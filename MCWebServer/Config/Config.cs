@@ -72,7 +72,7 @@ namespace MCWebServer.Config
         public string HamachiLocation { get; set; }  // location of hamachi exe
         public string DiscordBotToken { get; set; }  // discord bot token 
         public string MinecraftServerHandlerPath { get; set; }  // server handler exe
-        public string MinecraftServersFolder { get; set; }      //folder of the minecraft servers
+        public string MinecraftServersBaseFolder { get; set; }      //folder of the minecraft servers
         public int MinecraftServerMaxRamMB { get; set; }        // max ram for the minecraft server
         public int MinecraftServerInitRamMB { get; set; }       // ram to start the minecraft server with
         public int MinecraftServerPerformaceReportDelayInSeconds { get; set; }   // time period to check the minecraft server resource consumption
@@ -99,7 +99,7 @@ namespace MCWebServer.Config
                 throw new Exception("Please enter a valid value for " + nameof(DiscordBotToken));
 
 
-            if (string.IsNullOrWhiteSpace(MinecraftServersFolder))
+            if (string.IsNullOrWhiteSpace(MinecraftServersBaseFolder))
                 throw new Exception("Invalid Minecraft Server Folder Name!");
         }
     }

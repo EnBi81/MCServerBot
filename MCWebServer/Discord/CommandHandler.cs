@@ -28,6 +28,7 @@ namespace MCWebServer.Discord
                 ["get-web-url"] = PermissionCommands.GetWebLoginPage,
                 ["ping"] = ToolCommands.Ping,
                 ["reset-commands"] = ToolCommands.ResetAllCommands,
+                ["create-server"] = MinecraftServerCommands.CreateServer,
             };
 
 
@@ -45,7 +46,7 @@ namespace MCWebServer.Discord
             
             await _client.SetStatusAsync(UserStatus.Online);
 
-            _client.Ready += async () => await CommandSetup.SetUpSlashCommands(_client, Commands);
+            //_client.Ready += async () => await CommandSetup.SetUpSlashCommands(_client, Commands);
             _cmdService.Log += async msg => await LogService.Log.LogAsync(msg);
             _client.SlashCommandExecuted += SlashCommandExecuted;
             _client.SelectMenuExecuted += MenuHandlers.HandleMenu;

@@ -3,7 +3,7 @@
 	"DiscordBotToken": "NjkyMDczMTUyNjE1ODA5MDg1.GJfn9f.46z2sX3jwywlWi2SqHFs5_9U1UIotCCHayqMnE",
 	"DiscordBotOwner": 455447755796512778,
 	"MinecraftServerHandlerPath": "C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCServerHandler\\bin\\Debug\\net5.0\\MCServerHandler.exe",
-	"MinecraftServersFolder": "A:\\Games\\MinecraftServers",
+	"MinecraftServersBaseFolder": "A:\\Games\\MinecraftServers\\",
 	"MinecraftServerMaxRamMB": 8196,
 	"MinecraftServerInitRamMB": 8196,
 	"MinecraftServerPerformaceReportDelayInSeconds": 1,

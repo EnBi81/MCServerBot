@@ -15,7 +15,7 @@ namespace MCWebServer.MinecraftServer
     /// </summary>
     public class MinecraftServer
     {
-        public string ServerName { get; }
+        public string ServerName { get; set; }
         public int Port => int.Parse(Properties["server-port"]);
         public List<LogMessage> Logs { get; } = new List<LogMessage>();
 
@@ -373,48 +373,12 @@ namespace MCWebServer.MinecraftServer
         private static string GetStorage(string fileName)
         {
             var info = new FileInfo(fileName);
-            double size = DirSize(info.Directory);
-            string measurement = "B";
-
-            if (size > 1024)
-            {
-                size /= 1024;
-                measurement = "KB";
-
-                if (size > 1024)
-                {
-                    size /= 1024;
-                    measurement = "MB";
-
-                    if (size > 1024)
-                    {
-                        size /= 1024;
-                        measurement = "GB";
-                    }
-                }
-            }
-
-            string storage = Math.Round(size, 2) + " " + measurement;
+            double size = FileHelper.DirSize(info.Directory);
+            
+            string storage = FileHelper.StorageFormatter(size);
             LogService.GetService<MinecraftLogger>().Log("server", $"Storage measured: " + storage);
 
             return storage;
-        }
-        private static long DirSize(DirectoryInfo d)
-        {
-            long size = 0;
-            // Add file sizes.
-            FileInfo[] fis = d.GetFiles();
-            foreach (FileInfo fi in fis)
-            {
-                size += fi.Length;
-            }
-            // Add subdirectory sizes.
-            DirectoryInfo[] dis = d.GetDirectories();
-            foreach (DirectoryInfo di in dis)
-            {
-                size += DirSize(di);
-            }
-            return size;
         }
     }
 }

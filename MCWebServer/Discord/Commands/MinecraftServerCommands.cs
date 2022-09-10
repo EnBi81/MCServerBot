@@ -39,5 +39,22 @@ namespace MCWebServer.Discord.Commands
                 Console.WriteLine(ex.StackTrace);
             }
         }
+
+
+        [Command("Create a new server")]
+        [CommandOption("server-name", "Name of the new server.", ApplicationCommandOptionType.String, true)]
+        public static async Task CreateServer(SocketSlashCommand command)
+        {
+            string serverName = command.Data.Options.First().Value.ToString();
+            
+            try
+            {
+                ServerPark.CreateServer(serverName);
+                await command.RespondAsync($"Server {serverName} has been created");
+            } catch (Exception e)
+            {
+                await command.RespondAsync($"Server {serverName} cannot be created: " + e.Message);
+            }
+        }
     }
 }

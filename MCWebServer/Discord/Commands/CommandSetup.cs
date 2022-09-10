@@ -29,7 +29,7 @@ namespace MCWebServer.Discord.Commands
                 //skip if command is already registered
                 if (!allCommands)
                 {
-                    if (registeredCommands.Any(x => x.Name == name))
+                    if (registeredCommands != null && registeredCommands.Any(x => x.Name == name))
                         continue;
                 }
 

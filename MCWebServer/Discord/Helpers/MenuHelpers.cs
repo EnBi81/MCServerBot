@@ -19,7 +19,7 @@ namespace MCWebServer.Discord.Helpers
             .WithMaxValues(1);
 
             foreach (var server in MinecraftServer.ServerPark.MCServers.Values)
-                menuBuilder.AddOption(server.ServerName, server.ServerName);
+                menuBuilder.AddOption(server.ServerName, server.ServerName, $"Disk space: {server.StorageSpace}");
 
             var builder = new ComponentBuilder()
                 .WithSelectMenu(menuBuilder);

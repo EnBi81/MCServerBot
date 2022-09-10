@@ -9,22 +9,20 @@ namespace MCWebServer.MinecraftServer
     /// </summary>
     public class ServerPark
     {
+        public static string ServersFolder { get; } = Config.Config.Instance.MinecraftServersBaseFolder + "Servers\\";
+        public static string DeletedServersFolder { get; } = Config.Config.Instance.MinecraftServersBaseFolder + "Deleted Servers\\";
+        public static string EmptyServersFolder { get; } = Config.Config.Instance.MinecraftServersBaseFolder + "Empty Server\\";
+
+
         static ServerPark()
         {
-            string serversFolderName = Config.Config.Instance.MinecraftServersFolder;
-            DirectoryInfo info = new(serversFolderName);
+            DirectoryInfo info = new(ServersFolder);
 
             var servers = info.GetDirectories();
 
             MCServers.Clear();
             foreach (var server in servers)  // loop through all the directories and create the server instances
-            {
-                string serverName = server.Name;
-                string folderPath = server.FullName;
-
-                MinecraftServer mcServer = new(serverName, folderPath, Config.Config.Instance.JavaLocation);
-                MCServers.Add(serverName, mcServer);
-            }
+                RegisterMcServer(server.Name, server.FullName);
         }
 
 
@@ -88,6 +86,77 @@ namespace MCWebServer.MinecraftServer
         {
             ActiveServer?.Shutdown(username);
         }
+
+
+        /// <summary>
+        /// Creates a new server folder by copying the empty folder to the servers folder.
+        /// </summary>
+        /// <param name="name">name of the new </param>
+        /// <exception cref="Exception"></exception>
+        public static void CreateServer(string name)
+        {
+            if (!ValidateNameLength(name))
+                throw new Exception("Name must be less than 40 characters!");
+
+            if (ServerNameExist(name))
+                throw new Exception($"The name {name} is already taken");
+
+            
+            string destDir = ServersFolder + name;
+            Directory.CreateDirectory(destDir);
+
+            FileHelper.CopyDirectory(EmptyServersFolder, destDir);
+
+            RegisterMcServer(name, destDir);
+        }
+
+        public static void RenameServer(string oldName, string newName)
+        {
+            if (!ValidateNameLength(newName))
+                throw new Exception("Name must be less than 40 characters!");
+
+            if (!ServerNameExist(oldName))
+                throw new Exception($"The server '{oldName}' does not exist.");
+
+            if (ServerNameExist(newName))
+                throw new Exception($"The name {newName} is already taken");
+
+            if (ActiveServer.ServerName == oldName && ActiveServer.IsRunning())
+                throw new Exception($"To rename this server, first make sure it is stopped.");
+
+            FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
+
+            MCServers.Remove(oldName, out MinecraftServer server);
+            MCServers.Add(newName, server);
+            server.ServerName = newName;
+        }
+
+        public static void DeleteServer(string name)
+        {
+            if (!ServerNameExist(name))
+                throw new Exception($"The server '{name}' does not exist.");
+
+            if (ActiveServer.ServerName == name && ActiveServer.IsRunning())
+                throw new Exception($"To delete this server, first make sure it is stopped.");
+
+            string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+            FileHelper.MoveDirectory(ServersFolder + name, newDir);
+
+            MCServers.Remove(name);
+        }
+
+        private static bool ServerNameExist(string name) => MCServers.ContainsKey(name);
+
+        private static bool ValidateNameLength(string name) => name.Length < 40;
+        
+        
+        private static void RegisterMcServer(string serverName, string folderPath)
+        {
+            MinecraftServer mcServer = new(serverName, folderPath, Config.Config.Instance.JavaLocation);
+            MCServers.Add(serverName, mcServer);
+        }
+
+
 
         /// <summary>
         /// Event fired when the active server has changed.

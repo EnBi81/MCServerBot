@@ -42,8 +42,6 @@ namespace MCWebServer.Discord
             } catch (Exception e)
             {
                 await arg.RespondAsync("Server starting failed: " + e.Message);
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.StackTrace);
             }
         }
     }
