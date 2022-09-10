@@ -11,8 +11,6 @@ namespace MCWebServer.MinecraftServer
     {
         static ServerPark()
         {
-            var computerAddress = Hamachi.HamachiClient.GetStatus().Address; //get hamachi address
-
             string serversFolderName = Config.Config.Instance.MinecraftServersFolder;
             DirectoryInfo info = new(serversFolderName);
 
@@ -24,7 +22,7 @@ namespace MCWebServer.MinecraftServer
                 string serverName = server.Name;
                 string folderPath = server.FullName;
 
-                MinecraftServer mcServer = new(serverName, computerAddress, folderPath, Config.Config.Instance.JavaLocation);
+                MinecraftServer mcServer = new(serverName, folderPath, Config.Config.Instance.JavaLocation);
                 MCServers.Add(serverName, mcServer);
             }
         }
@@ -50,9 +48,10 @@ namespace MCWebServer.MinecraftServer
         /// <exception cref="Exception">If another server is already running.</exception>
         private static void SetActiveServer(string serverName)
         {
-            if(ActiveServer != null && !ActiveServer.IsRunning())
+            if(ActiveServer != null)
             {
-                throw new Exception("Another Server is Running Already!");
+                if(!ActiveServer.IsRunning())
+                    throw new Exception("Another Server is Running Already!");
             }
 
             if (!MCServers.TryGetValue(serverName, out MinecraftServer server))
@@ -136,6 +135,9 @@ namespace MCWebServer.MinecraftServer
 
         private static void UnSubscribeEventTrackers(MinecraftServer server)
         {
+            if (server == null)
+                return;
+
             server.StatusChange -= StatusTracker;
             server.LogReceived -= LogReceived;
             server.PlayerLeft -= PlayerLeft;

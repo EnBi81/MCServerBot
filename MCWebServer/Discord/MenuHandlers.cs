@@ -32,15 +32,18 @@ namespace MCWebServer.Discord
 
         public static async Task ServerStartMenu(SocketMessageComponent arg)
         {
-            string serverName = arg.Data.Value;
+            string serverName = string.Join(" ", arg.Data.Values);
             
             try
             {
+                Console.WriteLine("Server name: " + serverName);
                 ServerPark.StartServer(serverName, arg.User.Username);
                 await arg.RespondAsync("Starting server " + serverName);
             } catch (Exception e)
             {
                 await arg.RespondAsync("Server starting failed: " + e.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.StackTrace);
             }
         }
     }

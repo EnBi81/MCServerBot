@@ -1,4 +1,5 @@
 ﻿@page
+@using MCWebServer.Hamachi
 @using MCWebServer.MinecraftServer
 @using MCWebServer.PermissionControll
 @model Web_Test.Pages.IndexModel
@@ -11,7 +12,7 @@
     var mcServer = ServerPark.Keklepcso;
     var dcUser = WebsitePermission.GetUser(code);
 
-    var serverAddress = mcServer.Address;
+    var serverAddress = HamachiClient.Address;
     var port = MCWebServer.Config.Config.Instance.WebServerPortHttps;
 
     var fullAddress = $"wss://{Request.HttpContext.Connection.LocalIpAddress.MapToIPv4().ToString()}:{port}/ws?{cookieName}={code}"; // Request.Host.Value
@@ -60,7 +61,7 @@
         <div id="server-info" class="server-info offline-colors">
             <div class="information">
                 <div class="server-name">@mcServer.ServerName <span class="status"></span><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
-                <div id="server-address" class="server-address" title="Click here to copy address" tabindex="0">@mcServer.Address:@mcServer.Port</div>
+                <div id="server-address" class="server-address" title="Click here to copy address" tabindex="0">@HamachiClient.Address:@mcServer.Port</div>
                 <div class="server-uptime">Uptime: <span id="server-uptime"></span></div>
 
                 <div id="active-players" class="active-players">

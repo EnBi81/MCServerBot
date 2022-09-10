@@ -16,16 +16,8 @@ namespace MCWebServer.Discord.Commands
         [Command("Start the minecraft server")]
         public static async Task StartServer(SocketSlashCommand command)
         {
-            try
-            {
-                MessageComponent menu = MenuHelpers.CreateServerListMenu(MenuHelpers.StartServerMenuId);
-                await command.RespondAsync("Please select a server to start: ", components: menu);
-            }
-            catch (Exception ex)
-            {
-                var embed = EmbedHelper.CreateTitleEmbed("Starting failed: " + ex.Message, author: command.User);
-                await command.RespondAsync(embed: embed, ephemeral: true);
-            }
+            MessageComponent menu = MenuHelpers.CreateServerListMenu(MenuHelpers.StartServerMenuId);
+            await command.RespondAsync("Please select a server to start: ", components: menu);
         }
 
         [Command("Stop the minecraft server")]
@@ -42,6 +34,9 @@ namespace MCWebServer.Discord.Commands
             {
                 var embed = EmbedHelper.CreateTitleEmbed("Shutting Down failed: " + ex.Message, author: command.User);
                 await command.RespondAsync(embed: embed, ephemeral: true);
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.StackTrace);
             }
         }
     }

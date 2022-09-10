@@ -16,7 +16,6 @@ namespace MCWebServer.MinecraftServer
     public class MinecraftServer
     {
         public string ServerName { get; }
-        public string Address { get; }
         public int Port => int.Parse(Properties["server-port"]);
         public List<LogMessage> Logs { get; } = new List<LogMessage>();
 
@@ -79,10 +78,9 @@ namespace MCWebServer.MinecraftServer
 
 
 
-        public MinecraftServer(string serverName, string address, string serverFolderName, string javaLocation)
+        public MinecraftServer(string serverName, string serverFolderName, string javaLocation)
         {
             ServerName = serverName;
-            Address = address;
             _serverFileName = serverFolderName + "\\server.jar";
             Properties = MinecraftServerProperties.GetProperties(serverFolderName + "\\server.properties");
             _javaLocation = javaLocation;
@@ -359,12 +357,17 @@ namespace MCWebServer.MinecraftServer
             evt?.Invoke(this, param);
         }
 
+        
+        public static bool operator ==(MinecraftServer s1, MinecraftServer s2)
+        {
+            if (s1 is null || s2 is null)
+                return s1 is null && s2 is null;
 
-        public static bool operator ==(MinecraftServer s1, MinecraftServer s2) 
-            => s1.ServerName == s2.ServerName;
+            return s1.ServerName == s2.ServerName;
+        }
 
         public static bool operator !=(MinecraftServer s1, MinecraftServer s2)
-            => !(s1.ServerName != s2.ServerName);
+            => !(s1 == s2);
 
 
         private static string GetStorage(string fileName)
