@@ -48,4 +48,10 @@ namespace MCWebServer.Discord.Commands
             return builder;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    internal class OwnerCommandAttribute : Attribute
+    {
+        
+    }
 }

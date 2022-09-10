@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MCWebServer.PermissionControll;
+using System.Reflection;
 
 namespace MCWebServer.Discord
 {
@@ -26,6 +27,7 @@ namespace MCWebServer.Discord
                 ["revoke-perm"] = PermissionCommands.RevokePermission,
                 ["get-web-url"] = PermissionCommands.GetWebLoginPage,
                 ["ping"] = ToolCommands.Ping,
+                ["reset-commands"] = ToolCommands.ResetAllCommands,
             };
 
 
@@ -64,10 +66,19 @@ namespace MCWebServer.Discord
                 await arg.RespondAsync("You don't have permission to use the commands. Please contact someone who has!", ephemeral: true);
                 return;
             }
+            
+            
+            
+            var function = Commands[arg.Data.Name];
 
+            
+            if((function.Method.GetCustomAttribute(typeof(OwnerCommandAttribute)) is OwnerCommandAttribute) && userId != _botOwnerId)
+            {
+                await arg.RespondAsync("This command is only available for the bot owner.");
+                return;
+            }
 
             // execute command
-            var function = Commands[arg.Data.Name];
             await function(arg);
         }
     }
