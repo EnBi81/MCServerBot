@@ -31,6 +31,7 @@ namespace MCWebServer.Discord
         private CommandService CmdService { get; }
         public CommandHandler CommandHandler { get; }
         public IServiceProvider Services { get; private set; }
+        public ulong BotOwnerId { get; private set; }
 
 
         public DiscordBot()
@@ -74,9 +75,11 @@ namespace MCWebServer.Discord
             await CmdService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
             await SocketClient.LoginAsync(TokenType.Bot, Config.Config.Instance.DiscordBotToken);
             await SocketClient.StartAsync();
-            await CommandHandler.InitializeAsync();
+            BotOwnerId = (await SocketClient.GetApplicationInfoAsync()).Owner.Id;
+            await CommandHandler.InitializeAsync(BotOwnerId);
 
-            await SocketClient.SetGameAsync("Server Offline", null, ActivityType.Playing);
+            await SocketClient.SetGameAsync("Servers Offline", null, ActivityType.Playing);
+            
         }
 
 

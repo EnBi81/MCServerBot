@@ -40,12 +40,11 @@ namespace MCWebServer.Discord
         } 
 
 
-        internal async Task InitializeAsync()
+        internal async Task InitializeAsync(ulong botOwner)
         {
+            _botOwnerId = botOwner;
+            
             await _client.SetStatusAsync(UserStatus.Online);
-
-            Config.Config.Instance.DiscordBotOwner = (await _client.GetApplicationInfoAsync()).Owner.Id;
-            _botOwnerId = Config.Config.Instance.DiscordBotOwner;
 
             _client.Ready += () => SetUpSlashCommands();
             _cmdService.Log += async msg => await LogService.Log.LogAsync(msg);

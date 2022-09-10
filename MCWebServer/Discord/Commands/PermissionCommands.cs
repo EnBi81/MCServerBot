@@ -52,7 +52,7 @@ namespace MCWebServer.Discord.Commands
             }
 
             ulong id = user.Id;
-            if (id == Config.Config.Instance.DiscordBotOwner)
+            if (id == DiscordBot.Bot.BotOwnerId)
             {
                 var embed = EmbedHelper.CreateTitleEmbed("You cannot remove the bot owner, darling ;)", author: user);
                 await command.RespondAsync(embed: embed, ephemeral: true);
@@ -88,7 +88,7 @@ namespace MCWebServer.Discord.Commands
                     $"[{WebsitePermission.WebsiteDomainUrl}]({publicDomain})\n";
                
 
-                if(id == Config.Config.Instance.DiscordBotOwner)
+                if(id == DiscordBot.Bot.BotOwnerId)
                 {
                     string localSite = WebsitePermission.CreatePrivateUrl(WebsitePermission.WebsiteLocalUrl, code);
 

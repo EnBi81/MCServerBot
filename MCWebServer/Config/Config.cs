@@ -71,7 +71,6 @@ namespace MCWebServer.Config
 #pragma warning disable
         public string HamachiLocation { get; set; }  // location of hamachi exe
         public string DiscordBotToken { get; set; }  // discord bot token 
-        public ulong DiscordBotOwner { get; set; }   // discord bot owner (set when discord starts up)
         public string MinecraftServerHandlerPath { get; set; }  // server handler exe
         public string MinecraftServersFolder { get; set; }      //folder of the minecraft servers
         public int MinecraftServerMaxRamMB { get; set; }        // max ram for the minecraft server
