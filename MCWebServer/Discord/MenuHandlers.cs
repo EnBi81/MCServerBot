@@ -15,6 +15,11 @@ namespace MCWebServer.Discord
                 [MenuHelpers.StartServerMenuId] = ServerStartMenu,
             };
 
+        /// <summary>
+        /// Selects the correct handler for the menu and executes it
+        /// </summary>
+        /// <param name="arg">The menu to handle</param>
+        /// <returns></returns>
         public static async Task HandleMenu(SocketMessageComponent arg)
         {
             string menuId = arg.Data.CustomId;
@@ -37,7 +42,6 @@ namespace MCWebServer.Discord
             {
                 await arg.RespondAsync("Server starting failed: " + e.Message);
             }
-            
         }
     }
 }

@@ -4,11 +4,8 @@ using Discord.WebSocket;
 using MCWebServer.Discord.Commands;
 using MCWebServer.Discord.Services;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
-using CommandAttribute = MCWebServer.Discord.Commands.CommandAttribute;
 using MCWebServer.PermissionControll;
 
 namespace MCWebServer.Discord
@@ -20,7 +17,7 @@ namespace MCWebServer.Discord
         private IServiceProvider _services;
         private ulong _botOwnerId;
 
-        public IReadOnlyDictionary<string, Func<SocketSlashCommand, Task>> Commands { get; } =
+        public static IReadOnlyDictionary<string, Func<SocketSlashCommand, Task>> Commands { get; } =
             new Dictionary<string, Func<SocketSlashCommand,Task>>()
             {
                 ["start-server"] = MinecraftServerCommands.StartServer,
@@ -46,55 +43,12 @@ namespace MCWebServer.Discord
             
             await _client.SetStatusAsync(UserStatus.Online);
 
-            _client.Ready += () => SetUpSlashCommands();
+            _client.Ready += async () => await CommandSetup.SetUpSlashCommands(_client, Commands);
             _cmdService.Log += async msg => await LogService.Log.LogAsync(msg);
             _client.SlashCommandExecuted += SlashCommandExecuted;
             _client.SelectMenuExecuted += MenuHandlers.HandleMenu;
         }
 
-        
-
-        public async Task RemoveAllCommands()
-        {
-            //delete all previously registered commands
-
-            var commands = await _client.GetGlobalApplicationCommandsAsync();
-            foreach (var command in commands)
-                await command.DeleteAsync();
-        }
-
-        public async Task SetUpSlashCommands()
-        {
-
-            foreach (var (name, commandFunction) in Commands)
-            {
-                // get description attribute
-                CommandAttribute? attribute = commandFunction.Method.GetCustomAttribute(typeof(CommandAttribute)) as CommandAttribute
-                    ?? throw new NotImplementedException(name + " command does not have Command attribute");
-
-                // get options
-                var optionAttributes = commandFunction.Method.GetCustomAttributes(typeof(CommandOptionAttribute));
-                List<SlashCommandOptionBuilder> options = new ();
-                foreach (CommandOptionAttribute option in optionAttributes.Cast<CommandOptionAttribute>())
-                {
-                    options.Add((SlashCommandOptionBuilder)option);
-                }
-
-                // create command
-                var command = new SlashCommandBuilder()
-                {
-                    Name = name,
-                    Description = attribute.Description
-                };
-
-                if (options.Count > 0)
-                    command.Options = options;
-
-
-                // register command
-                await _client.CreateGlobalApplicationCommandAsync(command.Build());
-            }
-        }
         
 
         private async Task SlashCommandExecuted(SocketSlashCommand arg)
