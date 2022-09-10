@@ -17,6 +17,8 @@ namespace MCWebServer.MinecraftServer
             DirectoryInfo info = new(serversFolderName);
 
             var servers = info.GetDirectories();
+
+            MCServers.Clear();
             foreach (var server in servers)  // loop through all the directories and create the server instances
             {
                 string serverName = server.Name;
