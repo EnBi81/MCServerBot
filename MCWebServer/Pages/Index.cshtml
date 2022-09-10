@@ -1,0 +1,138 @@
+﻿@page
+@using MCWebServer.MinecraftServer
+@using MCWebServer.PermissionControll
+@model Web_Test.Pages.IndexModel
+
+@{
+
+    var cookieName = WebsitePermission.CookieName;
+    var code = Request.Cookies.ContainsKey(cookieName) ? Request.Cookies[cookieName] : Request.Query["code"].ToString();
+
+    var mcServer = ServerPark.Keklepcso;
+    var dcUser = WebsitePermission.GetUser(code);
+
+    var serverAddress = mcServer.Address;
+    var port = MCWebServer.Config.Config.Instance.WebServerPortHttps;
+
+    var fullAddress = $"wss://{Request.HttpContext.Connection.LocalIpAddress.MapToIPv4().ToString()}:{port}/ws?{cookieName}={code}"; // Request.Host.Value
+
+
+   <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>@mcServer.ServerName - Manager</title>
+        @if(dcUser != null)
+        {
+            <link rel="stylesheet" href="~/css/main.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script defer type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+            <script defer src="~/js/server-event.js"></script>
+            <script defer src="~/js/MCSocket.js"></script>
+            <script defer src="~/js/socket-handler.js"></script>
+            <script defer src="~/js/user-event-handlers.js"></script>
+            <script defer src="~/js/update-times.js"></script>
+            <script defer src="~/js/settings.js"></script>
+        }
+</head>
+<body data-webaddress="@fullAddress">
+<div class="background" style="background: url('@Web_Test.Pages.IndexModel.BackgroundImageHelper.GetRandomImage()')"></div>
+<div class="main-content">
+    <header>
+       @if(dcUser != null)
+       {
+           <div class="welcome-message">
+            <div class="image-wrapper">
+                <img src="@await dcUser?.GetProfilePicUrl()" alt="">
+                <div class="settings-image">
+                    <img src="~/button-images/settings.png" alt="" onclick="toggleSettings()">
+                </div>
+
+            </div>
+
+            <b id="player-name">@dcUser?.Username</b>
+        </div>
+        <div id="logout" class="logout"><div class="button" tabindex="0">Log out</div></div>
+       }       
+    </header>
+
+    <main>
+        <div id="server-info" class="server-info offline-colors">
+            <div class="information">
+                <div class="server-name">@mcServer.ServerName <span class="status"></span><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
+                <div id="server-address" class="server-address" title="Click here to copy address" tabindex="0">@mcServer.Address:@mcServer.Port</div>
+                <div class="server-uptime">Uptime: <span id="server-uptime"></span></div>
+
+                <div id="active-players" class="active-players">
+                    <!--<div class="player online">
+                        <pre>Crash285 - <span class="time">1:23:23</span></pre>
+                        <pre class="total-time">Total uptime: <span>2:23:23</span></pre>
+                    </div>-->
+                </div>
+            </div>
+            <div class="performance">
+                <pre>CPU:     <span id="cpu"></span></pre>
+                <pre>MEMORY:  <span id="memory"></span></pre>
+                <pre>STORAGE: <span id="storage">@mcServer.StorageSpace</span></pre>
+            </div>
+            <div id="start-button" class="button-wrapper">
+                <img class="toggle-button" src="button-images/toggle_off.png" alt="" tabindex="0">
+            </div>
+        </div>
+
+        <div class="log">
+            <div id="log-messages" class="log-messages">
+                <div style="display: none" class="system-message"></div>
+            </div>
+            <div class="input">
+                <label>
+                    <input id="command-input" type="text" placeholder="Write command here...">
+                </label>
+            </div>
+        </div>
+    </main>
+</div>
+<div id="settings-wrapper" class="hidden" onclick="toggleSettings()"></div>
+
+<div id="settings" class="hidden">
+
+    <div class="settings-title reset-text" id="settings-title">Settings</div>
+    <div class="settings-reset-hint">Double click to reset settings</div>
+    <div class="setting">
+        <span id="reset-font" class="reset-text">Font Style:</span>
+        <select name="fonts" id="fonts"></select>
+        <label for="fonts"></label>
+    </div>
+    <div class="setting setting-color">
+        <span id="reset-primary" class="reset-text">Main Color:</span>
+        <label>
+            <input id="primary-color-picker" type="color"/>
+        </label>
+    </div>
+    <div class="setting setting-color">
+        <span id="reset-secondary" class="reset-text">Secondary Color:</span>
+        <label>
+            <input id="secondary-color-picker" type="color"/>
+        </label>
+    </div>
+    <div class="setting setting-color">
+        <span id="reset-button-color" class="reset-text">Logout Button Color:</span>
+        <label>
+            <input id="button-color-picker" type="color"/>
+        </label>
+    </div>
+    <div class="setting setting-color">
+        <span id="reset-base-op" class="reset-text">Content Opacity:</span>
+        <label for="content-op"></label>
+        <input type="range" min="10" max="100" value="100" class="slider" id="content-op">
+    </div>
+    <div class="setting setting-color">
+        <span id="reset-hover-op" class="reset-text">Content Hover Opacity:</span>
+        <label for="content-hover-op"></label>
+        <input type="range" min="0" max="100" value="30" class="slider" id="content-hover-op">
+    </div>
+</div>
+</body>
+</html>
+    
+}
