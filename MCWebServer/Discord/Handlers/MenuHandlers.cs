@@ -15,6 +15,7 @@ namespace MCWebServer.Discord.Handlers
             {
                 [MenuHelpers.StartServerMenuId] = ServerStartMenu,
                 [MenuHelpers.DeleteServerMenuId] = DeleteServerMenu,
+                [MenuHelpers.RenameServerMenuId] = RenameServerMenu,
             };
 
         /// <summary>
@@ -57,6 +58,13 @@ namespace MCWebServer.Discord.Handlers
             string serverName = string.Join(" ", arg.Data.Values);
             var modal = ModalHelpers.DeleteServerBuilder(serverName);
             await arg.RespondWithModalAsync(modal.Build());
+        }
+
+        public static async Task RenameServerMenu(SocketMessageComponent arg)
+        {
+            string serverName = string.Join(" ", arg.Data.Values);
+            var modal = ModalHelpers.RenameServerBuilder(serverName).Build();
+            await arg.RespondWithModalAsync(modal);
         }
 
     }

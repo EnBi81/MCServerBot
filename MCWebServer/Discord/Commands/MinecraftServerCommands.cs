@@ -50,10 +50,10 @@ namespace MCWebServer.Discord.Commands
             try
             {
                 ServerPark.CreateServer(serverName);
-                await command.RespondAsync($"Server {serverName} has been created");
+                await command.RespondAsync($"Server **{serverName}** has been created");
             } catch (Exception e)
             {
-                await command.RespondAsync($"Server {serverName} cannot be created: " + e.Message);
+                await command.RespondAsync($"Server **{serverName}** cannot be created: " + e.Message);
             }
         }
 
@@ -62,8 +62,8 @@ namespace MCWebServer.Discord.Commands
         {
             try
             {
-                var modal = ModalHelpers.RenameServerBuilder().Build();
-                await command.RespondWithModalAsync(modal);
+                var menu = MenuHelpers.CreateServerListMenu(MenuHelpers.RenameServerMenuId);
+                await command.RespondAsync("Please select a server to rename:", components: menu);
             }
             catch (Exception e)
             {

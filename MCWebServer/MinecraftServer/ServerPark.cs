@@ -121,7 +121,7 @@ namespace MCWebServer.MinecraftServer
             if (ServerNameExist(newName))
                 throw new Exception($"The name {newName} is already taken");
 
-            if (ActiveServer == null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning())
+            if (ActiveServer != null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning())
                 throw new Exception($"To rename this server, first make sure it is stopped.");
 
             FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
@@ -136,7 +136,7 @@ namespace MCWebServer.MinecraftServer
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");
 
-            if (ActiveServer == null && ActiveServer.ServerName == name && ActiveServer.IsRunning())
+            if (ActiveServer != null && ActiveServer.ServerName == name && ActiveServer.IsRunning())
                 throw new Exception($"To delete this server, first make sure it is stopped.");
 
             string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");

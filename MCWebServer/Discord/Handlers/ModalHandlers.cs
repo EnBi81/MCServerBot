@@ -15,6 +15,7 @@ namespace MCWebServer.Discord.Handlers
             new Dictionary<string, Func<SocketModal, Task>>()
             {
                 [ModalHelpers.DeleteServerModalId] = DeleteServerModal,
+                [ModalHelpers.RenameServerModalId] = RenameServerModal,
             };
 
         /// <summary>
@@ -40,7 +41,7 @@ namespace MCWebServer.Discord.Handlers
         {
             var components = arg.Data.Components;
             
-            if(components == null || components.Count == 0)
+            if(components.First().Type != ComponentType.TextInput)
             {
                 await arg.RespondAsync("Incorrect Modal Form");
                 return;
@@ -52,6 +53,30 @@ namespace MCWebServer.Discord.Handlers
             {
                 ServerPark.DeleteServer(serverNameInput);
                 await arg.RespondAsync($"Server **{serverNameInput}** deleted.");
+            }
+            catch (Exception e)
+            {
+                await arg.RespondAsync($"Error occured: **{e.Message}**");
+            }
+        }
+
+        public static async Task RenameServerModal(SocketModal arg)
+        {
+            var components = arg.Data.Components;
+
+            if (components.Any(comp => comp.Type != ComponentType.TextInput))
+            {
+                await arg.RespondAsync("Incorrect Modal Form");
+                return;
+            }
+
+            string oldServerName = components.First().Value;
+            string newServerName = components.Skip(1).First().Value;
+
+            try
+            {
+                ServerPark.RenameServer(oldServerName, newServerName);
+                await arg.RespondAsync($"Server **{oldServerName}** is renamed to **{newServerName}**.");
             }
             catch (Exception e)
             {
