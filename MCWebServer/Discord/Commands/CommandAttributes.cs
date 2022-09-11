@@ -1,9 +1,7 @@
 ﻿using Discord;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security;
 
 namespace MCWebServer.Discord.Commands
 {
@@ -47,11 +45,5 @@ namespace MCWebServer.Discord.Commands
 
             return builder;
         }
-    }
-
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    internal class OwnerCommandAttribute : Attribute
-    {
-        
     }
 }

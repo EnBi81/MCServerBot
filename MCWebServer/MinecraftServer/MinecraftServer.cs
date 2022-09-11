@@ -15,7 +15,20 @@ namespace MCWebServer.MinecraftServer
     /// </summary>
     public class MinecraftServer
     {
-        public string ServerName { get; set; }
+        public const int NAME_MIN_LENGTH = 4;
+        public const int NAME_MAX_LENGTH = 35;
+
+
+        private string _serverName;
+        public string ServerName { get => _serverName;
+            set
+            {
+                if (value is null || value.Length < NAME_MIN_LENGTH || value.Length > NAME_MAX_LENGTH)
+                    throw new ArgumentException("Name length must be between 4 and 35");
+
+                _serverName = value;
+            } }
+
         public int Port => int.Parse(Properties["server-port"]);
         public List<LogMessage> Logs { get; } = new List<LogMessage>();
 

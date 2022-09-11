@@ -5,18 +5,29 @@ using System;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Linq;
+using MCWebServer.Discord.Handlers;
+using System.Security;
 
 namespace MCWebServer.Discord.Commands
 {
     public class CommandSetup
     {
-        public static async Task RemoveAllCommands(DiscordSocketClient client)
+        public static async Task RemoveCommands(DiscordSocketClient client, bool removeAll)
         {
             //delete all previously registered commands
 
             var commands = await client.GetGlobalApplicationCommandsAsync();
+
             foreach (var command in commands)
+            {
+                if (!removeAll)
+                {
+                    if (CommandHandlers.Commands.ContainsKey(command.Name))
+                        continue;
+                }
+
                 await command.DeleteAsync();
+            }
         }
 
         public static async Task SetUpSlashCommands(DiscordSocketClient client, IReadOnlyDictionary<string, Func<SocketSlashCommand, Task>> commands, bool allCommands = false)
@@ -33,7 +44,6 @@ namespace MCWebServer.Discord.Commands
                         continue;
                 }
 
-
                 // get description attribute
                 CommandAttribute? attribute = commandFunction.Method.GetCustomAttribute(typeof(CommandAttribute)) as CommandAttribute
                     ?? throw new NotImplementedException(name + " command does not have Command attribute");
@@ -46,19 +56,21 @@ namespace MCWebServer.Discord.Commands
                     options.Add((SlashCommandOptionBuilder)option);
                 }
 
+
                 // create command
                 var command = new SlashCommandBuilder()
                 {
                     Name = name,
                     Description = attribute.Description
                 };
-
+                
                 if (options.Count > 0)
-                    command.Options = options;
+                    command.AddOptions(options.ToArray());
 
 
                 // register command
-                await client.CreateGlobalApplicationCommandAsync(command.Build());
+                var builtCommand = command.Build();
+                await client.CreateGlobalApplicationCommandAsync(builtCommand);
             }
         }
     }

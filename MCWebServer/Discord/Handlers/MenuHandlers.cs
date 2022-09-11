@@ -1,11 +1,12 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using MCWebServer.Discord.Helpers;
 using MCWebServer.MinecraftServer;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MCWebServer.Discord
+namespace MCWebServer.Discord.Handlers
 {
     public class MenuHandlers
     {
@@ -13,6 +14,7 @@ namespace MCWebServer.Discord
             new Dictionary<string, Func<SocketMessageComponent, Task>>()
             {
                 [MenuHelpers.StartServerMenuId] = ServerStartMenu,
+                [MenuHelpers.DeleteServerMenuId] = DeleteServerMenu,
             };
 
         /// <summary>
@@ -23,26 +25,39 @@ namespace MCWebServer.Discord
         public static async Task HandleMenu(SocketMessageComponent arg)
         {
             string menuId = arg.Data.CustomId;
-            var handler = Handlers[menuId];
-            
+
+            if(!Handlers.TryGetValue(menuId, out Func<SocketMessageComponent, Task> handler))
+            {
+                await arg.RespondAsync("Unrecognized Menu");
+                return;
+            }
+
             await handler(arg);
         }
 
-        
+
 
         public static async Task ServerStartMenu(SocketMessageComponent arg)
         {
             string serverName = string.Join(" ", arg.Data.Values);
-            
+
             try
             {
-                Console.WriteLine("Server name: " + serverName);
                 ServerPark.StartServer(serverName, arg.User.Username);
                 await arg.RespondAsync("Starting server " + serverName);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 await arg.RespondAsync("Server starting failed: " + e.Message);
             }
         }
+
+        public static async Task DeleteServerMenu(SocketMessageComponent arg)
+        {
+            string serverName = string.Join(" ", arg.Data.Values);
+            var modal = ModalHelpers.DeleteServerBuilder(serverName);
+            await arg.RespondWithModalAsync(modal.Build());
+        }
+
     }
 }

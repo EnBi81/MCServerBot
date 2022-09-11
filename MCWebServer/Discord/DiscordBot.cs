@@ -29,7 +29,7 @@ namespace MCWebServer.Discord
 
         public DiscordSocketClient SocketClient { get; }
         private CommandService CmdService { get; }
-        public CommandHandler CommandHandler { get; }
+        public InputHandlers CommandHandler { get; }
         public IServiceProvider Services { get; private set; }
         public ulong BotOwnerId { get; private set; }
 
@@ -53,7 +53,7 @@ namespace MCWebServer.Discord
 
             Services = SetupServices();
 
-            CommandHandler = new CommandHandler(SocketClient, CmdService, Services);
+            CommandHandler = new InputHandlers(SocketClient, CmdService, Services);
 
             
 

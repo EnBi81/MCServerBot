@@ -96,7 +96,7 @@ namespace MCWebServer.MinecraftServer
         public static void CreateServer(string name)
         {
             if (!ValidateNameLength(name))
-                throw new Exception("Name must be less than 40 characters!");
+                throw new Exception("Name must be less than 40 characters and more than 3!");
 
             if (ServerNameExist(name))
                 throw new Exception($"The name {name} is already taken");
@@ -113,7 +113,7 @@ namespace MCWebServer.MinecraftServer
         public static void RenameServer(string oldName, string newName)
         {
             if (!ValidateNameLength(newName))
-                throw new Exception("Name must be less than 40 characters!");
+                throw new Exception("Name must be less than 40 characters and more than !");
 
             if (!ServerNameExist(oldName))
                 throw new Exception($"The server '{oldName}' does not exist.");
@@ -121,7 +121,7 @@ namespace MCWebServer.MinecraftServer
             if (ServerNameExist(newName))
                 throw new Exception($"The name {newName} is already taken");
 
-            if (ActiveServer.ServerName == oldName && ActiveServer.IsRunning())
+            if (ActiveServer == null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning())
                 throw new Exception($"To rename this server, first make sure it is stopped.");
 
             FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
@@ -136,7 +136,7 @@ namespace MCWebServer.MinecraftServer
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");
 
-            if (ActiveServer.ServerName == name && ActiveServer.IsRunning())
+            if (ActiveServer == null && ActiveServer.ServerName == name && ActiveServer.IsRunning())
                 throw new Exception($"To delete this server, first make sure it is stopped.");
 
             string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
@@ -147,7 +147,7 @@ namespace MCWebServer.MinecraftServer
 
         private static bool ServerNameExist(string name) => MCServers.ContainsKey(name);
 
-        private static bool ValidateNameLength(string name) => name.Length < 40;
+        private static bool ValidateNameLength(string name) => name.Length <= MinecraftServer.NAME_MAX_LENGTH && name.Length >= MinecraftServer.NAME_MIN_LENGTH;
         
         
         private static void RegisterMcServer(string serverName, string folderPath)

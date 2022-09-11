@@ -56,5 +56,27 @@ namespace MCWebServer.Discord.Commands
                 await command.RespondAsync($"Server {serverName} cannot be created: " + e.Message);
             }
         }
+
+        [Command("Rename a server")]
+        public static async Task RenameServer(SocketSlashCommand command)
+        {
+            try
+            {
+                var modal = ModalHelpers.RenameServerBuilder().Build();
+                await command.RespondWithModalAsync(modal);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        [Command("Delete a server")]
+        public static async Task DeleteServer(SocketSlashCommand command)
+        {
+            var menu = MenuHelpers.CreateServerListMenu(MenuHelpers.DeleteServerMenuId);
+            await command.RespondAsync("Select the server you want to delete: ", components: menu);
+        }
     }
 }

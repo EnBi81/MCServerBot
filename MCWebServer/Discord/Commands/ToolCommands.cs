@@ -1,7 +1,9 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using MCWebServer.Discord.Handlers;
 using MCWebServer.Discord.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MCWebServer.Discord.Commands
@@ -15,14 +17,23 @@ namespace MCWebServer.Discord.Commands
         }
 
 
-        [Command("Reset All Commands")]
-        [OwnerCommand]
+        [Command("Reset Commands")]
+        [CommandOption("full-reset", "Everything from scratch", ApplicationCommandOptionType.Boolean, false)]
         public static async Task ResetAllCommands(SocketSlashCommand command)
         {
-            await CommandSetup.RemoveAllCommands(DiscordBot.Bot.SocketClient);
-            await CommandSetup.SetUpSlashCommands(DiscordBot.Bot.SocketClient, CommandHandler.Commands, true);
+            bool fullReset = false;
+            if(command.Data.Options.Count > 0)
+            {
+                fullReset = (bool) command.Data.Options.First().Value;
+            }
 
-            await command.RespondAsync("Setup Complete");
+            await command.DeferAsync();
+
+
+            await CommandSetup.RemoveCommands(DiscordBot.Bot.SocketClient, fullReset);
+            await CommandSetup.SetUpSlashCommands(DiscordBot.Bot.SocketClient, CommandHandlers.Commands, fullReset);
+
+            await command.FollowupAsync("Setup Complete");
         }
     }
 }
