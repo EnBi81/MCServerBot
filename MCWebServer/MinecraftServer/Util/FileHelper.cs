@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace MCWebServer.MinecraftServer
+namespace MCWebServer.MinecraftServer.Util
 {
     public class FileHelper
     {

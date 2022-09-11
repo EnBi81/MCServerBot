@@ -7,13 +7,16 @@ using System.Linq;
 using System.Threading;
 using System.Management;
 using MCWebServer.Log;
+using MCWebServer.MinecraftServer.Util;
+using MCWebServer.MinecraftServer.Enums;
+using MCWebServer.Config;
 
 namespace MCWebServer.MinecraftServer
 {
     /// <summary>
     /// A representation of a single minecraft server.
     /// </summary>
-    public class MinecraftServer
+    public class MinecraftServer // TODO: Do state machine on status
     {
         public const int NAME_MIN_LENGTH = 4;
         public const int NAME_MAX_LENGTH = 35;
@@ -54,11 +57,11 @@ namespace MCWebServer.MinecraftServer
                             Players[player.Username].SetOffline();
                             RaiseEvent(PlayerLeft, player);
                         }
-                            
+                        
                     }
                     else if(value == ServerStatus.Offline)
                     {
-                        StorageSpace = GetStorage(_serverFileName);
+                        StorageSpace = _mcServerProcess.GetStorage();
                     }
                     OnlineFrom = null;
                 }
@@ -81,100 +84,63 @@ namespace MCWebServer.MinecraftServer
         public Dictionary<string, MinecraftPlayer> Players { get; } = new Dictionary<string, MinecraftPlayer>();
         public string StorageSpace { get; private set; }
 
-        private Process _serverHandlerProcess;
-        private Process _minecraftProcess;
-        private readonly string _serverFileName;
-        private readonly string _javaLocation;
 
 
-        private Thread _performanceThread = null;
+        private ProcessPerformanceReporter _performanceReporter;
+        private MinecraftServerProcess _mcServerProcess;
 
 
-
-        public MinecraftServer(string serverName, string serverFolderName, string javaLocation)
+        public MinecraftServer(string serverName, string serverFolderName)
         {
-            ServerName = serverName;
-            _serverFileName = serverFolderName + "\\server.jar";
-            Properties = MinecraftServerProperties.GetProperties(serverFolderName + "\\server.properties");
-            _javaLocation = javaLocation;
-            Status = ServerStatus.Offline;
+            string serverFileName = serverFolderName + "\\server.jar";
+            string serverPropertiesFileName = serverFolderName + "\\server.properties";
 
+            ServerName = serverName;
+            Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
+
+            
+
+            Config.Config config = Config.Config.Instance;
+
+            _mcServerProcess = new MinecraftServerProcess(
+                serverFileName:     serverFileName,
+                javaLocation:       config.JavaLocation,
+                serverHandlerPath:  config.MinecraftServerHandlerPath,
+                maxRam:             config.MinecraftServerMaxRamMB,
+                initRam:            config.MinecraftServerInitRamMB);
+
+            SubscribeToProcessEvents();
+
+
+            Status = ServerStatus.Offline;
             LogService.GetService<MinecraftLogger>().Log("server", $"Server {ServerName} created");
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
-        private void PerformanceReporter()
+        private void SubscribeToProcessEvents()
         {
-            var mcProcess = _minecraftProcess;
-
-            var objQuery = new ObjectQuery("select * from Win32_Process WHERE ProcessID = " + mcProcess.Id);
-            var moSearcher = new ManagementObjectSearcher(objQuery);
-            DateTime firstSample = DateTime.MinValue, secondSample;
-
-            double OldProcessorUsage = 0;
-            double ProcessorUsage = 20;
-            double msPassed;
-            ulong u_OldCPU = 0;
-            string cpu = "";
-            string memory = "";
-            while (Status != ServerStatus.Offline)
+            _mcServerProcess.ErrorDataReceived += (s, e) =>
             {
-                var gets = moSearcher.Get();
-                foreach (ManagementObject mObj in gets)
-                {
-                    try
-                    {
-                        if (firstSample == DateTime.MinValue)
-                        {
-                            firstSample = DateTime.Now;
-                            mObj.Get();
-                            u_OldCPU = (ulong)mObj["UserModeTime"] + (ulong)mObj["KernelModeTime"];
-                        }
-                        else
-                        {
-                            secondSample = DateTime.Now;
-                            mObj.Get();
-                            ulong u_newCPU = (ulong)mObj["UserModeTime"] + (ulong)mObj["KernelModeTime"];
+                var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.Error_Message);
+                AddLog(logMess);
+            };
 
-                            msPassed = (secondSample - firstSample).TotalMilliseconds;
-                            OldProcessorUsage = ProcessorUsage;
-                            ProcessorUsage = (u_newCPU - u_OldCPU) / (msPassed * 100.0 * Environment.ProcessorCount);
+            _mcServerProcess.OutputDataReceived += (s, e) =>
+            {
+                var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.System_Message);
+                AddLog(logMess);
+            };
+            _mcServerProcess.Exited += (s, e) =>
+            {
+                Status = ServerStatus.Offline;
+                _performanceReporter.Stop();
+            };
 
-                            u_OldCPU = u_newCPU;
-                            firstSample = secondSample;
-                        }
-
-
-                        mcProcess.Refresh();
-                        memory = (mcProcess.WorkingSet64 / (1024 * 1024)) + " MB";
-                        cpu = ProcessorUsage.ToString("0.00") + "%";
-
-                        RaiseEvent(PerformanceMeasured, (cpu, memory));
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message + ex.StackTrace);
-                        Console.WriteLine(ex.InnerException.Message);
-                    }
-                }
-
-                int waitTime = ProcessorUsage > 10 ? 1 : 5;
-                double cpuDifference = ProcessorUsage - OldProcessorUsage;
-
-                if (Math.Abs(cpuDifference) < 6)
-                    waitTime *= 2;
-
-
-                LogService.GetService<MinecraftLogger>().Log("server", $"Performance measurement: cpu {cpu}, memory {memory}. " +
-                    $"Next Measurement in {waitTime}");
-                Thread.Sleep(waitTime * 1000);
-            }
-
-            
-            moSearcher.Dispose();
-            RaiseEvent(PerformanceMeasured, ("0%", "0 MB"));
+            _mcServerProcess.ProcessIdReceived += (s, e) =>
+            {
+                _performanceReporter = new ProcessPerformanceReporter(e);
+                _performanceReporter.Start();
+            };
         }
-
 
         public void Start(string user = "Admin")
         {
@@ -185,75 +151,13 @@ namespace MCWebServer.MinecraftServer
             var logMessage = new LogMessage(user + ": " + "Starting Server", LogMessage.LogMessageType.User_Message);
             AddLog(logMessage);
 
-            var serverHandlerPath = Config.Config.Instance.MinecraftServerHandlerPath;
+            
 
-            FileInfo info = new FileInfo(_serverFileName);
-            var workingDir = info.DirectoryName;
-            var simpleFileName = info.Name;
-            var maxRam = Config.Config.Instance.MinecraftServerMaxRamMB;
-            var initRam = Config.Config.Instance.MinecraftServerInitRamMB;
+            
 
-            var processStartInfo = new ProcessStartInfo
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = false,
-                //Arguments = $"\"{serverHandlerPath}\" {simpleFileName} \"{_javaLocation}\" \"{workingDir}\" {maxRam} {initRam}",
-                FileName = "cmd.exe",
-                WorkingDirectory = workingDir
-            };
+            
 
-            _serverHandlerProcess = new Process()
-            {
-                StartInfo = processStartInfo,
-                EnableRaisingEvents = true,
-            };
-
-            LogService.GetService<MinecraftLogger>().Log("server", $"Starting server {simpleFileName} with max-ram {maxRam}.");
-
-            _serverHandlerProcess.Start();
-            _serverHandlerProcess.StandardInput.WriteLine($"\"{serverHandlerPath}\" {simpleFileName} \"{_javaLocation}\" \"{workingDir}\" {maxRam} {initRam} & exit");
-            _serverHandlerProcess.BeginErrorReadLine();
-            _serverHandlerProcess.BeginOutputReadLine();
-
-            _serverHandlerProcess.ErrorDataReceived += (s, e) =>
-            {
-                if (e.Data != null)
-                {
-                    var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.Error_Message);
-                    AddLog(logMess);
-                }
-            };
-
-            int messageCount = 0;
-            _serverHandlerProcess.OutputDataReceived += (s, e) =>
-            {
-                if (e.Data == null)
-                    return;
-
-                if (messageCount < 5)
-                {
-                    if (++messageCount == 5)
-                    {
-                        int minecraftProcessId = int.Parse(e.Data);
-                        _minecraftProcess = Process.GetProcessById(minecraftProcessId);
-
-                        _performanceThread = new Thread(PerformanceReporter);
-                        _performanceThread.Start();
-                    }
-                        
-                    return;
-                }
-
-                var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.System_Message);
-                AddLog(logMess);
-            };
-            _serverHandlerProcess.Exited += (s, e) =>
-            {
-                Status = ServerStatus.Offline;
-                _serverHandlerProcess = null;
-            };
+            _mcServerProcess.Start();
         }
 
 
@@ -319,7 +223,7 @@ namespace MCWebServer.MinecraftServer
         {
             try
             {
-                _serverHandlerProcess.StandardInput.WriteLine(command);
+                _mcServerProcess.WriteToStandardInput(command);
                 var logMess = new LogMessage(user + ": " + command, LogMessage.LogMessageType.User_Message);
                 AddLog(logMess);
             }
@@ -327,7 +231,6 @@ namespace MCWebServer.MinecraftServer
             {
                 throw new Exception("Server is not online!");
             }
-
         }
 
         public bool IsRunning()
@@ -383,15 +286,6 @@ namespace MCWebServer.MinecraftServer
             => !(s1 == s2);
 
 
-        private static string GetStorage(string fileName)
-        {
-            var info = new FileInfo(fileName);
-            double size = FileHelper.DirSize(info.Directory);
-            
-            string storage = FileHelper.StorageFormatter(size);
-            LogService.GetService<MinecraftLogger>().Log("server", $"Storage measured: " + storage);
-
-            return storage;
-        }
+        
     }
 }

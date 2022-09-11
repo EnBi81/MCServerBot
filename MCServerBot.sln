@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCServerBot", "MCServerBot\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCWebServer", "MCWebServer\MCWebServer.csproj", "{0826C131-CBEB-4EA7-A13A-A640B9F80BD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCServerHandler", "MCServerHandler\MCServerHandler.csproj", "{7EDB49AA-9B4F-44FC-A4C5-8C167276F16E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCServerHandler", "MCServerHandler\MCServerHandler.csproj", "{7EDB49AA-9B4F-44FC-A4C5-8C167276F16E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{F6A0C4E3-8433-4C09-AB0A-57263CB4F368}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox\Sandbox.csproj", "{F6A0C4E3-8433-4C09-AB0A-57263CB4F368}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

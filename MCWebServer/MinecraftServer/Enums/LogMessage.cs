@@ -1,4 +1,4 @@
-﻿namespace MCWebServer.MinecraftServer
+﻿namespace MCWebServer.MinecraftServer.Enums
 {
     public class LogMessage
     {

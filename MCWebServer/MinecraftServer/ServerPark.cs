@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using MCWebServer.MinecraftServer.Enums;
+using MCWebServer.MinecraftServer.Util;
 
 namespace MCWebServer.MinecraftServer
 {
@@ -152,7 +154,7 @@ namespace MCWebServer.MinecraftServer
         
         private static void RegisterMcServer(string serverName, string folderPath)
         {
-            MinecraftServer mcServer = new(serverName, folderPath, Config.Config.Instance.JavaLocation);
+            MinecraftServer mcServer = new(serverName, folderPath);
             MCServers.Add(serverName, mcServer);
         }
 

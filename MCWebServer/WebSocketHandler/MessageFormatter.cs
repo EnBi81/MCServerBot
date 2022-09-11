@@ -1,8 +1,8 @@
-﻿using MCWebServer.MinecraftServer;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using MCWebServer.MinecraftServer.Enums;
 
 namespace MCWebServer.WebSocketHandler
 {
@@ -73,10 +73,10 @@ namespace MCWebServer.WebSocketHandler
         {
             var stringStatus = status switch
             {
-                MinecraftServer.ServerStatus.Starting => "starting",
-                MinecraftServer.ServerStatus.ShuttingDown => "shutting-down",
-                MinecraftServer.ServerStatus.Online => "online",
-                MinecraftServer.ServerStatus.Offline => "offline",
+                ServerStatus.Starting => "starting",
+                ServerStatus.ShuttingDown => "shutting-down",
+                ServerStatus.Online => "online",
+                ServerStatus.Offline => "offline",
                 _ => "offline"
             };
 
