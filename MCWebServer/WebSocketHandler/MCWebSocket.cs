@@ -49,7 +49,7 @@ namespace MCWebServer.WebSocketHandler
                     if (status == ServerStatus.Starting || status == ServerStatus.ShuttingDown)
                         throw new Exception("Server is Loading. Please wait.");
 
-                    if (ServerPark.Keklepcso.IsRunning())
+                    if (ServerPark.Keklepcso.IsRunning)
                         ServerPark.Keklepcso.Shutdown(DiscordUser.Username);
                     else
                         ServerPark.Keklepcso.Start(DiscordUser.Username);

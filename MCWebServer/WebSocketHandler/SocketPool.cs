@@ -52,7 +52,7 @@ namespace MCWebServer.WebSocketHandler
 
             ServerPark.Keklepcso.StatusChange += async (sender, status) =>
             {
-                MinecraftServer.MinecraftServer mcServer = (MinecraftServer.MinecraftServer)sender;
+                MinecraftServer.IMinecraftServer mcServer = (MinecraftServer.IMinecraftServer)sender;
 
                 var mess = MessageFormatter.StatusUpdate(status, mcServer.OnlineFrom, mcServer.StorageSpace);
                 await BroadcastMessage(mess);

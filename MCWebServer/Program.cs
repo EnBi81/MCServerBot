@@ -1,10 +1,13 @@
+global using System;
+global using System.Linq;
+
 using MCWebServer.Config;
 using MCWebServer.Log;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System;
+
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web_Test

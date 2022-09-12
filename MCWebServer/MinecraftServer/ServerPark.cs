@@ -31,14 +31,14 @@ namespace MCWebServer.MinecraftServer
         /// <summary>
         /// Online minecraft server (only one can be online at a time)
         /// </summary>
-        public static MinecraftServer ActiveServer { get; private set; }
+        public static IMinecraftServer ActiveServer { get; private set; }
 
         /// <summary>
         /// List of all minecraft server instances
         /// </summary>
-        public static Dictionary<string, MinecraftServer> MCServers { get; } = new ();
+        public static Dictionary<string, IMinecraftServer> MCServers { get; } = new ();
 
-        public static MinecraftServer Keklepcso { get; } 
+        public static IMinecraftServer Keklepcso { get; } 
 
 
         /// <summary>
@@ -50,11 +50,11 @@ namespace MCWebServer.MinecraftServer
         {
             if(ActiveServer != null)
             {
-                if(!ActiveServer.IsRunning())
+                if(!ActiveServer.IsRunning)
                     throw new Exception("Another Server is Running Already!");
             }
 
-            if (!MCServers.TryGetValue(serverName, out MinecraftServer server))
+            if (!MCServers.TryGetValue(serverName, out IMinecraftServer server))
             {
                 throw new Exception("Server not found!");
             }
@@ -123,12 +123,12 @@ namespace MCWebServer.MinecraftServer
             if (ServerNameExist(newName))
                 throw new Exception($"The name {newName} is already taken");
 
-            if (ActiveServer != null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning())
+            if (ActiveServer != null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning)
                 throw new Exception($"To rename this server, first make sure it is stopped.");
 
             FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
 
-            MCServers.Remove(oldName, out MinecraftServer server);
+            MCServers.Remove(oldName, out IMinecraftServer server);
             MCServers.Add(newName, server);
             server.ServerName = newName;
         }
@@ -138,7 +138,7 @@ namespace MCWebServer.MinecraftServer
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");
 
-            if (ActiveServer != null && ActiveServer.ServerName == name && ActiveServer.IsRunning())
+            if (ActiveServer != null && ActiveServer.ServerName == name && ActiveServer.IsRunning)
                 throw new Exception($"To delete this server, first make sure it is stopped.");
 
             string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
@@ -149,12 +149,12 @@ namespace MCWebServer.MinecraftServer
 
         private static bool ServerNameExist(string name) => MCServers.ContainsKey(name);
 
-        private static bool ValidateNameLength(string name) => name.Length <= MinecraftServer.NAME_MAX_LENGTH && name.Length >= MinecraftServer.NAME_MIN_LENGTH;
+        private static bool ValidateNameLength(string name) => name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH;
         
         
         private static void RegisterMcServer(string serverName, string folderPath)
         {
-            MinecraftServer mcServer = new(serverName, folderPath);
+            IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
             MCServers.Add(serverName, mcServer);
         }
 
@@ -163,7 +163,7 @@ namespace MCWebServer.MinecraftServer
         /// <summary>
         /// Event fired when the active server has changed.
         /// </summary>
-        public static event EventHandler<MinecraftServer> ActiveServerChange;
+        public static event EventHandler<IMinecraftServer> ActiveServerChange;
 
         /// <summary>
         /// Event fired when the active server's status has changed.
@@ -194,7 +194,7 @@ namespace MCWebServer.MinecraftServer
 
 
         
-        private static void SubscribeEventTrackers(MinecraftServer server)
+        private static void SubscribeEventTrackers(IMinecraftServer server)
         {
             server.StatusChange += StatusTracker;
             server.LogReceived += LogReceived;
@@ -204,7 +204,7 @@ namespace MCWebServer.MinecraftServer
             
         }
 
-        private static void UnSubscribeEventTrackers(MinecraftServer server)
+        private static void UnSubscribeEventTrackers(IMinecraftServer server)
         {
             if (server == null)
                 return;

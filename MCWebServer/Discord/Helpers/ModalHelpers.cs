@@ -31,8 +31,8 @@ namespace MCWebServer.Discord.Helpers
                 .AddTextInput(label: "Please enter the new name of the server", 
                               customId: "new-server-name", 
                               placeholder: "New Server Name",
-                              minLength: MinecraftServer.MinecraftServer.NAME_MIN_LENGTH, 
-                              maxLength: MinecraftServer.MinecraftServer.NAME_MAX_LENGTH,
+                              minLength: MinecraftServer.IMinecraftServer.NAME_MIN_LENGTH, 
+                              maxLength: MinecraftServer.IMinecraftServer.NAME_MAX_LENGTH,
                               required: true);
 
             return builder;

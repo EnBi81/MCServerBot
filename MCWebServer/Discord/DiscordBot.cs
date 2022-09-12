@@ -75,13 +75,13 @@ namespace MCWebServer.Discord
             await CommandHandler.InitializeAsync(BotOwnerId);
 
             await SocketClient.SetGameAsync("Servers Offline", null, ActivityType.Playing);
-            ServerPark.ActiveServerStatusChange += (s, e) => ServerStatusChange((MinecraftServer.MinecraftServer) s);
-            ServerPark.ActiveServerPlayerJoined += (s, e) => ServerStatusChange((MinecraftServer.MinecraftServer) s);
-            ServerPark.ActiveServerPlayerLeft += (s, e) => ServerStatusChange((MinecraftServer.MinecraftServer) s);
+            ServerPark.ActiveServerStatusChange += (s, e) => ServerStatusChange((MinecraftServer.IMinecraftServer) s);
+            ServerPark.ActiveServerPlayerJoined += (s, e) => ServerStatusChange((MinecraftServer.IMinecraftServer) s);
+            ServerPark.ActiveServerPlayerLeft += (s, e) => ServerStatusChange((MinecraftServer.IMinecraftServer) s);
 
         }
 
-        private async void ServerStatusChange(MinecraftServer.MinecraftServer server)
+        private async void ServerStatusChange(MinecraftServer.IMinecraftServer server)
         {
             string name = $"{server.ServerName} - {server.OnlinePlayers.Count} active players";
             await SocketClient.SetGameAsync(name, null, ActivityType.Playing);

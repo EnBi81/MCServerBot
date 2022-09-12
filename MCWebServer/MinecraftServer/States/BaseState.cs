@@ -6,9 +6,9 @@ namespace MCWebServer.MinecraftServer.States
     {
         public ServerStatus Status { get; }
         public bool IsRunning { get; }
-        public void ToggleServer();
+        public void Start(string username);
+        public void Stop(string username);
         public void HandleLog(LogMessage logMessage);
-        public void Shutdown();
-        public void WriteCommand();
+        public void WriteCommand(string command, string username);
     }
 }
