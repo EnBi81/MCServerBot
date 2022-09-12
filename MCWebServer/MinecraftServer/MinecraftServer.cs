@@ -25,7 +25,7 @@ namespace MCWebServer.MinecraftServer
             } 
         }
 
-        private IBaseState _serverState;
+        private IServerState _serverState;
         public ServerStatus Status => _serverState.Status;
         public bool IsRunning => _serverState.IsRunning;
 
@@ -114,7 +114,7 @@ namespace MCWebServer.MinecraftServer
 
 
 
-        internal void SetServerState<T>() where T : IBaseState
+        internal void SetServerState<T>() where T : IServerState
         {
             var type = typeof(T);
 
@@ -128,7 +128,7 @@ namespace MCWebServer.MinecraftServer
 
 
             var parameters = new object[] { this };
-            _serverState = (IBaseState) Activator.CreateInstance(type, parameters);
+            _serverState = (IServerState) Activator.CreateInstance(type, parameters);
             LogService.GetService<MinecraftLogger>().Log("server", $"Status Change: {_serverState.Status}");
             RaiseEvent(StatusChange, _serverState.Status);
         }

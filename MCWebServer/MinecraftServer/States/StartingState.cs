@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace MCWebServer.MinecraftServer.States
 {
-    internal class StartingState : IBaseState
+    internal class StartingState : IServerState
     {
         private readonly MinecraftServer _server;
 
@@ -32,19 +32,13 @@ namespace MCWebServer.MinecraftServer.States
                 _server.SetServerState<OnlineState>();
         }
 
-        public void Start(string username)
-        {
+        public void Start(string username) =>
             throw new Exception("Server is already starting!");
-        }
 
-        public void Stop(string username)
-        {
+        public void Stop(string username) =>
             throw new Exception("Server is shutting down. Please wait till the operation is complete.");
-        }
 
-        public void WriteCommand(string command, string username)
-        {
+        public void WriteCommand(string command, string username) =>
             throw new Exception("Server is starting, please wait!");
-        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace MCWebServer.MinecraftServer.States
 {
-    internal class ShuttingDownState : IBaseState
+    internal class ShuttingDownState : IServerState
     {
         private readonly MinecraftServer _server;
 
@@ -27,19 +27,13 @@ namespace MCWebServer.MinecraftServer.States
             _server.AddLog(logMessage);
         }
 
-        public void Start(string username)
-        {
+        public void Start(string username) =>
             throw new Exception("Please wait till the server has shut down!");
-        }
 
-        public void Stop(string username)
-        {
+        public void Stop(string username) =>
             throw new Exception("The server is shutting down!");
-        }
 
-        public void WriteCommand(string command, string username)
-        {
+        public void WriteCommand(string command, string username) =>
             throw new Exception("Server is not online!");
-        }
     }
 }

@@ -6,7 +6,7 @@ using LogMessage = MCWebServer.MinecraftServer.Enums.LogMessage;
 
 namespace MCWebServer.MinecraftServer.States
 {
-    internal class OnlineState : IBaseState
+    internal class OnlineState : IServerState
     {
         private readonly MinecraftServer _server;
 
@@ -60,10 +60,8 @@ namespace MCWebServer.MinecraftServer.States
             }
         }
 
-        public void Start(string username)
-        {
+        public void Start(string username) =>
             throw new Exception("Server is already running!");
-        }
 
         public void Stop(string username)
         {

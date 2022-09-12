@@ -2,7 +2,7 @@
 
 namespace MCWebServer.MinecraftServer.States
 {
-    public interface IBaseState
+    public interface IServerState
     {
         public ServerStatus Status { get; }
         public bool IsRunning { get; }

@@ -5,7 +5,7 @@ using LogMessage = MCWebServer.MinecraftServer.Enums.LogMessage;
 
 namespace MCWebServer.MinecraftServer.States
 {
-    internal class OfflineState : IBaseState
+    internal class OfflineState : IServerState
     {
         private readonly MinecraftServer _server;
 
@@ -20,8 +20,6 @@ namespace MCWebServer.MinecraftServer.States
 
 
 
-
-
         public ServerStatus Status => ServerStatus.Offline;
 
         public bool IsRunning => false;
@@ -29,10 +27,7 @@ namespace MCWebServer.MinecraftServer.States
 
 
 
-        public void HandleLog(LogMessage logMessage)
-        {
-            // do nothing, no logs while server is offline
-        }
+        public void HandleLog(LogMessage logMessage) { } // do nothing, no logs while server is offline
 
         public void Start(string username)
         {
@@ -42,14 +37,10 @@ namespace MCWebServer.MinecraftServer.States
             _server.McServerProcess.Start();
         }
 
-        public void Stop(string username)
-        {
+        public void Stop(string username) =>
             throw new Exception("Server is already offline!");
-        }
 
-        public void WriteCommand(string command, string username)
-        {
+        public void WriteCommand(string command, string username) =>
             throw new Exception("Server is not online!");
-        }
     }
 }
