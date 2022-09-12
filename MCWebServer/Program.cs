@@ -34,10 +34,12 @@ namespace Web_Test
                 _ = MCWebServer.Hamachi.HamachiClient.LogOn();
 
             // Start Webserver
-            CreateHostBuilder(args).Build().Start();
+            if(args.Contains("--web-server"))
+                CreateHostBuilder(args).Build().Start();
 
             //Start Discord bot
-            await MCWebServer.Discord.DiscordBot.Initialize();
+            if(args.Contains("--discord-bot"))
+                await MCWebServer.Discord.DiscordBot.Initialize();
 
             await Task.Delay(-1);
         }

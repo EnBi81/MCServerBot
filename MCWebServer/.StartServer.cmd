@@ -1,1 +1,1 @@
-bin\Debug\net6.0\MCWebServer.exe --start-hamachi
+bin\Debug\net6.0\MCWebServer.exe --start-hamachi --web-server --discord-bot

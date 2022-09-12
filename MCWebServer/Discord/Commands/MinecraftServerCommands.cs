@@ -25,10 +25,9 @@ namespace MCWebServer.Discord.Commands
         {
             try
             {
-                ServerPark.StopActiveServer(command.User.Username);
 
-                var embed = EmbedHelper.CreateTitleEmbed("Shutting Down Server", author: command.User);
-                await command.RespondAsync(embed: embed);
+                ServerPark.StopActiveServer(command.User.Username);
+                await command.RespondAsync($"Shutting Down **{ServerPark.ActiveServer?.ServerName}**");
             }
             catch (Exception ex)
             {

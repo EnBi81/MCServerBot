@@ -45,7 +45,7 @@ namespace MCWebServer.Discord.Handlers
             try
             {
                 ServerPark.StartServer(serverName, arg.User.Username);
-                await arg.RespondAsync("Starting server " + serverName);
+                await arg.RespondAsync($"Starting server **{serverName}**");
             }
             catch (Exception e)
             {
