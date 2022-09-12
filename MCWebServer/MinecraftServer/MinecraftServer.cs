@@ -9,10 +9,8 @@ namespace MCWebServer.MinecraftServer
     /// <summary>
     /// A representation of a single minecraft server.
     /// </summary>
-    internal class MinecraftServer : IMinecraftServer // TODO: Do state machine on status
+    internal class MinecraftServer : IMinecraftServer 
     {
-        
-
 
         private string _serverName;
         public string ServerName
@@ -23,10 +21,9 @@ namespace MCWebServer.MinecraftServer
                     throw new ArgumentException($"Name length must be between {IMinecraftServer.NAME_MIN_LENGTH} and {IMinecraftServer.NAME_MAX_LENGTH}");
 
                 _serverName = value;
+                RaiseEvent(NameChanged, value);
             } 
         }
-
-        public List<LogMessage> Logs { get; } = new List<LogMessage>();
 
         private IBaseState _serverState;
         public ServerStatus Status => _serverState.Status;
@@ -34,17 +31,16 @@ namespace MCWebServer.MinecraftServer
 
         public DateTime? OnlineFrom { get; internal set; }
         public MinecraftServerProperties Properties { get; }
-
-
-        public Dictionary<string, MinecraftPlayer> Players { get; } = new Dictionary<string, MinecraftPlayer>();
-
-
         public string StorageSpace { get; internal set; }
 
-
+        public List<LogMessage> Logs { get; } = new List<LogMessage>();
+        public Dictionary<string, MinecraftPlayer> Players { get; } = new Dictionary<string, MinecraftPlayer>();
+        public List<MinecraftPlayer> OnlinePlayers => ((IMinecraftServer)this).OnlinePlayers;
 
         internal ProcessPerformanceReporter PerformanceReporter { get; private set; }
         internal MinecraftServerProcess McServerProcess { get; }
+
+
 
 
         public MinecraftServer(string serverName, string serverFolderName)
@@ -55,17 +51,13 @@ namespace MCWebServer.MinecraftServer
             ServerName = serverName;
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
 
-            
-
             Config.Config config = Config.Config.Instance;
-
             McServerProcess = new MinecraftServerProcess(
                 serverFileName:     serverFileName,
                 javaLocation:       config.JavaLocation,
                 serverHandlerPath:  config.MinecraftServerHandlerPath,
                 maxRam:             config.MinecraftServerMaxRamMB,
                 initRam:            config.MinecraftServerInitRamMB);
-
             SubscribeToProcessEvents();
 
 
@@ -81,14 +73,12 @@ namespace MCWebServer.MinecraftServer
                 var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.Error_Message);
                 HandleLog(logMess);
             };
-
             McServerProcess.OutputDataReceived += (s, e) =>
             {
                 var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.System_Message);
                 HandleLog(logMess);
             };
             McServerProcess.Exited += (s, e) => SetServerState<OfflineState>();
-
             McServerProcess.ProcessIdReceived += (s, processId) =>
             {
                 PerformanceReporter = new ProcessPerformanceReporter(processId);
@@ -116,10 +106,12 @@ namespace MCWebServer.MinecraftServer
         public event EventHandler<MinecraftPlayer> PlayerJoined;
         public event EventHandler<MinecraftPlayer> PlayerLeft;
         public event EventHandler<(string CPU, string Memory)> PerformanceMeasured;
+        public event EventHandler<string> NameChanged;
 
 
         internal void RaiseEvent<T>(EventHandler<T> evt, T param) 
             => evt?.Invoke(this, param);
+
 
 
         internal void SetServerState<T>() where T : IBaseState
@@ -176,19 +168,22 @@ namespace MCWebServer.MinecraftServer
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))
-            {
                 return true;
-            }
-
-            if (ReferenceEquals(obj, null))
-            {
-                return false;
-            }
 
             if (obj is not MinecraftServer server)
                 return false;
 
             return ServerName == server.ServerName;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked // disable overflow, for the unlikely possibility that you
+            {         // are compiling with overflow-checking enabled
+                int hash = 27;
+                hash = (13 * hash) + ServerName.GetHashCode();
+                return hash;
+            }
         }
     }
 }
