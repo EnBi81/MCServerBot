@@ -6,30 +6,25 @@ namespace MCWebServer.MinecraftServer.States
     /// <summary>
     /// Represents the Starting state of the minecraft server.
     /// </summary>
-    internal class StartingState : IServerState
+    internal class StartingState : ServerStateAbs
     {
-        private readonly MinecraftServer _server;
-
         /// <summary>
         /// Initializes the starting state.
         /// </summary>
         /// <param name="server"></param>
-        public StartingState(MinecraftServer server)
-        {
-            _server = server;
-        }
+        public StartingState(MinecraftServer server) : base(server) { }
 
         /// <summary>
         /// Returns <see cref="ServerStatus.Starting"/>
         /// </summary>
-        public ServerStatus Status => ServerStatus.Starting;
+        public override ServerStatus Status => ServerStatus.Starting;
 
         /// <summary>
         /// Returns true.
         /// </summary>
-        public bool IsRunning => true;
+        public override bool IsRunning => true;
 
-        public void HandleLog(LogMessage logMessage)
+        public override void HandleLog(LogMessage logMessage)
         {
             _server.AddLog(logMessage);
 
@@ -44,13 +39,13 @@ namespace MCWebServer.MinecraftServer.States
                 _server.SetServerState<OnlineState>();
         }
 
-        public void Start(string username) =>
+        public override void Start(string username) =>
             throw new Exception("Server is already starting!");
 
-        public void Stop(string username) =>
+        public override void Stop(string username) =>
             throw new Exception("Server is starting. Please wait till the operation is complete.");
 
-        public void WriteCommand(string command, string username) =>
+        public override void WriteCommand(string command, string username) =>
             throw new Exception("Server is starting, please wait!");
     }
 }
