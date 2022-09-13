@@ -1,20 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MCWebServer.MinecraftServer.Enums
+﻿namespace MCWebServer.MinecraftServer.Enums
 {
     /// <summary>
     /// Represents the status of a server
     /// </summary>
     public enum ServerStatus
     {
+        /// <summary>
+        /// Server fully functions, it's online
+        /// </summary>
         Online,
+        /// <summary>
+        /// Server process is not running, the server is offline.
+        /// </summary>
         Offline,
+        /// <summary>
+        /// Server process has been started, it is not ready though.
+        /// </summary>
         Starting,
+        /// <summary>
+        /// Server process is shutting down, expect to go offline in some seconds.
+        /// </summary>
         ShuttingDown
     }
 
@@ -31,7 +36,7 @@ namespace MCWebServer.MinecraftServer.Enums
         public static string DisplayString(this ServerStatus status)
         {
             if (status == ServerStatus.Online)
-                return $"Server Online on {Hamachi.HamachiClient.Address}:{ServerPark.Keklepcso.Port}";
+                return $"Server Online on {Hamachi.HamachiClient.Address}:{ServerPark.ActiveServer.Port}";
             if (status == ServerStatus.Offline)
                 return "Server Offline";
             if (status == ServerStatus.Starting)

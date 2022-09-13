@@ -7,29 +7,45 @@ using System.Diagnostics;
 
 namespace MCWebServer.MinecraftServer.Util
 {
+    /// <summary>
+    /// Class responsible for measuring the cpu and memory usage of a process.
+    /// </summary>
     public class ProcessPerformanceReporter
     {
-        private readonly Process _mcProcess;
-        private volatile bool _isRunning;
+        private readonly Process _mcProcess; // process to measure
+        private volatile bool _isRunning; 
         private readonly Thread _measurementThread;
 
+        /// <summary>
+        /// Initializes the ProcessPerformanceReporter object
+        /// </summary>
+        /// <param name="processId">id of the process to measure.</param>
         public ProcessPerformanceReporter(int processId)
         {
             _mcProcess = Process.GetProcessById(processId);
-            _isRunning = true;
             _measurementThread = new Thread(PerformanceReporter);
         }
 
+        /// <summary>
+        /// Starts the measurement on a separate thread.
+        /// </summary>
         public void Start()
         {
+            _isRunning = true;
             _measurementThread.Start();
         }
 
+        /// <summary>
+        /// Stops the measurement thread.
+        /// </summary>
         public void Stop()
         {
             _isRunning = false;
         }
 
+        /// <summary>
+        /// Measures the cpu and memory usage time by time, and invokes the <see cref="PerformanceMeasured"/> event.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private void PerformanceReporter()
         {
@@ -99,8 +115,17 @@ namespace MCWebServer.MinecraftServer.Util
             RaiseEvent(PerformanceMeasured, ("0%", "0 MB"));
         }
 
+        /// <summary>
+        /// Raised when a measurement result is ready.
+        /// </summary>
         public event EventHandler<(string CPU, string Memory)> PerformanceMeasured;
 
+        /// <summary>
+        /// Helper method for raising events.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="evt"></param>
+        /// <param name="param"></param>
         protected void RaiseEvent<T>(EventHandler<T> evt, T param)
         {
             //Console.WriteLine($"Event raised: {evt.Method.Name} with data: {param}");

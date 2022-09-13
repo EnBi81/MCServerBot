@@ -105,6 +105,5 @@ namespace MCWebServer.MinecraftServer.Util
 
             return Math.Round(size, 2) + " " + measurement;
         }
-
     }
 }

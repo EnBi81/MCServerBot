@@ -6,10 +6,18 @@ using LogMessage = MCWebServer.MinecraftServer.Enums.LogMessage;
 
 namespace MCWebServer.MinecraftServer.States
 {
+    /// <summary>
+    /// Represents the Online state of the minecraft server.
+    /// In this state, the process is running and ready for all type of user interaction.
+    /// </summary>
     internal class OnlineState : IServerState
     {
         private readonly MinecraftServer _server;
 
+        /// <summary>
+        /// Initializes the Online state, and does the online state routine.
+        /// </summary>
+        /// <param name="server"></param>
         public OnlineState(MinecraftServer server)
         {
             _server = server;
@@ -17,11 +25,20 @@ namespace MCWebServer.MinecraftServer.States
         }
 
 
-
+        /// <summary>
+        /// Returns <see cref="ServerStatus.Online"/>
+        /// </summary>
         public ServerStatus Status => ServerStatus.Online;
 
+        /// <summary>
+        /// Returns true.
+        /// </summary>
         public bool IsRunning => true;
 
+        /// <summary>
+        /// Handles the log message.
+        /// </summary>
+        /// <param name="logMessage">The log message to be handled</param>
         public void HandleLog(LogMessage logMessage)
         {
             _server.AddLog(logMessage);
@@ -60,15 +77,29 @@ namespace MCWebServer.MinecraftServer.States
             }
         }
 
+        /// <summary>
+        /// Throws exception as the server cant be started; it is already online.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <exception cref="Exception"></exception>
         public void Start(string username) =>
             throw new Exception("Server is already running!");
 
+        /// <summary>
+        /// Stops the server by writing stop to the server process window.
+        /// </summary>
+        /// <param name="username"></param>
         public void Stop(string username)
         {
             LogService.GetService<MinecraftLogger>().Log("server", $"Shutdown request by: " + username);
             WriteCommand("stop", username);
         }
 
+        /// <summary>
+        /// Writes command to the server process.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="username"></param>
         public void WriteCommand(string command, string username)
         {
             _server.McServerProcess.WriteToStandardInput(command);

@@ -13,6 +13,9 @@ namespace MCWebServer.MinecraftServer
     {
 
         private string _serverName;
+        /// <summary>
+        /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.
+        /// </summary>
         public string ServerName
         {
             get => _serverName; set
@@ -26,23 +29,60 @@ namespace MCWebServer.MinecraftServer
         }
 
         private IServerState _serverState;
+
+        /// <summary>
+        /// Gets the status of the server.
+        /// </summary>
         public ServerStatus Status => _serverState.Status;
+
+        /// <summary>
+        /// Gets if the server process is running.
+        /// </summary>
         public bool IsRunning => _serverState.IsRunning;
 
+
+        /// <summary>
+        /// The time of the server when it became online, or null if the server is offline
+        /// </summary>
         public DateTime? OnlineFrom { get; internal set; }
+
+        /// <summary>
+        /// Access to the properties file of the server.
+        /// </summary>
         public MinecraftServerProperties Properties { get; }
+
+        /// <summary>
+        /// Phisical storage space on the disk of the server.
+        /// </summary>
         public string StorageSpace { get; internal set; }
 
+        /// <summary>
+        /// All of the log messages the server or the users wrote.
+        /// </summary>
         public List<LogMessage> Logs { get; } = new List<LogMessage>();
-        public Dictionary<string, MinecraftPlayer> Players { get; } = new Dictionary<string, MinecraftPlayer>();
-        public List<MinecraftPlayer> OnlinePlayers => ((IMinecraftServer)this).OnlinePlayers;
 
+        /// <summary>
+        /// Holding all the players who have played in the server, from the beginning of the current runtime.
+        /// </summary>
+        public Dictionary<string, MinecraftPlayer> Players { get; } = new Dictionary<string, MinecraftPlayer>();
+
+        /// <summary>
+        /// Performance reporter class, which measures the cpu and memory usage of the running minecraft server.
+        /// </summary>
         internal ProcessPerformanceReporter PerformanceReporter { get; private set; }
+
+        /// <summary>
+        /// Low level process handling of the minecraft server.
+        /// </summary>
         internal MinecraftServerProcess McServerProcess { get; }
 
 
 
-
+        /// <summary>
+        /// Initializes the MinecraftServer object
+        /// </summary>
+        /// <param name="serverName">Name of the server</param>
+        /// <param name="serverFolderName">Folder path of the server</param>
         public MinecraftServer(string serverName, string serverFolderName)
         {
             string serverFileName = serverFolderName + "\\server.jar";
@@ -58,6 +98,7 @@ namespace MCWebServer.MinecraftServer
                 serverHandlerPath:  config.MinecraftServerHandlerPath,
                 maxRam:             config.MinecraftServerMaxRamMB,
                 initRam:            config.MinecraftServerInitRamMB);
+
             SubscribeToProcessEvents();
 
 
@@ -65,7 +106,9 @@ namespace MCWebServer.MinecraftServer
             LogService.GetService<MinecraftLogger>().Log("server", $"Server {ServerName} created");
         }
 
-
+        /// <summary>
+        /// Subscribes to the events fired by the <see cref="McServerProcess"/>
+        /// </summary>
         private void SubscribeToProcessEvents()
         {
             McServerProcess.ErrorDataReceived += (s, e) =>
@@ -87,33 +130,78 @@ namespace MCWebServer.MinecraftServer
             };
         }
 
+        /// <summary>
+        /// Starts the server
+        /// </summary>
+        /// <param name="user">username of the user who initiates the start of the server.</param>
         public void Start(string user = "Admin") =>
             _serverState.Start(user);
 
+        /// <summary>
+        /// Writes a command to the minecraft serves based on the state of the server.
+        /// </summary>
+        /// <param name="command">command to send to the minecraft server.</param>
+        /// <param name="user">username of the user who sends the command.</param>
         public void WriteCommand(string command, string user = "Admin") =>
             _serverState.WriteCommand(command, user);
 
+        /// <summary>
+        /// Shuts down the minecraft server if it is online.
+        /// </summary>
+        /// <param name="user">username of the user who initiates the start of the server.</param>
         public void Shutdown(string user = "Admin") => 
             _serverState.Stop(user);
 
-        internal void HandleLog(LogMessage logMessage) =>
+        /// <summary>
+        /// Handles the received log message according to the state of the server.
+        /// </summary>
+        /// <param name="logMessage">log message object representing the log message</param>
+        protected void HandleLog(LogMessage logMessage) =>
             _serverState.HandleLog(logMessage);
 
 
 
+        /// <summary>
+        /// Fired when the server has changed status.
+        /// </summary>
         public event EventHandler<ServerStatus> StatusChange;
+        /// <summary>
+        /// Fired when a log message received.
+        /// </summary>
         public event EventHandler<LogMessage> LogReceived;
+        /// <summary>
+        /// Fired when a player has joined to the server.
+        /// </summary>
         public event EventHandler<MinecraftPlayer> PlayerJoined;
+        /// <summary>
+        /// Fired when a player has left the server.
+        /// </summary>
         public event EventHandler<MinecraftPlayer> PlayerLeft;
+        /// <summary>
+        /// Fired when performance has been measured of the minecraft server process.
+        /// </summary>
         public event EventHandler<(string CPU, string Memory)> PerformanceMeasured;
+        /// <summary>
+        /// Fired when the server has changed its name.
+        /// </summary>
         public event EventHandler<string> NameChanged;
 
 
-        internal void RaiseEvent<T>(EventHandler<T> evt, T param) 
+        /// <summary>
+        /// Raises an event of the eventhandler put in the evt parameter.
+        /// </summary>
+        /// <typeparam name="T">Type of the event argument of the event handler.</typeparam>
+        /// <param name="evt">Event handler to invoke.</param>
+        /// <param name="param">Event data to invoke the handler with.</param>
+        protected void RaiseEvent<T>(EventHandler<T> evt, T param) 
             => evt?.Invoke(this, param);
 
 
-
+        /// <summary>
+        /// Change the state of the server. Please don't put abstract or interface classes, thank you.
+        /// </summary>
+        /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
+        /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
         internal void SetServerState<T>() where T : IServerState
         {
             var type = typeof(T);
@@ -121,7 +209,7 @@ namespace MCWebServer.MinecraftServer
             // here we check that the type is neither abstract nor interface, and it has a constructor which takes a minecraft server.
             if(type.IsAbstract ||      
                type.IsInterface ||
-               type.GetConstructor(new Type[] {typeof(MinecraftServer)}) == null)
+               type.GetConstructor(new Type[] {typeof(MinecraftServer)}) == null) //last line: check if T contains a public constructor which takes a MinecraftServer object
             {
                 throw new Exception("Invalid State " + type.FullName);
             }
@@ -133,6 +221,10 @@ namespace MCWebServer.MinecraftServer
             RaiseEvent(StatusChange, _serverState.Status);
         }
 
+        /// <summary>
+        /// Set a player as online. Also if the player is not registered, it automatically registers it.
+        /// </summary>
+        /// <param name="username">Username of the player.</param>
         internal void SetPlayerOnline(string username)
         {
             if (!Players.ContainsKey(username))
@@ -142,6 +234,10 @@ namespace MCWebServer.MinecraftServer
             RaiseEvent(PlayerJoined, Players[username]);
         }
 
+        /// <summary>
+        /// Set player as offline.
+        /// </summary>
+        /// <param name="username">Username of the player.</param>
         internal void SetPlayerOffline(string username)
         {
             Players.TryGetValue(username, out MinecraftPlayer player);
@@ -149,6 +245,12 @@ namespace MCWebServer.MinecraftServer
             RaiseEvent(PlayerLeft, player);
         }
 
+
+
+        /// <summary>
+        /// Adds a log to the Logs list, and raises a log received event.
+        /// </summary>
+        /// <param name="logMessage"></param>
         internal void AddLog(LogMessage logMessage)
         {
             LogService.GetService<MinecraftLogger>().Log("server", $"{logMessage.MessageType} received: {logMessage.Message}", ConsoleColor.DarkGreen);
@@ -165,6 +267,11 @@ namespace MCWebServer.MinecraftServer
         public static bool operator !=(MinecraftServer s1, MinecraftServer s2)
             => !(s1 == s2);
 
+        /// <summary>
+        /// Checks if the object given in the argument is equal to the current object.
+        /// </summary>
+        /// <param name="obj">Object to check.</param>
+        /// <returns>True if the object is a MinecraftServer and has the same name as the current server, else false.</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))
@@ -176,6 +283,10 @@ namespace MCWebServer.MinecraftServer
             return ServerName == server.ServerName;
         }
 
+        /// <summary>
+        /// Gets the hash code of the current object.
+        /// </summary>
+        /// <returns>The hash code of the current object.</returns>
         public override int GetHashCode()
         {
             unchecked // disable overflow, for the unlikely possibility that you

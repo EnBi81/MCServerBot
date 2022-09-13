@@ -3,9 +3,13 @@ using System.Diagnostics;
 using System.IO;
 using System;
 using MCWebServer.MinecraftServer.Util;
+using System.Threading.Tasks;
 
 namespace MCWebServer.MinecraftServer
 {
+    /// <summary>
+    /// Class for handling low level process events handling of a minecraft server.
+    /// </summary>
     public class MinecraftServerProcess
     {
         private Process _serverHandlerProcess;
@@ -30,12 +34,18 @@ namespace MCWebServer.MinecraftServer
             _initRam = initRam;
         }
 
-
+        /// <summary>
+        /// Writes the text to the process' standard input.
+        /// </summary>
+        /// <param name="text">Text to write to the standard input.</param>
         public void WriteToStandardInput(string text)
         {
             _serverHandlerProcess?.StandardInput.WriteLine(text);
         }
 
+        /// <summary>
+        /// Start the minecraft server process, and subscribe to all the process events.
+        /// </summary>
         public void Start()
         {
             FileInfo info = new FileInfo(_serverFileName);
@@ -82,9 +92,9 @@ namespace MCWebServer.MinecraftServer
                 if (e.Data == null)
                     return;
 
-                if (messageCount < 5)
+                if (messageCount < 5) //ignore the first 4 message
                 {
-                    if (++messageCount == 5)
+                    if (++messageCount == 5) // the fifth line is the processId of the server
                     {
                         int minecraftProcessId = int.Parse(e.Data);
                         ProcessIdReceived?.Invoke(this, minecraftProcessId);
