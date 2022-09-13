@@ -4,7 +4,7 @@ namespace MCWebServer.MinecraftServer.States
 {
     internal abstract class ServerStateAbs : IServerState
     {
-        protected MinecraftServer _server;
+        protected readonly MinecraftServer _server;
         public ServerStateAbs(MinecraftServer server)
         {
             _server = server;
