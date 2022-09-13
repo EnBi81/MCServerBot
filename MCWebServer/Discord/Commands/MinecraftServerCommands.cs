@@ -2,11 +2,6 @@
 using Discord.WebSocket;
 using MCWebServer.Discord.Helpers;
 using MCWebServer.MinecraftServer;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MCWebServer.Discord.Commands
