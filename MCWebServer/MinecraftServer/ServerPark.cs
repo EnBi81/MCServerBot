@@ -50,7 +50,7 @@ namespace MCWebServer.MinecraftServer
         {
             if(ActiveServer != null)
             {
-                if(!ActiveServer.IsRunning)
+                if(ActiveServer.IsRunning)
                     throw new Exception("Another Server is Running Already!");
             }
 

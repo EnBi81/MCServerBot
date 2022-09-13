@@ -35,6 +35,7 @@ namespace MCWebServer.Discord.Commands
                 await command.RespondAsync(embed: embed, ephemeral: true);
 
                 Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
         }
