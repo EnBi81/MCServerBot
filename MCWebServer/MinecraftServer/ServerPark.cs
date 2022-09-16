@@ -11,8 +11,17 @@ namespace MCWebServer.MinecraftServer
     /// </summary>
     public class ServerPark
     {
+        /// <summary>
+        /// Path of the folder the minecraft servers are stored
+        /// </summary>
         public static string ServersFolder { get; } = Config.Config.Instance.MinecraftServersBaseFolder + "Servers\\";
+        /// <summary>
+        /// Path of the folder which contains the previously deleted servers
+        /// </summary>
         public static string DeletedServersFolder { get; } = Config.Config.Instance.MinecraftServersBaseFolder + "Deleted Servers\\";
+        /// <summary>
+        /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
+        /// </summary>
         public static string EmptyServersFolder { get; } = Config.Config.Instance.MinecraftServersBaseFolder + "Empty Server\\";
 
 
@@ -97,8 +106,7 @@ namespace MCWebServer.MinecraftServer
         /// <exception cref="Exception"></exception>
         public static void CreateServer(string name)
         {
-            if (!ValidateNameLength(name))
-                throw new Exception("Name must be less than 40 characters and more than 3!");
+            ValidateNameLength(name);
 
             if (ServerNameExist(name))
                 throw new Exception($"The name {name} is already taken");
@@ -112,19 +120,26 @@ namespace MCWebServer.MinecraftServer
             RegisterMcServer(name, destDir);
         }
 
+        /// <summary>
+        /// Changes an already existing minecraft server's name if it is not running
+        /// </summary>
+        /// <param name="oldName">Name of the server to change</param>
+        /// <param name="newName">New name of the server</param>
+        /// <exception cref="Exception">If the name has invalid length</exception>
+        /// <exception cref="Exception">If the new name is already taken</exception>
+        /// <exception cref="Exception">If the server to change is running</exception>
         public static void RenameServer(string oldName, string newName)
         {
-            if (!ValidateNameLength(newName))
-                throw new Exception("Name must be less than 40 characters and more than !");
+            ValidateNameLength(newName);
 
             if (!ServerNameExist(oldName))
                 throw new Exception($"The server '{oldName}' does not exist.");
 
             if (ServerNameExist(newName))
-                throw new Exception($"The name {newName} is already taken");
+                throw new Exception($"The name '{newName}' is already taken");
 
             if (ActiveServer != null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning)
-                throw new Exception($"To rename this server, first make sure it is stopped.");
+                throw new Exception($"{oldName} is Runnning! Please stop the server first.");
 
             FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
 
@@ -133,6 +148,11 @@ namespace MCWebServer.MinecraftServer
             server.ServerName = newName;
         }
 
+        /// <summary>
+        /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
+        /// </summary>
+        /// <param name="name">Server to be moved.</param>
+        /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
         public static void DeleteServer(string name)
         {
             if (!ServerNameExist(name))
@@ -147,11 +167,30 @@ namespace MCWebServer.MinecraftServer
             MCServers.Remove(name);
         }
 
+        /// <summary>
+        /// Check if the name already exists.
+        /// </summary>
+        /// <param name="name">name to check</param>
+        /// <returns>true if it exists, else false.</returns>
         private static bool ServerNameExist(string name) => MCServers.ContainsKey(name);
 
-        private static bool ValidateNameLength(string name) => name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH;
+        /// <summary>
+        /// Checks if the name's length is valid, throws exception if yes.
+        /// </summary>
+        /// <param name="name">name to check</param>
+        /// <exception cref="Exception">if the name is not valid.</exception>
+        private static void ValidateNameLength(string name)
+        {
+            if(!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
+                throw new Exception($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
+        }
         
         
+        /// <summary>
+        /// Register a new minecraft server object to the program.
+        /// </summary>
+        /// <param name="serverName"></param>
+        /// <param name="folderPath"></param>
         private static void RegisterMcServer(string serverName, string folderPath)
         {
             IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
@@ -193,7 +232,10 @@ namespace MCWebServer.MinecraftServer
 
 
 
-        
+        /// <summary>
+        /// Subscribe ServerPark events on a specific minecraft server.
+        /// </summary>
+        /// <param name="server">server to subscribe</param>
         private static void SubscribeEventTrackers(IMinecraftServer server)
         {
             server.StatusChange += StatusTracker;
@@ -201,9 +243,12 @@ namespace MCWebServer.MinecraftServer
             server.PlayerLeft += PlayerLeft;
             server.PlayerJoined += PlayerJoined;
             server.PerformanceMeasured += PerformanceMeasured;
-            
         }
 
+        /// <summary>
+        /// Unsubscribe ServerPark events from a minecraft server.
+        /// </summary>
+        /// <param name="server">server to unsubscribe from</param>
         private static void UnSubscribeEventTrackers(IMinecraftServer server)
         {
             if (server == null)

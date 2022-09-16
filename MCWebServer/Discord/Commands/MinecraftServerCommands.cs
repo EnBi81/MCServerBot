@@ -20,7 +20,6 @@ namespace MCWebServer.Discord.Commands
         {
             try
             {
-
                 ServerPark.StopActiveServer(command.User.Username);
                 await command.RespondAsync($"Shutting Down **{ServerPark.ActiveServer?.ServerName}**");
             }

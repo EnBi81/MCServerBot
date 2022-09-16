@@ -49,7 +49,7 @@ namespace MCWebServer.Discord.Handlers
             }
             catch (Exception e)
             {
-                await arg.RespondAsync("Server starting failed: " + e.Message);
+                await arg.RespondAsync($"Server starting failed: **{e.Message}**");
             }
         }
 
