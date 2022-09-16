@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace MCWebServer.Hamachi
 {
+    /// <summary>
+    /// Low level process handling for Hamachi.
+    /// </summary>
     static class HamachiProcess
     {
+        /// <summary>
+        /// Starts hamachi-2.exe program and enters the command for execution, then closes the client
+        /// </summary>
+        /// <param name="command">command to run</param>
+        /// <returns>Output of hamachi client.</returns>
         public static List<string> RequestData(string? command)
         {
             string text = "hamachi-2.exe --cli" + (command != null ? " " + command : "") + " & exit";

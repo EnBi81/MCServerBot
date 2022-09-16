@@ -1,23 +1,25 @@
 ﻿using MCWebServer.Log;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MCWebServer.Hamachi
 {
+    /// <summary>
+    /// Retrieves information from the Hamachi client.
+    /// </summary>
     internal static class HamachiClient
     {
         private static string _address = null;
+        /// <summary>
+        /// Gets the address of the current computer.
+        /// </summary>
         public static string Address { get => _address ??= GetStatus().Address; }
 
 
         
-
+        /// <summary>
+        /// Gets the status of the current Hamachi client.
+        /// </summary>
+        /// <returns>A <see cref="HamachiStatus"/> object containing the information.</returns>
         public static HamachiStatus GetStatus()
         {
             LogService.GetService<HamachiLogger>().Log("Getting Hamachi Status");
@@ -54,6 +56,10 @@ namespace MCWebServer.Hamachi
             return hamachiStatus;
         }
 
+        /// <summary>
+        /// Makes Hamachi log in to the Hamachi network.
+        /// </summary>
+        /// <returns>the text hamachi returned.</returns>
         public static string LogOn()
         {
             LogService.GetService<HamachiLogger>().Log("Logging on");
@@ -62,6 +68,10 @@ namespace MCWebServer.Hamachi
             return data[0];
         }
 
+        /// <summary>
+        /// Logs out from the Hamachi network.
+        /// </summary>
+        /// <returns>the text hamachi returned.</returns>
         public static string LogOff()
         {
             LogService.GetService<HamachiLogger>().Log("Logging off");
