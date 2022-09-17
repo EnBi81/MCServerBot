@@ -24,7 +24,22 @@ Other features implemented in the webserver before adding the option to manage m
 - Write a command directly to the minecraft server process from the webpage
 
 ## Setup
-To set up and run the program, download the whole project, go to the MCWebServer folder, open the config.json file, and fill it out with your preferences/token/folder paths. Then you can start the .StartServer.cmd file.
+To set up and run the program, download the whole project, go to the MCWebServer folder, create a config.json file, copy the json template from below and fill it out with your preferences/token/folder paths. Then you can start the .StartServer.cmd file.
+
+```json
+{
+	"HamachiLocation": "C:\\Program Files (x86)\\LogMeIn Hamachi\\x64",
+	"DiscordBotToken": "",
+	"MinecraftServerHandlerPath": "MCServerHandler.exe",
+	"MinecraftServersBaseFolder": "A:\\Games\\MinecraftServers\\",
+	"MinecraftServerMaxRamMB": 8196,
+	"MinecraftServerInitRamMB": 8196,
+	"MinecraftServerPerformaceReportDelayInSeconds": 1,
+	"JavaLocation": "C:\\Program Files\\Java\\jdk-17.0.2\\bin\\java.exe",
+	"WebServerPortHttps": 443,
+	"WebServerPortHttp": 2081
+}
+```
 
 ## MCServerHandler
 MCServerHandler is working as a proxy for the minecraft server, due to the MCWebServer project is huge, and might contain bugs, or it may crash. It could possibly happen that the program crashes while the minecraft server stays online, and the only possible option to shut it down, is to kill the process from the Task Manager. To avoid that situation, MCServerHandler takes of the minecraft server's shutdown, by creating a thread that checks for the server.running file every 10 seconds. If this file is deleted, it will shut down the server the nicest way, so no progress is lost.
