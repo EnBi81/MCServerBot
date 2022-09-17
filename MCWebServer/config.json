@@ -1,0 +1,12 @@
+{
+	"HamachiLocation": "",
+	"DiscordBotToken": "",
+	"MinecraftServerHandlerPath": "",
+	"MinecraftServersBaseFolder": "",
+	"MinecraftServerMaxRamMB": 8196,
+	"MinecraftServerInitRamMB": 8196,
+	"MinecraftServerPerformaceReportDelayInSeconds": 1,
+	"JavaLocation": "C:\\Program Files\\Java\\jdk-17.0.2\\bin\\java.exe",
+	"WebServerPortHttps": 443,
+	"WebServerPortHttp": 2081
+}
