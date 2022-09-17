@@ -1,30 +1,35 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using MCWebServer.Discord.Services;
 using MCWebServer.MinecraftServer;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using MCWebServer.PermissionControll;
 using MCWebServer.Log;
 
 namespace MCWebServer.Discord
 {
+    /// <summary>
+    /// Main part of the Discord Bot.
+    /// </summary>
     internal class DiscordBot
     {
+        /// <summary>
+        /// Bot instance.
+        /// </summary>
         public static DiscordBot Bot { get; private set; }
+
+        /// <summary>
+        /// Initialize a Discord Bot.
+        /// </summary>
         public static async Task Initialize()
         {
+            if (Bot != null)
+                return;
+
             Bot = new DiscordBot();
             await Bot.InitializeAsync();
         }
-
 
 
         public DiscordSocketClient SocketClient { get; }
@@ -65,7 +70,10 @@ namespace MCWebServer.Discord
 
 
         
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task InitializeAsync()
         {
             await CmdService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
