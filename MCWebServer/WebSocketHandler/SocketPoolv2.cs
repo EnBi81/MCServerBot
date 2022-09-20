@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Linq;
 using MCWebServer.MinecraftServer;
 using MCWebServer.MinecraftServer.EventHandlers;
 using MCWebServer.MinecraftServer.Enums;
@@ -14,19 +13,19 @@ namespace MCWebServer.WebSocketHandler
     /// <summary>
     /// SocketPool stores and takes care of all the incoming and established websockets.
     /// </summary>
-    public class SocketPoolv2
+    public class SocketPool
     {
         /// <summary>
         /// Single SocketPool reference.
         /// </summary>
-        public static SocketPoolv2 SocketPool { get; private set; }
+        public static SocketPool SocketPool { get; private set; }
 
         /// <summary>
         /// Initializes the SocketPool
         /// </summary>
         public static void InitializePool()
         {
-            SocketPool = new SocketPoolv2();
+            SocketPool = new SocketPool();
         }
 
 
@@ -38,7 +37,7 @@ namespace MCWebServer.WebSocketHandler
         /// <summary>
         /// Initializes the SocketPool.
         /// </summary>
-        private SocketPoolv2()
+        private SocketPool()
         {
             LogService.GetService<WebLogger>().Log("socket-pool", "Socket Pool Initalizing");
             SetupListeners();
@@ -62,7 +61,11 @@ namespace MCWebServer.WebSocketHandler
             ServerPark.ServerAdded += ServerAdded;
             ServerPark.ServerDeleted += ServerDeleted;
             ServerPark.ServerNameChanged += ServerNameChanged;
+            WebsitePermission.PermissionRemoved += PermissionRemoved;
+            LogService.GetService<WebLogger>().Log("socket-pool", "Listeners have been set up");
         }
+
+        
 
 
         /// <summary>
@@ -107,50 +110,97 @@ namespace MCWebServer.WebSocketHandler
         #endregion
 
 
-        #region Listeneres
-        private void ActiveServerChange(object sender, ValueEventArgs<IMinecraftServer> e)
+        #region Listeners
+        private async void ActiveServerChange(object sender, ValueEventArgs<IMinecraftServer> e)
         {
-            throw new NotImplementedException();
+            string newActiveServer = e.NewValue.ServerName;
+            string mess = MessageFormatter.ActiveServerChange(newActiveServer);
+
+            await BroadcastMessage(mess);
         }
 
-        private void ActiveServerPlayerLeft(object sender, ValueEventArgs<MinecraftPlayer> e)
+        private async void ActiveServerPlayerLeft(object sender, ValueEventArgs<MinecraftPlayer> e)
         {
-            throw new NotImplementedException();
+            MinecraftPlayer player = e.NewValue;
+            string mess = MessageFormatter.PlayerLeft(player.Username);
+
+            await BroadcastMessage(mess);
         }
 
-        private void ActiveServerPlayerJoined(object sender, ValueEventArgs<MinecraftPlayer> e)
+        private async void ActiveServerPlayerJoined(object sender, ValueEventArgs<MinecraftPlayer> e)
         {
-            throw new NotImplementedException();
+            MinecraftPlayer player = e.NewValue;
+            string mess = MessageFormatter.PlayerJoin(player.Username, player.OnlineFrom.Value, player.PastOnline);
+
+            await BroadcastMessage(mess);
         }
 
-        private void ActiveServerLogReceived(object sender, ValueEventArgs<LogMessage> e)
+        private async void ActiveServerLogReceived(object sender, ValueEventArgs<LogMessage> e)
         {
-            throw new NotImplementedException();
+            LogMessage message = e.NewValue;
+            string mess = MessageFormatter.Log(message.Message, type: (int)message.MessageType);
+
+            await BroadcastMessage(mess);
         }
 
-        private void ActiveServerPerformanceMeasured(object sender, ValueEventArgs<(string CPU, string Memory)> e)
+        private async void ActiveServerPerformanceMeasured(object sender, ValueEventArgs<(string CPU, string Memory)> e)
         {
-            throw new NotImplementedException();
+            string cpu = e.NewValue.CPU;
+            string memory = e.NewValue.Memory;
+
+            string mess = MessageFormatter.PcUsage(cpu, memory);
+            await BroadcastMessage(mess);
         }
 
-        private void ActiveServerStatusChange(object sender, ValueEventArgs<ServerStatus> e)
+        private async void ActiveServerStatusChange(object sender, ValueEventArgs<ServerStatus> e)
         {
-            throw new NotImplementedException();
+            IMinecraftServer mcServer = (IMinecraftServer)sender;
+            string message = MessageFormatter.StatusUpdate(e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
+
+            await BroadcastMessage(message);
         }
 
-        private void ServerAdded(object sender, ValueEventArgs<IMinecraftServer> e)
+        private async void ServerAdded(object sender, ValueEventArgs<IMinecraftServer> e)
         {
-            throw new NotImplementedException();
+            string name = e.NewValue.ServerName;
+            string message = MessageFormatter.ServerAdded(name);
+
+            await BroadcastMessage(message);
         }
 
-        private void ServerDeleted(object sender, ValueEventArgs<IMinecraftServer> e)
+        private async void ServerDeleted(object sender, ValueEventArgs<IMinecraftServer> e)
         {
-            throw new NotImplementedException();
+            string name = e.NewValue.ServerName;
+            string message = MessageFormatter.ServerDeleted(name);
+
+            await BroadcastMessage(message);
         }
 
-        private void ServerNameChanged(object sender, ValueChangedEventArgs<string> e)
+        private async void ServerNameChanged(object sender, ValueChangedEventArgs<string> e)
         {
-            throw new NotImplementedException();
+            string oldName = e.OldValue;
+            string newName = e.NewValue;
+
+            string message = MessageFormatter.ServerNameChanged(oldName, newName);
+
+            await BroadcastMessage(message);
+        }
+
+        private async void PermissionRemoved(object sender, string e)
+        {
+            string code = e;
+
+            string message = MessageFormatter.Logout();
+            await BroadcastMessage(message, code);
+
+            var sockets = GetAllSockets(code);
+
+            RemoveSockets(code);
+
+            foreach (var item in GetAllSockets(code))
+            {
+                _ = item.Close();
+            }
         }
 
         #endregion

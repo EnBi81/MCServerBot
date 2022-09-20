@@ -46,7 +46,7 @@ namespace Web_Test
             app.UseWebSockets(new WebSocketOptions() { KeepAliveInterval = TimeSpan.FromMinutes(2) });
             app.Use(ReceiveSockets);
 
-            SocketPoolv2.InitializePool();
+            SocketPool.InitializePool();
 
             LogService.GetService<WebLogger>().Log("setup", "Setup completed");
             LogService.GetService<WebLogger>().Log("setup", "Listening on HTTPS port " + Config.Instance.WebServerPortHttps);
@@ -73,7 +73,7 @@ namespace Web_Test
                     LogService.GetService<WebLogger>().Log("ws-request", "Websocket accepted for " + ip);
 
                     WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
-                    await SocketPoolv2.SocketPool.AddSocket(code, ws);
+                    await SocketPool.SocketPool.AddSocket(code, ws);
                 }
             }
         }

@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using MCWebServer.MinecraftServer.Enums;
+using System.Net.NetworkInformation;
 
 namespace MCWebServer.WebSocketHandler
 {
@@ -14,6 +13,39 @@ namespace MCWebServer.WebSocketHandler
             var logout = new { datatype = "logout"};
             return Serialize(logout);
         }
+
+
+
+        public static string ServerNameChanged(string oldName, string newName)
+        {
+            var nameChange = new
+            {
+                datatype = "serverNameChange",
+                oldName,
+                newName
+            };
+
+            return Serialize(nameChange);
+        }
+
+        public static string ServerDeleted(string name)
+        {
+            var deleted = new { datatype = "serverDeleted", name };
+            return Serialize(deleted);
+        }
+
+        public static string ServerAdded(string name)
+        {
+            var added = new { datatype = "serverAdded", name };
+            return Serialize(added);
+        }
+
+        public static string ActiveServerChange(string newServer)
+        {
+            var active = new { datatype = "activeServerChange", newActive = newServer }
+            return Serialize(active);
+        }
+
 
         public static string Log(string message, int type)
         {
@@ -71,7 +103,7 @@ namespace MCWebServer.WebSocketHandler
 
         public static string StatusUpdate(ServerStatus status, DateTime? onlineFrom, string storage)
         {
-            var stringStatus = status switch
+            string stringStatus = status switch
             {
                 ServerStatus.Starting => "starting",
                 ServerStatus.ShuttingDown => "shutting-down",
