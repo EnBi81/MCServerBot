@@ -73,7 +73,7 @@ namespace Web_Test
                     LogService.GetService<WebLogger>().Log("ws-request", "Websocket accepted for " + ip);
 
                     WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
-                    await SocketPool.SocketPool.AddSocket(code, ws);
+                    await SocketPool.SocketPoolInstance.AddSocket(code, ws);
                 }
             }
         }

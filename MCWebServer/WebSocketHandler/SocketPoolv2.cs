@@ -18,14 +18,14 @@ namespace MCWebServer.WebSocketHandler
         /// <summary>
         /// Single SocketPool reference.
         /// </summary>
-        public static SocketPool SocketPool { get; private set; }
+        public static SocketPool SocketPoolInstance { get; private set; }
 
         /// <summary>
         /// Initializes the SocketPool
         /// </summary>
         public static void InitializePool()
         {
-            SocketPool = new SocketPool();
+            SocketPoolInstance = new SocketPool();
         }
 
 
