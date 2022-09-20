@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using MCWebServer.MinecraftServer.Enums;
+using MCWebServer.MinecraftServer.EventHandlers;
 using MCWebServer.MinecraftServer.Util;
+using Microsoft.AspNetCore.Http;
 
 namespace MCWebServer.MinecraftServer
 {
@@ -75,8 +77,8 @@ namespace MCWebServer.MinecraftServer
             ActiveServer = server;
             SubscribeEventTrackers(ActiveServer);
 
-            
-            ActiveServerChange?.Invoke(null, ActiveServer);
+
+            InvokeActiveServerChanged(ActiveServer);
         }
 
         /// <summary>
@@ -146,6 +148,8 @@ namespace MCWebServer.MinecraftServer
             MCServers.Remove(oldName, out IMinecraftServer server);
             MCServers.Add(newName, server);
             server.ServerName = newName;
+
+            InvokeServerNameChange(oldName, newName);
         }
 
         /// <summary>
@@ -164,7 +168,9 @@ namespace MCWebServer.MinecraftServer
             string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             FileHelper.MoveDirectory(ServersFolder + name, newDir);
 
-            MCServers.Remove(name);
+            MCServers.Remove(name, out IMinecraftServer server);
+
+            InvokeServerDeleted(server);
         }
 
         /// <summary>
@@ -195,6 +201,7 @@ namespace MCWebServer.MinecraftServer
         {
             IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
             MCServers.Add(serverName, mcServer);
+            InvokeServerAdded(mcServer);
         }
 
 
@@ -202,32 +209,47 @@ namespace MCWebServer.MinecraftServer
         /// <summary>
         /// Event fired when the active server has changed.
         /// </summary>
-        public static event EventHandler<IMinecraftServer> ActiveServerChange;
+        public static event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
 
         /// <summary>
         /// Event fired when the active server's status has changed.
         /// </summary>
-        public static event EventHandler<ServerStatus> ActiveServerStatusChange;
+        public static event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange;
 
         /// <summary>
         /// Event fired when a log message has been received from the active server.
         /// </summary>
-        public static event EventHandler<LogMessage> ActiveServerLogReceived;
+        public static event EventHandler<ValueEventArgs<LogMessage>> ActiveServerLogReceived;
 
         /// <summary>
         /// Event fired when a player joins the active server.
         /// </summary>
-        public static event EventHandler<MinecraftPlayer> ActiveServerPlayerJoined;
+        public static event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerJoined;
 
         /// <summary>
         /// Event fired when a player leaves the active server.
         /// </summary>
-        public static event EventHandler<MinecraftPlayer> ActiveServerPlayerLeft;
+        public static event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerLeft;
 
         /// <summary>
         /// Event fired when a performance measurement data has been received.
         /// </summary>
-        public static event EventHandler<(string CPU, string Memory)> ActiveServerPerformanceMeasured;
+        public static event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured;
+
+        /// <summary>
+        /// Event fired when a server's name is changed.
+        /// </summary>
+        public static event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged;
+
+        /// <summary>
+        /// Event fired when a server is added to the ServerPark.
+        /// </summary>
+        public static event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
+
+        /// <summary>
+        /// Event fired when a server is deleted from the ServerPark.
+        /// </summary>
+        public static event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted;
 
 
 
@@ -238,11 +260,11 @@ namespace MCWebServer.MinecraftServer
         /// <param name="server">server to subscribe</param>
         private static void SubscribeEventTrackers(IMinecraftServer server)
         {
-            server.StatusChange += StatusTracker;
-            server.LogReceived += LogReceived;
-            server.PlayerLeft += PlayerLeft;
-            server.PlayerJoined += PlayerJoined;
-            server.PerformanceMeasured += PerformanceMeasured;
+            server.StatusChange += InvokeStatusTracker;
+            server.LogReceived += InvokeLogReceived;
+            server.PlayerLeft += InvokePlayerLeft;
+            server.PlayerJoined += InvokePlayerJoined;
+            server.PerformanceMeasured += InvokePerformanceMeasured;
         }
 
         /// <summary>
@@ -254,24 +276,34 @@ namespace MCWebServer.MinecraftServer
             if (server == null)
                 return;
 
-            server.StatusChange -= StatusTracker;
-            server.LogReceived -= LogReceived;
-            server.PlayerLeft -= PlayerLeft;
-            server.PlayerJoined -= PlayerJoined;
-            server.PerformanceMeasured -= PerformanceMeasured;
+            server.StatusChange -= InvokeStatusTracker;
+            server.LogReceived -= InvokeLogReceived;
+            server.PlayerLeft -= InvokePlayerLeft;
+            server.PlayerJoined -= InvokePlayerJoined;
+            server.PerformanceMeasured -= InvokePerformanceMeasured;
         }
 
 
+        // IMinecraft events
+        private static void InvokePerformanceMeasured(object sender, (string CPU, string Memory) e) =>
+            ActiveServerPerformanceMeasured?.Invoke(sender, new (e));
+        private static void InvokePlayerJoined(object sender, MinecraftPlayer e) =>
+            ActiveServerPlayerJoined?.Invoke(sender, new (e));
+        private static void InvokePlayerLeft(object sender, MinecraftPlayer e) =>
+            ActiveServerPlayerLeft?.Invoke(sender, new (e));
+        private static void InvokeLogReceived(object sender, LogMessage e) =>
+            ActiveServerLogReceived?.Invoke(sender, new (e));
+        private static void InvokeStatusTracker(object sender, ServerStatus e) => 
+            ActiveServerStatusChange?.Invoke(sender, new (e));
 
-        private static void PerformanceMeasured(object sender, (string CPU, string Memory) e) =>
-            ActiveServerPerformanceMeasured?.Invoke(sender, e);
-        private static void PlayerJoined(object sender, MinecraftPlayer e) =>
-            ActiveServerPlayerJoined?.Invoke(sender, e);
-        private static void PlayerLeft(object sender, MinecraftPlayer e) =>
-            ActiveServerPlayerLeft?.Invoke(sender, e);
-        private static void LogReceived(object sender, LogMessage e) =>
-            ActiveServerLogReceived?.Invoke(sender, e);
-        private static void StatusTracker(object sender, ServerStatus e) => 
-            ActiveServerStatusChange?.Invoke(sender, e);
+        // ServerPark events
+        private static void InvokeActiveServerChanged(IMinecraftServer activeServer) =>
+            ActiveServerChange?.Invoke(typeof(ServerPark), new(activeServer));
+        private static void InvokeServerNameChange(string oldName, string newName) =>
+            ServerNameChanged?.Invoke(typeof(ServerPark), new (oldName, newName));
+        private static void InvokeServerAdded(IMinecraftServer addedServer) =>
+            ServerAdded?.Invoke(typeof(ServerPark), new (addedServer));
+        private static void InvokeServerDeleted(IMinecraftServer deletedServer) =>
+            ServerDeleted?.Invoke(typeof(ServerPark), new (deletedServer));
     }
 }
