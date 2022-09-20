@@ -94,11 +94,13 @@ namespace MCWebServer.WebSocketHandler
         /// <returns></returns>
         public static Task ToggleHandler(MCWebSocket sender, JObject? data)
         {
-            IMinecraftServer activeServer = ServerPark.ActiveServer;
+            IMinecraftServer? activeServer = ServerPark.ActiveServer;
+
+
             string username = sender.DiscordUser.Username;
 
             
-            if (activeServer.IsRunning)
+            if (activeServer?.IsRunning ?? false)
             {
                 ServerPark.StopActiveServer(username);
             }
@@ -222,7 +224,7 @@ namespace MCWebServer.WebSocketHandler
             if (command is null)
                 throw new Exception("command must not be null!");
 
-            ServerPark.ActiveServer.WriteCommand(command, sender.DiscordUser.Username);
+            ServerPark.ActiveServer?.WriteCommand(command, sender.DiscordUser.Username);
 
             return Task.CompletedTask;
         }

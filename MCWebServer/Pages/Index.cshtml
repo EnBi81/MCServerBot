@@ -9,7 +9,7 @@
     var cookieName = WebsitePermission.CookieName;
     var code = Request.Cookies.ContainsKey(cookieName) ? Request.Cookies[cookieName] : Request.Query["code"].ToString();
 
-    var mcServer = ServerPark.Keklepcso;
+    var mcServer = ServerPark.ActiveServer;
     var dcUser = WebsitePermission.GetUser(code);
 
     var serverAddress = HamachiClient.Address;

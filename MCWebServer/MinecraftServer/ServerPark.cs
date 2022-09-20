@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using MCWebServer.MinecraftServer.Enums;
 using MCWebServer.MinecraftServer.EventHandlers;
 using MCWebServer.MinecraftServer.Util;
-using Microsoft.AspNetCore.Http;
 
 namespace MCWebServer.MinecraftServer
 {
@@ -36,20 +34,29 @@ namespace MCWebServer.MinecraftServer
             MCServers.Clear();
             foreach (var server in servers)  // loop through all the directories and create the server instances
                 RegisterMcServer(server.Name, server.FullName);
+
+            ActiveServerChange = null!;
+            ActiveServerPlayerLeft = null!;
+            ActiveServerPlayerJoined = null!;
+            ActiveServerLogReceived = null!;
+            ActiveServerPerformanceMeasured = null!;
+            ActiveServerStatusChange = null!;
+
+            ServerAdded = null!;
+            ServerDeleted = null!;
+            ServerNameChanged = null!;
         }
 
 
         /// <summary>
         /// Online minecraft server (only one can be online at a time)
         /// </summary>
-        public static IMinecraftServer ActiveServer { get; private set; }
+        public static IMinecraftServer? ActiveServer { get; private set; }
 
         /// <summary>
         /// List of all minecraft server instances
         /// </summary>
         public static Dictionary<string, IMinecraftServer> MCServers { get; } = new ();
-
-        public static IMinecraftServer Keklepcso { get; } 
 
 
         /// <summary>
@@ -65,7 +72,7 @@ namespace MCWebServer.MinecraftServer
                     throw new Exception("Another Server is Running Already!");
             }
 
-            if (!MCServers.TryGetValue(serverName, out IMinecraftServer server))
+            if (!MCServers.TryGetValue(serverName, out IMinecraftServer? server))
             {
                 throw new Exception("Server not found!");
             }
@@ -145,7 +152,12 @@ namespace MCWebServer.MinecraftServer
 
             FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
 
-            MCServers.Remove(oldName, out IMinecraftServer server);
+            MCServers.Remove(oldName, out IMinecraftServer? server);
+
+            if (server == null)
+                return;
+
+
             MCServers.Add(newName, server);
             server.ServerName = newName;
 
@@ -168,9 +180,10 @@ namespace MCWebServer.MinecraftServer
             string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             FileHelper.MoveDirectory(ServersFolder + name, newDir);
 
-            MCServers.Remove(name, out IMinecraftServer server);
-
-            InvokeServerDeleted(server);
+            MCServers.Remove(name, out IMinecraftServer? server);
+            
+            if(server != null)
+                InvokeServerDeleted(server);
         }
 
         /// <summary>
@@ -271,7 +284,7 @@ namespace MCWebServer.MinecraftServer
         /// Unsubscribe ServerPark events from a minecraft server.
         /// </summary>
         /// <param name="server">server to unsubscribe from</param>
-        private static void UnSubscribeEventTrackers(IMinecraftServer server)
+        private static void UnSubscribeEventTrackers(IMinecraftServer? server)
         {
             if (server == null)
                 return;
@@ -285,15 +298,15 @@ namespace MCWebServer.MinecraftServer
 
 
         // IMinecraft events
-        private static void InvokePerformanceMeasured(object sender, (string CPU, string Memory) e) =>
+        private static void InvokePerformanceMeasured(object? sender, (string CPU, string Memory) e) =>
             ActiveServerPerformanceMeasured?.Invoke(sender, new (e));
-        private static void InvokePlayerJoined(object sender, MinecraftPlayer e) =>
+        private static void InvokePlayerJoined(object? sender, MinecraftPlayer e) =>
             ActiveServerPlayerJoined?.Invoke(sender, new (e));
-        private static void InvokePlayerLeft(object sender, MinecraftPlayer e) =>
+        private static void InvokePlayerLeft(object? sender, MinecraftPlayer e) =>
             ActiveServerPlayerLeft?.Invoke(sender, new (e));
-        private static void InvokeLogReceived(object sender, LogMessage e) =>
+        private static void InvokeLogReceived(object? sender, LogMessage e) =>
             ActiveServerLogReceived?.Invoke(sender, new (e));
-        private static void InvokeStatusTracker(object sender, ServerStatus e) => 
+        private static void InvokeStatusTracker(object? sender, ServerStatus e) => 
             ActiveServerStatusChange?.Invoke(sender, new (e));
 
         // ServerPark events

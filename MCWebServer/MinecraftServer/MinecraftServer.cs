@@ -12,7 +12,7 @@ namespace MCWebServer.MinecraftServer
     internal class MinecraftServer : IMinecraftServer 
     {
 
-        private string _serverName;
+        private string _serverName = null!;
         /// <summary>
         /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.
         /// </summary>
@@ -55,7 +55,7 @@ namespace MCWebServer.MinecraftServer
         /// <summary>
         /// Phisical storage space on the disk of the server.
         /// </summary>
-        public string StorageSpace { get; internal set; }
+        public string StorageSpace { get; internal set; } = null!;
 
         /// <summary>
         /// All of the log messages the server or the users wrote.
@@ -70,7 +70,7 @@ namespace MCWebServer.MinecraftServer
         /// <summary>
         /// Performance reporter class, which measures the cpu and memory usage of the running minecraft server.
         /// </summary>
-        internal ProcessPerformanceReporter PerformanceReporter { get; private set; }
+        internal ProcessPerformanceReporter? PerformanceReporter { get; private set; }
 
         /// <summary>
         /// Low level process handling of the minecraft server.
@@ -105,6 +105,13 @@ namespace MCWebServer.MinecraftServer
             _serverState = null!;
             SetServerState<OfflineState>();
             LogService.GetService<MinecraftLogger>().Log("server", $"Server {ServerName} created");
+
+            StatusChange = null!;
+            LogReceived = null!;
+            PlayerJoined = null!;
+            PlayerLeft = null!;
+            PerformanceMeasured = null!;
+            NameChanged = null!;
         }
 
         /// <summary>
@@ -246,7 +253,11 @@ namespace MCWebServer.MinecraftServer
         /// <param name="username">Username of the player.</param>
         internal void SetPlayerOffline(string username)
         {
-            Players.TryGetValue(username, out MinecraftPlayer player);
+            Players.TryGetValue(username, out MinecraftPlayer? player);
+
+            if (player == null)
+                return;
+
             player.SetOffline();
             RaiseEvent(PlayerLeft, player);
         }
