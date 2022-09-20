@@ -2,9 +2,9 @@
 using MCWebServer.MinecraftServer;
 using MCWebServer.MinecraftServer.Enums;
 using MCWebServer.PermissionControll;
+
 using Newtonsoft.Json;
-using System;
-using System.Linq;
+using Newtonsoft.Json.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -12,104 +12,150 @@ using System.Threading.Tasks;
 
 namespace MCWebServer.WebSocketHandler
 {
+    /// <summary>
+    /// Handles a single websocket instance.
+    /// </summary>
     public class MCWebSocket
     {
         private readonly WebSocket _socket;
-        private bool _readInput = true;
+        private bool _readInput = true; // true if it should read input from the socket, false if not.
+        private readonly MCSocketInputHandler _inputHandler;
 
+        /// <summary>
+        /// If the socket is actively trying reading input.
+        /// </summary>
         public bool IsOpen { get => _readInput; }
+
+        /// <summary>
+        /// Discord user associated with this socket.
+        /// </summary>
         public DiscordUser DiscordUser { get; }
+
+        /// <summary>
+        /// Code of the Discord user.
+        /// </summary>
         public string Code { get; }
 
         public MCWebSocket(WebSocket socket, DiscordUser discordUser, string code)
         {
+            _inputHandler = new MCSocketInputHandler(this);
             _socket = socket;
             DiscordUser = discordUser;
             Code = code;
         }
 
+        /// <summary>
+        /// Starts listening to the socket and sends startup data.
+        /// </summary>
+        /// <returns></returns>
         public async Task Initialize()
         {
+            var receive = ReceiveDataAsync(MessageReceived);
             await SendStartupData();
-            await ReceiveDataAsync();
+            await receive;
         }
 
+        /// <summary>
+        /// Parses the request, and sends it to the input handler for further inspection.
+        /// </summary>
+        /// <param name="message">whole request text</param>
+        /// <returns></returns>
         private async Task MessageReceived(string message)
         {
-            var data = JsonConvert.DeserializeObject<WebSocketData>(message);
-            string requestName = data.Request;
-            string requestData = data.Data;
-
-            if(requestName == "toggle")
+            string? requestName;
+            JObject? requestData;
+            try
             {
-                LogService.GetService<WebLogger>().Log("socket", "Toggle request from " + DiscordUser.Username);
-                try
-                {
-                    var status = ServerPark.Keklepcso.Status;
-                    if (status == ServerStatus.Starting || status == ServerStatus.ShuttingDown)
-                        throw new Exception("Server is Loading. Please wait.");
-
-                    if (ServerPark.Keklepcso.IsRunning)
-                        ServerPark.Keklepcso.Shutdown(DiscordUser.Username);
-                    else
-                        ServerPark.Keklepcso.Start(DiscordUser.Username);
-                }
-                catch (Exception ex)
-                {
-                    var command = MessageFormatter.Log(requestData, (int)LogMessage.LogMessageType.User_Message);
-                    var mess = MessageFormatter.Log(ex.Message, (int)LogMessage.LogMessageType.Error_Message);
-                    await SendMessage(command);
-                    await SendMessage(mess);
-                }
-                
+                var data = JsonConvert.DeserializeObject<WebSocketData>(message);
+                requestName = data?.Request;
+                requestData = data?.Data;
+            } catch
+            {
+                LogService.GetService<WebLogger>().Log("socket", $"Invalid request from {DiscordUser.Username}: " + message);
+                await SendMessage("Invalid Message received");
+                return;
             }
             
-            else if(requestName == "logout")
-            {
-                LogService.GetService<WebLogger>().Log("socket", "Logout request from " + DiscordUser.Username);
-                await Close();
-            }
+            await _inputHandler.HandleInput(requestName, requestData);
 
-            else if(requestName == "addCommand")
-            {
-                LogService.GetService<WebLogger>().Log("socket", $"Command received from {DiscordUser.Username}, command: {requestData}");
-                try
-                {
-                    ServerPark.Keklepcso.WriteCommand(requestData, DiscordUser.Username);
-                }
-                catch(Exception ex)
-                {
-                    var command = MessageFormatter.Log(requestData, (int)LogMessage.LogMessageType.User_Message);
-                    var mess = MessageFormatter.Log(ex.Message, (int)LogMessage.LogMessageType.Error_Message);
-                    await SendMessage(command);
-                    await SendMessage(mess);
-                }
+
+
+            //if(requestName == "toggle")
+            //{
+            //    LogService.GetService<WebLogger>().Log("socket", "Toggle request from " + DiscordUser.Username);
+            //    try
+            //    {
+            //        var status = ServerPark.Keklepcso.Status;
+            //        if (status == ServerStatus.Starting || status == ServerStatus.ShuttingDown)
+            //            throw new Exception("Server is Loading. Please wait.");
+
+            //        if (ServerPark.Keklepcso.IsRunning)
+            //            ServerPark.Keklepcso.Shutdown(DiscordUser.Username);
+            //        else
+            //            ServerPark.Keklepcso.Start(DiscordUser.Username);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var command = MessageFormatter.Log(requestData, (int)LogMessage.LogMessageType.User_Message);
+            //        var mess = MessageFormatter.Log(ex.Message, (int)LogMessage.LogMessageType.Error_Message);
+            //        await SendMessage(command);
+            //        await SendMessage(mess);
+            //    }
                 
-            }
+            //}
+            
+            //else if(requestName == "logout")
+            //{
+            //    LogService.GetService<WebLogger>().Log("socket", "Logout request from " + DiscordUser.Username);
+            //    await Close();
+            //}
+
+            //else if(requestName == "addCommand")
+            //{
+            //    LogService.GetService<WebLogger>().Log("socket", $"Command received from {DiscordUser.Username}, command: {requestData}");
+            //    try
+            //    {
+            //        ServerPark.Keklepcso.WriteCommand(requestData, DiscordUser.Username);
+            //    }
+            //    catch(Exception ex)
+            //    {
+            //        var command = MessageFormatter.Log(requestData, (int)LogMessage.LogMessageType.User_Message);
+            //        var mess = MessageFormatter.Log(ex.Message, (int)LogMessage.LogMessageType.Error_Message);
+            //        await SendMessage(command);
+            //        await SendMessage(mess);
+            //    }
+                
+            //}
         }
 
 
         private async Task SendStartupData()
         {
-            var mcServer = ServerPark.Keklepcso;
-            var status = MessageFormatter.StatusUpdate(mcServer.Status, mcServer.OnlineFrom, mcServer.StorageSpace);
+            //var mcServer = ServerPark.Keklepcso;
+            //var status = MessageFormatter.StatusUpdate(mcServer.Status, mcServer.OnlineFrom, mcServer.StorageSpace);
 
-            await SendMessage(status);
+            //await SendMessage(status);
 
-            foreach (var activePlayer in mcServer.OnlinePlayers)
-            {
-                var playerData = MessageFormatter.PlayerJoin(activePlayer.Username, activePlayer.OnlineFrom.Value, activePlayer.PastOnline);
-                await SendMessage(playerData);
-            }
+            //foreach (var activePlayer in mcServer.OnlinePlayers)
+            //{
+            //    var playerData = MessageFormatter.PlayerJoin(activePlayer.Username, activePlayer.OnlineFrom.Value, activePlayer.PastOnline);
+            //    await SendMessage(playerData);
+            //}
 
-            var logs = MessageFormatter.Log(mcServer.Logs.TakeLast(50));
-            await SendMessage(logs);
+            //var logs = MessageFormatter.Log(mcServer.Logs.TakeLast(50));
+            //await SendMessage(logs);
+            await Task.Delay(1);
         }
 
 
 
+        #region Low level network stuff, no business logic
 
-        private async Task ReceiveDataAsync()
+        /// <summary>
+        /// Receiv
+        /// </summary>
+        /// <returns></returns>
+        private async Task ReceiveDataAsync(Func<string, Task> MessageHandler)
         {
             try
             {
@@ -138,7 +184,7 @@ namespace MCWebServer.WebSocketHandler
                         string res = resultBuilder.ToString();
                         try
                         {
-                            await MessageReceived(res);
+                            await MessageHandler(res);
                         }
                         catch (Exception ex)
                         {
@@ -159,12 +205,21 @@ namespace MCWebServer.WebSocketHandler
             await Close();
         }
 
+        /// <summary>
+        /// Sends a text message through the socket.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public async Task SendMessage(string text)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(text);
             await _socket.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), WebSocketMessageType.Text, true, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Closes the websocket nicely.
+        /// </summary>
+        /// <returns></returns>
         public async Task Close()
         {
             LogService.GetService<WebLogger>().Log("socket", "Closing socket for " + DiscordUser.Username);
@@ -177,10 +232,15 @@ namespace MCWebServer.WebSocketHandler
             catch { }
         }
 
+        /// <summary>
+        /// Just to deserialize the incoming data.
+        /// </summary>
         private class WebSocketData
         {
-            public string Request { get; set; }
-            public string Data { get; set; }
+            public string? Request { get; set; }
+            public JObject? Data { get; set; }
         }
+
+        #endregion
     }
 }

@@ -18,21 +18,15 @@ namespace MCWebServer.WebSocketHandler
         /// <summary>
         /// Single SocketPool reference.
         /// </summary>
-        public static SocketPool SocketPoolInstance { get; private set; }
+        public static SocketPool SocketPoolInstance { get; } = new SocketPool();
 
-        /// <summary>
-        /// Initializes the SocketPool
-        /// </summary>
-        public static void InitializePool()
-        {
-            SocketPoolInstance = new SocketPool();
-        }
+
 
 
         /// <summary>
         /// Store all the sockets.
         /// </summary>
-        private static ICollection<MCWebSocket> Sockets { get; } = new List<MCWebSocket>();
+        private ICollection<MCWebSocket> Sockets { get; } = new List<MCWebSocket>();
 
         /// <summary>
         /// Initializes the SocketPool.
@@ -52,16 +46,20 @@ namespace MCWebServer.WebSocketHandler
         private void SetupListeners()
         {
             LogService.GetService<WebLogger>().Log("socket-pool", "Setting up listeners");
+
             ServerPark.ActiveServerChange += ActiveServerChange;
             ServerPark.ActiveServerPlayerLeft += ActiveServerPlayerLeft;
             ServerPark.ActiveServerPlayerJoined += ActiveServerPlayerJoined;
             ServerPark.ActiveServerLogReceived += ActiveServerLogReceived;
             ServerPark.ActiveServerPerformanceMeasured += ActiveServerPerformanceMeasured;
             ServerPark.ActiveServerStatusChange += ActiveServerStatusChange;
+
             ServerPark.ServerAdded += ServerAdded;
             ServerPark.ServerDeleted += ServerDeleted;
             ServerPark.ServerNameChanged += ServerNameChanged;
+
             WebsitePermission.PermissionRemoved += PermissionRemoved;
+
             LogService.GetService<WebLogger>().Log("socket-pool", "Listeners have been set up");
         }
 
@@ -94,7 +92,7 @@ namespace MCWebServer.WebSocketHandler
         /// <param name="message">Message to broadcast.</param>
         /// <param name="code">user's code to broadcast the message to. If not specified, it broadcasts the message to all the sockets.</param>
         /// <returns></returns>
-        public async Task BroadcastMessage(string message, string code = null)
+        public async Task BroadcastMessage(string message, string? code = null)
         {
             List<Task> tasks = new();
 
@@ -111,7 +109,7 @@ namespace MCWebServer.WebSocketHandler
 
 
         #region Listeners
-        private async void ActiveServerChange(object sender, ValueEventArgs<IMinecraftServer> e)
+        private async void ActiveServerChange(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
             string newActiveServer = e.NewValue.ServerName;
             string mess = MessageFormatter.ActiveServerChange(newActiveServer);
@@ -119,7 +117,7 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerPlayerLeft(object sender, ValueEventArgs<MinecraftPlayer> e)
+        private async void ActiveServerPlayerLeft(object? sender, ValueEventArgs<MinecraftPlayer> e)
         {
             MinecraftPlayer player = e.NewValue;
             string mess = MessageFormatter.PlayerLeft(player.Username);
@@ -127,15 +125,18 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerPlayerJoined(object sender, ValueEventArgs<MinecraftPlayer> e)
+        private async void ActiveServerPlayerJoined(object? sender, ValueEventArgs<MinecraftPlayer> e)
         {
             MinecraftPlayer player = e.NewValue;
+            if (player.OnlineFrom is null)
+                return;
+
             string mess = MessageFormatter.PlayerJoin(player.Username, player.OnlineFrom.Value, player.PastOnline);
 
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerLogReceived(object sender, ValueEventArgs<LogMessage> e)
+        private async void ActiveServerLogReceived(object? sender, ValueEventArgs<LogMessage> e)
         {
             LogMessage message = e.NewValue;
             string mess = MessageFormatter.Log(message.Message, type: (int)message.MessageType);
@@ -143,7 +144,7 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerPerformanceMeasured(object sender, ValueEventArgs<(string CPU, string Memory)> e)
+        private async void ActiveServerPerformanceMeasured(object? sender, ValueEventArgs<(string CPU, string Memory)> e)
         {
             string cpu = e.NewValue.CPU;
             string memory = e.NewValue.Memory;
@@ -152,15 +153,16 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerStatusChange(object sender, ValueEventArgs<ServerStatus> e)
+        private async void ActiveServerStatusChange(object? sender, ValueEventArgs<ServerStatus> e)
         {
-            IMinecraftServer mcServer = (IMinecraftServer)sender;
-            string message = MessageFormatter.StatusUpdate(e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
+            if (sender is not IMinecraftServer mcServer)
+                return;
 
+            string message = MessageFormatter.StatusUpdate(e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
             await BroadcastMessage(message);
         }
 
-        private async void ServerAdded(object sender, ValueEventArgs<IMinecraftServer> e)
+        private async void ServerAdded(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
             string name = e.NewValue.ServerName;
             string message = MessageFormatter.ServerAdded(name);
@@ -168,7 +170,7 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void ServerDeleted(object sender, ValueEventArgs<IMinecraftServer> e)
+    private async void ServerDeleted(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
             string name = e.NewValue.ServerName;
             string message = MessageFormatter.ServerDeleted(name);
@@ -176,7 +178,7 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void ServerNameChanged(object sender, ValueChangedEventArgs<string> e)
+        private async void ServerNameChanged(object? sender, ValueChangedEventArgs<string> e)
         {
             string oldName = e.OldValue;
             string newName = e.NewValue;
@@ -186,7 +188,7 @@ namespace MCWebServer.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void PermissionRemoved(object sender, string e)
+        private async void PermissionRemoved(object? sender, string e)
         {
             string code = e;
 

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using MCWebServer.MinecraftServer.Enums;
-using System.Net.NetworkInformation;
 
 namespace MCWebServer.WebSocketHandler
 {
@@ -42,7 +41,7 @@ namespace MCWebServer.WebSocketHandler
 
         public static string ActiveServerChange(string newServer)
         {
-            var active = new { datatype = "activeServerChange", newActive = newServer }
+            var active = new { datatype = "activeServerChange", newActive = newServer };
             return Serialize(active);
         }
 

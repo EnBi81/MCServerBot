@@ -1,50 +1,35 @@
-﻿using System;
-using System.Reflection;
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 
 namespace Sandbox
 {
     public class SandBoxClass
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            var SocketClient = new DiscordSocketClient(new DiscordSocketConfig
+            var dic = new Dictionary<string, object>()
             {
-                AlwaysDownloadUsers = false,
-                LogLevel = LogSeverity.Debug,
+                ["text"] = "hi",
+                ["number"] = 2,
+                ["dic"] = new Dictionary<string, object?>
+                {
+                    ["double"] = 2.2,
+                    ["null"] = null
+                }
+            };
 
-            });
 
-            var CmdService = new CommandService(new CommandServiceConfig
-            {
-                LogLevel = LogSeverity.Debug,
-                CaseSensitiveCommands = false,
-                DefaultRunMode = RunMode.Async,
+            string text = JsonConvert.SerializeObject(dic);
 
-            });
+            Dictionary<string, object> data = JsonConvert.DeserializeObject<Dictionary<string, object>>(text) ?? new Dictionary<string, object>();
 
-            var Services = SetupServices(SocketClient, CmdService);
+            Console.WriteLine(data["text"]);
+            Console.WriteLine(data["number"].GetType().FullName);
+            if(data["dic"] is JObject obj)
+                Console.WriteLine(obj["double"]);
 
-            var CommandHandler = new CommandHandler(SocketClient);
-
-            await CmdService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
-            await SocketClient.LoginAsync(TokenType.Bot, "NjkyMDczMTUyNjE1ODA5MDg1.GJfn9f.46z2sX3jwywlWi2SqHFs5_9U1UIotCCHayqMnE");
-            await SocketClient.StartAsync();
-            await CommandHandler.InitializeAsync();
-
-            await SocketClient.SetGameAsync("Server Offline", null, ActivityType.Playing);
-
-            await Task.Delay(-1);
         }
-
-        private static IServiceProvider SetupServices(params object[] objects)
-            => new ServiceCollection()
-            .AddSingleton(objects[0])
-            .AddSingleton(objects[1])
-            .BuildServiceProvider();
     }
 }
 

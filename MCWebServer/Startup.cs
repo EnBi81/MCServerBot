@@ -46,7 +46,6 @@ namespace Web_Test
             app.UseWebSockets(new WebSocketOptions() { KeepAliveInterval = TimeSpan.FromMinutes(2) });
             app.Use(ReceiveSockets);
 
-            SocketPool.InitializePool();
 
             LogService.GetService<WebLogger>().Log("setup", "Setup completed");
             LogService.GetService<WebLogger>().Log("setup", "Listening on HTTPS port " + Config.Instance.WebServerPortHttps);
@@ -57,7 +56,7 @@ namespace Web_Test
         {
             if (context.Request.Path == "/ws")
             {
-                string ip = context.Connection.RemoteIpAddress?.ToString();
+                string? ip = context.Connection.RemoteIpAddress?.ToString();
                 LogService.GetService<WebLogger>().Log("ws-request", "Request received from " + ip);
 
                 if (!context.Request.Query.ContainsKey(WebsitePermission.CookieName))
