@@ -102,7 +102,7 @@ namespace MCWebServer.MinecraftServer
 
             SubscribeToProcessEvents();
 
-
+            _serverState = null!;
             SetServerState<OfflineState>();
             LogService.GetService<MinecraftLogger>().Log("server", $"Server {ServerName} created");
         }
@@ -114,12 +114,12 @@ namespace MCWebServer.MinecraftServer
         {
             McServerProcess.ErrorDataReceived += (s, e) =>
             {
-                var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.Error_Message);
+                var logMess = new LogMessage(e, LogMessage.LogMessageType.Error_Message);
                 HandleLog(logMess);
             };
             McServerProcess.OutputDataReceived += (s, e) =>
             {
-                var logMess = new LogMessage(e.Data, LogMessage.LogMessageType.System_Message);
+                var logMess = new LogMessage(e, LogMessage.LogMessageType.System_Message);
                 HandleLog(logMess);
             };
             McServerProcess.Exited += (s, e) => SetServerState<OfflineState>();
@@ -217,7 +217,12 @@ namespace MCWebServer.MinecraftServer
 
 
             var parameters = new object[] { this };
-            _serverState = (IServerState) Activator.CreateInstance(type, parameters);
+
+            object? nullableState = Activator.CreateInstance(type, parameters);
+            if (nullableState is not IServerState state)
+                throw new Exception($"Error creating {type.FullName}");
+
+            _serverState = state;
             LogService.GetService<MinecraftLogger>().Log("server", $"Status Change: {_serverState.Status}");
             RaiseEvent(StatusChange, _serverState.Status);
         }
@@ -273,7 +278,7 @@ namespace MCWebServer.MinecraftServer
         /// </summary>
         /// <param name="obj">Object to check.</param>
         /// <returns>True if the object is a MinecraftServer and has the same name as the current server, else false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
                 return true;

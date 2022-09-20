@@ -99,7 +99,16 @@ namespace MCWebServer.WebSocketHandler
             var socketsToBroadcast = code == null ? GetAllSockets() : GetAllSockets(code);
 
             foreach (var socket in socketsToBroadcast)
+            {
+                if(!socket.IsOpen)
+                {
+                    RemoveSocket(socket);
+                    continue;
+                }    
+
                 tasks.Add(socket.SendMessage(message));
+            }
+                
 
             foreach (var task in tasks)
                 await task;

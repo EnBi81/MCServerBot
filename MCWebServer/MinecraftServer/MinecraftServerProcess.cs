@@ -12,7 +12,7 @@ namespace MCWebServer.MinecraftServer
     /// </summary>
     public class MinecraftServerProcess
     {
-        private Process _serverHandlerProcess;
+        private Process? _serverHandlerProcess;
         private readonly string _serverFileName;
         private readonly string _javaLocation;
         private readonly string _serverHandlerPath;
@@ -82,7 +82,7 @@ namespace MCWebServer.MinecraftServer
             {
                 if (e.Data != null)
                 {
-                    ErrorDataReceived?.Invoke(this, e);
+                    ErrorDataReceived?.Invoke(this, e.Data);
                 }
             };
 
@@ -103,7 +103,7 @@ namespace MCWebServer.MinecraftServer
                     return;
                 }
 
-                OutputDataReceived?.Invoke(this, e);
+                OutputDataReceived?.Invoke(this, e.Data);
             };
             _serverHandlerProcess.Exited += (s, e) =>
             {
@@ -112,10 +112,10 @@ namespace MCWebServer.MinecraftServer
             };
         }
 
-        public event DataReceivedEventHandler ErrorDataReceived;
-        public event DataReceivedEventHandler OutputDataReceived;
-        public event EventHandler Exited;
-        public event EventHandler<int> ProcessIdReceived;
+        public event EventHandler<string>? ErrorDataReceived;
+        public event EventHandler<string>? OutputDataReceived;
+        public event EventHandler? Exited;
+        public event EventHandler<int>? ProcessIdReceived;
 
 
         public string GetStorage()

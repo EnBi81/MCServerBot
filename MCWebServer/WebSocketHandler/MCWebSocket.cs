@@ -71,8 +71,10 @@ namespace MCWebServer.WebSocketHandler
                 requestData = data?.Data;
             } catch
             {
-                LogService.GetService<WebLogger>().Log("socket", $"Invalid request from {DiscordUser.Username}: " + message);
-                await SendMessage("Invalid Message received");
+                string errorMessage = $"Invalid request from {DiscordUser.Username}: " + message;
+                LogService.GetService<WebLogger>().Log("socket", errorMessage);
+                string error = MessageFormatter.ErrorMessage(errorMessage);
+                await SendMessage(error);
                 return;
             }
             

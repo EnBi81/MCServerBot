@@ -7,6 +7,13 @@ namespace MCWebServer.WebSocketHandler
     public static class MessageFormatter
     {
 
+        public static string ErrorMessage(string errorMessage)
+        {
+            var error = new { datatype = "error", errorMessage };
+            return Serialize(error);
+        }
+
+
         public static string Logout()
         {
             var logout = new { datatype = "logout"};

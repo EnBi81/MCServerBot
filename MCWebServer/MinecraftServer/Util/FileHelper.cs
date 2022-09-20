@@ -58,8 +58,11 @@ namespace MCWebServer.MinecraftServer.Util
         /// </summary>
         /// <param name="d"></param>
         /// <returns></returns>
-        public static long DirSize(DirectoryInfo d)
+        public static long DirSize(DirectoryInfo? d)
         {
+            if (d == null)
+                return 0;
+
             long size = 0;
             // Add file sizes.
             FileInfo[] fis = d.GetFiles();
