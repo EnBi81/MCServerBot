@@ -18,7 +18,8 @@ namespace MCWebServer.MinecraftServer
         /// </summary>
         public string ServerName
         {
-            get => _serverName; set
+            get => _serverName; 
+            set
             {
                 if (value is null || value.Length < IMinecraftServer.NAME_MIN_LENGTH || value.Length > IMinecraftServer.NAME_MAX_LENGTH)
                     throw new ArgumentException($"Name length must be between {IMinecraftServer.NAME_MIN_LENGTH} and {IMinecraftServer.NAME_MAX_LENGTH}");

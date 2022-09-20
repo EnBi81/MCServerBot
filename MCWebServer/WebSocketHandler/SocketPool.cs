@@ -9,6 +9,9 @@ using MCWebServer.Log;
 
 namespace MCWebServer.WebSocketHandler
 {
+    /// <summary>
+    /// SocketPool stores and takes care of all the incoming and established websockets.
+    /// </summary>
     public static class SocketPool
     {
         private static Dictionary<string, List<MCWebSocket>> Sockets { get; } = new Dictionary<string, List<MCWebSocket>>();
@@ -52,7 +55,7 @@ namespace MCWebServer.WebSocketHandler
 
             ServerPark.Keklepcso.StatusChange += async (sender, status) =>
             {
-                MinecraftServer.IMinecraftServer mcServer = (MinecraftServer.IMinecraftServer)sender;
+                IMinecraftServer mcServer = (IMinecraftServer)sender;
 
                 var mess = MessageFormatter.StatusUpdate(status, mcServer.OnlineFrom, mcServer.StorageSpace);
                 await BroadcastMessage(mess);
