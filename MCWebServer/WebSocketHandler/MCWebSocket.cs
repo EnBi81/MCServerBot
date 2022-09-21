@@ -1,6 +1,4 @@
 ﻿using MCWebServer.Log;
-using MCWebServer.MinecraftServer;
-using MCWebServer.MinecraftServer.Enums;
 using MCWebServer.PermissionControll;
 
 using Newtonsoft.Json;
@@ -73,8 +71,7 @@ namespace MCWebServer.WebSocketHandler
             {
                 string errorMessage = $"Invalid request from {DiscordUser.Username}: " + message;
                 LogService.GetService<WebLogger>().Log("socket", errorMessage);
-                string error = MessageFormatter.ErrorMessage(errorMessage);
-                await SendMessage(error);
+                await SendBackErrorMessage(errorMessage);
                 return;
             }
             
@@ -130,6 +127,18 @@ namespace MCWebServer.WebSocketHandler
             //}
         }
 
+        /// <summary>
+        /// Sends an error message to the socket.
+        /// </summary>
+        /// <param name="message">error message</param>
+        /// <returns></returns>
+        public async Task SendBackErrorMessage(string message)
+        {
+            LogService.GetService<WebLogger>().Log("socket", $"Error from {DiscordUser.Username}, data: {message}");
+
+            string mess = MessageFormatter.ErrorMessage(message);
+            await SendMessage(mess);
+        }
 
         private async Task SendStartupData()
         {

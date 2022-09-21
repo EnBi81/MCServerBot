@@ -53,21 +53,22 @@ namespace MCWebServer.WebSocketHandler
         }
 
 
-        public static string Log(string message, int type)
+        public static string Log(string server, string message, int type)
         {
-            return Log(new LogMessage(message, (LogMessage.LogMessageType)type));
+            return Log(server, new LogMessage(message, (LogMessage.LogMessageType)type));
         }
 
-        public static string Log(LogMessage message)
+        public static string Log(string server, LogMessage message)
         {
-            return Log(new List<LogMessage>() { message });
+            return Log(server, new List<LogMessage>() { message });
         }
 
-        public static string Log(IEnumerable<LogMessage> messages)
+        public static string Log(string server, IEnumerable<LogMessage> messages)
         {
             var log = new
             {
                 datatype = "log",
+                server,
                 logs = (from logMessage in messages
                        select new
                        {
@@ -79,11 +80,12 @@ namespace MCWebServer.WebSocketHandler
             return Serialize(log);
         }
 
-        public static string PlayerJoin(string username, DateTime onlineFrom, TimeSpan pastUptime)
+        public static string PlayerJoin(string server, string username, DateTime onlineFrom, TimeSpan pastUptime)
         {
             var playerJoin = new
             {
                 datatype = "playerJoin",
+                server,
                 username = username,
                 onlineFrom = onlineFrom.DateToString(),
                 pastUptime = new {
@@ -95,19 +97,19 @@ namespace MCWebServer.WebSocketHandler
             return Serialize(playerJoin);
         }
 
-        public static string PlayerLeft(string username)
+        public static string PlayerLeft(string server, string username)
         {
-            var playerLeft = new { datatype = "playerLeft", username = username };
+            var playerLeft = new { datatype = "playerLeft", server, username = username };
             return Serialize(playerLeft);
         }
 
-        public static string PcUsage(string cpuPerc, string memory)
+        public static string PcUsage(string server, string cpuPerc, string memory)
         {
-            var pcUsage = new { datatype = "pcUsage", cpu = cpuPerc, memory = memory };
+            var pcUsage = new { datatype = "pcUsage", server, cpu = cpuPerc, memory = memory };
             return Serialize(pcUsage);
         }
 
-        public static string StatusUpdate(ServerStatus status, DateTime? onlineFrom, string storage)
+        public static string StatusUpdate(string server, ServerStatus status, DateTime? onlineFrom, string storage)
         {
             string stringStatus = status switch
             {
@@ -120,6 +122,7 @@ namespace MCWebServer.WebSocketHandler
 
             var statusResponse = new { 
                 datatype = "status",
+                server,
                 status = stringStatus, 
                 onlineFrom = onlineFrom?.DateToString(),
                 storage = storage

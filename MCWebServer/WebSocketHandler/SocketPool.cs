@@ -128,37 +128,49 @@ namespace MCWebServer.WebSocketHandler
 
         private async void ActiveServerPlayerLeft(object? sender, ValueEventArgs<MinecraftPlayer> e)
         {
+            if (sender is not IMinecraftServer server)
+                return;
+
             MinecraftPlayer player = e.NewValue;
-            string mess = MessageFormatter.PlayerLeft(player.Username);
+            string mess = MessageFormatter.PlayerLeft(server.ServerName, player.Username);
 
             await BroadcastMessage(mess);
         }
 
         private async void ActiveServerPlayerJoined(object? sender, ValueEventArgs<MinecraftPlayer> e)
         {
+            if (sender is not IMinecraftServer server)
+                return;
+
             MinecraftPlayer player = e.NewValue;
             if (player.OnlineFrom is null)
                 return;
 
-            string mess = MessageFormatter.PlayerJoin(player.Username, player.OnlineFrom.Value, player.PastOnline);
+            string mess = MessageFormatter.PlayerJoin(server.ServerName, player.Username, player.OnlineFrom.Value, player.PastOnline);
 
             await BroadcastMessage(mess);
         }
 
         private async void ActiveServerLogReceived(object? sender, ValueEventArgs<LogMessage> e)
         {
+            if (sender is not IMinecraftServer server)
+                return;
+
             LogMessage message = e.NewValue;
-            string mess = MessageFormatter.Log(message.Message, type: (int)message.MessageType);
+            string mess = MessageFormatter.Log(server.ServerName, message.Message, type: (int)message.MessageType);
 
             await BroadcastMessage(mess);
         }
 
         private async void ActiveServerPerformanceMeasured(object? sender, ValueEventArgs<(string CPU, string Memory)> e)
         {
+            if (sender is not IMinecraftServer server)
+                return;
+
             string cpu = e.NewValue.CPU;
             string memory = e.NewValue.Memory;
 
-            string mess = MessageFormatter.PcUsage(cpu, memory);
+            string mess = MessageFormatter.PcUsage(server.ServerName, cpu, memory);
             await BroadcastMessage(mess);
         }
 
@@ -167,7 +179,7 @@ namespace MCWebServer.WebSocketHandler
             if (sender is not IMinecraftServer mcServer)
                 return;
 
-            string message = MessageFormatter.StatusUpdate(e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
+            string message = MessageFormatter.StatusUpdate(mcServer.ServerName, e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
             await BroadcastMessage(message);
         }
 

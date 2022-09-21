@@ -1,11 +1,9 @@
 ﻿using MCWebServer.Log;
 using MCWebServer.MinecraftServer;
-using MCWebServer.MinecraftServer.Enums;
-using MCWebServer.PermissionControll;
-using Newtonsoft.Json;
+
 using Newtonsoft.Json.Linq;
+
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MCWebServer.WebSocketHandler
@@ -46,7 +44,7 @@ namespace MCWebServer.WebSocketHandler
         {
             if (string.IsNullOrEmpty(requestName))
             {
-                await _parent.SendMessage("Request null or invalid."); //WHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT
+                await SendBackErrorMessage(_parent, "Request null or invalid.");
                 return;
             }
 
@@ -57,7 +55,7 @@ namespace MCWebServer.WebSocketHandler
             }
 
 
-            //LogService.GetService<WebLogger>().Log("socket", $"Command received from {DiscordUser.Username}, command: {requestData}");
+            LogService.GetService<WebLogger>().Log("socket", $"Command received from {_parent.DiscordUser.Username}, command: {requestData}");
 
             try
             {
@@ -74,11 +72,8 @@ namespace MCWebServer.WebSocketHandler
         /// <param name="sendTo">send the error message to.</param>
         /// <param name="message">error message</param>
         /// <returns></returns>
-        public static async Task SendBackErrorMessage(MCWebSocket sendTo, string message)
-        {
-            string mess = MessageFormatter.ErrorMessage(message);
-            await sendTo.SendMessage(mess);
-        }
+        public static async Task SendBackErrorMessage(MCWebSocket sendTo, string message) =>
+            await sendTo.SendBackErrorMessage(message);
 
 
         /// <summary>
