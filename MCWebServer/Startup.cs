@@ -56,15 +56,21 @@ namespace Web_Test
         {
             if (context.Request.Path == "/ws")
             {
-                string? ip = context.Connection.RemoteIpAddress?.ToString();
+                string? ip = context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
                 LogService.GetService<WebLogger>().Log("ws-request", "Request received from " + ip);
 
                 if (!context.Request.Query.ContainsKey(WebsitePermission.CookieName))
-                    return;
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no request query found"); return;
+                }
+                    
 
                 var code = context.Request.Query[WebsitePermission.CookieName];
                 if (!WebsitePermission.HasAccess(code))
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no access");
                     return;
+                }
 
 
                 if (context.WebSockets.IsWebSocketRequest)

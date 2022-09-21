@@ -51,6 +51,7 @@ namespace MCWebServer.WebSocketHandler
             var receive = ReceiveDataAsync(MessageReceived);
             await SendStartupData();
             await receive;
+            LogService.GetService<WebLogger>().Log("socket", $"Socket Initialized for {DiscordUser.Username}");
         }
 
         /// <summary>
@@ -70,7 +71,6 @@ namespace MCWebServer.WebSocketHandler
             } catch
             {
                 string errorMessage = $"Invalid request from {DiscordUser.Username}: " + message;
-                LogService.GetService<WebLogger>().Log("socket", errorMessage);
                 await SendBackErrorMessage(errorMessage);
                 return;
             }
