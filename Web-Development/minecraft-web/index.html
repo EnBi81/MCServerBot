@@ -58,17 +58,28 @@
         <div class="right-container">
             <div class="dropdown-wrapper">
                 <div class="dropdown-border"></div>
-                <div class="dropdown-content">
-                    <div class="constant-content">
+                <div class="dropdown-content" id="dropdown-content"
+                     onclick="this.classList.toggle('active')">
+                    <div class="constant-content" onmousedown="this.classList.add('press')" onmouseup="this.classList.remove('press')">
                         <div class="selected-server-name">Keklepcso</div>
                         <div class="dropdown-button">
-                            <img src="button-images/button_down.png" alt="">
+                            <img class="normal-image" src="button-images/button_down.png" alt="">
+                            <img class="hover-image" src="button-images/button_down_hover.png" alt="">
+                            <img class="press-image" src="button-images/button_down_press.png" alt="">
                         </div>
                     </div>
 
                     <div class="dropdown-server-list">
+                        <div id="servers">
+                            <div class="minecraft-server">
+                                Server1
+                            </div>
+                            <div class="minecraft-server">
+                                Server2
+                            </div>
+                        </div>
                         <div class="minecraft-server">
-
+                            Create a new server!
                         </div>
                     </div>
                 </div>
@@ -165,7 +176,7 @@
             </label>
         </div>
         <div class="setting">
-            <span id="reset-button-color" class="reset-text">Logout Button Color:</span>
+            <span id="reset-button-color" class="reset-text">Dropdown Color:</span>
             <label>
                 <input id="button-color-picker" type="color" class="setting-border-transition"/>
             </label>

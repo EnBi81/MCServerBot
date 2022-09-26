@@ -69,4 +69,4 @@ WIP
 Manages permissions for both the web clients and the discord users.
 
 ### WebSocketHandler (WIP)
-Handles the websockets (WIP)
+Handles the websockets.

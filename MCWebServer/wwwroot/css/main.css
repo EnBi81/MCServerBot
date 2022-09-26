@@ -28,7 +28,7 @@ body {
 :root {
   --base-primary-color: #252424;
   --base-secondary-color: #260808;
-  --base-logout-button-color: #d97c7c;
+  --base-dropdown-color: #d97c7c;
   --base-font-family: Arial;
   --base-opacity: 1;
   --base-hover-opacity: 0.3;
@@ -204,7 +204,7 @@ header .logout {
 }
 header .logout .button {
   position: relative;
-  background: var(--base-logout-button-color);
+  background: var(--base-dropdown-color);
   color: black;
   padding: 5px;
   border-radius: 10px;
@@ -224,7 +224,7 @@ header .logout .button::before {
   top: 0;
   left: 0;
   right: 0;
-  border: 4px solid var(--base-logout-button-color);
+  border: 4px solid var(--base-dropdown-color);
   border-radius: 10px;
   filter: blur(3px);
   transition: 0.3s;
@@ -236,7 +236,7 @@ header .logout .button::before {
     outline: none;
   }
   header .logout .button:hover::before, header .logout .button:focus::before {
-    border: 5px solid var(--base-logout-button-color);
+    border: 5px solid var(--base-dropdown-color);
     filter: blur(5px) saturate(1.5);
     transition: 0.3s;
   }

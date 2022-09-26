@@ -1,23 +1,29 @@
 @import "functions";
 
-// right part
+// right part of the header
 .right-container{
   width: 500px;
   height: 80px;
   margin-right: 20px;
 
 
+  // dropdown outer wrapper
   .dropdown-wrapper{
     @extend %full-size;
 
     position: relative;
 
+    // dropdown border and background color
     .dropdown-border{
       @extend %full-size;
       @extend %absoluteCenter;
 
-      background: rgba(0, 0, 0, 0.3);
-      border: var(--base-primary-color) 2px solid;
+      //make background darker
+      background: linear-gradient(
+                      rgba(0, 0, 0, 0.85),
+                      rgba(0, 0, 0, 0.9)), var(--base-dropdown-color);
+
+      border: var(--base-dropdown-color) 2px solid;
       filter: saturate(1.5) brightness(1.5);
     }
 
@@ -25,10 +31,12 @@
       filter: saturate(3) brightness(2);
     }
 
+    // the real content
     .dropdown-content{
       @extend %full-size;
       @extend %absoluteCenter;
 
+      // this is what is displayed all the time
       .constant-content{
         @extend %full-size;
 
@@ -45,23 +53,61 @@
 
         }
 
+        // the minecraft button
         .dropdown-button{
           width: 60px;
           height: 60px;
 
+          position: relative;
+
+          transition: transform 400ms;
+
           img{
+            position: absolute;
+
             image-rendering: pixelated;
             content: var(--image-path);
             @extend %full-size;
+
+            visibility: hidden;
           }
+        }
+
+        &:hover .hover-image, & .normal-image, &.press .press-image{
+          visibility: visible !important;
         }
       }
 
 
+
+      & .constant-content:hover{
+        cursor: url('../button-images/cursor_arrow_down.png'), pointer;
+      }
+
+      &.active{
+        .dropdown-button{
+          transform: rotate(180deg);
+        }
+
+        .constant-content:hover{
+          cursor: url('../button-images/cursor_arrow_up.png'), pointer;
+        }
+
+        .dropdown-server-list{
+          display: block;
+        }
+      }
+
+
+      // this is the actual dropdown
       .dropdown-server-list{
+        display: none;
+
         width: 100%;
         height: 100px;
-        background: #676767;
+        background: linear-gradient(
+                        rgba(0, 0, 0, 0.7),
+                        rgba(0, 0, 0, 0.7)), var(--base-dropdown-color);
 
         box-sizing: border-box;
         padding: 10px;
@@ -72,6 +118,7 @@
           align-items: center;
           justify-content: space-between;
 
+          color: white;
           width: 100%;
 
         }

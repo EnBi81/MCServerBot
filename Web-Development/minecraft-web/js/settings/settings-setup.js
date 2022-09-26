@@ -31,9 +31,9 @@ const settingSetup = {
         resetButtonId: 'reset-secondary',
         eventsToListen: ['change'],
     },
-    "logout-color": {
-        defaultValue: '#d97c7c',
-        cssProperty: '--base-logout-button-color',
+    "dropdown": {
+        defaultValue: '#877dd9',
+        cssProperty: '--base-dropdown-color',
         valueInputId: 'button-color-picker',
         resetButtonId: 'reset-button-color',
         eventsToListen: ['change'],
