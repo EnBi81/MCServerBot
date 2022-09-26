@@ -1,0 +1,5 @@
+Logout button: confirm logout from user
+
+finish dropdown menu css and js
+
+create mc server rename and delete buttons (idk where, pls design it)
