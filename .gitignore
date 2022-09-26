@@ -5,6 +5,8 @@
 
 MCWebServer/config.json
 
+*/.idea
+
 # User-specific files
 *.rsuser
 *.suo
