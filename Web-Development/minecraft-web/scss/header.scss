@@ -1,0 +1,71 @@
+@import "colors";
+@import "functions";
+
+// Colors
+$header-bg: $base-bg;
+$text-color: $base-text-color;
+
+header{
+  background: linear-gradient(to left, var(--base-secondary-color), var(--base-primary-color) 70%);
+  color: $text-color;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 0 20px;
+
+
+  // left part
+  .welcome-message{
+    font-size: fontSize(1.7rem);
+    height: 80%;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .image-wrapper{
+      height: 80%;
+      width: auto;
+
+      position: relative;
+
+      img:first-child{
+        min-width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+
+      .settings-image{
+        background: var(--base-primary-color);
+        position: absolute;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+
+        bottom: -5px;
+        right: -5px;
+      }
+
+      img:last-child{
+        width: 100%;
+        height: auto;
+
+        filter: brightness(50%);
+        transition: 300ms;
+
+        &:hover{
+          filter: brightness(80%) drop-shadow(0 0 3px white);
+          transform: rotate(60deg);
+          cursor: pointer;
+        }
+      }
+    }
+
+    b{
+      margin-left: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+    }
+  }
+}

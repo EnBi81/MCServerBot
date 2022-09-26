@@ -40,9 +40,9 @@ namespace MCWebServer.WebSocketHandler
             return Serialize(deleted);
         }
 
-        public static string ServerAdded(string name)
+        public static string ServerAdded(string name, string storage)
         {
-            var added = new { datatype = "serverAdded", name };
+            var added = new { datatype = "serverAdded", name, storage };
             return Serialize(added);
         }
 

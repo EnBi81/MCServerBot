@@ -186,7 +186,8 @@ namespace MCWebServer.WebSocketHandler
         private async void ServerAdded(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
             string name = e.NewValue.ServerName;
-            string message = MessageFormatter.ServerAdded(name);
+            string storage = e.NewValue.StorageSpace;
+            string message = MessageFormatter.ServerAdded(name, storage);
 
             await BroadcastMessage(message);
         }

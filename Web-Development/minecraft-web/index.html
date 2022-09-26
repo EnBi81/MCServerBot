@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name = "viewport" content = "width=device-width, initial-scale = 1">
+    <link rel="stylesheet" href="scss/main.css">
+
+
+    <!--  Settings -->
+    <script defer src="js/settings/SingleSetting.js"></script>
+    <script defer src="js/settings/SettingsCollection.js"></script>
+    <script defer src="js/settings/settings-setup.js"></script>
+
+    <!--  Utils -->
+    <script src="js/utils/SimpleTimeObject.js"></script>
+    <script src="js/utils/DateHelper.js"></script>
+
+    <!--  Networking -->
+    <script src="js/networking/MCSocketSender.js"></script>
+    <script src="js/networking/MCSocketReceived.js"></script>
+    <script src="js/networking/MCSocket.js"></script>
+
+    <!--  Model -->
+    <script src="js/model/Logout.js"></script>
+    <script src="js/model/ServerLog.js"></script>
+    <script src="js/model/ServerStatus.js"></script>
+    <script src="js/model/MinecraftPlayer.js"></script>
+    <script src="js/model/MinecraftServer.js"></script>
+    <script src="js/model/ServerPark.js"></script>
+
+    <!--  Views -->
+    <script src="js/view/ServerAddressCopy.js"></script>
+    <script src="js/view/LogView.js"></script>
+    <script src="js/view/PlayerView.js"></script>
+    <script src="js/view/UpdateTimers.js"></script>
+    <script src="js/view/ServerInfoPage.js"></script>
+    <script src="js/view/ErrorMessageElement.js"></script>
+    <script src="js/view/ErrorView.js"></script>
+
+
+</head>
+<body data-user-code="C10A19E3C6013598D902AEFF7F0480119907453F25A9DE2188F852E4F1EC26A9">
+<div class="background" style="background: url('bg-images-compressed/bg1-min.png')"></div>
+<div class="main-content hide-on-bg-hover">
+    <header>
+        <div class="welcome-message">
+            <div class="image-wrapper">
+                <img src="shiba-prof-pic.webp" alt="">
+                <div class="settings-image">
+                    <img src="button-images/settings.png" alt="" onclick="toggleSettings()">
+                </div>
+
+            </div>
+
+            <b id="player-name">Shiba Orange Inu</b>
+        </div>
+        <div class="right-container">
+            <div class="dropdown-wrapper">
+                <div class="dropdown-border"></div>
+                <div class="dropdown-content">
+                    <div class="constant-content">
+                        <div class="selected-server-name">Keklepcso</div>
+                        <div class="dropdown-button">
+                            <img src="button-images/button_down.png" alt="">
+                        </div>
+                    </div>
+
+                    <div class="dropdown-server-list">
+                        <div class="minecraft-server">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div id="server-info" class="server-info offline-colors">
+            <div class="information">
+                <div style="display: flex; gap: 10px;">
+                    <div class="server-name" id="server-name">Keklepcso</div>
+                    <span class="status"></span><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+                <div id="server-address" class="server-address" title="Click here to copy address" tabindex="0">
+                    <span id="ip-address">127.0.0.1</span>:<span id="port">25565</span>
+                </div>
+                <div class="server-uptime">Uptime: <span id="server-uptime">3:23:23</span></div>
+
+                <div id="active-players" class="active-players">
+                   <!-- <div class="player online">
+                        <pre>Crash285 - <span class="time">1:23:23</span></pre>
+                        <pre class="total-time">Total uptime: <span>2:23:23</span></pre>
+                    </div>-->
+                </div>
+            </div>
+            <div class="performance">
+                <pre>CPU:     <span id="cpu">40 %</span></pre>
+                <pre>MEMORY:  <span id="memory">6000 MB</span></pre>
+                <pre>STORAGE: <span id="storage">1.4 GB</span></pre>
+            </div>
+            <div id="start-button" class="button-wrapper">
+                <!--<input type="checkbox" id="start-button-checkbox">
+                <label for="start-button-checkbox" class="button">Start</label>-->
+                <img class="toggle-button" src="button-images/toggle_off.png" alt="" tabindex="0">
+            </div>
+        </div>
+
+        <div class="log">
+            <div id="log-messages" class="log-messages">
+               <!-- <div class="system-message user-message">Hello</div>-->
+            </div>
+            <div class="line"></div>
+            <div class="input">
+                <label>
+                    <input id="command-input" type="text" placeholder="Write command here...">
+                </label>
+            </div>
+        </div>
+    </main>
+
+    <div class="error-messages-wrapper">
+
+    </div>
+</div>
+<div class="error-message-wrapper hide-on-bg-hover">
+    <div class="error-content" id="error-content">
+        <!--<div class="single-error-message">
+            <div class="error-text-content">
+                This is an error message pls take it serious
+            </div>
+        </div>-->
+    </div>
+</div>
+
+<div id="settings-wrapper" class="hidden">
+    <div id="settings-blur" onclick="toggleSettings()"></div>
+    <div id="settings">
+
+        <div class="settings-title reset-text" id="settings-title">Settings</div>
+        <div class="settings-reset-hint">Double click to reset settings</div>
+        <div class="setting">
+            <span id="reset-font" class="reset-text">Font Style:</span>
+            <label for="fonts">
+                <select name="fonts" id="fonts" class="setting-border-transition fonts"></select>
+            </label>
+        </div>
+        <div class="setting">
+            <span id="reset-font-size" class="reset-text setting-border-transition">Font Scale:</span>
+
+            <label for="font-size-input">
+                <input type="number" id="font-size-input" step="0.1" min="0.1" max="2">
+            </label>
+        </div>
+        <div class="setting">
+            <span id="reset-primary" class="reset-text">Main Color:</span>
+            <label>
+                <input id="primary-color-picker" type="color" class="setting-border-transition"/>
+            </label>
+        </div>
+        <div class="setting">
+            <span id="reset-secondary" class="reset-text">Secondary Color:</span>
+            <label>
+                <input id="secondary-color-picker" type="color" class="setting-border-transition"/>
+            </label>
+        </div>
+        <div class="setting">
+            <span id="reset-button-color" class="reset-text">Logout Button Color:</span>
+            <label>
+                <input id="button-color-picker" type="color" class="setting-border-transition"/>
+            </label>
+        </div>
+        <div class="setting">
+            <span id="reset-base-op" class="reset-text">Content Opacity:</span>
+            <label for="content-op"></label>
+            <input type="range" step="0.01" min="0.1" max="1" value="1" class="slider" id="content-op">
+        </div>
+        <div class="setting">
+            <span id="reset-hover-op" class="reset-text">Content Hover Opacity:</span>
+            <label for="content-hover-op"></label>
+            <input type="range" step="0.01" min="0" max="1" value="0.3" class="slider" id="content-hover-op">
+        </div>
+        <div class="setting logout" onclick="Logout.logout()">
+            <div id="logout"><div tabindex="0">Log out</div></div>
+        </div>
+
+    </div>
+</div>
+</body>
+
+<script src="js/core.js"></script>
+<script id="setup-script">
+    let setupData = {
+        servers: [
+            {
+                name: 'Server1',
+                serverStatus: "online",
+                players: [
+                    {
+                        username: 'username1',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    }
+                ],
+                logs: [
+                    {
+                        message: 'this is a message',
+                        messageType: 0,
+                    }
+                ],
+                cpu: '1 %',
+                memory: '0 MB',
+                storage: '0 B',
+                onlineFrom: '2022-09-25 15:10:00'
+            },
+            {
+                name: 'Server2',
+                serverStatus: "starting",
+                players: [
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    }
+                ],
+                logs: [
+                    {
+                        message: 'this another message',
+                        messageType: 1,
+                    }
+                ],
+                cpu: '1 %',
+                memory: '0 MB',
+                storage: '0 B',
+                onlineFrom: '2022-09-25 15:10:00'
+            },
+        ]
+    }
+
+    serverPark.loadSetupData(setupData);
+    serverInfoPage.loadMCServer('Server1');
+
+    document.getElementById("setup-script").remove();
+</script>
+
+</html>

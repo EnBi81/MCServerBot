@@ -1,0 +1,182 @@
+@import "functions";
+@import "colors";
+
+$responsive-breakpoint: 1000px;
+$bg-transition-time: 300ms;
+
+html, body{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  font-size: fontSize(1.2rem);
+  overflow-x: hidden;
+
+  font-family: Arial, serif;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
+
+
+.background{
+  width: 100%;
+  height: 100%;
+
+  position: absolute;
+
+  transition: filter $bg-transition-time;
+  filter: blur(10px) brightness(50%);
+
+  &:hover{
+    filter: blur(0) brightness(70%);
+  }
+}
+
+:root{
+  --base-primary-color: #252424; //#121921;
+  --base-secondary-color: #260808; //#311a3c;
+  --base-logout-button-color: #d97c7c;
+  --base-font-family: Arial;
+  --base-opacity: 1;
+  --base-hover-opacity: 0.3;
+  --base-font-scale: 1;
+
+
+  --loading-bar-color: white;
+}
+
+.offline-colors{
+  --circle-color: red;
+  --loading-bar-display: none;
+  --server-name: #ffcccc;
+  --server-address: var(--server-name);
+  --start-button: #87ff87;
+  --start-button-image: url("../button-images/toggle_off.png");
+  --start-button-hover-image: url("../button-images/toggle_off_hover.png");
+  --start-button-filter: none;
+  --start-button-cursor: pointer;
+  --uptime-timer-display: none;
+}
+
+.online-colors{
+  --circle-color: #25ee25;
+  --loading-bar-display: none;
+  --server-name: #ddffcc;
+  --server-address: var(--server-name);
+  --start-button: #ff5050;
+  --start-button-image: url("../button-images/toggle_on.png");
+  --start-button-hover-image: url("../button-images/toggle_on_hover.png");
+  --start-button-filter: none;
+  --start-button-cursor: pointer;
+  --uptime-timer-display: block;
+}
+
+.loading-colors{
+  --circle-color: var(--base-primary-color);
+  --loading-bar-display: block;
+  --server-name: #d2d2d2;
+  --server-address: var(--server-name);
+  --start-button: #d2d2d2;
+  --start-button-image: url("../button-images/toggle_mid.png");
+  --start-button-hover-image: url("../button-images/toggle_mid_hover.png");
+  --start-button-filter: opacity(0.7) saturate(20%) sepia(1);
+  --start-button-cursor: wait;
+  --uptime-timer-display: none;
+}
+
+*{
+  font-family: var(--base-font-family), serif;
+}
+
+.main-content{
+  height: 95%;
+  width: 95%;
+  min-height: 580px;
+
+  overflow: hidden;
+  border-radius: 20px;
+
+  position: absolute;
+  z-index: 1;
+}
+
+.hide-on-bg-hover{
+  transition: opacity $bg-transition-time;
+  opacity: var(--base-opacity);
+
+  .background:hover ~ &{
+    opacity: var(--base-hover-opacity);
+  }
+}
+
+@media screen and (max-width: $responsive-breakpoint) {
+  .background{
+    display: none;
+  }
+
+  .main-content{
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+
+  .server-info{
+    min-height: 500px;
+  }
+
+  .log{
+    max-height: 500px;
+  }
+}
+
+header{
+  width: calc(100% - 20px);
+  height: 100px;
+}
+
+main{
+  height: calc(100% - 100px); // header height
+  display: flex;
+
+  position: relative;
+  z-index: -1;
+
+
+  .server-info{
+    height: 100%;
+    width: 400px;
+    max-width: 100%;
+  }
+
+  .log{
+    height: 100%;
+    width: calc(100% - 400px); // server-info width
+  }
+
+  @media screen and (max-width: $responsive-breakpoint) {
+    flex-direction: column;
+
+    .server-info{
+      width: 100%;
+      height: fit-content;
+    }
+
+    .log{
+      width: 100%;
+      height: fit-content;
+    }
+  }
+}
+
+@import "header";
+@import "server-info";
+@import "log";
+@import "settings";
+@import "error-messages";
+@import "server-selector";

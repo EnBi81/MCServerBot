@@ -16,6 +16,7 @@ namespace MCWebServer.MinecraftServer.Util
         private volatile bool _isRunning; 
         private readonly Thread _measurementThread;
 
+
         /// <summary>
         /// Initializes the ProcessPerformanceReporter object
         /// </summary>
@@ -89,7 +90,7 @@ namespace MCWebServer.MinecraftServer.Util
 
                         _mcProcess.Refresh();
                         memory = (_mcProcess.WorkingSet64 / (1024 * 1024)) + " MB";
-                        cpu = ProcessorUsage.ToString("0.00") + "%";
+                        cpu = ProcessorUsage.ToString("0.00") + " %";
 
                         RaiseEvent(PerformanceMeasured, (cpu, memory));
                     }
@@ -112,7 +113,7 @@ namespace MCWebServer.MinecraftServer.Util
 
 
             moSearcher.Dispose();
-            RaiseEvent(PerformanceMeasured, ("0%", "0 MB"));
+            RaiseEvent(PerformanceMeasured, ("0 %", "0 MB"));
         }
 
         /// <summary>

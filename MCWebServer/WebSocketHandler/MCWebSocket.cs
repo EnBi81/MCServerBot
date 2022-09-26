@@ -76,55 +76,6 @@ namespace MCWebServer.WebSocketHandler
             }
             
             await _inputHandler.HandleInput(requestName, requestData);
-
-
-
-            //if(requestName == "toggle")
-            //{
-            //    LogService.GetService<WebLogger>().Log("socket", "Toggle request from " + DiscordUser.Username);
-            //    try
-            //    {
-            //        var status = ServerPark.Keklepcso.Status;
-            //        if (status == ServerStatus.Starting || status == ServerStatus.ShuttingDown)
-            //            throw new Exception("Server is Loading. Please wait.");
-
-            //        if (ServerPark.Keklepcso.IsRunning)
-            //            ServerPark.Keklepcso.Shutdown(DiscordUser.Username);
-            //        else
-            //            ServerPark.Keklepcso.Start(DiscordUser.Username);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        var command = MessageFormatter.Log(requestData, (int)LogMessage.LogMessageType.User_Message);
-            //        var mess = MessageFormatter.Log(ex.Message, (int)LogMessage.LogMessageType.Error_Message);
-            //        await SendMessage(command);
-            //        await SendMessage(mess);
-            //    }
-                
-            //}
-            
-            //else if(requestName == "logout")
-            //{
-            //    LogService.GetService<WebLogger>().Log("socket", "Logout request from " + DiscordUser.Username);
-            //    await Close();
-            //}
-
-            //else if(requestName == "addCommand")
-            //{
-            //    LogService.GetService<WebLogger>().Log("socket", $"Command received from {DiscordUser.Username}, command: {requestData}");
-            //    try
-            //    {
-            //        ServerPark.Keklepcso.WriteCommand(requestData, DiscordUser.Username);
-            //    }
-            //    catch(Exception ex)
-            //    {
-            //        var command = MessageFormatter.Log(requestData, (int)LogMessage.LogMessageType.User_Message);
-            //        var mess = MessageFormatter.Log(ex.Message, (int)LogMessage.LogMessageType.Error_Message);
-            //        await SendMessage(command);
-            //        await SendMessage(mess);
-            //    }
-                
-            //}
         }
 
         /// <summary>

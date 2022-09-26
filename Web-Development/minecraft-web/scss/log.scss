@@ -1,0 +1,105 @@
+@import "colors";
+@import "functions";
+
+$log-bg: #1a1a1a;
+$log-bg-hover: #313131;
+$log-bg-focus: $log-bg;
+$system-message-color: white;
+$system-error-color: red;
+$user-message-color: #e3f8b6;
+$user-message-color-unfocus: #a3b285;
+
+
+main div.log{
+  background: $log-bg;
+
+  &-messages{
+    padding-left: 10px;
+
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar{
+      width: 15px;
+    }
+    &::-webkit-scrollbar-track{
+      background: linear-gradient(180deg, black 0%, $log-bg 100%);
+      margin-block: -10px;
+    }
+    &::-webkit-scrollbar-thumb{
+      background-color: $user-message-color;
+      border-radius: 10px;
+    }
+
+    width: calc(100% - 10px);
+    height: calc(100% - 45px); // textbox size
+
+    color:white;
+
+    .system-message, .user-message{
+      word-wrap: break-word;
+      width: 95%;
+    }
+
+    .system-message{
+      color: $system-message-color;
+    }
+
+    .system-message.error{
+      color: $system-error-color;
+    }
+
+    .user-message{
+      color: $user-message-color;
+      &:before{
+        content: '>> ';
+      }
+    }
+
+    .system-message + .user-message {
+      margin: 10px 0 10px 0;
+    }
+
+    .system-message:last-child, .user-message:last-child{
+      margin-bottom: 80px;
+    }
+  }
+
+  .line{
+    width: 100%;
+    height: 2px;
+
+    background: var(--base-secondary-color);
+    filter: saturate(4) brightness(3);
+  }
+
+  .input{
+    width: 100%;
+    height: 45px;
+    overflow: hidden;
+
+    input{
+      width: 100%;
+      height: 100%;
+
+      outline: none;
+      font-size: fontSize(1.25rem);
+      background-color: $log-bg;
+      color: $user-message-color-unfocus;
+      padding: 0 0 5px 10px;
+      margin-left: -2px;
+
+
+      &:hover{
+        background-color: $log-bg-hover;
+      }
+      &:focus{
+        background-color: $log-bg-focus;
+        color: $user-message-color;
+
+        &::placeholder{
+          color: #9d9d9d;
+        }
+      }
+    }
+  }
+}

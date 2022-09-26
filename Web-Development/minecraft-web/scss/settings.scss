@@ -1,0 +1,230 @@
+@import "functions";
+
+// outer settings wrapper, this is getting hidden
+#settings-wrapper{
+  position: fixed;
+  z-index: 4;
+
+  height: 100%;
+  width: 100%;
+}
+
+// this is to blur the background
+#settings-blur{
+  position: fixed;
+  z-index: 4;
+
+  height: 100%;
+  width: 100%;
+
+  backdrop-filter: blur(7px);
+}
+
+// the settings menu
+#settings{
+  position: absolute;
+  z-index: 5;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+
+  width: 700px;
+  padding: 10px;
+
+  background-color: #121921;
+  color: white;
+
+  filter: drop-shadow(0 0 10px var(--base-secondary-color));
+  border-radius: 3%;
+  transition: 300ms;
+
+  &:hover{
+    filter: drop-shadow(0 0 25px var(--base-secondary-color));
+  }
+
+  // make cursor a pointer for all the input elements (this is very obvious though)
+  input, select{
+    cursor: pointer;
+  }
+
+
+  // settings title
+  .settings-title{
+    font-size: fontSize(3rem);
+    text-align: center;
+
+    margin-top: 30px;
+  }
+
+  // reset settings title
+  .settings-reset-hint{
+    width: 100%;
+    text-align: center;
+    padding-bottom: 30px;
+    opacity: 0.7;
+  }
+
+  // the settings panel where the inputs are
+  .setting{
+    width: 90%;
+    height: 30px;
+    padding: 1rem;
+    margin: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    font-size: fontSize(2rem);
+
+    border-bottom: var(--base-secondary-color) 2px solid;
+    border-top: var(--base-secondary-color) 2px solid;
+
+    position: relative;
+
+
+
+
+    // bright up the area around the settings panel
+    &:hover{
+      animation: bg-slide-in 200ms forwards;
+      background: linear-gradient(to right, var(--base-secondary-color) 0%, var(--base-primary-color) 80%);
+      background-size: 200%;
+
+      @keyframes bg-slide-in {
+        from{
+          background-position-x: 100%;
+        }
+        to{
+          background-position-x: 50%;
+        }
+      }
+
+      &.logout{
+        --base-secondary-color: #c23b3b;
+        color: white;
+      }
+    }
+
+    &.logout{
+      color: #ff4848;
+      cursor: pointer;
+    }
+
+    // fonts select menu
+    .fonts{
+      font-size: fontSize(1.4rem);
+      background-color: var(--base-primary-color);
+      color: white;
+      border: var(white) 1px solid;
+    }
+
+    // that nice border on some of the inputs
+    .setting-border-transition{
+      transition: border 100ms;
+
+      &:hover, &:focus{
+        border: white 2px solid;
+      }
+    }
+
+    // color inputs
+    input[type="color"] {
+      -webkit-appearance: none;
+      width: 100px;
+      height: 30px;
+
+      &::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      &::-webkit-color-swatch {
+        border: none;
+      }
+    }
+
+
+    // number input
+    input[type="number"]{
+      width: 87px;
+      height: 32px;
+      font-size: fontSize(1.4rem);
+      padding: 0 0 0 10px;
+
+      color: white;
+      background: var(--base-primary-color);
+      border: white solid 1px;
+
+      &:hover, &:focus{
+        outline: none;
+        background: var(--base-secondary-color);
+      }
+
+      // those up and down buttons
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        height: 32px;
+      }
+    }
+  }
+
+  // for the reset text buttons
+  .reset-text{
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+
+
+  // the opacity sliders
+  .slider {
+    -webkit-appearance: none;
+    width: 250px;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+
+    position: relative;
+
+    &:hover{
+      opacity: 1;
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      background: #04AA6D;
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      background: #04AA6D;
+      cursor: pointer;
+    }
+
+    &::before{
+      content: var(--val);
+      position: absolute;
+      background: red;
+    }
+  }
+}
+
+// to make the settings disappear
+.hidden{
+  display: none;
+}

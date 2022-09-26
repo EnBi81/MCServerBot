@@ -1,0 +1,204 @@
+@import "colors";
+@import "functions";
+@import "external-loading-bar";
+
+// Colors
+$server-info-bg: $base-bg;
+$text-color: $base-text-color;
+$status-color: red;
+
+
+.server-info{
+  background: $server-info-bg;
+  padding: 10px;
+  position: relative;
+  background: linear-gradient(to top, var(--base-secondary-color) 0%, var(--base-primary-color) 80%);
+
+  color: $text-color;
+  height: 100%;
+
+  .information{
+    height: 100%;
+  }
+
+  .server-name{
+    color: var(--server-name);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: fontSize(2rem);
+    font-weight: 600;
+  }
+
+  $status-size: 20px;
+  .status{
+    box-sizing: border-box;
+    width: $status-size;
+    height: $status-size;
+    border-radius: 50%;
+    background: var(--circle-color);
+
+    position: relative;
+
+
+    &:before{
+      content: '';
+
+      box-sizing: border-box;
+      position: absolute;
+
+      top:50%;
+      left:50%;
+
+      transform: translate(-50%, -50%);
+
+      width: 80%;
+      height: 80%;
+      border-radius: 50%;
+      border: $server-info-bg $status-size/10 solid;
+      opacity: 0.7;
+    }
+  }
+
+  .lds-spinner{
+    zoom: 0.4;
+    transform: translateX(-70px);
+    color: var(--loading-bar-color);
+    display: var(--loading-bar-display);
+
+    div:after{
+      background: var(--loading-bar-color);
+    }
+  }
+
+  .server-address{
+    margin-bottom: 30px;
+    color: var(--server-address);
+    cursor: pointer;
+    position: relative;
+
+    transition: letter-spacing 200ms, transform 200ms;
+
+    &:hover, &:focus{
+      text-decoration: underline;
+    }
+
+    &:focus{
+      outline: none;
+      letter-spacing: 1px;
+      transform: scale(1.1) translateX(18px);
+    }
+
+    &:before{
+      visibility: hidden;
+      content: 'Copied';
+      position: absolute;
+      top: 20px;
+      left: 100px;
+
+      border: 1px black solid;
+      background-color: var(--base-secondary-color);
+      padding: 5px;
+      border-radius: 10px;
+    }
+    &.copied:before{
+      visibility: visible;
+      animation: showCopyMessage 3s forwards;
+    }
+
+    @keyframes showCopyMessage {
+      0%, 70%{
+        opacity: 1;
+      }
+      100%{
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  }
+
+  .server-uptime{
+    display: var(--uptime-timer-display);
+  }
+
+  &:not(.online-colors) .active-players{
+    display: none;
+  }
+  .active-players{
+    margin-top: 40px;
+    height: calc(100% - 250px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .player{
+      width: 100%;
+      height: 40px;
+      background: #232e3b;
+      border-radius: 2px;
+      padding-left: 6px;
+      margin-bottom: 3px;
+
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      opacity: 0.9;
+
+      &:hover{
+
+        background: #334254;
+        .total-time{
+          display: block;
+        }
+      }
+
+      .total-time{
+        display: none;
+        position: absolute;
+        z-index: 3;
+        top: -20px;
+        left: 130px;
+        background: #505050;
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: 2px 2px 11px 1px black;
+      }
+    }
+  }
+
+  .performance{
+    position: absolute;
+    bottom: 40px;
+    font-size: fontSize(1rem);
+    filter: drop-shadow(0 0 4px black);
+
+    pre{
+      margin: 0;
+    }
+  }
+
+  .button-wrapper{
+    position: absolute;
+    bottom: 40px;
+    right: 30px;
+    filter: var(--start-button-filter);
+
+    cursor: var(--start-button-cursor);
+
+    .toggle-button{
+
+      image-rendering: pixelated;
+      width: 75px;
+      height: 40px;
+      content: var(--start-button-image);
+
+      &:hover, &:focus{
+        content: var(--start-button-hover-image);
+        outline: none;
+      }
+    }
+  }
+}
+

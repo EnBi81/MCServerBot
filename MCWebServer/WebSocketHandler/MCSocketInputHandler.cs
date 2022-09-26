@@ -205,6 +205,7 @@ namespace MCWebServer.WebSocketHandler
         /// <param name="data">
         /// Expected to look something like this:
         /// {
+        ///    "server-name": "name"
         ///    "command": "command-data"
         /// }
         /// </param>
@@ -213,6 +214,13 @@ namespace MCWebServer.WebSocketHandler
         {
             if (data is null)
                 throw new Exception("data key must not have a null value!");
+
+            string? serverName = data["server-name"]?.Value<string>();
+
+            if(serverName is null || serverName == ServerPark.ActiveServer?.ServerName)
+            {
+                throw new Exception("Server is not running.");
+            }
 
             string? command = data["command"]?.Value<string>();
 
