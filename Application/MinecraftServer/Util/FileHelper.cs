@@ -84,29 +84,44 @@ namespace Application.MinecraftServer.Util
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        public static string StorageFormatter(double size)
+        public static string StorageFormatter(long size)
         {
             string measurement = "B";
+            double temp = size;
 
-            if (size > 1024)
+            if (temp > 1024)
             {
-                size /= 1024;
+                temp /= 1024;
                 measurement = "KB";
 
-                if (size > 1024)
+                if (temp > 1024)
                 {
-                    size /= 1024;
+                    temp /= 1024;
                     measurement = "MB";
 
-                    if (size > 1024)
+                    if (temp > 1024)
                     {
-                        size /= 1024;
+                        temp /= 1024;
                         measurement = "GB";
                     }
                 }
             }
 
-            return Math.Round(size, 2) + " " + measurement;
+            return Math.Round(temp, 2) + " " + measurement;
+        }
+
+
+        /// <summary>
+        /// Checks if the directory's storage space in bytes is larger than the value specified in the maxBytes
+        /// </summary>
+        /// <param name="dir">Directory to check</param>
+        /// <param name="maxBytes">Maximum allowed bytes</param>
+        /// <returns>True if the storage has overflew.</returns>
+        public static (bool Overflow, long Measured) CheckStorageOverflow(string dir, long maxBytes)
+        {
+            DirectoryInfo info = new(dir);
+            long dirSize = FileHelper.DirSize(info);
+            return (dirSize > maxBytes, dirSize);
         }
     }
 }

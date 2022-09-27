@@ -39,6 +39,12 @@ namespace DiscordBot.Discord.Commands
         public static async Task CreateServer(SocketSlashCommand command)
         {
             string serverName = command.Data.Options.First().Value.ToString();
+
+            if(serverName == null)
+            {
+                await command.RespondAsync("**No server name specified!**");
+                return;
+            }
             
             try
             {
@@ -46,7 +52,7 @@ namespace DiscordBot.Discord.Commands
                 await command.RespondAsync($"Server **{serverName}** has been created");
             } catch (Exception e)
             {
-                await command.RespondAsync($"Server **{serverName}** cannot be created: " + e.Message);
+                await command.RespondAsync($"Server **{serverName}** cannot be created: **{e.Message}**");
             }
         }
 

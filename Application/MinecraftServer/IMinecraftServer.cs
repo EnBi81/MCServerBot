@@ -58,6 +58,10 @@ namespace Application.MinecraftServer
         /// Phisical storage space on the disk of the server.
         /// </summary>
         public string StorageSpace { get; }
+        /// <summary>
+        /// Phisical storage space on the disk of the server in BYTES.
+        /// </summary>
+        public long StorageBytes { get; }
 
         /// <summary>
         /// Starts the server

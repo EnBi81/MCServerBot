@@ -56,7 +56,12 @@ namespace Application.MinecraftServer
         /// <summary>
         /// Phisical storage space on the disk of the server.
         /// </summary>
-        public string StorageSpace { get; internal set; } = null!;
+        public string StorageSpace => FileHelper.StorageFormatter(StorageBytes);
+
+        /// <summary>
+        /// Phisical storage space on the disk of the server in BYTES.
+        /// </summary>
+        public long StorageBytes { get; internal set; }
 
         /// <summary>
         /// All of the log messages the server or the users wrote.

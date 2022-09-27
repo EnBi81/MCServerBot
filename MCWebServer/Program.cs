@@ -39,7 +39,7 @@ namespace Web_Test
             Application.MinecraftConfig.SetupConfig(
                 config.MinecraftServersBaseFolder, config.JavaLocation, 
                 config.MinecraftServerHandlerPath, config.MinecraftServerMaxRamMB, 
-                config.MinecraftServerInitRamMB);
+                config.MinecraftServerInitRamMB, 5);
             
 
             // Start Hamachi

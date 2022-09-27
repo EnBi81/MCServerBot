@@ -1,5 +1,4 @@
-﻿using Discord;
-using Loggers;
+﻿using Loggers;
 using Application.MinecraftServer.Enums;
 using System.Text.RegularExpressions;
 using LogMessage = Application.MinecraftServer.Enums.LogMessage;

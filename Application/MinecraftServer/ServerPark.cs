@@ -4,6 +4,7 @@ using Application;
 using Application.MinecraftServer.Enums;
 using Application.MinecraftServer.EventHandlers;
 using Application.MinecraftServer.Util;
+using Loggers;
 
 namespace Application.MinecraftServer
 {
@@ -24,6 +25,8 @@ namespace Application.MinecraftServer
         /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
         /// </summary>
         public static string EmptyServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Empty Server\\";
+
+
 
 
         static ServerPark()
@@ -95,6 +98,8 @@ namespace Application.MinecraftServer
         /// <param name="username">username who initiates the start</param>
         public static void StartServer(string serverName, string username)
         {
+            ValidateMaxStorage();
+
             SetActiveServer(serverName);
             ActiveServer?.Start(username);
         }
@@ -120,6 +125,8 @@ namespace Application.MinecraftServer
 
             if (ServerNameExist(name))
                 throw new Exception($"The name {name} is already taken");
+
+            ValidateMaxStorage();
 
             
             string destDir = ServersFolder + name;
@@ -203,6 +210,26 @@ namespace Application.MinecraftServer
         {
             if(!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
                 throw new Exception($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
+        }
+
+        private static void ValidateMaxStorage()
+        {
+            var dir = MinecraftConfig.Instance.MinecraftServersBaseFolder;
+            long maxDiskSpaceByte = (long)MinecraftConfig.Instance.MaxSumOfDiskSpaceGB * (1024 * 1024 * 1024);
+
+            (bool overflow, long measured) = FileHelper.CheckStorageOverflow(dir, maxDiskSpaceByte);
+
+            string measuredString = FileHelper.StorageFormatter(measured);
+
+            LogService.GetService<MinecraftLogger>().Log("serverpark", "Storage measured: " + measuredString);
+
+            if (overflow)
+            {
+                LogService.GetService<MinecraftLogger>().Log("serverpark", "Storage OVERFLOW", ConsoleColor.Red);
+                throw new Exception($"Disk space full. Max disk space allocated: {MinecraftConfig.Instance.MaxSumOfDiskSpaceGB} GB." +
+                    $" Current storage: {measuredString}.");
+            }
+                
         }
         
         
@@ -307,8 +334,9 @@ namespace Application.MinecraftServer
             ActiveServerPlayerLeft?.Invoke(sender, new (e));
         private static void InvokeLogReceived(object? sender, LogMessage e) =>
             ActiveServerLogReceived?.Invoke(sender, new (e));
-        private static void InvokeStatusTracker(object? sender, ServerStatus e) => 
-            ActiveServerStatusChange?.Invoke(sender, new (e));
+        private static void InvokeStatusTracker(object? sender, ServerStatus e) =>
+            ActiveServerStatusChange?.Invoke(sender, new(e));
+            
 
         // ServerPark events
         private static void InvokeActiveServerChanged(IMinecraftServer activeServer) =>

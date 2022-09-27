@@ -18,7 +18,7 @@ namespace Application.MinecraftServer.States
         /// <param name="server"></param>
         public OfflineState(MinecraftServer server) : base(server)
         {
-            _server.StorageSpace = server.McServerProcess.GetStorage();
+            _server.StorageBytes = server.McServerProcess.GetStorage();
             _server.OnlineFrom = null;
 
             _server.PerformanceReporter?.Stop();

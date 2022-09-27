@@ -118,15 +118,15 @@ namespace Application.MinecraftServer
         public event EventHandler<int>? ProcessIdReceived;
 
 
-        public string GetStorage()
+        public long GetStorage()
         {
             var info = new FileInfo(_serverFileName);
-            double size = FileHelper.DirSize(info.Directory);
+            long dirSize = FileHelper.DirSize(info.Directory);
 
-            string storage = FileHelper.StorageFormatter(size);
+            string storage = FileHelper.StorageFormatter(dirSize);
             LogService.GetService<MinecraftLogger>().Log("server", $"Storage measured: " + storage);
 
-            return storage;
+            return dirSize;
         }
     }
 }
