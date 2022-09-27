@@ -1,14 +1,14 @@
-﻿using MCWebServer.Log;
-using MCWebServer.PermissionControll;
+﻿using Loggers;
+using Application.PermissionControll;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using MCWebServer.MinecraftServer;
-using MCWebServer.MinecraftServer.EventHandlers;
-using MCWebServer.MinecraftServer.Enums;
+using Application.MinecraftServer;
+using Application.MinecraftServer.EventHandlers;
+using Application.MinecraftServer.Enums;
 
-namespace MCWebServer.WebSocketHandler
+namespace Application.WebSocketHandler
 {
     /// <summary>
     /// SocketPool stores and takes care of all the incoming and established websockets.

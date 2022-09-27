@@ -1,8 +1,9 @@
 global using System;
 global using System.Linq;
 
-using MCWebServer.Config;
-using MCWebServer.Log;
+using Application.Config;
+using HamachiHelper;
+using Loggers;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -27,14 +28,23 @@ namespace Web_Test
             LogService.RegisterLogService(logService);
 
             //check internet connection
-            MCWebServer.Hamachi.NetworkingTools.CheckNetworking();
+            NetworkingTools.CheckNetworking();
 
             // Invoke importing the config
-            _ = Config.Instance.ToString();
+            var config = Config.Instance;
+
+            HamachiClient.Setup(config.HamachiLocation);
+
+
+            Application.MinecraftConfig.SetupConfig(
+                config.MinecraftServersBaseFolder, config.JavaLocation, 
+                config.MinecraftServerHandlerPath, config.MinecraftServerMaxRamMB, 
+                config.MinecraftServerInitRamMB);
+            
 
             // Start Hamachi
             if(args.Contains("--start-hamachi"))
-                _ = MCWebServer.Hamachi.HamachiClient.LogOn();
+                _ = HamachiClient.LogOn();
 
             // Start Webserver
             if(args.Contains("--web-server"))
@@ -42,7 +52,7 @@ namespace Web_Test
 
             //Start Discord bot
             if(args.Contains("--discord-bot"))
-                await MCWebServer.Discord.DiscordBot.Initialize();
+                await DiscordBot.Discord.DiscordBot.Initialize(config.DiscordBotToken);
 
             await Task.Delay(-1);
         }

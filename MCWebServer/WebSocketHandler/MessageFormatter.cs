@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using MCWebServer.MinecraftServer.Enums;
+using Application.MinecraftServer.Enums;
 
-namespace MCWebServer.WebSocketHandler
+namespace Application.WebSocketHandler
 {
     public static class MessageFormatter
     {

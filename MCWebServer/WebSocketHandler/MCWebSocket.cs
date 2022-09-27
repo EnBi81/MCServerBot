@@ -1,5 +1,5 @@
-﻿using MCWebServer.Log;
-using MCWebServer.PermissionControll;
+﻿using Loggers;
+using Application.PermissionControll;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MCWebServer.WebSocketHandler
+namespace Application.WebSocketHandler
 {
     /// <summary>
     /// Handles a single websocket instance.

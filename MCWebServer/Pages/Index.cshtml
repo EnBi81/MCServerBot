@@ -1,7 +1,7 @@
 ﻿@page
-@using MCWebServer.Hamachi
-@using MCWebServer.MinecraftServer
-@using MCWebServer.PermissionControll
+@using Application.MinecraftServer
+@using Application.PermissionControll
+@using HamachiHelper
 @model Web_Test.Pages.IndexModel
 
 @{
@@ -13,7 +13,7 @@
     var dcUser = WebsitePermission.GetUser(code);
 
     var serverAddress = HamachiClient.Address;
-    var port = MCWebServer.Config.Config.Instance.WebServerPortHttps;
+    var port = Application.Config.Config.Instance.WebServerPortHttps;
 
     var fullAddress = $"wss://{Request.HttpContext.Connection.LocalIpAddress.MapToIPv4().ToString()}:{port}/ws?{cookieName}={code}"; // Request.Host.Value
 

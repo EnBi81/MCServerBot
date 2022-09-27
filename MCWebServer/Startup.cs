@@ -1,7 +1,7 @@
-using MCWebServer.Config;
-using MCWebServer.Log;
-using MCWebServer.PermissionControll;
-using MCWebServer.WebSocketHandler;
+using Application.Config;
+using Loggers;
+using Application.PermissionControll;
+using Application.WebSocketHandler;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

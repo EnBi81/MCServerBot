@@ -15,4 +15,11 @@
     <PackageReference Include="System.Management" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\DiscordBot\DiscordBot.csproj" />
+    <ProjectReference Include="..\HamachiHelper\HamachiHelper.csproj" />
+    <ProjectReference Include="..\Loggers\Loggers.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,9 +1,8 @@
-﻿using MCWebServer.Log;
+﻿using Loggers;
 using Newtonsoft.Json;
-using System;
 using System.IO;
 
-namespace MCWebServer.Config
+namespace Application.Config
 {
     /// <summary>
     /// Handling config file for the whole program.

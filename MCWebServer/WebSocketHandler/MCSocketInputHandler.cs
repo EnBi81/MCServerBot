@@ -1,12 +1,12 @@
-﻿using MCWebServer.Log;
-using MCWebServer.MinecraftServer;
+﻿using Loggers;
+using Application.MinecraftServer;
 
 using Newtonsoft.Json.Linq;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MCWebServer.WebSocketHandler
+namespace Application.WebSocketHandler
 {
     /// <summary>
     /// Handles input received from sockets
