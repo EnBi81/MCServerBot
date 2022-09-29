@@ -57,6 +57,12 @@ class ServerSelectors{
 
     #serverDeleted(name){
         delete this.#singleServerSelectors[name];
+
+        let keys = Object.keys(this.#singleServerSelectors);
+        if(keys.length === 0)
+            this.selectServer(null);
+        else
+            this.selectServer(keys.pop());
     }
 
 

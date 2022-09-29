@@ -1,7 +1,7 @@
 /**
  * Handles an error message element and its events.
  */
-class ErrorMessageElement{
+class NotificationMessageElement {
     #htmlElement;
     #htmlInnerElement;
     #errorMessage;
@@ -12,16 +12,23 @@ class ErrorMessageElement{
 
     /**
      * Creates an error message element.
+     * @param primaryColor optional primary color
+     * @param secondaryColor optional secondary color
      * @returns {HTMLDivElement}
      */
-    createElement(){
+    createElement(primaryColor, secondaryColor){
         let innerElement = document.createElement("div");
-        innerElement.classList.add("error-text-content");
+        innerElement.classList.add("notification-text-content");
         innerElement.textContent = this.#errorMessage;
 
         let element = document.createElement("div");
-        element.classList.add("single-error-message");
+        element.classList.add("single-notification-message");
         element.appendChild(innerElement);
+
+        if(primaryColor != null)
+            element.style.setProperty('--notification-primary-color', primaryColor);
+        if(secondaryColor != null)
+            element.style.setProperty('--notification-secondary-color', secondaryColor);
 
         this.#htmlInnerElement = innerElement;
         this.#htmlElement = element;

@@ -903,7 +903,9 @@ main div.log .input input:focus::placeholder {
   transform: translateX(-50%) translateY(-50%);
 }
 
-.error-message-wrapper {
+.notification-message-wrapper {
+  --notification-primary-color: red;
+  --notification-secondary-color: orange;
   position: absolute;
   z-index: 3;
   right: 0;
@@ -911,7 +913,7 @@ main div.log .input input:focus::placeholder {
   width: 400px;
   margin-bottom: 30px;
 }
-.error-message-wrapper .error-content {
+.notification-message-wrapper .notification-content {
   width: 100%;
   height: 100%;
   display: flex;
@@ -922,10 +924,10 @@ main div.log .input input:focus::placeholder {
   flex-flow: wrap;
   gap: 20px;
 }
-.error-message-wrapper .error-content .single-error-message {
+.notification-message-wrapper .notification-content .single-notification-message {
   width: 80%;
   height: available;
-  background-image: linear-gradient(-65deg, red 20%, orange);
+  background-image: linear-gradient(-65deg, var(--notification-primary-color) 20%, var(--notification-secondary-color));
   animation: rotateBorderBg 3s infinite;
   display: flex;
   justify-content: center;
@@ -933,7 +935,7 @@ main div.log .input input:focus::placeholder {
   padding: 1px;
   border-radius: 10px;
 }
-.error-message-wrapper .error-content .single-error-message .error-text-content {
+.notification-message-wrapper .notification-content .single-notification-message .notification-text-content {
   width: 93.5%;
   height: 100%;
   padding: 20px 10px 20px 20px;
@@ -942,7 +944,7 @@ main div.log .input input:focus::placeholder {
   font-size: calc(var(--base-font-scale) * 1.3rem);
   border-radius: inherit;
 }
-.error-message-wrapper .error-content .fade-out {
+.notification-message-wrapper .notification-content .fade-out {
   animation: fadeOut 1500ms forwards ease-in;
 }
 @keyframes fadeOut {

@@ -8,7 +8,7 @@ class ServerPark{
 
     #observers = {
         "serverNameChange": [], // ([oldName, newName]) => {},
-        "serverAdded": [], // ([mcServer]) => {},
+        "serverAdded": [], // ([mcServer, isSetup]) => {},
         "serverDeleted": [], // ([name]) => {},
         "activeServerChange": [], // ([name]) => {},
         "statusChange": [], // ([serverName, status, onlineFrom, storage]) => {},
@@ -60,22 +60,8 @@ class ServerPark{
             this.#servers[name] = new MinecraftServer(this.#mcSocket, name,
                 status, players, logs, cpu, memory, storage, onlineFrom);
 
-            this.#invokeObserver("serverAdded", this.#servers[name]);
+            this.#invokeObserver("serverAdded", this.#servers[name], true);
         }
-    }
-
-    /**
-     * Gets the running server.
-     * @returns {null|*}
-     */
-    getRunningServer(){
-        for (const [name, server] of this.#servers) {
-            if(server.isRunning()){
-                return server;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -165,7 +151,7 @@ class ServerPark{
         this.#servers[name] = new MinecraftServer(this.#mcSocket, name, ServerStatus.Offline, [],
             [], "0%", "0 B", storage, new Date());
 
-        this.#invokeObserver("serverAdded", this.#servers[name]);
+        this.#invokeObserver("serverAdded", this.#servers[name], false);
     }
 
     /**

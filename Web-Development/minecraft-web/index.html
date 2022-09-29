@@ -35,8 +35,8 @@
     <script src="js/view/server-page/PlayerView.js"></script>
     <script src="js/view/server-page/UpdateTimers.js"></script>
     <script src="js/view/server-page/ServerInfoPage.js"></script>
-    <script src="js/view/ErrorMessageElement.js"></script>
-    <script src="js/view/ErrorView.js"></script>
+    <script src="js/view/NotificationMessageElement.js"></script>
+    <script src="js/view/NotificationView.js"></script>
     <script src="js/view/server-page/SingleServerOption.js"></script>
     <script src="js/view/server-page/ServerOptionsHandler.js"></script>
     <script src="js/view/server-selector/SingleServerSelector.js"></script>
@@ -84,7 +84,18 @@
                         </div>
                         <div class="minecraft-server">
                             Create a new server!
+                            <label>
+                                <input type="text">
+                            </label>
                         </div>
+
+                        <script>
+                            let addServerElement = document.querySelector('.minecraft-server');
+                            addServerElement.onclick = e => {
+                                e.stopPropagation();
+                                //e.preventDefault();
+                            }
+                        </script>
                     </div>
                 </div>
             </div>
@@ -163,10 +174,10 @@
 
     </div>
 </div>
-<div class="error-message-wrapper hide-on-bg-hover">
-    <div class="error-content" id="error-content">
-        <!--<div class="single-error-message">
-            <div class="error-text-content">
+<div class="notification-message-wrapper hide-on-bg-hover">
+    <div class="notification-content" id="notification-content">
+        <!--<div class="single-notification-message" style="--notification-primary-color: red;--notification-secondary-color: orange;">
+            <div class="notification-text-content">
                 This is an error message pls take it serious
             </div>
         </div>-->
@@ -350,7 +361,6 @@
     }
 
     serverPark.loadSetupData(setupData);
-    serverInfoPage.loadMCServer('Server1');
 
     document.getElementById("setup-script").remove();
 </script>

@@ -5,7 +5,7 @@ const serverPark = new ServerPark(
     `wss://${location.host}/ws?minecraft-web-login=${userCode}`
 );
 
-let errorView = new ErrorView(serverPark, "error-content");
+let notificationView = new NotificationView(serverPark, "notification-content");
 
 let serverOptionsSetupData = [
     {

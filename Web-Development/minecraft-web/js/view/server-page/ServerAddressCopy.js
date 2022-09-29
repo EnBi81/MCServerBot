@@ -52,7 +52,7 @@ class ServerAddressCopy{
                 this.#serverAddressElement.classList.add("copied");
             }
             else {
-                errorView.addErrorMessage('Cannot copy message to clipboard. Please use the https website for that!');
+                notificationView.addNotificationMessage('Cannot copy message to clipboard. Please use the https website for that!');
             }
         });
     }
