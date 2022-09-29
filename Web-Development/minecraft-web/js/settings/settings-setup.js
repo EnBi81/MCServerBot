@@ -119,3 +119,13 @@ settingsCollection.load(settingSetup);
 function toggleSettings(){
     settingsCollection.toggle();
 }
+
+let numberSettings = document.getElementById('font-size-input');
+function numberStepUp(){
+    numberSettings.stepUp();
+    numberSettings.dispatchEvent(new Event('change'))
+}
+function numberStepDown(){
+    numberSettings.stepDown();
+    numberSettings.dispatchEvent(new Event('change'))
+}

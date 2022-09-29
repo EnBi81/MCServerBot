@@ -30,13 +30,17 @@
     <script src="js/model/ServerPark.js"></script>
 
     <!--  Views -->
-    <script src="js/view/ServerAddressCopy.js"></script>
-    <script src="js/view/LogView.js"></script>
-    <script src="js/view/PlayerView.js"></script>
-    <script src="js/view/UpdateTimers.js"></script>
-    <script src="js/view/ServerInfoPage.js"></script>
+    <script src="js/view/server-page/ServerAddressCopy.js"></script>
+    <script src="js/view/server-page/LogView.js"></script>
+    <script src="js/view/server-page/PlayerView.js"></script>
+    <script src="js/view/server-page/UpdateTimers.js"></script>
+    <script src="js/view/server-page/ServerInfoPage.js"></script>
     <script src="js/view/ErrorMessageElement.js"></script>
     <script src="js/view/ErrorView.js"></script>
+    <script src="js/view/server-page/SingleServerOption.js"></script>
+    <script src="js/view/server-page/ServerOptionsHandler.js"></script>
+    <script src="js/view/server-selector/SingleServerSelector.js"></script>
+    <script src="js/view/server-selector/ServerSelectors.js"></script>
 
 
 </head>
@@ -71,12 +75,12 @@
 
                     <div class="dropdown-server-list">
                         <div id="servers">
-                            <div class="minecraft-server">
+                            <!--<div class="minecraft-server">
                                 Server1
                             </div>
                             <div class="minecraft-server">
                                 Server2
-                            </div>
+                            </div>-->
                         </div>
                         <div class="minecraft-server">
                             Create a new server!
@@ -89,10 +93,35 @@
     <main>
         <div id="server-info" class="server-info offline-colors">
             <div class="information">
-                <div style="display: flex; gap: 10px;">
-                    <div class="server-name" id="server-name">Keklepcso</div>
-                    <span class="status"></span><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <div>
+                    <div class="server-name-wrapper" id="server-name-wrapper">
+                        <div class="server-name" id="server-name">Keklepcso</div>
+                        <span class="status"></span><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+                    </div>
+                    <div class="server-options" id="server-options">
+                        <div class="server-single-option" id="rename-server-option">
+                            <label>
+                                <input placeholder="Rename Server" type="text">
+                            </label>
+                            <div class="server-option-proceed">
+                                <input class="cancel-button" type="button" value="Cancel">
+                                <input class="proceed-button" type="button" value="Proceed">
+                            </div>
+                        </div>
+                        <div class="server-single-option" id="delete-server-option">
+                            <label>
+                                <input type="button" value="Delete">
+                            </label>
+
+                            <div class="server-option-proceed">
+                                <input class="cancel-button" type="button" value="Cancel">
+                                <input class="proceed-button" type="button" value="Proceed">
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div id="server-address" class="server-address" title="Click here to copy address" tabindex="0">
                     <span id="ip-address">127.0.0.1</span>:<span id="port">25565</span>
                 </div>
@@ -159,9 +188,16 @@
         <div class="setting">
             <span id="reset-font-size" class="reset-text setting-border-transition">Font Scale:</span>
 
-            <label for="font-size-input">
-                <input type="number" id="font-size-input" step="0.1" min="0.1" max="2">
-            </label>
+            <div class="number">
+                <label for="font-size-input">
+
+                    <input type="number" id="font-size-input" step="0.1" min="0.1" max="2">
+                </label>
+                <div class="input-arrows">
+                    <div class="up-arrow" onclick="numberStepUp()">▲</div>
+                    <div class="down-arrow" onclick="numberStepDown()">▼</div>
+                </div>
+            </div>
         </div>
         <div class="setting">
             <span id="reset-primary" class="reset-text">Main Color:</span>
@@ -211,7 +247,72 @@
                         username: 'username1',
                         onlineFrom: '2022-09-25 15:10:00',
                         pastUptime: 123,
-                    }
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username1',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
+                    {
+                        username: 'username2',
+                        onlineFrom: '2022-09-25 15:10:00',
+                        pastUptime: 123,
+                    },
                 ],
                 logs: [
                     {

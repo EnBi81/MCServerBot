@@ -8,7 +8,7 @@ class ServerPark{
 
     #observers = {
         "serverNameChange": [], // ([oldName, newName]) => {},
-        "serverAdded": [], // ([newName]) => {},
+        "serverAdded": [], // ([mcServer]) => {},
         "serverDeleted": [], // ([name]) => {},
         "activeServerChange": [], // ([name]) => {},
         "statusChange": [], // ([serverName, status, onlineFrom, storage]) => {},
@@ -59,6 +59,8 @@ class ServerPark{
 
             this.#servers[name] = new MinecraftServer(this.#mcSocket, name,
                 status, players, logs, cpu, memory, storage, onlineFrom);
+
+            this.#invokeObserver("serverAdded", this.#servers[name]);
         }
     }
 
@@ -163,7 +165,7 @@ class ServerPark{
         this.#servers[name] = new MinecraftServer(this.#mcSocket, name, ServerStatus.Offline, [],
             [], "0%", "0 B", storage, new Date());
 
-        this.#invokeObserver("serverAdded", name);
+        this.#invokeObserver("serverAdded", this.#servers[name]);
     }
 
     /**
@@ -183,8 +185,10 @@ class ServerPark{
     #serverRenamed(oldName, newName){
         let temp = this.#servers[oldName];
         delete this.#servers[oldName];
+        temp.serverName = newName;
 
         this.#servers[newName] = temp;
+
 
         this.#invokeObserver("serverNameChange", oldName, newName);
     }

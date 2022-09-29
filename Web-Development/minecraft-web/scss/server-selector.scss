@@ -24,7 +24,7 @@
                       rgba(0, 0, 0, 0.9)), var(--base-dropdown-color);
 
       border: var(--base-dropdown-color) 2px solid;
-      filter: saturate(1.5) brightness(1.5);
+      filter: saturate(1.1) brightness(1.1);
     }
 
     &:hover .dropdown-border{
@@ -48,6 +48,8 @@
         padding: 0 2% 0 6%;
 
         font-size: fontSize(2rem);
+
+        user-select: none;
 
         .selected-server-name{
 

@@ -38,7 +38,7 @@ namespace DiscordBot.Discord.Commands
         [CommandOption("server-name", "Name of the new server.", ApplicationCommandOptionType.String, true)]
         public static async Task CreateServer(SocketSlashCommand command)
         {
-            string serverName = command.Data.Options.First().Value.ToString();
+            string? serverName = command.Data.Options.First().Value.ToString();
 
             if(serverName == null)
             {

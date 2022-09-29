@@ -146,7 +146,69 @@
 
 
     // number input
-    input[type="number"]{
+    .number{
+      width: 87px;
+      height: 32px;
+      font-size: fontSize(1.4rem);
+      padding: 0 0 0 10px;
+
+      color: white;
+      background: var(--base-primary-color);
+      border: white solid 1px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+
+      &:hover, &:focus{
+        outline: none;
+        background: var(--base-secondary-color);
+      }
+
+      input[type="number"]{
+        background: transparent;
+
+        color: currentColor;
+        border: none;
+        font-size: inherit;
+
+        outline: none;
+
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+          display: none;
+        }
+      }
+
+      .input-arrows{
+        position: absolute;
+        right: 0;
+
+        height: 100%;
+        min-width: 20px;
+
+        .up-arrow, .down-arrow{
+          height: 50%;
+          background: white;
+          color: black;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.8rem;
+
+          cursor: pointer;
+          user-select: none;
+
+          &:hover{
+            filter: brightness(0.8);
+          }
+        }
+      }
+    }
+
+    /*input[type="number"], .number{
       width: 87px;
       height: 32px;
       font-size: fontSize(1.4rem);
@@ -164,9 +226,9 @@
       // those up and down buttons
       &::-webkit-inner-spin-button,
       &::-webkit-outer-spin-button {
-        height: 32px;
+        min-height: 32px;
       }
-    }
+    }*/
   }
 
   // for the reset text buttons

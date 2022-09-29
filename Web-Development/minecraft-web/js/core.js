@@ -6,6 +6,24 @@ const serverPark = new ServerPark(
 );
 
 let errorView = new ErrorView(serverPark, "error-content");
+
+let serverOptionsSetupData = [
+    {
+        singleServerOptionId: "rename-server-option",
+        listeners: [
+            { "keypress": e => e.key === "Enter" }
+        ],
+        onProceed: inputElement => serverInfoPage.getSelectedServer().renameServer(inputElement.value),
+    },
+    {
+        singleServerOptionId: "delete-server-option",
+        listeners: [
+            { "click": () => true }
+        ],
+        onProceed: () => serverInfoPage.getSelectedServer().deleteServer(),
+    }
+]
+
 const serverInfoPage = new ServerInfoPage(
     serverPark,
     "server-info",
@@ -18,5 +36,10 @@ const serverInfoPage = new ServerInfoPage(
     "storage",
     "start-button",
     "log-messages",
-    "command-input"
-)
+    "command-input",
+    'server-name-wrapper',
+    'server-options',
+    serverOptionsSetupData
+);
+
+const serverSelector = new ServerSelectors(serverPark, serverInfoPage);

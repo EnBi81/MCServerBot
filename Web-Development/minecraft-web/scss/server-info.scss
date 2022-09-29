@@ -29,6 +29,125 @@ $status-color: red;
 
     font-size: fontSize(2rem);
     font-weight: 600;
+    text-overflow: clip;
+
+    cursor: pointer;
+
+    &:hover{
+      background: var(--base-secondary-color);
+    }
+  }
+
+  .server-name-wrapper{
+    display: flex;
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .server-name-wrapper.server-option-active{
+    & ~ .server-options{
+      display: block;
+    }
+  }
+
+  .server-options{
+    display: none;
+
+    padding-left: 20px;
+    margin-bottom: 2rem;
+
+    font-size: fontSize(1.3rem);
+
+    .server-single-option{
+      margin-top: 10px;
+      position: relative;
+      width: 80%;
+
+      label{
+        input{
+          font-size: inherit;
+          color: white;
+          border: none;
+          height: 30px;
+          width: 100%;
+        }
+
+        input[type="text"]{
+          background: var(--base-secondary-color);
+
+          &::placeholder {
+            color: #c5c5c5;
+          }
+
+          &:hover{
+            filter: brightness(1.3);
+          }
+        }
+
+        input[type="button"]{
+          background: #c50707;
+
+          &:hover{
+            background: #e3e3e3;
+            color: #c50707;
+          }
+        }
+      }
+
+      &.proceed-active{
+        .server-option-proceed{
+          display: flex;
+        }
+
+        // hide outline when the proceed is active
+        label input{
+          outline: none !important;
+        }
+      }
+
+      .server-option-proceed{
+        display: none;
+
+        // position and height top so that this box appears on top of the inputs
+        position: absolute;
+        width: 105%;
+        height: 110%;
+        top: -5%;
+        left: -1%;
+
+        align-items: center;
+        justify-content: space-between;
+
+        background: var(--base-primary-color);
+
+        input{
+          height: 80%;
+          cursor: pointer;
+
+          outline: none;
+
+          &:hover{
+            color: white;
+          }
+        }
+
+        .cancel-button{
+          background: #f57272;
+
+          &:hover{
+            background: #9d0505;
+          }
+        }
+
+        .proceed-button{
+          background: #8ffa8f;
+
+          &:hover{
+            background: #128012;
+          }
+        }
+      }
+    }
   }
 
   $status-size: 20px;
@@ -36,6 +155,9 @@ $status-color: red;
     box-sizing: border-box;
     width: $status-size;
     height: $status-size;
+    min-width: $status-size;
+    min-height: $status-size;
+
     border-radius: 50%;
     background: var(--circle-color);
 
@@ -127,7 +249,7 @@ $status-color: red;
   }
   .active-players{
     margin-top: 40px;
-    height: calc(100% - 250px);
+    height: calc(100% - 350px);
 
     overflow-y: auto;
     overflow-x: hidden;
@@ -158,8 +280,8 @@ $status-color: red;
         display: none;
         position: absolute;
         z-index: 3;
-        top: -20px;
-        left: 130px;
+        top: -10px;
+        left: 110px;
         background: #505050;
         padding: 5px;
         border-radius: 5px;

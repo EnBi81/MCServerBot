@@ -349,11 +349,97 @@ header .welcome-message b {
   gap: 10px;
   font-size: calc(var(--base-font-scale) * 2rem);
   font-weight: 600;
+  text-overflow: clip;
+  cursor: pointer;
+}
+.server-info .server-name:hover {
+  background: var(--base-secondary-color);
+}
+.server-info .server-name-wrapper {
+  display: flex;
+  gap: 10px;
+  max-width: 100%;
+}
+.server-info .server-name-wrapper.server-option-active ~ .server-options {
+  display: block;
+}
+.server-info .server-options {
+  display: none;
+  padding-left: 20px;
+  margin-bottom: 2rem;
+  font-size: calc(var(--base-font-scale) * 1.3rem);
+}
+.server-info .server-options .server-single-option {
+  margin-top: 10px;
+  position: relative;
+  width: 80%;
+}
+.server-info .server-options .server-single-option label input {
+  font-size: inherit;
+  color: white;
+  border: none;
+  height: 30px;
+  width: 100%;
+}
+.server-info .server-options .server-single-option label input[type=text] {
+  background: var(--base-secondary-color);
+}
+.server-info .server-options .server-single-option label input[type=text]::placeholder {
+  color: #c5c5c5;
+}
+.server-info .server-options .server-single-option label input[type=text]:hover {
+  filter: brightness(1.3);
+}
+.server-info .server-options .server-single-option label input[type=button] {
+  background: #c50707;
+}
+.server-info .server-options .server-single-option label input[type=button]:hover {
+  background: #e3e3e3;
+  color: #c50707;
+}
+.server-info .server-options .server-single-option.proceed-active .server-option-proceed {
+  display: flex;
+}
+.server-info .server-options .server-single-option.proceed-active label input {
+  outline: none !important;
+}
+.server-info .server-options .server-single-option .server-option-proceed {
+  display: none;
+  position: absolute;
+  width: 105%;
+  height: 110%;
+  top: -5%;
+  left: -1%;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--base-primary-color);
+}
+.server-info .server-options .server-single-option .server-option-proceed input {
+  height: 80%;
+  cursor: pointer;
+  outline: none;
+}
+.server-info .server-options .server-single-option .server-option-proceed input:hover {
+  color: white;
+}
+.server-info .server-options .server-single-option .server-option-proceed .cancel-button {
+  background: #f57272;
+}
+.server-info .server-options .server-single-option .server-option-proceed .cancel-button:hover {
+  background: #9d0505;
+}
+.server-info .server-options .server-single-option .server-option-proceed .proceed-button {
+  background: #8ffa8f;
+}
+.server-info .server-options .server-single-option .server-option-proceed .proceed-button:hover {
+  background: #128012;
 }
 .server-info .status {
   box-sizing: border-box;
   width: 20px;
   height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   border-radius: 50%;
   background: var(--circle-color);
   position: relative;
@@ -427,7 +513,7 @@ header .welcome-message b {
 }
 .server-info .active-players {
   margin-top: 40px;
-  height: calc(100% - 250px);
+  height: calc(100% - 350px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -453,8 +539,8 @@ header .welcome-message b {
   display: none;
   position: absolute;
   z-index: 3;
-  top: -20px;
-  left: 130px;
+  top: -10px;
+  left: 110px;
   background: #505050;
   padding: 5px;
   border-radius: 5px;
@@ -645,6 +731,27 @@ main div.log .input input:focus::placeholder {
   border-bottom: var(--base-secondary-color) 2px solid;
   border-top: var(--base-secondary-color) 2px solid;
   position: relative;
+  /*input[type="number"], .number{
+    width: 87px;
+    height: 32px;
+    font-size: fontSize(1.4rem);
+    padding: 0 0 0 10px;
+
+    color: white;
+    background: var(--base-primary-color);
+    border: white solid 1px;
+
+    &:hover, &:focus{
+      outline: none;
+      background: var(--base-secondary-color);
+    }
+
+    // those up and down buttons
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      min-height: 32px;
+    }
+  }*/
 }
 #settings .setting:hover {
   animation: bg-slide-in 200ms forwards;
@@ -690,7 +797,7 @@ main div.log .input input:focus::placeholder {
 #settings .setting input[type=color]::-webkit-color-swatch {
   border: none;
 }
-#settings .setting input[type=number] {
+#settings .setting .number {
   width: 87px;
   height: 32px;
   font-size: calc(var(--base-font-scale) * 1.4rem);
@@ -698,13 +805,44 @@ main div.log .input input:focus::placeholder {
   color: white;
   background: var(--base-primary-color);
   border: white solid 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
 }
-#settings .setting input[type=number]:hover, #settings .setting input[type=number]:focus {
+#settings .setting .number:hover, #settings .setting .number:focus {
   outline: none;
   background: var(--base-secondary-color);
 }
-#settings .setting input[type=number]::-webkit-inner-spin-button, #settings .setting input[type=number]::-webkit-outer-spin-button {
-  height: 32px;
+#settings .setting .number input[type=number] {
+  background: transparent;
+  color: currentColor;
+  border: none;
+  font-size: inherit;
+  outline: none;
+}
+#settings .setting .number input[type=number]::-webkit-inner-spin-button, #settings .setting .number input[type=number]::-webkit-outer-spin-button {
+  display: none;
+}
+#settings .setting .number .input-arrows {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  min-width: 20px;
+}
+#settings .setting .number .input-arrows .up-arrow, #settings .setting .number .input-arrows .down-arrow {
+  height: 50%;
+  background: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+#settings .setting .number .input-arrows .up-arrow:hover, #settings .setting .number .input-arrows .down-arrow:hover {
+  filter: brightness(0.8);
 }
 #settings .reset-text {
   cursor: pointer;
@@ -844,7 +982,7 @@ main div.log .input input:focus::placeholder {
 .right-container .dropdown-wrapper .dropdown-border {
   background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9)), var(--base-dropdown-color);
   border: var(--base-dropdown-color) 2px solid;
-  filter: saturate(1.5) brightness(1.5);
+  filter: saturate(1.1) brightness(1.1);
 }
 .right-container .dropdown-wrapper:hover .dropdown-border {
   filter: saturate(3) brightness(2);
@@ -856,6 +994,7 @@ main div.log .input input:focus::placeholder {
   box-sizing: border-box;
   padding: 0 2% 0 6%;
   font-size: calc(var(--base-font-scale) * 2rem);
+  user-select: none;
 }
 .right-container .dropdown-wrapper .dropdown-content .constant-content .dropdown-button {
   width: 60px;

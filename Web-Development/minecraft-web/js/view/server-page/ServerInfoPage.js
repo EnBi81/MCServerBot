@@ -18,9 +18,13 @@ class ServerInfoPage{
     #logView;
     #playerView;
     #updateTimers;
+    #serverOptionsHandler;
 
 
-    constructor(serverPark, serverInfoId, serverNameId, serverAddressId, serverUptimeId, playersBoxId, cpuId, memoryId, storageId, toggleButtonId, commandBoxId, writeCommandId) {
+    constructor(serverPark, serverInfoId, serverNameId,
+                serverAddressId, serverUptimeId, playersBoxId,
+                cpuId, memoryId, storageId, toggleButtonId,
+                commandBoxId, writeCommandId, serverNameWrapperId, serverOptionsWrapperId, serverOptionsSetupData) {
         this.#serverPark = serverPark;
 
         this.#serverInfoElement = document.getElementById(serverInfoId);
@@ -35,6 +39,7 @@ class ServerInfoPage{
         this.#logView = new LogView(commandBoxId, writeCommandId);
         this.#playerView = new PlayerView(playersBoxId);
         this.#updateTimers = new UpdateTimers(this.#serverUptimeElement, this.#playerView.playersBoxElement);
+        this.#serverOptionsHandler = new ServerOptionsHandler(serverNameWrapperId, serverOptionsWrapperId, serverOptionsSetupData);
 
         this.#setupListeners();
 
@@ -58,6 +63,14 @@ class ServerInfoPage{
 
 
     // public events
+
+    /**
+     * Gets the currently selected server.
+     * @returns {*}
+     */
+    getSelectedServer(){
+        return this.#selectedServer;
+    }
 
     /**
      * Loads the information of a minecraft server to the GUI. If the name is null or the server cannot be found, a default server will be loaded.
@@ -85,6 +98,8 @@ class ServerInfoPage{
         this.#playerView.addPlayersToView(server.players);
 
         this.#updateTimers.updateAllTime();
+        this.#serverOptionsHandler.deleteTextFromFields();
+        this.#serverOptionsHandler.closeAllProceeds();
     }
 
 
