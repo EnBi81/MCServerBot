@@ -103,7 +103,6 @@ class ServerSelectors{
             this.#selectedServerNameElement.setAttribute('data-default-server', '0');
         }
 
-
         this.#selectedServerNameElement.textContent = this.#selectedServer.serverName;
     }
 }

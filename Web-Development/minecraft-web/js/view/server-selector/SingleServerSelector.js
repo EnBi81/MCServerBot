@@ -4,7 +4,6 @@
 class SingleServerSelector{
     #serverPark;
     #serverInfoPage;
-
     #mcServer;
 
     #htmlElement;
