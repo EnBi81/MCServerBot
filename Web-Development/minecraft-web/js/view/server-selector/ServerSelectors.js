@@ -1,3 +1,6 @@
+/**
+ * Handles the events and functionalities of the server selectors.
+ */
 class ServerSelectors{
     #singleServerSelectors = {};
 
@@ -20,12 +23,18 @@ class ServerSelectors{
         this.selectServer(null);
     }
 
+    /**
+     * Sets up the required listeners.
+     */
     #setupListeners(){
         this.#serverPark.addListener('serverAdded', ([server]) => this.#addServer(server));
         this.#serverPark.addListener('serverNameChange', ([o, n]) => this.#serverRename(o, n));
         this.#serverPark.addListener('serverDeleted', ([name]) => this.#serverDeleted(name));
     }
 
+    /**
+     * Loads servers into the GUI.
+     */
     #setupGui(){
         let allServers = this.#serverPark.getAllServers();
         for (const server of allServers) {
@@ -33,6 +42,10 @@ class ServerSelectors{
         }
     }
 
+    /**
+     * Adds a server to the GUI.
+     * @param server the server to add
+     */
     #addServer(server){
         let singleServer = new SingleServerSelector(this.#serverPark, this.#serverInfoPage, server);
         singleServer.userSelected = name => this.selectServer(name);
@@ -48,6 +61,11 @@ class ServerSelectors{
         }
     }
 
+    /**
+     * Server renamed event.
+     * @param oldName the old name of the server.
+     * @param newName the new name of the server.
+     */
     #serverRename(oldName, newName){
         let server = this.#singleServerSelectors[oldName];
         delete this.#singleServerSelectors[oldName];
@@ -55,6 +73,10 @@ class ServerSelectors{
         this.#singleServerSelectors[newName] = server;
     }
 
+    /**
+     * Server deleted event.
+     * @param name name of the server that got deleted.
+     */
     #serverDeleted(name){
         delete this.#singleServerSelectors[name];
 
@@ -66,6 +88,10 @@ class ServerSelectors{
     }
 
 
+    /**
+     * Loads the server name to the selected server field in the server selector.
+     * @param name the server name.
+     */
     selectServer(name){
         this.#selectedServer = this.#serverPark.getServer(name);
 
