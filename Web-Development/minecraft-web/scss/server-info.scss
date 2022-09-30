@@ -42,6 +42,7 @@ $status-color: red;
     display: flex;
     gap: 10px;
     max-width: 100%;
+    user-select: none;
   }
 
   .server-name-wrapper.server-option-active{
@@ -116,13 +117,15 @@ $status-color: red;
         left: -1%;
 
         align-items: center;
-        justify-content: space-between;
+        justify-content: space-around;
 
         background: var(--base-primary-color);
 
         input{
-          height: 80%;
+          height: 100%;
+          width: 30%;
           cursor: pointer;
+          font-size: fontSize(1rem);
 
           outline: none;
 

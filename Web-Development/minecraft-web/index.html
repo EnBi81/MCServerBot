@@ -62,7 +62,7 @@
         <div class="right-container">
             <div class="dropdown-wrapper">
                 <div class="dropdown-border"></div>
-                <div class="dropdown-content" id="dropdown-content"
+                <div class="dropdown-content active" id="dropdown-content"
                      onclick="this.classList.toggle('active')">
                     <div class="constant-content" onmousedown="this.classList.add('press')" onmouseup="this.classList.remove('press')">
                         <div class="selected-server-name">Keklepcso</div>
@@ -74,28 +74,45 @@
                     </div>
 
                     <div class="dropdown-server-list">
-                        <div id="servers">
-                            <!--<div class="minecraft-server">
-                                Server1
+                        <div class="dropdown-list-bg">
+                            <div class="dropdown-list-content-servers">
+                                <div class="minecraft-server"></div>
+                                <div class="minecraft-server"></div>
+                                <div class="minecraft-server"></div>
+                                <div class="minecraft-server"> </div>
                             </div>
-                            <div class="minecraft-server">
-                                Server2
-                            </div>-->
                         </div>
-                        <div class="minecraft-server">
-                            Create a new server!
-                            <label>
-                                <input type="text">
-                            </label>
-                        </div>
+                        <div class="dropdown-list-content">
+                            <div class="dropdown-list-content-servers" id="servers">
+                                <div class="minecraft-server running-server">
+                                    Server1
+                                </div>
+                                <div class="minecraft-server">
+                                    Server2
+                                </div>
+                                <div class="minecraft-server">
+                                    Server2
+                                </div>
+                                <div class="minecraft-server">
+                                    Server2
+                                </div>
+                            </div>
+                            <div>
+                                <label>
+                                    <input id="new-server-box" class="new-server-box" type="text" placeholder="Create a new server!">
+                                </label>
+                                <!--<label>
+                                    <input type="text">
+                                </label>-->
 
-                        <script>
-                            let addServerElement = document.querySelector('.minecraft-server');
-                            addServerElement.onclick = e => {
-                                e.stopPropagation();
-                                //e.preventDefault();
-                            }
-                        </script>
+                                <!--<script>
+                                let addServerElement = document.querySelector('.minecraft-server');
+                                addServerElement.onclick = e => {
+                                    e.stopPropagation();
+                                }
+                            </script>-->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,7 +263,7 @@
 </div>
 </body>
 
-<script src="js/core.js"></script>
+<!--<script src="js/core.js"></script>-->
 <script id="setup-script">
     let setupData = {
         servers: [
@@ -360,7 +377,7 @@
         ]
     }
 
-    serverPark.loadSetupData(setupData);
+    /*serverPark.loadSetupData(setupData);*/
 
     document.getElementById("setup-script").remove();
 </script>

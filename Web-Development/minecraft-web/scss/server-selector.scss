@@ -1,17 +1,28 @@
 @import "functions";
 
+
+$dropdown-bg-brighter: rgba(0, 0, 0, 0.9);
+$dropdown-bg-darker: rgba(0, 0, 0, 0.95);
+
+$offline-server-color: #adadad;
+$offline-server-hover-color: #ececec;
+$running-server-color: #63bb63;
+$running-server-hover-color: #a2f3a2;
+
+
 // right part of the header
 .right-container{
   width: 500px;
-  height: 80px;
+  height: 65px;
   margin-right: 20px;
 
 
   // dropdown outer wrapper
   .dropdown-wrapper{
     @extend %full-size;
-
     position: relative;
+
+    border-radius: 10px;
 
     // dropdown border and background color
     .dropdown-border{
@@ -20,11 +31,14 @@
 
       //make background darker
       background: linear-gradient(
-                      rgba(0, 0, 0, 0.85),
-                      rgba(0, 0, 0, 0.9)), var(--base-dropdown-color);
+                      $dropdown-bg-brighter,
+                      $dropdown-bg-darker), var(--base-dropdown-color);
+
 
       border: var(--base-dropdown-color) 2px solid;
       filter: saturate(1.1) brightness(1.1);
+
+      border-radius: inherit;
     }
 
     &:hover .dropdown-border{
@@ -45,7 +59,7 @@
         align-items: center;
 
         box-sizing: border-box;
-        padding: 0 2% 0 6%;
+        padding: 0 2% 0 3.5%;
 
         font-size: fontSize(2rem);
 
@@ -57,8 +71,8 @@
 
         // the minecraft button
         .dropdown-button{
-          width: 60px;
-          height: 60px;
+          min-width: 50px;
+          height: 50px;
 
           position: relative;
 
@@ -104,25 +118,121 @@
       // this is the actual dropdown
       .dropdown-server-list{
         display: none;
-
-        width: 100%;
         height: 100px;
-        background: linear-gradient(
-                        rgba(0, 0, 0, 0.7),
-                        rgba(0, 0, 0, 0.7)), var(--base-dropdown-color);
+        width: 99%;
 
-        box-sizing: border-box;
-        padding: 10px;
-        font-size: fontSize(1.3rem);
+        position: relative;
+        transform: translateY(-2px);
 
-        .minecraft-server{
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+        .dropdown-list-bg{
+          @extend %full-size;
 
-          color: white;
-          width: 100%;
+          float: left;
+          position: absolute;
+          top: 0;
+          left: 0;
 
+
+
+          background: linear-gradient(
+                          $dropdown-bg-darker,
+                          $dropdown-bg-brighter), var(--base-dropdown-color);
+
+          border: var(--base-dropdown-color) 2px solid;
+          border-top: none;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+
+          // to keep the same height of the bg as the server list menu, there are copies of the server-list elements
+          // which are put in this element. Here we set them as not visible, to hide them (obviously).
+          .dropdown-list-content-servers{
+            opacity: 0;
+          }
+        }
+
+
+        // to make the dropdown bg only saturated when the user hovers only on the dropdown, and not
+        // on the "create a new server" field
+        // btw wtf is this
+        .dropdown-list-bg:has(+ .dropdown-list-content > .dropdown-list-content-servers:hover){
+          filter: saturate(3) brightness(2);
+        }
+
+
+        //this class is ok    ,  this is here to copy the height of the dropdown-list-content element.
+        .dropdown-list-content, .dropdown-list-bg{
+          position: absolute;
+          z-index: 1;
+
+          padding: 10px;
+          font-size: fontSize(1.3rem);
+
+          width: 95%;
+          height: auto;
+
+          .dropdown-list-content-servers{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          }
+
+          .minecraft-server{
+            display: flex;
+            align-items: center;
+            justify-content: left;
+
+            color: $offline-server-color;
+            width: 100%;
+
+            cursor: pointer;
+
+
+            &::before{
+              content: '▶';
+              margin-right: 5px;
+            }
+
+            &:hover{
+              color: $offline-server-hover-color;
+            }
+          }
+
+          .running-server{
+            color: $running-server-color;
+
+            &::after {
+              content: '(Running)';
+              margin-left: 10px;
+            }
+
+            &:hover{
+              color: $running-server-hover-color;
+            }
+          }
+
+          .new-server-box{
+            width: 60%;
+            height: 40px;
+
+            margin-top: 5%;
+
+            font-size: fontSize(1rem);
+
+            padding-left: 10px;
+
+            background: linear-gradient(
+                            $dropdown-bg-darker,
+                            $dropdown-bg-brighter), var(--base-dropdown-color);
+            border: var(--base-dropdown-color) 2px solid;
+            border-radius: 5px;
+
+
+            &:hover{
+              &::placeholder{
+                color: #dadada;
+              }
+            }
+          }
         }
       }
     }
