@@ -58,12 +58,12 @@ namespace Web_Test
             {
                 string? ip = context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
                 LogService.GetService<WebLogger>().Log("ws-request", "Request received from " + ip);
-
+                
+                
                 if (!context.Request.Query.ContainsKey(WebsitePermission.CookieName))
                 {
                     LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no request query found"); return;
                 }
-                    
 
                 var code = context.Request.Query[WebsitePermission.CookieName];
                 if (!WebsitePermission.HasAccess(code))
@@ -72,13 +72,16 @@ namespace Web_Test
                     return;
                 }
 
-
                 if (context.WebSockets.IsWebSocketRequest)
                 {
                     LogService.GetService<WebLogger>().Log("ws-request", "Websocket accepted for " + ip);
 
                     WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
                     await SocketPool.SocketPoolInstance.AddSocket(code, ws);
+                }
+                else
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", "Not a websocket request: " + ip);
                 }
             }
         }

@@ -6,7 +6,7 @@ class MinecraftServer{
         if(serverName == null)
             serverName = "No Server";
 
-        let mcServer = new MinecraftServer(null, serverName, ServerStatus.Offline, [], [], "- %", "- B", "- B", new Date(0));
+        let mcServer = new MinecraftServer(new MCSocket(), serverName, ServerStatus.Offline, [], [], "- %", "- B", "- B", new Date(0));
 
         mcServer.renameServer = () => {};
         mcServer.deleteServer = () => {};
@@ -70,7 +70,7 @@ class MinecraftServer{
      * Sends a toggle request to the server
      */
     toggle(){
-        mcSocket.sendHandler.sendToggle(this.serverName);
+        this.#mcSocket.sendHandler.sendToggle(this.serverName);
     }
 
     /**

@@ -18,7 +18,13 @@ class MCSocketSender {
 
         let request = {request: requestName, data: data};
         let json = JSON.stringify(request);
-        this.#socket.send(json);
+
+        try{
+            this.#socket.send(json);
+        } catch (e){
+            this.#socketReceiver.errorReceived("No connection with the server! Please refresh the page.");
+        }
+
     }
 
     /**

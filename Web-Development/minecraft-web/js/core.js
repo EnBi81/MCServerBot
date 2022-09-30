@@ -2,7 +2,7 @@ let userCode = document.body.getAttribute("data-user-code");
 document.body.removeAttribute("data-user-code");
 
 const serverPark = new ServerPark(
-    `wss://${location.host}/ws?minecraft-web-login=${userCode}`
+    `wss://${location.hostname}/ws?minecraft-web-login=${userCode}`
 );
 
 let notificationView = new NotificationView(serverPark, "notification-content");

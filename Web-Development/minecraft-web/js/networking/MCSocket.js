@@ -11,12 +11,15 @@ class MCSocket{
     constructor(address) {
         this.receiveHandler = new MCSocketReceived();
 
-        this.#socket = new WebSocket(address);
-        this.#socket.addEventListener('message', e => this.#dataReceived(e));
-        this.#socket.addEventListener('open', () => console.log("Websocket ready!"));
-        this.#socket.addEventListener('close', () => this.receiveHandler.errorReceived("Connection to Server could not be established :(("));
+        try{
+            this.#socket = new WebSocket(address);
+            this.#socket.addEventListener('message', e => this.#dataReceived(e));
+            this.#socket.addEventListener('open', () => console.log("Websocket ready!"));
+            this.#socket.addEventListener('close', () => this.receiveHandler.errorReceived("Connection to Server could not be established :(("));
 
-        this.sendHandler = new MCSocketSender(this.#socket, this.receiveHandler);
+            this.sendHandler = new MCSocketSender(this.#socket, this.receiveHandler);
+        } catch (e){
+        }
     }
 
     /**
