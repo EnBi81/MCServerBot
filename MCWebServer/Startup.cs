@@ -40,6 +40,10 @@ namespace Web_Test
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "v1/{controller=ServerPark}/{action=Get}"
+                    );
             });
 
             LogService.GetService<WebLogger>().Log("setup", "Setting up websocket usage.");

@@ -15,7 +15,7 @@
     var serverAddress = HamachiClient.Address;
     var port = Application.Config.Config.Instance.WebServerPortHttps;
 
-    var fullAddress = $"wss://{Request.HttpContext.Connection.LocalIpAddress.MapToIPv4().ToString()}:{port}/ws?{cookieName}={code}"; // Request.Host.Value
+    var fullAddress = $"wss://{Request.HttpContext.Connection.LocalIpAddress?.MapToIPv4()?.ToString()}:{port}/ws?{cookieName}={code}"; // Request.Host.Value
 
 
    <!DOCTYPE html>

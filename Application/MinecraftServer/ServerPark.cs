@@ -115,11 +115,27 @@ namespace Application.MinecraftServer
 
 
         /// <summary>
+        /// Toggles a server, e.g. it starts if it's offline, and stops if it's online.
+        /// </summary>
+        /// <param name="serverName">server to toggle</param>
+        /// <param name="username">username who initiated this action</param>
+        public static void ToggleServer(string serverName, string username = "Admin")
+        {
+            SetActiveServer(serverName);
+
+            if(ActiveServer!.IsRunning)
+                ActiveServer.Start(username);
+            else
+                ActiveServer.Shutdown(username);
+        }
+
+
+        /// <summary>
         /// Creates a new server folder by copying the empty folder to the servers folder.
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public static void CreateServer(string name)
+        public static IMinecraftServer CreateServer(string name)
         {
             ValidateNameLength(name);
 
@@ -134,7 +150,7 @@ namespace Application.MinecraftServer
 
             FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
-            RegisterMcServer(name, destDir);
+            return RegisterMcServer(name, destDir);
         }
 
         /// <summary>
@@ -238,11 +254,13 @@ namespace Application.MinecraftServer
         /// </summary>
         /// <param name="serverName"></param>
         /// <param name="folderPath"></param>
-        private static void RegisterMcServer(string serverName, string folderPath)
+        private static IMinecraftServer RegisterMcServer(string serverName, string folderPath)
         {
             IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
             MCServers.Add(serverName, mcServer);
             InvokeServerAdded(mcServer);
+
+            return mcServer;
         }
 
 

@@ -1006,7 +1006,7 @@ main div.log .input input:focus::placeholder {
   border-radius: 10px;
 }
 .right-container .dropdown-wrapper .dropdown-border {
-  background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.95)), var(--base-dropdown-color);
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.95)), var(--base-dropdown-color);
   border: var(--base-dropdown-color) 2px solid;
   filter: saturate(1.1) brightness(1.1);
   border-radius: inherit;
@@ -1062,7 +1062,7 @@ main div.log .input input:focus::placeholder {
   position: absolute;
   top: 0;
   left: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.9)), var(--base-dropdown-color);
+  background: linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85)), var(--base-dropdown-color);
   border: var(--base-dropdown-color) 2px solid;
   border-top: none;
   border-bottom-left-radius: 10px;
@@ -1118,7 +1118,7 @@ main div.log .input input:focus::placeholder {
   margin-top: 5%;
   font-size: calc(var(--base-font-scale) * 1rem);
   padding-left: 10px;
-  background: linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.9)), var(--base-dropdown-color);
+  background: linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85)), var(--base-dropdown-color);
   border: var(--base-dropdown-color) 2px solid;
   border-radius: 5px;
 }

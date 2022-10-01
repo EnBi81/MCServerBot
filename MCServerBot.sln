@@ -9,13 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCServerHandler", "MCServer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox\Sandbox.csproj", "{F6A0C4E3-8433-4C09-AB0A-57263CB4F368}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordBot", "DiscordBot\DiscordBot.csproj", "{EEF1CB9C-CA8D-47C3-8EE1-420AD1D06351}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordBot", "DiscordBot\DiscordBot.csproj", "{EEF1CB9C-CA8D-47C3-8EE1-420AD1D06351}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loggers", "Loggers\Loggers.csproj", "{A8AFBEA1-3E61-4C12-A672-49B3913F523C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loggers", "Loggers\Loggers.csproj", "{A8AFBEA1-3E61-4C12-A672-49B3913F523C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{5F2EBE5F-7E86-42C3-94AF-E8455446AFB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{5F2EBE5F-7E86-42C3-94AF-E8455446AFB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HamachiHelper", "HamachiHelper\HamachiHelper.csproj", "{77211A9E-B5E3-4CC7-BD75-E97F24CCB44C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HamachiHelper", "HamachiHelper\HamachiHelper.csproj", "{77211A9E-B5E3-4CC7-BD75-E97F24CCB44C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCWebApp", "MCWebApp\MCWebApp.csproj", "{92B8F99F-1A50-4CEB-BC81-24E2648D770E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{77211A9E-B5E3-4CC7-BD75-E97F24CCB44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77211A9E-B5E3-4CC7-BD75-E97F24CCB44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77211A9E-B5E3-4CC7-BD75-E97F24CCB44C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -49,7 +49,7 @@ namespace DiscordBot.PermissionControll
 
 
 
-        private static string PermissionFile => "user-permissions.json";
+        private static string PermissionFile => "Resources/user-permissions.json";
         private static Dictionary<ulong, DiscordUser> ReadPermissions()
         {
             try

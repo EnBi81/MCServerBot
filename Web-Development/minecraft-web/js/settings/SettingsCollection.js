@@ -7,10 +7,12 @@ class SettingsCollection{
 
     #settingWrapperElement; // to toggle hide
     #settingsAllResetElement; // add event listener to reset all settings
+    #logoutButton;
 
-    constructor(settingWrapperId, settingsAllResetId) {
+    constructor(settingWrapperId, settingsAllResetId, logoutButtonId) {
         this.#settingWrapperElement = document.getElementById(settingWrapperId);
         this.#settingsAllResetElement = document.getElementById(settingsAllResetId);
+        this.#logoutButton = document.getElementById(logoutButtonId);
 
         this.#setupListener();
     }
@@ -20,6 +22,12 @@ class SettingsCollection{
      */
     #setupListener(){
         this.#settingsAllResetElement.addEventListener('dblclick', () => this.reset());
+        this.#logoutButton.addEventListener('click', () => {
+            let result = confirm('Do you really want to log out?');
+            if(result === true){
+                Logout.logout();
+            }
+        })
     }
 
     /**

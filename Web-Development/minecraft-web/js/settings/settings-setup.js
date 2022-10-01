@@ -109,7 +109,11 @@ const settingSetup = {
 })();
 
 // create an empty SettingsCollection instance.
-let settingsCollection = new SettingsCollection('settings-wrapper', 'settings-title');
+let settingsCollection = new SettingsCollection(
+    'settings-wrapper',
+    'settings-title',
+    'logout'
+);
 // load the settings data into the SettingsCollection
 settingsCollection.load(settingSetup);
 

@@ -9,6 +9,7 @@ class ServerSelectors{
     #selectedServer;
 
     #serverDropdownElement;
+    #serverDropdownBgElement;
     #selectedServerNameElement;
 
     constructor(serverPark, serverInfoPage) {
@@ -16,6 +17,7 @@ class ServerSelectors{
         this.#serverInfoPage = serverInfoPage;
 
         this.#serverDropdownElement = document.getElementById('servers');
+        this.#serverDropdownBgElement = document.getElementById('servers-bg');
         this.#selectedServerNameElement = document.querySelector('.selected-server-name');
         this.#setupListeners();
         this.#setupGui();
@@ -59,6 +61,9 @@ class ServerSelectors{
         if(this.#selectedServerNameElement.getAttribute('data-default-server') === '1'){
             singleServer.select();
         }
+
+        // this is to keep the bg the same height
+        this.#serverDropdownBgElement.innerHTML += '<div class="minecraft-server"></div>';
     }
 
     /**
@@ -85,6 +90,11 @@ class ServerSelectors{
             this.selectServer(null);
         else
             this.selectServer(keys.pop());
+
+        // this is to keep the bg the same height
+        try{
+            this.#serverDropdownBgElement.children[0].remove();
+        }catch (e){}
     }
 
 

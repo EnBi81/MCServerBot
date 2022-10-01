@@ -110,7 +110,7 @@ namespace Application.PermissionControll
 
 
 
-        private static string PermissionFile => "web-permissions.json";
+        private static string PermissionFile => "Resources/web-permissions.json";
         private static Dictionary<string, ulong> ReadPermissions()
         {
             try

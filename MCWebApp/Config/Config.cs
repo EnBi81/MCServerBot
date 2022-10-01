@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.IO;
 
-namespace Application.Config
+namespace MCWebApp.Config
 {
     /// <summary>
     /// Handling config file for the whole program.
