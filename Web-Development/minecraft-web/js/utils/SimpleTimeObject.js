@@ -21,6 +21,14 @@ class SimpleTimeObject {
     }
 
 
+    static fromText(text){
+        let hour = text.slice(0, 2);
+        let minute = text.slice(2, 4);
+        let second = text.slice(4, 6);
+
+        return new SimpleTimeObject(parseInt(hour), parseInt(minute), parseInt(second));
+    }
+
 
     #hour;
     #minute;

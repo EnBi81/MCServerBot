@@ -1,7 +1,7 @@
 /**
  * Creates and listens to the socket. Handles received data, and can send data to the server.
  */
-class MCSocket{
+class MCNetworking {
     #socket;
 
     receiveHandler;

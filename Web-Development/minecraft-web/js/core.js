@@ -43,3 +43,6 @@ const serverInfoPage = new ServerInfoPage(
 );
 
 const serverSelector = new ServerSelectors(serverPark, serverInfoPage);
+
+
+serverPark.setup();

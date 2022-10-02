@@ -5,26 +5,55 @@ class MCSocketSender {
     #socket;
     #socketReceiver;
 
+    BASE_API_URL = "/api/v1/"
+
     constructor(socket, socketReceiver) {
         this.#socket = socket;
         this.#socketReceiver = socketReceiver;
     }
 
-    #sendToServer(requestName, data = null){
-        if(this.#socket.readyState === 3){
-            this.#socketReceiver.errorReceived("No connection with the server! Please refresh the page.");
-            return;
-        }
-
-        let request = {request: requestName, data: data};
-        let json = JSON.stringify(request);
-
+    #sendRequest(requestUrl, methodName, body, callback){
         try{
-            this.#socket.send(json);
-        } catch (e){
-            this.#socketReceiver.errorReceived("No connection with the server! Please refresh the page.");
+            let xmlHttp = new XMLHttpRequest();
+            if(callback != null){
+                xmlHttp.onreadystatechange = () => callback(xmlHttp);
+            }
+            xmlHttp.open(methodName, this.BASE_API_URL + requestUrl, true); // true for asynchronous
+            xmlHttp.send(body);
+        }
+        catch (e){
+            this.#socketReceiver.errorReceived("No connection with the server!");
         }
 
+    }
+    #post(requestUrl, data){
+        this.#sendRequest(requestUrl, "POST", data);
+    }
+
+    #delete(requestUrl){
+        this.#sendRequest(requestUrl, "DELETE", null);
+    }
+
+    #put(requestUrl, data){
+        this.#sendRequest(requestUrl, "PUT", data);
+    }
+
+    #get(requestUrl, callback){
+        this.#sendRequest(requestUrl, "GET", null, callback);
+    }
+
+
+    /**
+     * Requests the setup data.
+     * @param callback this method will be called with the parsed json data in the parameter.
+     */
+    getSetupData(callback){
+        let networkCallback = request => {
+            if (request.readyState === 4 && request.status === 200)
+                callback(JSON.parse(request.textContent));
+        }
+
+        this.#get("serverpark", networkCallback);
     }
 
     /**
@@ -32,8 +61,7 @@ class MCSocketSender {
      * @param serverName the server to turn on/off.
      */
     sendToggle(serverName){
-        let data = { "server-name": serverName };
-        this.#sendToServer('toggle', data);
+        this.#post(`minecraftserver/${serverName}/toggle`);
     }
 
     /**
@@ -41,8 +69,8 @@ class MCSocketSender {
      * @param serverName the new server's name.
      */
     sendAddServer(serverName){
-        let data = { "server-name": serverName };
-        this.#sendToServer('add-server', data);
+        let data = { "new-name": serverName };
+        this.#post(`serverpark`, data);
     }
 
     /**
@@ -50,8 +78,7 @@ class MCSocketSender {
      * @param serverName the name of the server to be removed.
      */
     sendRemoveServer(serverName){
-        let data = { "server-name": serverName };
-        this.#sendToServer('remove-server', data);
+        this.#delete(`minecraftserver/${serverName}`);
     }
 
     /**
@@ -60,8 +87,8 @@ class MCSocketSender {
      * @param newName new name of the server-
      */
     sendRenameServer(oldName, newName){
-        let data = { "old-name": oldName, "new-name": newName };
-        this.#sendToServer('rename-server', data);
+        let data = { "new-name": newName };
+        this.#put(`/api/v1/minecraftserver/${oldName}`, data);
     }
 
     /**
@@ -70,14 +97,7 @@ class MCSocketSender {
      * @param command the command to write.
      */
     sendWriteCommand(serverName, command){
-        let data = { "server-name": serverName, "command": command };
-        this.#sendToServer('write-command', data);
-    }
-
-    /**
-     * Logs out from the page.
-     */
-    sendLogout(){
-        this.#sendToServer('logout', null);
+        let data = { "command-data": command };
+        this.#post(`/api/v1/minecraftserver/${serverName}/commands`, data);
     }
 }

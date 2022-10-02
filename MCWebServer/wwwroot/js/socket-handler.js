@@ -1,5 +1,5 @@
 let address = document.body.getAttribute("data-webaddress")
-const mcSocket = new MCSocket(address);
+const mcSocket = new MCNetworking(address);
 
 /*mcSocket.logReceived = (message, type) => {
     let logType;

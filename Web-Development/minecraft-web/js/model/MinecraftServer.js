@@ -6,7 +6,7 @@ class MinecraftServer{
         if(serverName == null)
             serverName = "No Server";
 
-        let mcServer = new MinecraftServer(new MCSocket(), serverName, ServerStatus.Offline, [], [], "- %", "- B", "- B", new Date(0));
+        let mcServer = new MinecraftServer(new MCNetworking(), serverName, ServerStatus.Offline, [], [], "- %", "- B", "- B", new Date(0));
 
         mcServer.renameServer = () => {};
         mcServer.deleteServer = () => {};
@@ -17,7 +17,7 @@ class MinecraftServer{
     }
 
 
-    #mcSocket;
+    #mcNetworking;
 
     serverName; // string
     players = []; // MinecraftPlayer[]
@@ -28,10 +28,10 @@ class MinecraftServer{
     status; // string: ServerStatus
     onlineFrom; // Date | null object
 
-    constructor(mcSocket, serverName, status,
+    constructor(mcNetworking, serverName, status,
                 players, logs, cpu, memory,
                 storage, onlineFrom) {
-        this.#mcSocket = mcSocket;
+        this.#mcNetworking = mcNetworking;
         this.serverName = serverName;
         this.players = [...players];
         this.logs = [...logs];
@@ -55,14 +55,14 @@ class MinecraftServer{
      * @param newName the new name of the server.
      */
     renameServer(newName){
-        this.#mcSocket.sendHandler.sendRenameServer(this.serverName, newName);
+        this.#mcNetworking.sendHandler.sendRenameServer(this.serverName, newName);
     }
 
     /**
      * Sends a server delete request to the server.
      */
     deleteServer(){
-        this.#mcSocket.sendHandler.sendRemoveServer(this.serverName);
+        this.#mcNetworking.sendHandler.sendRemoveServer(this.serverName);
     }
 
 
@@ -70,7 +70,7 @@ class MinecraftServer{
      * Sends a toggle request to the server
      */
     toggle(){
-        this.#mcSocket.sendHandler.sendToggle(this.serverName);
+        this.#mcNetworking.sendHandler.sendToggle(this.serverName);
     }
 
     /**
@@ -78,6 +78,6 @@ class MinecraftServer{
      * @param command the command to send.
      */
     writeCommand(command){
-        this.#mcSocket.sendHandler.sendWriteCommand(this.serverName, command);
+        this.#mcNetworking.sendHandler.sendWriteCommand(this.serverName, command);
     }
 }

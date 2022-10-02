@@ -10,6 +10,13 @@
       font-size: 4rem;
     }
   </style>
+
+    <script>
+        let json = JSON.parse('[{ "name": "lol" }, { "name": "hi" }]')
+        for (const jsonElement of json) {
+            console.log(jsonElement["name"]);
+        }
+    </script>
 </head>
 <body>
 You are logged out!

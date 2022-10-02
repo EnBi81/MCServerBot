@@ -2,7 +2,7 @@
  * Container which holds the server instances.
  */
 class ServerPark{
-    #mcSocket;
+    #mcNetworking;
     #servers = {}; // {"name1": MinecraftServer}
     #errorMessages = [];
 
@@ -21,7 +21,7 @@ class ServerPark{
 
 
     constructor(serverAddress) {
-        this.#mcSocket = new MCSocket(serverAddress);
+        this.#mcNetworking = new MCNetworking(serverAddress);
         this.#setUpListeners();
     }
 
@@ -29,39 +29,52 @@ class ServerPark{
      * Sets up the Minecraft servers from the data parameter.
      * @param data the setup data.
      */
-    loadSetupData(data){
+    #loadSetupData(data){
         if(data == null)
             return;
 
         for (const server of data.servers) {
-            let name = server.name;
-            let status = server.serverStatus;
+
+            let name = server["name"];
+            let status = server["serverStatus"];
             let players = [];
             let logs = [];
-            let cpu = server.cpu;
-            let memory = server.memory;
-            let storage = server.storage;
-            let onlineFrom = new Date(server.onlineFrom); //from text;
+            let cpu = "0 %";
+            let memory = "0 B";
+            let storage = server["storageSpace"];
+            let onlineFrom = server.onlineFrom == null ? null : new Date(server.onlineFrom); //from text;
 
-            for (const player of server.players) {
-                let dateOnlineFrom = new Date(player.onlineFrom);
-                let pastUptime = SimpleTimeObject.fromSeconds(player.pastUptime);
-                let mcPlayer = new MinecraftPlayer(player.username, dateOnlineFrom, pastUptime);
+            for (const player of server["onlinePlayers"]) {
+                let username = player["username"];
+                let dateOnlineFrom = new Date(player["onlineFrom"]);
+                let pastUptime = SimpleTimeObject.fromText(player["pastOnline"]);
+
+                let mcPlayer = new MinecraftPlayer(username, dateOnlineFrom, pastUptime);
                 players.push(mcPlayer);
             }
 
-            for (const log of server.logs) {
-                let message = new ServerLog(log.message, log.messageType);
-                logs.push(message);
+            for (const log of server["logs"]) {
+                let message = log["message"];
+                let type = log["messageType"];
+
+                let logMessage = new ServerLog(message, type);
+                logs.push(logMessage);
             }
 
 
 
-            this.#servers[name] = new MinecraftServer(this.#mcSocket, name,
+            this.#servers[name] = new MinecraftServer(this.#mcNetworking, name,
                 status, players, logs, cpu, memory, storage, onlineFrom);
 
             this.#invokeObserver("serverAdded", this.#servers[name], true);
         }
+    }
+
+    /**
+     * Gets and loads the setup data from the server.
+     */
+    setup(){
+        this.#mcNetworking.sendHandler.getSetupData(data => this.#loadSetupData(data));
     }
 
     /**
@@ -86,7 +99,7 @@ class ServerPark{
      * @param name
      */
     addServer(name){
-        this.#mcSocket.sendHandler.sendAddServer(name);
+        this.#mcNetworking.sendHandler.sendAddServer(name);
     }
 
     /**
@@ -127,19 +140,19 @@ class ServerPark{
      * Sets up the received listeners for the sockets.
      */
     #setUpListeners(){
-        this.#mcSocket.receiveHandler.serverAddedReceived = (name, storage) => this.#serverAdded(name, storage);
-        this.#mcSocket.receiveHandler.serverDeletedReceived = name => this.#serverDeleted(name);
-        this.#mcSocket.receiveHandler.serverNameChangeReceived = (oldName, newName) => this.#serverRenamed(oldName, newName);
-        this.#mcSocket.receiveHandler.activeServerChangeReceived = serverName => this.#activeServerChange(serverName);
+        this.#mcNetworking.receiveHandler.serverAddedReceived = (name, storage) => this.#serverAdded(name, storage);
+        this.#mcNetworking.receiveHandler.serverDeletedReceived = name => this.#serverDeleted(name);
+        this.#mcNetworking.receiveHandler.serverNameChangeReceived = (oldName, newName) => this.#serverRenamed(oldName, newName);
+        this.#mcNetworking.receiveHandler.activeServerChangeReceived = serverName => this.#activeServerChange(serverName);
 
-        this.#mcSocket.receiveHandler.statusChangeReceived = (name, stat, onlineFrom, storage) => this.#statusChangeReceived(name, stat, onlineFrom, storage);
-        this.#mcSocket.receiveHandler.pcUsageReceived = (serverName, cpu, memory) => this.#pcUsage(serverName, cpu, memory);
-        this.#mcSocket.receiveHandler.playerLeftReceived = (serverName, username) => this.#playerLeft(serverName, username);
-        this.#mcSocket.receiveHandler.playerJoinedReceived = (serverName, username, onlineFrom, pastUptime) => this.#playerJoined(serverName, username, onlineFrom, pastUptime);
-        this.#mcSocket.receiveHandler.logReceived = (serverName, messages) => this.#logReceived(serverName, messages);
+        this.#mcNetworking.receiveHandler.statusChangeReceived = (name, stat, onlineFrom, storage) => this.#statusChangeReceived(name, stat, onlineFrom, storage);
+        this.#mcNetworking.receiveHandler.pcUsageReceived = (serverName, cpu, memory) => this.#pcUsage(serverName, cpu, memory);
+        this.#mcNetworking.receiveHandler.playerLeftReceived = (serverName, username) => this.#playerLeft(serverName, username);
+        this.#mcNetworking.receiveHandler.playerJoinedReceived = (serverName, username, onlineFrom, pastUptime) => this.#playerJoined(serverName, username, onlineFrom, pastUptime);
+        this.#mcNetworking.receiveHandler.logReceived = (serverName, messages) => this.#logReceived(serverName, messages);
 
-        this.#mcSocket.receiveHandler.logoutReceived = () => Logout.logout();
-        this.#mcSocket.receiveHandler.errorReceived = (message) => this.#errorMessage(message);
+        this.#mcNetworking.receiveHandler.logoutReceived = () => Logout.logout();
+        this.#mcNetworking.receiveHandler.errorReceived = (message) => this.#errorMessage(message);
     }
 
     /**
@@ -148,7 +161,7 @@ class ServerPark{
      * @param storage storage of the server.
      */
     #serverAdded(name, storage){
-        this.#servers[name] = new MinecraftServer(this.#mcSocket, name, ServerStatus.Offline, [],
+        this.#servers[name] = new MinecraftServer(this.#mcNetworking, name, ServerStatus.Offline, [],
             [], "0%", "0 B", storage, new Date());
 
         this.#invokeObserver("serverAdded", this.#servers[name], false);
