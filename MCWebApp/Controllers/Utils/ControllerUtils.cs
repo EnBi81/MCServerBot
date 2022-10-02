@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MCWebApp.Controllers
+namespace MCWebApp.Controllers.Utils
 {
     public static class ControllerUtils
     {
