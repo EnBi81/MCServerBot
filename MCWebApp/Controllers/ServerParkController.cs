@@ -1,6 +1,8 @@
 ﻿using Application.MinecraftServer;
+using Application.MinecraftServer.Enums;
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Serialization;
 
 namespace MCWebApp.Controllers
 {
@@ -11,7 +13,26 @@ namespace MCWebApp.Controllers
         [HttpGet]
         public IActionResult GetAllServers()
         {
-            List<IMinecraftServerSimplified> servers = new (ServerPark.MCServers.Values);
+            static object GetSimplifiedServer(IMinecraftServer server)
+            {
+                return new
+                {
+                    Name = server.ServerName,
+                    ServerStatus = server.Status switch
+                    {
+                        ServerStatus.Offline => "offline",
+                        ServerStatus.Starting => "starting",
+                        ServerStatus.Online => "online",
+                        _ => "shutting-down"
+                    },
+                    server.OnlinePlayers,
+                    Logs = server.Logs.TakeLast(50),
+                    OnlineFrom = server.OnlineFrom?.ToString("yyyy-MM-dd HH:mm:ss"),
+                    server.StorageSpace
+                };
+            }
+
+            var servers = ServerPark.MCServers.Values.Select(GetSimplifiedServer);
             return Ok(servers);
         }
 

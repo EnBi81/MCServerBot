@@ -13,8 +13,4 @@
     <ProjectReference Include="..\Loggers\Loggers.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\" />
-  </ItemGroup>
-
 </Project>

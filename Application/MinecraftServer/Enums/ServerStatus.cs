@@ -6,17 +6,20 @@
     public enum ServerStatus
     {
         /// <summary>
-        /// Server fully functions, it's online
-        /// </summary>
-        Online,
-        /// <summary>
         /// Server process is not running, the server is offline.
         /// </summary>
         Offline,
+
         /// <summary>
         /// Server process has been started, it is not ready though.
         /// </summary>
         Starting,
+
+        /// <summary>
+        /// Server fully functions, it's online
+        /// </summary>
+        Online,
+        
         /// <summary>
         /// Server process is shutting down, expect to go offline in some seconds.
         /// </summary>
