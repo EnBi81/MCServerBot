@@ -1,20 +1,50 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.MinecraftServer;
+using MCWebApp.Controllers.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebApp.Controllers
 {
-    public class ServerParkController : ControllerBase
+    [ApiController]
+    [Route("/api/v1/serverpark")]
+    public class ServerParkController : MCControllerBase
     {
-        /*  
-         *   get all servers (simplified):
-         *       GET     api/v1/minecraftserver
-         *   
-         *   create server:
-         *       POST    api/v1/minecraftserver
-         *       body: { "new-name": "string" }
-         *   
-         *   
-         *   get active server
-         *       GET     api/v1/minecraftserver/active
-         */
+        [HttpGet]
+        public IActionResult GetAllServers()
+        {
+            List<IMinecraftServerSimplified> servers = new (ServerPark.MCServers.Values);
+            return Ok(servers);
+        }
+
+        [HttpPost]
+        public IActionResult CreateServer([FromBody] Dictionary<string, object?>? data)
+        {
+            if (data == null)
+                return GetBadRequest("No data provided in the body.");
+
+            if (!data.TryGetValue("new-name", out object? nameData))
+                return GetBadRequest("No 'new-name' key specified.");
+
+            if (nameData is not string name)
+                return GetBadRequest("Invalid name specified");
+
+            try
+            {
+                IMinecraftServer server = ServerPark.CreateServer(name);
+                return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server); 
+            }
+            catch (Exception e)
+            {
+                return GetBadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("running")]
+        public IActionResult GetActiveServer()
+        {
+            if (ServerPark.ActiveServer is not IMinecraftServer server || !server.IsRunning)
+                return Ok(new { Message = "No running server." });
+
+            return Redirect("/api/v1/minecraftserver/" + server.ServerName);
+        }
     }
 }

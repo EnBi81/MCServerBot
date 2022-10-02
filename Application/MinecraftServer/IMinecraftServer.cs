@@ -6,7 +6,7 @@ namespace Application.MinecraftServer
     /// <summary>
     /// Interface representing a single Minecraft Server.
     /// </summary>
-    public interface IMinecraftServer
+    public interface IMinecraftServer : IMinecraftServerSimplified
     {
         /// <summary>
         /// Minimum allowed length of the ServerName
@@ -18,26 +18,10 @@ namespace Application.MinecraftServer
         public const int NAME_MAX_LENGTH = 35;
 
         /// <summary>
-        /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.
-        /// </summary>
-        public string ServerName { get; set; }
-
-        /// <summary>
-        /// Gets the port associated with the server.
-        /// </summary>
-        public int Port => int.Parse(Properties["server-port"]);
-        /// <summary>
         /// All of the log messages the server or the users wrote.
         /// </summary>
         public List<LogMessage> Logs { get; }
-        /// <summary>
-        /// Gets the status of the server.
-        /// </summary>
-        public ServerStatus Status { get; }
-        /// <summary>
-        /// Gets if the server process is running.
-        /// </summary>
-        public bool IsRunning { get; }
+
         /// <summary>
         /// The time of the server when it became online, or null if the server is offline
         /// </summary>
@@ -58,10 +42,7 @@ namespace Application.MinecraftServer
         /// Phisical storage space on the disk of the server.
         /// </summary>
         public string StorageSpace { get; }
-        /// <summary>
-        /// Phisical storage space on the disk of the server in BYTES.
-        /// </summary>
-        public long StorageBytes { get; }
+        
 
         /// <summary>
         /// Starts the server

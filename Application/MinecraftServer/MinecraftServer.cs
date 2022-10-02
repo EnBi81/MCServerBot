@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using Loggers;
+﻿using Loggers;
 using Application.MinecraftServer.Util;
 using Application.MinecraftServer.Enums;
 using Application.MinecraftServer.States;
-using Application;
 
 namespace Application.MinecraftServer
 {
@@ -52,6 +50,11 @@ namespace Application.MinecraftServer
         /// Access to the properties file of the server.
         /// </summary>
         public MinecraftServerProperties Properties { get; }
+
+        /// <summary>
+        /// Gets the port associated with the server.
+        /// </summary>
+        public int Port => int.Parse(Properties["server-port"]);
 
         /// <summary>
         /// Phisical storage space on the disk of the server.
