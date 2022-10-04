@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+
 namespace MCWebApp.WebServerSetup
 {
     internal static class MCWebServer
@@ -20,11 +23,14 @@ namespace MCWebApp.WebServerSetup
                 app.UseHsts();
             }
 
+            //app.UseMiddleware<AuthenticationMiddleware>();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapRazorPages();

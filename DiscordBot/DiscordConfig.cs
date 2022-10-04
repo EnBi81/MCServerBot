@@ -7,7 +7,7 @@
 
         public static void SetupConfig(string discordBotToken, int websiteHttpsPort)
         {
-            if (Instance != null)
+            if (_instance != null)
                 return;
 
             _instance = new DiscordConfig()

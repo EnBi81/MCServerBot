@@ -1,0 +1,32 @@
+﻿@page
+@model MCWebApp.Pages.IndexModel
+@{
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged out!</title>
+  <style>
+    body{
+      background: black;
+      color: white;
+      font-size: 4rem;
+    }
+  </style>
+
+    <script>
+        let xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "https://localhost:7144/api/v1/serverpark", true); // true for asynchronous
+        xmlHttp.send();
+
+        xmlHttp.onreadystatechange = () => {
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
+                console.log(xmlHttp.responseText);
+        }
+    </script>
+</head>
+<body>
+HEYYY
+</body>
+</html>
+}

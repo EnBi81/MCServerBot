@@ -24,11 +24,9 @@ namespace DiscordBot.Discord.Commands
                 return;
             }
 
-            ulong id = user.Id;
-
             try
             {
-                BotPermission.GrantPermission(id, user);
+                BotPermission.GrantPermission(user);
                 var embed = EmbedHelper.CreateTitleEmbed($"Permission Granted for {user.Username} :white_check_mark:", author: user);
                 await command.RespondAsync(embed: embed, ephemeral: true);
             }

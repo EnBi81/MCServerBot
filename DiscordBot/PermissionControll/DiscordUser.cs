@@ -8,10 +8,6 @@ namespace Application.PermissionControll
         public ulong Id { get; set; }
         public string Username { get; set; }
         public string ProfPic { get; set; }
-        public DateTime LastUpdated { get; set; }
-
-        [JsonIgnore]
-        private IUser _user;
 
 
         public DiscordUser()  // for json
@@ -20,34 +16,14 @@ namespace Application.PermissionControll
         }
         public DiscordUser(IUser user)
         {
-            _user = user;
-            Id = user.Id;
-            Username = user.Username;
-            ProfPic = _user.GetAvatarUrl() ?? _user.GetDefaultAvatarUrl();
-            LastUpdated = DateTime.Now;
+            Refresh(user);
         }
 
-
-
-        public async Task<string> GetProfilePicUrl()
+        public void Refresh(IUser user)
         {
-            if((DateTime.Now - LastUpdated).TotalDays > 1)
-            {
-                try
-                {
-                    LastUpdated = DateTime.Now;
-
-                    if (_user == null)
-                        _user = await DiscordBot.Discord.DiscordBot.Bot.SocketClient.GetUserAsync(Id);
-
-                    ProfPic = _user.GetAvatarUrl() ?? _user.GetDefaultAvatarUrl();
-                    
-                }
-                catch { }
-            }
-            
-
-            return ProfPic;
+            Id = user.Id;
+            Username = user.Username;
+            ProfPic = user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl();
         }
     }
 }

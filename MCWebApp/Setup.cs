@@ -3,6 +3,8 @@ using Loggers;
 using MCWebApp.Config;
 using MCWebApp.WebServerSetup;
 
+//https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
+//https://learn.microsoft.com/en-us/aspnet/core/security/authorization/simple?source=recommendations&view=aspnetcore-6.0
 
 LogService logService = new LogService()
                 .SetupLogger<DiscordLogger>()
@@ -27,6 +29,8 @@ Application.MinecraftConfig.SetupConfig(
     config.MinecraftServersBaseFolder, config.JavaLocation,
     config.MinecraftServerHandlerPath, config.MinecraftServerMaxRamMB,
     config.MinecraftServerInitRamMB, config.MinecraftMaxDiskSpaceGB);
+
+DiscordBot.DiscordConfig.SetupConfig(config.DiscordBotToken, config.WebServerPortHttps);
 
 
 // Start Hamachi
