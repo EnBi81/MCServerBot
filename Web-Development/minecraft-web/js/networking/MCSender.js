@@ -1,14 +1,12 @@
 /**
  * Handles sending data to the server.
  */
-class MCSocketSender {
-    #socket;
+class MCSender {
     #socketReceiver;
 
     BASE_API_URL = "/api/v1/"
 
     constructor(socket, socketReceiver) {
-        this.#socket = socket;
         this.#socketReceiver = socketReceiver;
     }
 
@@ -99,5 +97,14 @@ class MCSocketSender {
     sendWriteCommand(serverName, command){
         let data = { "command-data": command };
         this.#post(`/api/v1/minecraftserver/${serverName}/commands`, data);
+    }
+
+    getRefreshedProfPic(discordId, callback){
+        let networkCallback = request => {
+            if (request.readyState === 4 && request.status === 200)
+                callback(JSON.parse(request.textContent));
+        }
+
+        this.#get("discord/user/refresh", networkCallback);
     }
 }

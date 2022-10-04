@@ -5,6 +5,8 @@ const serverPark = new ServerPark(
     `wss://${location.hostname}/ws?minecraft-web-login=${userCode}`
 );
 
+let profPicView = new ProfilePicView(serverPark);
+
 let notificationView = new NotificationView(serverPark, "notification-content");
 
 let serverOptionsSetupData = [

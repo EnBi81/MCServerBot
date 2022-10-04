@@ -210,15 +210,22 @@ $running-server-hover-color: #a2f3a2;
             }
           }
 
+
+
+          .new-server-wrapper{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            height: 40px;
+            margin-top: 7%;
+          }
+
           .new-server-box{
             width: 60%;
-            height: 40px;
+            height: 100%;
+            padding: 5px;
 
-            margin-top: 5%;
-
-            font-size: fontSize(1rem);
-
-            padding-left: 10px;
 
             background: linear-gradient(
                             $dropdown-bg-darker,
@@ -226,11 +233,41 @@ $running-server-hover-color: #a2f3a2;
             border: var(--base-dropdown-color) 2px solid;
             border-radius: 5px;
 
+            &:hover{
+              filter: brightness(1.4);
+            }
+
+            input[type="text"]{
+              width: 100%;
+              height: 100%;
+
+              background: transparent;
+              border: none;
+              color: #dcdcdc;
+              font-size: fontSize(1.2rem);
+              outline: none;
+
+              &:hover{
+                &::placeholder{
+                  color: #dadada;
+                }
+              }
+            }
+          }
+
+          .add-server-button{
+            width: 60px;
+            height: 50px;
+
+            border-radius: 5px;
+
+
+            background: url("../button-images/pipa.png") no-repeat;
+            background-size: 90%;
+            border: var(--base-dropdown-color) 2px solid;
 
             &:hover{
-              &::placeholder{
-                color: #dadada;
-              }
+              filter: brightness(1.4);
             }
           }
         }

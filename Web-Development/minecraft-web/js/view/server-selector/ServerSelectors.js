@@ -12,6 +12,10 @@ class ServerSelectors{
     #serverDropdownBgElement;
     #selectedServerNameElement;
 
+    #serverAddWrapper;
+    #serverAddTextbox;
+    #serverAddButton;
+
     constructor(serverPark, serverInfoPage) {
         this.#serverPark = serverPark;
         this.#serverInfoPage = serverInfoPage;
@@ -19,6 +23,10 @@ class ServerSelectors{
         this.#serverDropdownElement = document.getElementById('servers');
         this.#serverDropdownBgElement = document.getElementById('servers-bg');
         this.#selectedServerNameElement = document.querySelector('.selected-server-name');
+        this.#serverAddWrapper = document.querySelector('.new-server-wrapper');
+        this.#serverAddTextbox = document.getElementById('new-server-box');
+        this.#serverAddButton = document.getElementById('add-server-button');
+
         this.#setupListeners();
         this.#setupGui();
 
@@ -32,6 +40,16 @@ class ServerSelectors{
         this.#serverPark.addListener('serverAdded', ([server]) => this.#addServer(server));
         this.#serverPark.addListener('serverNameChange', ([o, n]) => this.#serverRename(o, n));
         this.#serverPark.addListener('serverDeleted', ([name]) => this.#serverDeleted(name));
+        this.#serverAddWrapper.addEventListener('click', e => {
+            e.stopPropagation();
+        });
+        this.#serverAddButton.addEventListener('click', () => {
+            let text = this.#serverAddTextbox.value;
+            if(text != null || text !== ""){
+                this.#serverPark.addServer(text);
+                this.#serverAddTextbox.value = "";
+            }
+        });
     }
 
     /**

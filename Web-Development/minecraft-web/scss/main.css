@@ -1112,18 +1112,46 @@ main div.log .input input:focus::placeholder {
 .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .running-server:hover, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .running-server:hover {
   color: #a2f3a2;
 }
+.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .new-server-wrapper, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .new-server-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 40px;
+  margin-top: 7%;
+}
 .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .new-server-box, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .new-server-box {
   width: 60%;
-  height: 40px;
-  margin-top: 5%;
-  font-size: calc(var(--base-font-scale) * 1rem);
-  padding-left: 10px;
+  height: 100%;
+  padding: 5px;
   background: linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85)), var(--base-dropdown-color);
   border: var(--base-dropdown-color) 2px solid;
   border-radius: 5px;
 }
-.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .new-server-box:hover::placeholder, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .new-server-box:hover::placeholder {
+.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .new-server-box:hover, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .new-server-box:hover {
+  filter: brightness(1.4);
+}
+.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .new-server-box input[type=text], .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .new-server-box input[type=text] {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: #dcdcdc;
+  font-size: calc(var(--base-font-scale) * 1.2rem);
+  outline: none;
+}
+.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .new-server-box input[type=text]:hover::placeholder, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .new-server-box input[type=text]:hover::placeholder {
   color: #dadada;
+}
+.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .add-server-button, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .add-server-button {
+  width: 60px;
+  height: 50px;
+  border-radius: 5px;
+  background: url("../button-images/pipa.png") no-repeat;
+  background-size: 90%;
+  border: var(--base-dropdown-color) 2px solid;
+}
+.right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-content .add-server-button:hover, .right-container .dropdown-wrapper .dropdown-content .dropdown-server-list .dropdown-list-bg .add-server-button:hover {
+  filter: brightness(1.4);
 }
 
 /*# sourceMappingURL=main.css.map */
