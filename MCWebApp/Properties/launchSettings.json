@@ -2,7 +2,7 @@
   "profiles": {
     "MCWebApp": {
       "commandName": "Project",
-      "commandLineArgs": "--web-server --discord-bot",
+      "commandLineArgs": "--web-server",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

@@ -4,7 +4,7 @@ using Loggers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
 
-namespace MCWebApp.Controllers
+namespace MCWebApp.Controllers.api.v1
 {
     [ApiController]
     [Route("api/v1/ws/{accessCode}")]

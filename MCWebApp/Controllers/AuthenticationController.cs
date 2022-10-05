@@ -6,9 +6,9 @@ namespace MCWebApp.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        [Route("/login/{token}")]
+        [Route("/login")]
         [HttpGet]
-        public IActionResult Login(string? token, [FromQuery] string? redirectUrl)
+        public IActionResult Login([FromQuery] string? token, [FromQuery] string? redirectUrl)
         {
             if (token == null)
                 return BadRequest("No login token provided");
@@ -17,7 +17,6 @@ namespace MCWebApp.Controllers
                 return Unauthorized("This token is invalid.");
 
             Response.Cookies.Append(WebsitePermission.CookieName, token);
-
 
             try
             {
@@ -30,6 +29,7 @@ namespace MCWebApp.Controllers
         }
 
         [Route("logout")]
+        [HttpGet]
         public IActionResult Logout([FromQuery] string? redirectUrl)
         {
             Response.Cookies.Delete(WebsitePermission.CookieName);

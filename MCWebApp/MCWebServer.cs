@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 
-namespace MCWebApp.WebServerSetup
+namespace MCWebApp
 {
     internal static class MCWebServer
     {
@@ -10,8 +10,8 @@ namespace MCWebApp.WebServerSetup
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddRazorPages();
             builder.Services.AddControllers();
+            builder.Services.AddRazorPages();
 
             var app = builder.Build();
 
@@ -25,6 +25,12 @@ namespace MCWebApp.WebServerSetup
 
             //app.UseMiddleware<AuthenticationMiddleware>();
 
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Index}/{action=Index}/{id?}");
+
+            app.UseWebSockets(new WebSocketOptions() { KeepAliveInterval = TimeSpan.FromMinutes(2) });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -33,8 +39,9 @@ namespace MCWebApp.WebServerSetup
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapRazorPages();
             app.MapControllers();
+            app.MapRazorPages();
+
 
 
             await app.StartAsync();

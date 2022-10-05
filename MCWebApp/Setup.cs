@@ -1,7 +1,7 @@
 ﻿using HamachiHelper;
 using Loggers;
+using MCWebApp;
 using MCWebApp.Config;
-using MCWebApp.WebServerSetup;
 
 //https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
 //https://learn.microsoft.com/en-us/aspnet/core/security/authorization/simple?source=recommendations&view=aspnetcore-6.0

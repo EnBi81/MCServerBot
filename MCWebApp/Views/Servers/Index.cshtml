@@ -1,0 +1,262 @@
+﻿@using Application.PermissionControll
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    string cookieValue = (string)ViewData["Token"]!;
+    DiscordUser user = (DiscordUser)ViewData["DiscordUser"]!;
+    string bgImage = (string)ViewData["BGImage"]!;
+
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale = 1">
+        <link rel="stylesheet" href="~/index/css/main.css">
+
+
+        <!--  Settings  -->
+        <script defer src="~/index/js/settings/SingleSetting.js"></script>
+        <script defer src="~/index/js/settings/SettingsCollection.js"></script>
+        <script defer src="~/index/js/settings/settings-setup.js"></script>
+
+        <!--  Utils  -->
+        <script defer src="~/index/js/utils/SimpleTimeObject.js"></script>
+        <script defer src="~/index/js/utils/DateHelper.js"></script>
+
+        <!--  Networking  -->
+        <script defer src="~/index/js/networking/MCSender.js"></script>
+        <script defer src="~/index/js/networking/MCSocketReceived.js"></script>
+        <script defer src="~/index/js/networking/MCNetworking.js"></script>
+
+        <!--  Model  -->
+        <script defer src="~/index/js/model/DiscordUser.js"></script>
+        <script defer src="~/index/js/model/Logout.js"></script>
+        <script defer src="~/index/js/model/ServerLog.js"></script>
+        <script defer src="~/index/js/model/ServerStatus.js"></script>
+        <script defer src="~/index/js/model/MinecraftPlayer.js"></script>
+        <script defer src="~/index/js/model/MinecraftServer.js"></script>
+        <script defer src="~/index/js/model/ServerPark.js"></script>
+
+        <!--  Views  -->
+        <script defer src="~/index/js/view/server-page/ServerAddressCopy.js"></script>
+        <script defer src="~/index/js/view/server-page/LogView.js"></script>
+        <script defer src="~/index/js/view/server-page/PlayerView.js"></script>
+        <script defer src="~/index/js/view/server-page/UpdateTimers.js"></script>
+        <script defer src="~/index/js/view/server-page/ServerInfoPage.js"></script>
+        <script defer src="~/index/js/view/NotificationMessageElement.js"></script>
+        <script defer src="~/index/js/view/NotificationView.js"></script>
+        <script defer src="~/index/js/view/server-page/SingleServerOption.js"></script>
+        <script defer src="~/index/js/view/server-page/ServerOptionsHandler.js"></script>
+        <script defer src="~/index/js/view/server-selector/SingleServerSelector.js"></script>
+        <script defer src="~/index/js/view/server-selector/ServerSelectors.js"></script>
+        <script defer src="~/index/js/view/ProfilePicView.js"></script>
+
+        <!--  Core  -->
+        <script defer src="~/index/js/core.js"></script>
+
+
+    </head>
+    <body data-user-code="@cookieValue">
+        <div class="background" style="background: url('@bgImage')"></div>
+        <div class="main-content hide-on-bg-hover">
+            <header>
+                <div class="welcome-message">
+                    <div class="image-wrapper">
+                        <img class="prof-pic" src="@user?.ProfPic" alt="">
+                        <div class="settings-image">
+                            <img src="~/index/button-images/settings.png" alt="" onclick="toggleSettings()">
+                        </div>
+
+                    </div>
+
+                    <b id="player-name" data-user-id="@user?.Id">@user?.Username</b>
+                </div>
+                <div class="right-container">
+                    <div class="dropdown-wrapper">
+                        <div class="dropdown-border"></div>
+                        <div class="dropdown-content" id="dropdown-content"
+                             onclick="this.classList.toggle('active')">
+                            <div class="constant-content" onmousedown="this.classList.add('press')" onmouseup="this.classList.remove('press')">
+                                <div class="selected-server-name">Keklepcso</div>
+                                <div class="dropdown-button">
+                                    <img class="normal-image" src="~/index/button-images/button_down.png" alt="">
+                                    <img class="hover-image" src="~/index/button-images/button_down_hover.png" alt="">
+                                    <img class="press-image" src="~/index/button-images/button_down_press.png" alt="">
+                                </div>
+                            </div>
+
+                            <div class="dropdown-server-list">
+                                <div class="dropdown-list-bg">
+                                    <div class="dropdown-list-content-servers" id="servers-bg">
+                                        <!--<div class="minecraft-server"></div>-->
+                                    </div>
+                                </div>
+                                <div class="dropdown-list-content">
+                                    <div class="dropdown-list-content-servers" id="servers">
+                                        <!--<div class="minecraft-server running-server">
+                                            Server1
+                                        </div>-->
+                                    </div>
+                                    <div class="new-server-wrapper">
+                                        <div class="new-server-box">
+                                            <label>
+                                                <input id="new-server-box" class="new-server-box-text" type="text" placeholder="Create a new server!">
+                                            </label>
+                                        </div>
+                                        <input id="add-server-button" class="add-server-button" type="button">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main>
+                <div id="server-info" class="server-info offline-colors">
+                    <div class="information">
+                        <div>
+                            <div class="server-name-wrapper" id="server-name-wrapper">
+                                <div class="server-name" id="server-name">Keklepcso</div>
+                                <span class="status"></span><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+                            </div>
+                            <div class="server-options" id="server-options">
+                                <div class="server-single-option" id="rename-server-option">
+                                    <label>
+                                        <input placeholder="Rename Server" type="text">
+                                    </label>
+                                    <div class="server-option-proceed">
+                                        <input class="cancel-button" type="button" value="Cancel">
+                                        <input class="proceed-button" type="button" value="Proceed">
+                                    </div>
+                                </div>
+                                <div class="server-single-option" id="delete-server-option">
+                                    <label>
+                                        <input type="button" value="Delete">
+                                    </label>
+
+                                    <div class="server-option-proceed">
+                                        <input class="cancel-button" type="button" value="Cancel">
+                                        <input class="proceed-button" type="button" value="Proceed">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="server-address" class="server-address" title="Click here to copy address" tabindex="0">
+                            <span id="ip-address">127.0.0.1</span>:<span id="port">25565</span>
+                        </div>
+                        <div class="server-uptime">Uptime: <span id="server-uptime">0:00:00</span></div>
+
+                        <div id="active-players" class="active-players">
+                            <!-- <div class="player online">
+                                 <pre>Crash285 - <span class="time">1:23:23</span></pre>
+                                 <pre class="total-time">Total uptime: <span>2:23:23</span></pre>
+                             </div>-->
+                        </div>
+                    </div>
+                    <div class="performance">
+                        <pre>CPU:     <span id="cpu">0 %</span></pre>
+                        <pre>MEMORY:  <span id="memory">0 MB</span></pre>
+                        <pre>STORAGE: <span id="storage">0 GB</span></pre>
+                    </div>
+                    <div id="start-button" class="button-wrapper">
+                        <!--<input type="checkbox" id="start-button-checkbox">
+                        <label for="start-button-checkbox" class="button">Start</label>-->
+                        <img class="toggle-button" src="~/index/button-images/toggle_off.png" alt="" tabindex="0">
+                    </div>
+                </div>
+
+                <div class="log">
+                    <div id="log-messages" class="log-messages">
+                        <!-- <div class="system-message user-message">Hello</div>-->
+                    </div>
+                    <div class="line"></div>
+                    <div class="input">
+                        <label>
+                            <input id="command-input" type="text" placeholder="Write command here...">
+                        </label>
+                    </div>
+                </div>
+            </main>
+
+            <div class="error-messages-wrapper">
+            </div>
+        </div>
+        <div class="notification-message-wrapper hide-on-bg-hover">
+            <div class="notification-content" id="notification-content">
+                <!--<div class="single-notification-message" style="--notification-primary-color: red;--notification-secondary-color: orange;">
+                    <div class="notification-text-content">
+                        This is an error message pls take it serious
+                    </div>
+                </div>-->
+            </div>
+        </div>
+
+        <div id="settings-wrapper" class="hidden">
+            <div id="settings-blur" onclick="toggleSettings()"></div>
+            <div id="settings">
+
+                <div class="settings-title reset-text" id="settings-title">Settings</div>
+                <div class="settings-reset-hint">Double click to reset settings</div>
+                <div class="setting">
+                    <span id="reset-font" class="reset-text">Font Style:</span>
+                    <label for="fonts">
+                        <select name="fonts" id="fonts" class="setting-border-transition fonts"></select>
+                    </label>
+                </div>
+                <div class="setting">
+                    <span id="reset-font-size" class="reset-text setting-border-transition">Font Scale:</span>
+
+                    <div class="number">
+                        <label for="font-size-input">
+
+                            <input type="number" id="font-size-input" step="0.1" min="0.1" max="2">
+                        </label>
+                        <div class="input-arrows">
+                            <div class="up-arrow" onclick="numberStepUp()">▲</div>
+                            <div class="down-arrow" onclick="numberStepDown()">▼</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting">
+                    <span id="reset-primary" class="reset-text">Main Color:</span>
+                    <label>
+                        <input id="primary-color-picker" type="color" class="setting-border-transition" />
+                    </label>
+                </div>
+                <div class="setting">
+                    <span id="reset-secondary" class="reset-text">Secondary Color:</span>
+                    <label>
+                        <input id="secondary-color-picker" type="color" class="setting-border-transition" />
+                    </label>
+                </div>
+                <div class="setting">
+                    <span id="reset-button-color" class="reset-text">Dropdown Color:</span>
+                    <label>
+                        <input id="button-color-picker" type="color" class="setting-border-transition" />
+                    </label>
+                </div>
+                <div class="setting">
+                    <span id="reset-base-op" class="reset-text">Content Opacity:</span>
+                    <label for="content-op"></label>
+                    <input type="range" step="0.01" min="0.1" max="1" value="1" class="slider" id="content-op">
+                </div>
+                <div class="setting">
+                    <span id="reset-hover-op" class="reset-text">Content Hover Opacity:</span>
+                    <label for="content-hover-op"></label>
+                    <input type="range" step="0.01" min="0" max="1" value="0.3" class="slider" id="content-hover-op">
+                </div>
+                <div class="setting logout" id="logout">
+                    <div><div tabindex="0">Log out</div></div>
+                </div>
+
+            </div>
+        </div>
+    </body>
+    </html>
+}

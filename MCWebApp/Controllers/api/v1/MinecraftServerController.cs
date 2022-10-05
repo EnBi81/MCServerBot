@@ -1,8 +1,9 @@
 ﻿using Application.MinecraftServer;
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
-namespace MCWebApp.Controllers
+namespace MCWebApp.Controllers.api.v1
 {
     [ApiController]
     [Route("/api/v1/minecraftserver/{serverName}")]
@@ -11,7 +12,7 @@ namespace MCWebApp.Controllers
         [HttpGet]
         public IActionResult GetFullServer(string serverName)
         {
-            if(!ServerPark.MCServers.TryGetValue(serverName, out var server))
+            if (!ServerPark.MCServers.TryGetValue(serverName, out var server))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
             return Ok(server);
@@ -24,7 +25,7 @@ namespace MCWebApp.Controllers
             {
                 ServerPark.DeleteServer(serverName);
                 return Ok();
-            } 
+            }
             catch (Exception e)
             {
                 return GetBadRequest(e.Message);
@@ -40,7 +41,7 @@ namespace MCWebApp.Controllers
             if (data == null)
                 return GetBadRequest("No data has been provided");
 
-            if(data.TryGetValue("new-name", out object? temp) && 
+            if (data.TryGetValue("new-name", out object? temp) &&
                 temp is not string)
             {
                 return GetBadRequest("'new-name' value is expected to be a string.");
@@ -59,8 +60,13 @@ namespace MCWebApp.Controllers
             }
         }
 
+        public class Command
+        {
+            public string commandData { get; set; }
+        }
+
         [HttpPost("commands")]
-        public IActionResult WriteCommand(string serverName, [FromBody] Dictionary<string, object?> data)
+        public IActionResult WriteCommand(string serverName, [FromBody] Dictionary<string, object?>? data)
         {
             if (!ServerPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
@@ -68,23 +74,29 @@ namespace MCWebApp.Controllers
             if (data == null)
                 return GetBadRequest("No data has been provided");
 
-            if (data.TryGetValue("command-data", out object? temp) &&
-                temp is not string)
+            JsonValueKind? valueKind = null;
+            if (data.TryGetValue("command-data", out object? temp) && // check if the jsonobject has this key, and get the value
+                temp is JsonElement json &&   // check if the value is jsonelement (obviously it is, here we more just convert it to JsonElement)
+                (valueKind = json.ValueKind) == JsonValueKind.String) // set the valuekind parameter to the received valuekind, and check if it is a string
             {
-                return GetBadRequest("'command-data' value is expected to be a string.");
+                try
+                {
+                    json = new JsonElement();
+                    string? command = json.Deserialize<string>();
+
+                    if(!string.IsNullOrWhiteSpace(command))
+                        ServerPark.MCServers[serverName].WriteCommand(command);
+
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return GetBadRequest(e.Message);
+                }
             }
 
-            try
-            {
-                if (temp is string command)
-                    ServerPark.MCServers[serverName].WriteCommand(command);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            return GetBadRequest($"'command-data' value is expected to be a string, but was {valueKind}.");
         }
 
 

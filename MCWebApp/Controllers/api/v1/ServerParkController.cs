@@ -4,7 +4,7 @@ using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.Serialization;
 
-namespace MCWebApp.Controllers
+namespace MCWebApp.Controllers.api.v1
 {
     [ApiController]
     [Route("/api/v1/serverpark")]
@@ -51,7 +51,7 @@ namespace MCWebApp.Controllers
             try
             {
                 IMinecraftServer server = ServerPark.CreateServer(name);
-                return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server); 
+                return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);
             }
             catch (Exception e)
             {

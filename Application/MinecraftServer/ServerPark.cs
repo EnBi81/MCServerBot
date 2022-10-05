@@ -121,12 +121,15 @@ namespace Application.MinecraftServer
         /// <param name="username">username who initiated this action</param>
         public static void ToggleServer(string serverName, string username = "Admin")
         {
-            SetActiveServer(serverName);
-
-            if(ActiveServer!.IsRunning)
-                ActiveServer.Start(username);
-            else
+            if(ActiveServer?.IsRunning ?? false)
+            {
                 ActiveServer.Shutdown(username);
+            }
+            else
+            {
+                SetActiveServer(serverName);
+                ActiveServer!.Start(username);
+            } 
         }
 
 

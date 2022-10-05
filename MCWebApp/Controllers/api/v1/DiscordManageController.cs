@@ -2,7 +2,7 @@
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MCWebApp.Controllers
+namespace MCWebApp.Controllers.api.v1
 {
     [ApiController]
     [Route("api/v1/discord/user")]
