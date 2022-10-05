@@ -18,15 +18,22 @@ class ProfilePicView{
         this.#setupListener();
     }
 
+    /**
+     * Sets up the listeners.
+     */
     #setupListener(){
         this.#welcomeMessageElement.addEventListener('dblclick', () => {
             let id = this.#nameElement.getAttribute('data-user-id')
-            serverPark.getRefreshedProfile(id, user => this.setupData(user));
+            serverPark.getRefreshedProfile(id, user => this.loadData(user));
         })
     }
 
 
-    setupData(discordUser){
+    /**
+     * Loads the discord user's data into the view
+     * @param discordUser
+     */
+    loadData(discordUser){
         this.#nameElement.setAttribute('data-user-id', discordUser.discordId);
         this.#nameElement.textContent = discordUser.discordName;
         this.#profPicElement.setAttribute('src', discordUser.profilePicUrl);
