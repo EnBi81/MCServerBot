@@ -94,6 +94,8 @@ class ServerSelectors{
         delete this.#singleServerSelectors[oldName];
 
         this.#singleServerSelectors[newName] = server;
+
+        this.selectServer(newName);
     }
 
     /**
@@ -132,5 +134,7 @@ class ServerSelectors{
         }
 
         this.#selectedServerNameElement.textContent = this.#selectedServer.serverName;
+
+        this.#serverInfoPage.loadMCServer(name);
     }
 }

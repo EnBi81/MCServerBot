@@ -50,7 +50,7 @@ namespace Application.MinecraftServer.States
         public override void Start(string username)
         {
             _server.SetServerState<StartingState>();
-            var logMessage = new LogMessage(username + ": " + "Starting Server", LogMessage.LogMessageType.User_Message);
+            var logMessage = new LogMessage(username + ": " + "Starting Server " + _server.ServerName, LogMessage.LogMessageType.User_Message);
             _server.AddLog(logMessage);
             _server.McServerProcess.Start();
         }
@@ -61,7 +61,7 @@ namespace Application.MinecraftServer.States
         /// <param name="username">username of the very intelligent user who tried to stop an offline server.</param>
         /// <exception cref="Exception">Always is thrown because yeah, the serve is offline.</exception>
         public override void Stop(string username) => // like who would want to stop a server when it's offline lol.
-            throw new Exception("Server is already offline!");
+            throw new Exception(_server.ServerName + " is already offline!");
 
         /// <summary>
         /// Throws exception as the server is offline.
@@ -70,6 +70,6 @@ namespace Application.MinecraftServer.States
         /// <param name="username">This parameter is also ignored</param>
         /// <exception cref="Exception">This is thrown always.</exception>
         public override void WriteCommand(string command, string username) =>
-            throw new Exception("Server is not online!");
+            throw new Exception(_server.ServerName +  " is not online!");
     }
 }

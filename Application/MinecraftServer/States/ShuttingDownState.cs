@@ -41,12 +41,12 @@ namespace Application.MinecraftServer.States
 
 
         public override void Start(string username) =>
-            throw new Exception("Please wait till the server has shut down!");
+            throw new Exception($"Please wait till {_server.ServerName} has shut down!");
 
         public override void Stop(string username) =>
-            throw new Exception("The server is shutting down!");
+            throw new Exception($"{_server.ServerName} is shutting down!");
 
         public override void WriteCommand(string command, string username) =>
-            throw new Exception("Server is not online!");
+            throw new Exception(_server.ServerName + " is not online!");
     }
 }

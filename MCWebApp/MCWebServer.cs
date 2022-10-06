@@ -1,5 +1,9 @@
+using Application.PermissionControll;
+using Application.WebSocketHandler;
+using Loggers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using System.Net.WebSockets;
 
 namespace MCWebApp
 {
@@ -42,9 +46,44 @@ namespace MCWebApp
             app.MapControllers();
             app.MapRazorPages();
 
-
-
+            app.Use(ReceiveSockets);
             await app.StartAsync();
+        }
+
+        public static async Task ReceiveSockets(HttpContext context, RequestDelegate next)
+        {
+            if (context.Request.Path == "/ws")
+            {
+                string? ip = context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+                LogService.GetService<WebLogger>().Log("ws-request", "Request received from " + ip);
+
+
+                if (!context.Request.Query.ContainsKey(WebsitePermission.CookieName))
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no request query found"); return;
+                }
+
+                var code = context.Request.Query[WebsitePermission.CookieName];
+                if (!WebsitePermission.HasAccess(code))
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no access");
+                    return;
+                }
+
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", "Websocket accepted for " + ip);
+
+                    WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
+                    await SocketPool.SocketPoolInstance.AddSocket(code, ws);
+                }
+                else
+                {
+                    LogService.GetService<WebLogger>().Log("ws-request", "Not a websocket request: " + ip);
+                }
+            }
+            else
+                await next(context);
         }
     }
 }

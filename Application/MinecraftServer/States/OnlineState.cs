@@ -80,7 +80,7 @@ namespace Application.MinecraftServer.States
         /// <param name="username"></param>
         /// <exception cref="Exception"></exception>
         public override void Start(string username) =>
-            throw new Exception("Server is already running!");
+            throw new Exception(_server.ServerName + " is already running!");
 
         /// <summary>
         /// Stops the server by writing stop to the server process window.
@@ -100,7 +100,7 @@ namespace Application.MinecraftServer.States
         public override void WriteCommand(string command, string username)
         {
             _server.McServerProcess.WriteToStandardInput(command);
-            var logMess = new LogMessage(username + ": " + command, LogMessage.LogMessageType.User_Message);
+            var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessage.LogMessageType.User_Message);
             _server.AddLog(logMess);
         }
     }

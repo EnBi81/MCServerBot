@@ -42,6 +42,11 @@ namespace Application.WebSocketHandler
             LogService.GetService<WebLogger>().Log("socket", $"Socket Initialized for {DiscordUser.Username}");
         }
 
+        public async Task Initialize()
+        {
+            await ReceiveDataAsync(null);
+        }
+
 
         /// <summary>
         /// Sends an error message to the socket.
@@ -78,6 +83,62 @@ namespace Application.WebSocketHandler
                 await Close();
             }
             
+        }
+
+
+        /// <summary>
+        /// Receiv
+        /// </summary>
+        /// <returns></returns>
+        private async Task ReceiveDataAsync(Func<string, Task>? MessageHandler)
+        {
+            try
+            {
+                var buffer = new byte[1024];
+                WebSocketReceiveResult result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                StringBuilder resultBuilder = new StringBuilder();
+
+                while (true)//_readInput && !result.CloseStatus.HasValue)
+                {
+                    if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        await Close();
+                        return;
+                    }
+
+                    if (result.MessageType != WebSocketMessageType.Text)
+                    {
+                        continue;
+                    }
+
+                    resultBuilder.Append(Encoding.UTF8.GetString(buffer));
+                    Array.Clear(buffer, 0, buffer.Length);
+
+                    if (result.EndOfMessage)
+                    {
+                        string res = resultBuilder.ToString();
+                        try
+                        {
+                            if(MessageHandler != null)
+                                await MessageHandler(res);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(ex.StackTrace);
+                        }
+
+
+                        resultBuilder.Clear();
+                    }
+
+
+
+                    result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                }
+            }
+            catch (Exception e) { Console.WriteLine(e); }
+            await Close();
         }
 
         /// <summary>

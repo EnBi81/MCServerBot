@@ -49,7 +49,8 @@ class LogView{
      * Loads the log messages into the view.
      * @param logs logs to load.
      */
-    loadLogsToView(logs){
+    loadLogsToView(logs) {
+       
         for (const log of logs) {
             let div = this.#createLogDiv(log);
             this.#appendLogMessage(div);

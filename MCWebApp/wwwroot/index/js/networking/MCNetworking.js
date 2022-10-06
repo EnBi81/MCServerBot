@@ -15,7 +15,15 @@ class MCNetworking {
             this.#socket = new WebSocket(address);
             this.#socket.addEventListener('message', e => this.#dataReceived(e));
             this.#socket.addEventListener('open', () => console.log("Websocket ready!"));
-            this.#socket.addEventListener('close', () => this.receiveHandler.errorReceived("Connection to Server could not be established :(("));
+
+            this.#socket.onclose = e => {
+                this.receiveHandler.errorReceived("Connection to Server could not be established :((");
+                console.error(e);
+            }
+
+            this.#socket.onerror = e => {
+                console.error(e);
+            }
 
             this.sendHandler = new MCSender(this.receiveHandler);
         } catch (e){
@@ -63,6 +71,8 @@ class MCNetworking {
             console.log("Null datatype received: " + dataType);
             return;
         }
+
+        //console.log(parsedData)
 
         // get and execute the handler.
         this.#receiveHandlers[dataType](parsedData);

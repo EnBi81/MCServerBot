@@ -42,14 +42,9 @@ namespace MCWebApp.Controllers.api.v1
             if (data == null)
                 return GetBadRequest("No data provided in the body.");
 
-            if (!data.TryGetValue("new-name", out object? nameData))
-                return GetBadRequest("No 'new-name' key specified.");
-
-            if (nameData is not string name)
-                return GetBadRequest("Invalid name specified");
-
             try
             {
+                string name = ControllerUtils.TryGetStringFromJson(data, "new-name");
                 IMinecraftServer server = ServerPark.CreateServer(name);
                 return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);
             }

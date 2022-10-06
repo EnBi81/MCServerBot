@@ -72,7 +72,7 @@ namespace Application.WebSocketHandler
         /// <param name="code">code of the user.</param>
         /// <param name="socket">captured websocket.</param>
         /// <returns></returns>
-        public Task AddSocket(string code, WebSocket socket)
+        public async Task AddSocket(string code, WebSocket socket)
         {
             var user = WebsitePermission.GetUser(code);
             LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user.Username);
@@ -81,7 +81,7 @@ namespace Application.WebSocketHandler
 
             RegisterSocket(socketHandler);
 
-            return Task.CompletedTask;
+            await socketHandler.Initialize();
         }
 
 
@@ -103,14 +103,10 @@ namespace Application.WebSocketHandler
                 {
                     RemoveSocket(socket);
                     continue;
-                }    
+                }
 
-                tasks.Add(socket.SendMessage(message));
+                await socket.SendMessage(message);
             }
-                
-
-            foreach (var task in tasks)
-                await task;
         }
 
         #endregion

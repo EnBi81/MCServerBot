@@ -241,7 +241,7 @@ class ServerPark{
      * @param cpu cpu usage
      * @param memory memory usage
      */
-    #pcUsage(serverName, cpu, memory){
+    #pcUsage(serverName, cpu, memory) {
         let server = this.getServer(serverName);
         server.cpuUsage = cpu;
         server.memoryUsage = memory;
@@ -292,10 +292,10 @@ class ServerPark{
         for (const log of logs) {
             let message = new ServerLog(log["message"], log["type"]);
             server.logs.push(message);
-            messages.push(messages);
+            messages.push(message);
         }
 
-        this.#invokeObserver("logReceived", messages);
+        this.#invokeObserver("logReceived", serverName, messages);
     }
 
     /**

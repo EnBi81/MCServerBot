@@ -126,7 +126,7 @@ class ServerInfoPage{
      * @param storage the storage space the server takes on the disk.
      */
     #statusChange(serverName, status, onlineFrom, storage){
-        if(this.#selectedServer.serverName === serverName)
+        if(this.#selectedServer.serverName !== serverName)
             return;
 
         this.setStatus(status);
@@ -141,7 +141,7 @@ class ServerInfoPage{
      * @param memory memory usage
      */
     #pcUsageChange(serverName, cpu, memory){
-        if(this.#selectedServer.serverName === serverName)
+        if(this.#selectedServer.serverName !== serverName)
             return;
 
         this.setCpu(cpu);
@@ -154,7 +154,7 @@ class ServerInfoPage{
      * @param messages log messages.
      */
     #logReceived(serverName, messages){
-        if(this.#selectedServer.serverName === serverName)
+        if(this.#selectedServer.serverName !== serverName)
             return;
 
         this.#logView.loadLogsToView(messages);
@@ -166,7 +166,7 @@ class ServerInfoPage{
      * @param mcPlayer player who joined the server.
      */
     #playerJoined(serverName, mcPlayer){
-        if(this.#selectedServer.serverName === serverName)
+        if(this.#selectedServer.serverName !== serverName)
             return;
 
         this.#playerView.addPlayerToView(mcPlayer);
@@ -178,7 +178,7 @@ class ServerInfoPage{
      * @param username player who left the server.
      */
     #playerLeft(serverName, username){
-        if(this.#selectedServer.serverName === serverName)
+        if(this.#selectedServer.serverName !== serverName)
             return;
 
         this.#playerView.removePlayerFromView(username);

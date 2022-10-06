@@ -40,12 +40,12 @@ namespace Application.MinecraftServer.States
         }
 
         public override void Start(string username) =>
-            throw new Exception("Server is already starting!");
+            throw new Exception(_server.ServerName + " is already starting!");
 
         public override void Stop(string username) =>
-            throw new Exception("Server is starting. Please wait till the operation is complete.");
+            throw new Exception(_server.ServerName + " is starting. Please wait till the operation is complete.");
 
         public override void WriteCommand(string command, string username) =>
-            throw new Exception("Server is starting, please wait!");
+            throw new Exception(_server.ServerName + " is starting, please wait!");
     }
 }

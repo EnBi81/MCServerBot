@@ -2,7 +2,7 @@ let userCode = document.body.getAttribute("data-user-code");
 document.body.removeAttribute("data-user-code");
 
 const serverPark = new ServerPark(
-    `wss://${location.host}/api/v1/ws/${userCode}`
+    `wss://${location.host}/ws?minecraft-web-login=${userCode}`
 );
 
 let profPicView = new ProfilePicView(serverPark);

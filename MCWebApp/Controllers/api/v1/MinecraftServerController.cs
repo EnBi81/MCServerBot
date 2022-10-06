@@ -2,6 +2,7 @@
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using static MCWebApp.Controllers.api.v1.MinecraftServerController;
 
 namespace MCWebApp.Controllers.api.v1
 {
@@ -41,16 +42,11 @@ namespace MCWebApp.Controllers.api.v1
             if (data == null)
                 return GetBadRequest("No data has been provided");
 
-            if (data.TryGetValue("new-name", out object? temp) &&
-                temp is not string)
-            {
-                return GetBadRequest("'new-name' value is expected to be a string.");
-            }
 
             try
             {
-                if (temp is string newName)
-                    ServerPark.RenameServer(serverName, newName);
+                string newName = ControllerUtils.TryGetStringFromJson(data, "new-name");
+                ServerPark.RenameServer(serverName, newName);
 
                 return Ok();
             }
@@ -60,10 +56,7 @@ namespace MCWebApp.Controllers.api.v1
             }
         }
 
-        public class Command
-        {
-            public string commandData { get; set; }
-        }
+
 
         [HttpPost("commands")]
         public IActionResult WriteCommand(string serverName, [FromBody] Dictionary<string, object?>? data)
@@ -74,29 +67,16 @@ namespace MCWebApp.Controllers.api.v1
             if (data == null)
                 return GetBadRequest("No data has been provided");
 
-            JsonValueKind? valueKind = null;
-            if (data.TryGetValue("command-data", out object? temp) && // check if the jsonobject has this key, and get the value
-                temp is JsonElement json &&   // check if the value is jsonelement (obviously it is, here we more just convert it to JsonElement)
-                (valueKind = json.ValueKind) == JsonValueKind.String) // set the valuekind parameter to the received valuekind, and check if it is a string
+            try
             {
-                try
-                {
-                    json = new JsonElement();
-                    string? command = json.Deserialize<string>();
-
-                    if(!string.IsNullOrWhiteSpace(command))
-                        ServerPark.MCServers[serverName].WriteCommand(command);
-
-                    return Ok();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    return GetBadRequest(e.Message);
-                }
+                string command = ControllerUtils.TryGetStringFromJson(data, "command-data");
+                ServerPark.MCServers[serverName].WriteCommand(command);
+                return Ok();
             }
-
-            return GetBadRequest($"'command-data' value is expected to be a string, but was {valueKind}.");
+            catch (Exception e)
+            {
+                return GetBadRequest(e.Message);
+            }
         }
 
 

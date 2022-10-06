@@ -17,18 +17,13 @@ class MCSender {
 
         try{
             let xmlHttp = new XMLHttpRequest();
-            if(callback != null){
-                xmlHttp.onreadystatechange = () => callback(xmlHttp);
-            }
-            xmlHttp.onload = data => {
-                console.log(xmlHttp)
-                console.log("errordata: " + data);
+            if (callback != null) {
+                xmlHttp.onload = () => callback(xmlHttp);
             }
             
             xmlHttp.open(methodName, requestUrl, true); // true for asynchronous
             xmlHttp.setRequestHeader("Content-Type", "application/json");
             xmlHttp.send(body);
-            console.log(body);
 
         }
         catch (e){
@@ -37,15 +32,15 @@ class MCSender {
 
     }
     #post(requestUrl, data){
-        this.#sendRequest(requestUrl, "POST", data);
+        this.#sendRequest(requestUrl, "POST", data, this.#createNetworkcallback());
     }
 
     #delete(requestUrl){
-        this.#sendRequest(requestUrl, "DELETE", null);
+        this.#sendRequest(requestUrl, "DELETE", null, this.#createNetworkcallback());
     }
 
-    #put(requestUrl, data){
-        this.#sendRequest(requestUrl, "PUT", data);
+    #put(requestUrl, data) {
+        this.#sendRequest(requestUrl, "PUT", data, this.#createNetworkcallback());
     }
 
     #get(requestUrl, callback){
@@ -54,16 +49,18 @@ class MCSender {
 
     #createNetworkcallback(callbackFunction) {
         return request => {
-            if (request.readyState !== 4)
-                return;
-
-            if (request.status <= 300)
+            if (request.status <= 300 && callbackFunction != null)
                 callbackFunction(JSON.parse(request.responseText));
 
             else if (request.status >= 400 && request.status < 500) {
-                console.log("error")
-                let json = Json.parse(request.responseText);
-                this.#socketReceiver.errorReceived(json['errorMessage']);
+                try {
+                    let json = JSON.parse(request.responseText);
+                    this.#socketReceiver.errorReceived(json['errorMessage']);
+                }
+                catch (e) {
+                    console.error(e);
+                }
+                
             }
         }
     }
