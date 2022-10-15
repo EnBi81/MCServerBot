@@ -27,6 +27,7 @@ namespace Application.MinecraftServer
             int maxRam, 
             int initRam)
         {
+            // server.jar path
             _serverFileName = serverFileName;
             _javaLocation = javaLocation;
             _serverHandlerPath = serverHandlerPath;
@@ -48,10 +49,12 @@ namespace Application.MinecraftServer
         /// </summary>
         public void Start()
         {
+            // get the server.jar fileinfo
             FileInfo info = new FileInfo(_serverFileName);
             var workingDir = info.DirectoryName;
             var simpleFileName = info.Name;
 
+            // processstartinfo of cmd in the server folder
             var processStartInfo = new ProcessStartInfo
             {
                 RedirectStandardError = true,
@@ -63,6 +66,7 @@ namespace Application.MinecraftServer
                 WorkingDirectory = workingDir
             };
 
+            // create cmd process
             _serverHandlerProcess = new Process()
             {
                 StartInfo = processStartInfo,
@@ -71,6 +75,7 @@ namespace Application.MinecraftServer
 
             LogService.GetService<MinecraftLogger>().Log("server-process", $"Starting server {simpleFileName} with max-ram {_maxRam}.");
 
+            // start cmd process and make it run the server handler
             _serverHandlerProcess.Start();
             _serverHandlerProcess.StandardInput.WriteLine($"\"{_serverHandlerPath}\" {simpleFileName} \"{_javaLocation}\" \"{workingDir}\" {_maxRam} {_initRam} & exit");
             _serverHandlerProcess.BeginErrorReadLine();

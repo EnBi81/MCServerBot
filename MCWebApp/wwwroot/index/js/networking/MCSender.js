@@ -127,6 +127,6 @@ class MCSender {
                 callback(JSON.parse(request.responseText));
         }
 
-        this.#get("discord/user/refresh", networkCallback);
+        this.#get(this.BASE_API_URL + "discord/user/refresh", networkCallback);
     }
 }

@@ -226,13 +226,16 @@ class ServerPark{
      * @param onlineFrom online from (might be null).
      * @param storage storage space for the server.
      */
-    #statusChangeReceived(serverName, status, onlineFrom, storage){
+    #statusChangeReceived(serverName, status, onlineFrom, storage) {
         let server = this.getServer(serverName);
         server.status = status;
         server.storage = storage;
-        server.onlineFrom = new Date(onlineFrom);
-
-        this.#invokeObserver("statusChange", serverName, status, onlineFrom, storage);
+        
+        if (onlineFrom != null) {
+            onlineFrom = onlineFrom.replace("T", " ");
+            server.onlineFrom = new Date(onlineFrom);
+        }
+        this.#invokeObserver("statusChange", serverName, status, server.onlineFrom, storage);
     }
 
     /**
@@ -269,7 +272,7 @@ class ServerPark{
      * @param pastUptime past uptime timespan.
      */
     #playerJoined(serverName, username, onlineFrom, pastUptime){
-        let date = new Date(onlineFrom);
+        let date = new Date(onlineFrom.replace("T", " "));
         let simpleTime = new SimpleTimeObject(pastUptime.h, pastUptime.m, pastUptime.s);
 
         let player = new MinecraftPlayer(username, date, simpleTime);

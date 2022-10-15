@@ -132,6 +132,8 @@ class ServerInfoPage{
         this.setStatus(status);
         this.setStorage(storage);
         this.setServerOnlineFrom(onlineFrom);
+
+        
     }
 
     /**
@@ -247,7 +249,6 @@ class ServerInfoPage{
             return;
 
         let milliseconds = value.getTime();
-
         this.#serverUptimeElement.setAttribute("data-online-from", milliseconds);
     }
 
