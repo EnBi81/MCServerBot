@@ -22,7 +22,9 @@ namespace DiscordBot.Bot
 
         public async Task InitializeAsync()
         {
-            _client.Ready += () => RegisterCommands();
+            await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
+
+            _client.Ready += () => RegisterCommands(false);
             _client.InteractionCreated += ExecuteSocketInteraction;
 
             BotOwnerId = (await _client.GetApplicationInfoAsync()).Owner.Id;
@@ -39,12 +41,14 @@ namespace DiscordBot.Bot
             }
         }
 
-        private async Task RegisterCommands(bool global = false)
+        private async Task RegisterCommands(bool global)
         {
             try
             {
-                await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
-                await _interactionService.RegisterCommandsToGuildAsync(765567760327507979, true);
+                if (global)
+                    await _interactionService.RegisterCommandsGloballyAsync(true);
+                else
+                    await _interactionService.RegisterCommandsToGuildAsync(765567760327507979, true);
             }
             catch (Exception e)
             {

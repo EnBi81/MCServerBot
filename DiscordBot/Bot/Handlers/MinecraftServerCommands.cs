@@ -77,16 +77,5 @@ namespace DiscordBot.Bot.Handlers
                 await RespondAsync($"**{serverName}** cannot be renamed: **{e.Message}**");
             }
         }
-
-        [SlashCommand("delete-server", "Delete a server")]
-        public async Task DeleteServer([Summary("server-name", "Name of the server to delete"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
-        {
-            var cancelButton = ButtonHelper.CreateCancelButton("delete-cancel");
-            var proceedButton = ButtonHelper.CreateProceedButton("delete-proceed", "Delete");
-
-            var messageComponent = ButtonHelper.JoinButtons(cancelButton, proceedButton);
-
-            IUserMessage replyMessage = await ReplyAsync($"Do you really want to delete **{serverName}**?", components: messageComponent);
-        }
     }
 }
