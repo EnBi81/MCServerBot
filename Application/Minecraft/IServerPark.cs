@@ -4,7 +4,7 @@ using Application.Minecraft.MinecraftServers;
 
 namespace Application.Minecraft
 {
-    internal interface IServerPark
+    public interface IServerPark
     {
 
         /// <summary>
