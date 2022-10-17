@@ -1,10 +1,10 @@
 ﻿using Application.Minecraft;
 using Discord;
 using Discord.Interactions;
-using DiscordBot.Bot.Commands.Autocompletes;
+using DiscordBot.Bot.Handlers.Autocompletes;
 using DiscordBot.Bot.Helpers;
 
-namespace DiscordBot.Bot.Commands
+namespace DiscordBot.Bot.Handlers
 {
    
     public class MinecraftServerCommands : InteractionModuleBase<SocketInteractionContext>
@@ -22,8 +22,6 @@ namespace DiscordBot.Bot.Commands
         [SlashCommand("start-server", "Start the minecraft server")]
         public async Task StartServer([Summary("server-name", "Name of the server to start"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
         {
-            await DeferAsync();
-
             try
             {
                 _serverPark.StartServer(serverName, Context.User.Username);
@@ -35,12 +33,11 @@ namespace DiscordBot.Bot.Commands
             }
         }
 
+        
 
         [SlashCommand("stop-server", "Stop the minecraft server")]
         public async Task ShutDownServer()
         {
-            await DeferAsync();
-
             try
             {
                 _serverPark.StopActiveServer(Context.User.Username);
@@ -54,7 +51,7 @@ namespace DiscordBot.Bot.Commands
 
 
         [SlashCommand("create-server", "Create a new server")]
-        public async Task CreateServer([Summary("server-name", "Name of the new server"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
+        public async Task CreateServer([Summary("server-name", "Name of the new server")] string serverName)
         {
             try
             {
@@ -68,7 +65,7 @@ namespace DiscordBot.Bot.Commands
 
         [SlashCommand("rename-server", "Rename a server")]
         public async Task RenameServer([Summary("name", "Name of the server to rename"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName,
-                                        [Summary("new-name", "New name of the server"), Autocomplete(typeof(ServerNameAutocomplete))] string newName)
+                                        [Summary("new-name", "New name of the server")] string newName)
         {
             try
             {
@@ -84,14 +81,12 @@ namespace DiscordBot.Bot.Commands
         [SlashCommand("delete-server", "Delete a server")]
         public async Task DeleteServer([Summary("server-name", "Name of the server to delete"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
         {
-            await DeferAsync();
-
             var cancelButton = ButtonHelper.CreateCancelButton("delete-cancel");
-            var proceedButton = ButtonHelper.CreateProceedButton("delete-server", "Delete");
+            var proceedButton = ButtonHelper.CreateProceedButton("delete-proceed", "Delete");
 
             var messageComponent = ButtonHelper.JoinButtons(cancelButton, proceedButton);
 
-            await RespondAsync($"Do you really want to delete **{serverName}**?", components: messageComponent);
+            IUserMessage replyMessage = await ReplyAsync($"Do you really want to delete **{serverName}**?", components: messageComponent);
         }
     }
 }

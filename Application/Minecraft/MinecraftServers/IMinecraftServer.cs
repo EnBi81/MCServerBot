@@ -18,6 +18,11 @@ namespace Application.Minecraft.MinecraftServers
         public const int NAME_MAX_LENGTH = 35;
 
         /// <summary>
+        /// Id number, unique for a minecraft server.
+        /// </summary>
+        public int Id { get; }
+
+        /// <summary>
         /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.
         /// </summary>
         public string ServerName { get; set; }

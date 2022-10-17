@@ -29,7 +29,7 @@
     /// <summary>
     /// Extension class for ServerStatus enum
     /// </summary>
-    internal static class ServerStatusExtensions
+    public static class ServerStatusExtensions
     {
         /// <summary>
         /// Converts the enum variable to string
@@ -38,16 +38,14 @@
         /// <returns>the string representative of the enum value</returns>
         public static string DisplayString(this ServerStatus status)
         {
-            if (status == ServerStatus.Online)
-                return $"Server Online on {HamachiHelper.HamachiClient.Address}:{IServerPark.Instance.ActiveServer?.Port}";
-            if (status == ServerStatus.Offline)
-                return "Server Offline";
-            if (status == ServerStatus.Starting)
-                return "Server Starting";
-            if (status == ServerStatus.ShuttingDown)
-                return "Server Shutting Down";
-
-            return "";
+            return status switch
+            {
+                ServerStatus.Offline => "Offline",
+                ServerStatus.Starting => "Starting",
+                ServerStatus.Online => "Online",
+                ServerStatus.ShuttingDown => "Shutting Down",
+                _ => "NOT IMPLEMENTED SERVER STATUS"
+            };
         }
     }
 }

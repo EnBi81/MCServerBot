@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Loggers;
 using Application.Minecraft.MinecraftServers;
 using Discord.Interactions;
+using Application.Minecraft.Enums;
 
 namespace DiscordBot.Bot
 {
@@ -43,15 +44,13 @@ namespace DiscordBot.Bot
 
         private readonly string _token;
 
-        public DiscordBot(string token)
+        internal DiscordBot(string token)
         {
             _token = token;
 
             Services = SetupServices();
             SocketClient = Services.GetRequiredService<DiscordSocketClient>();
             CommandHandler = Services.GetRequiredService<CommandHandler>();
-
-            
         }
 
 
@@ -69,19 +68,27 @@ namespace DiscordBot.Bot
             await CommandHandler.InitializeAsync();
 
             await SocketClient.SetGameAsync("Servers Offline", null, ActivityType.Playing);
-            //ServerPark.ActiveServerStatusChange += (s, e) => ServerStatusChange((IMinecraftServer) s!);
-            //ServerPark.ActiveServerPlayerJoined += (s, e) => ServerStatusChange((IMinecraftServer) s!);
-            //ServerPark.ActiveServerPlayerLeft += (s, e) => ServerStatusChange((IMinecraftServer) s!);
+
+
+            IServerPark serverPark = Services.GetRequiredService<IServerPark>();
+
+            serverPark.ActiveServerStatusChange += (s, e) => ServerStatusChange((IMinecraftServer) s!);
+            serverPark.ActiveServerPlayerJoined += (s, e) => ServerStatusChange((IMinecraftServer) s!);
+            serverPark.ActiveServerPlayerLeft += (s, e) => ServerStatusChange((IMinecraftServer) s!);
         }
 
         private async void ServerStatusChange(IMinecraftServer server)
         {
-            string name = $"{server.ServerName} - {server.OnlinePlayers.Count} active players";
+            string serverName = server.ServerName;
+            string serverStatus = server.Status.DisplayString();
+            string playerCount = server.Status == ServerStatus.Online ? $" ({server.OnlinePlayers.Count} players)" : "";
+
+            string name = $"{serverName} - {serverStatus}{playerCount}";
             await SocketClient.SetGameAsync(name, null, ActivityType.Playing);
         }
 
 
-        private IServiceProvider SetupServices()
+        private static IServiceProvider SetupServices()
             => new ServiceCollection()
             .AddSingleton(IServerPark.Instance)
             .AddSingleton(new DiscordSocketConfig

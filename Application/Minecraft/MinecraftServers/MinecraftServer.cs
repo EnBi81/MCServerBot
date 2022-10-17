@@ -11,6 +11,11 @@ namespace Application.Minecraft.MinecraftServers
     internal class MinecraftServer : IMinecraftServer
     {
 
+        /// <summary>
+        /// Id number, unique for a minecraft server.
+        /// </summary>
+        public int Id { get; } = 0;
+
         private string _serverName = null!;
         /// <summary>
         /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.

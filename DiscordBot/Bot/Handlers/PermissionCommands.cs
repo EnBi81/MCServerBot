@@ -7,7 +7,7 @@ using Application.PermissionControll;
 using DiscordBot.Bot.Helpers;
 using DiscordBot.PermissionControll;
 
-namespace DiscordBot.Bot.Commands
+namespace DiscordBot.Bot.Handlers
 {
     internal class PermissionCommands
     {

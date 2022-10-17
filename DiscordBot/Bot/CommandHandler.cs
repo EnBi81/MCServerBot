@@ -1,15 +1,11 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Loggers;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordBot.Bot
 {
-    internal class CommandHandler
+    public class CommandHandler
     {
         private readonly DiscordSocketClient _client;
         private readonly InteractionService _interactionService;
@@ -26,33 +22,34 @@ namespace DiscordBot.Bot
 
         public async Task InitializeAsync()
         {
-            _client.Ready += ReadyEvent;
-            _client.SlashCommandExecuted += SlashCommandExecuted;
-            _client.InteractionCreated += async arg =>
-            {
-                SocketInteractionContext context = new SocketInteractionContext(_client, arg);
-                await _interactionService.ExecuteCommandAsync(context, _services);
-            };
+            _client.Ready += () => RegisterCommands();
+            _client.InteractionCreated += ExecuteSocketInteraction;
 
             BotOwnerId = (await _client.GetApplicationInfoAsync()).Owner.Id;
         }
 
-        private async Task SlashCommandExecuted(SocketSlashCommand arg)
+        private async Task ExecuteSocketInteraction(SocketInteraction arg) 
         {
             SocketInteractionContext context = new SocketInteractionContext(_client, arg);
-            await _interactionService.ExecuteCommandAsync(context, _services);
+            IResult result = await _interactionService.ExecuteCommandAsync(context, _services);
+
+            if(!result.IsSuccess)
+            {
+                LogService.GetService<DiscordLogger>().LogError(result.Error + " - " + result.ErrorReason);
+            }
         }
 
-
-        private async Task ReadyEvent()
+        private async Task RegisterCommands(bool global = false)
         {
-            await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
-
-#if DEBUG
-            await _interactionService.RegisterCommandsToGuildAsync(765567760327507979, true);
-#else
-            await _interactionService.RegisterCommandsGloballyAsync(true);
-#endif
+            try
+            {
+                await _interactionService.AddModulesAsync(Assembly.GetExecutingAssembly(), _services);
+                await _interactionService.RegisterCommandsToGuildAsync(765567760327507979, true);
+            }
+            catch (Exception e)
+            {
+                LogService.GetService<DiscordLogger>().LogFatal(e.Message);
+            }
         }
     }
 }
