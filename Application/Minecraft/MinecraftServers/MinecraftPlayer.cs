@@ -1,7 +1,7 @@
 ﻿using Loggers;
 using System;
 
-namespace Application.MinecraftServer
+namespace Application.Minecraft.MinecraftServers
 {
     /// <summary>
     /// Holds information of a minecraft player in
@@ -22,8 +22,8 @@ namespace Application.MinecraftServer
         /// Sum of the time spent online from the previous sessions.
         /// </summary>
         public TimeSpan PastOnline { get; private set; }
-        
-        
+
+
         public MinecraftPlayer(string username)
         {
             Username = username;
@@ -48,7 +48,7 @@ namespace Application.MinecraftServer
         /// </summary>
         public void SetOffline()
         {
-            if(OnlineFrom == null)
+            if (OnlineFrom == null)
                 return;
 
             PastOnline += DateTime.Now - OnlineFrom.Value;

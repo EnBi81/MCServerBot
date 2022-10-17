@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Application.MinecraftServer;
-using Application.MinecraftServer.EventHandlers;
-using Application.MinecraftServer.Enums;
+using Application.Minecraft;
+using Application.Minecraft.EventHandlers;
+using Application.Minecraft.Enums;
+using Application.Minecraft.MinecraftServers;
 
 namespace Application.WebSocketHandler
 {

@@ -1,4 +1,4 @@
-﻿namespace Application.MinecraftServer.Enums
+﻿namespace Application.Minecraft.Enums
 {
     /// <summary>
     /// Represents the status of a server

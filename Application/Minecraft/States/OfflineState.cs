@@ -1,9 +1,10 @@
 ﻿using Discord;
-using Application.MinecraftServer.Enums;
+using Application.Minecraft.Enums;
 using System.Data.SqlTypes;
-using LogMessage = Application.MinecraftServer.Enums.LogMessage;
+using LogMessage = Application.Minecraft.Enums.LogMessage;
+using Application.Minecraft.MinecraftServers;
 
-namespace Application.MinecraftServer.States
+namespace Application.Minecraft.States
 {
     /// <summary>
     /// Represents the offline state of the minecraft server. 

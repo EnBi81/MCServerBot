@@ -1,4 +1,4 @@
-﻿namespace Application.MinecraftServer.EventHandlers
+﻿namespace Application.Minecraft.EventHandlers
 {
     public class ValueEventArgs<T> : EventArgs
     {

@@ -1,7 +1,7 @@
-﻿using Application.MinecraftServer.Enums;
+﻿using Application.Minecraft.Enums;
 using System.Collections.Generic;
 
-namespace Application.MinecraftServer
+namespace Application.Minecraft.MinecraftServers
 {
     /// <summary>
     /// Interface representing a single Minecraft Server.

@@ -1,4 +1,4 @@
-﻿using Application.MinecraftServer;
+﻿using Application.Minecraft.MinecraftServers;
 using Discord;
 
 namespace DiscordBot.Discord.Helpers

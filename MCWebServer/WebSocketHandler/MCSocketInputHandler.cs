@@ -1,10 +1,11 @@
 ﻿using Loggers;
-using Application.MinecraftServer;
+using Application.Minecraft;
 
 using Newtonsoft.Json.Linq;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Minecraft.MinecraftServers;
 
 namespace Application.WebSocketHandler
 {

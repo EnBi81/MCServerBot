@@ -1,6 +1,6 @@
-﻿using Application.MinecraftServer.Enums;
+﻿using Application.Minecraft.Enums;
 
-namespace Application.MinecraftServer.States
+namespace Application.Minecraft.States
 {
     /// <summary>
     /// Blueprint of a Minecraft Server State.

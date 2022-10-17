@@ -1,4 +1,4 @@
-﻿using Application.MinecraftServer;
+﻿using Application.Minecraft;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebApp.Controllers.Utils

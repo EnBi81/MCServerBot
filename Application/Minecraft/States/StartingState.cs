@@ -1,7 +1,8 @@
-﻿using Application.MinecraftServer.Enums;
+﻿using Application.Minecraft.Enums;
+using Application.Minecraft.MinecraftServers;
 using System.Text.RegularExpressions;
 
-namespace Application.MinecraftServer.States
+namespace Application.Minecraft.States
 {
     /// <summary>
     /// Represents the Starting state of the minecraft server.

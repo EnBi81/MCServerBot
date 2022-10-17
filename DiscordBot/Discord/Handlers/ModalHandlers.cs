@@ -1,7 +1,7 @@
 ﻿using Discord.WebSocket;
 using DiscordBot.Discord.Helpers;
 using Discord;
-using Application.MinecraftServer;
+using Application.Minecraft;
 
 namespace DiscordBot.Discord.Handlers
 {

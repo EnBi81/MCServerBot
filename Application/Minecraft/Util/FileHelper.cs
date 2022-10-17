@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace Application.MinecraftServer.Util
+namespace Application.Minecraft.Util
 {
     internal class FileHelper
     {

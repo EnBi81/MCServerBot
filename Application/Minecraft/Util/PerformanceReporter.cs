@@ -1,11 +1,11 @@
 ﻿using Loggers;
-using Application.MinecraftServer.Enums;
+using Application.Minecraft.Enums;
 using System.Management;
 using System.Threading;
 using System;
 using System.Diagnostics;
 
-namespace Application.MinecraftServer.Util
+namespace Application.Minecraft.Util
 {
     /// <summary>
     /// Class responsible for measuring the cpu and memory usage of a process.

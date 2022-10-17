@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.IO;
 using System;
-using Application.MinecraftServer.Util;
+using Application.Minecraft.Util;
 using System.Threading.Tasks;
 
-namespace Application.MinecraftServer
+namespace Application.Minecraft.MinecraftServers
 {
     /// <summary>
     /// Class for handling low level process events handling of a minecraft server.
@@ -21,10 +21,10 @@ namespace Application.MinecraftServer
 
 
         public MinecraftServerProcess(
-            string serverFileName, 
-            string javaLocation, 
+            string serverFileName,
+            string javaLocation,
             string serverHandlerPath,
-            int maxRam, 
+            int maxRam,
             int initRam)
         {
             // server.jar path

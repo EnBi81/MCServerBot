@@ -1,11 +1,12 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Application.MinecraftServer;
+using Application.Minecraft;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Loggers;
 using System.Net.NetworkInformation;
+using Application.Minecraft.MinecraftServers;
 
 namespace DiscordBot.Discord
 {

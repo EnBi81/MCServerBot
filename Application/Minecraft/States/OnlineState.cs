@@ -1,9 +1,10 @@
 ﻿using Loggers;
-using Application.MinecraftServer.Enums;
+using Application.Minecraft.Enums;
 using System.Text.RegularExpressions;
-using LogMessage = Application.MinecraftServer.Enums.LogMessage;
+using LogMessage = Application.Minecraft.Enums.LogMessage;
+using Application.Minecraft.MinecraftServers;
 
-namespace Application.MinecraftServer.States
+namespace Application.Minecraft.States
 {
     /// <summary>
     /// Represents the Online state of the minecraft server.

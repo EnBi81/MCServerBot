@@ -1,4 +1,4 @@
-﻿namespace Application.MinecraftServer.Enums
+﻿namespace Application.Minecraft.Enums
 {
     /// <summary>
     /// Represents a single log message, its type and the message itself.

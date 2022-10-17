@@ -4,7 +4,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Application.MinecraftServer
+
+namespace Application.Minecraft.MinecraftServers
 {
     /// <summary>
     /// Class managing the properties file for a minecraft server.
@@ -30,7 +31,7 @@ namespace Application.MinecraftServer
         public static void SaveProperties(string file, MinecraftServerProperties props)
         {
             StringBuilder sb = new StringBuilder();
-            foreach(var (key, value) in props)
+            foreach (var (key, value) in props)
                 sb.AppendLine(key + "=" + value.ToString());
 
             File.WriteAllText(file, sb.ToString());
@@ -38,7 +39,7 @@ namespace Application.MinecraftServer
 
 
 
-        
+
         /// <summary>
         /// Dictionary of each of the property key and value.
         /// </summary>
@@ -51,9 +52,9 @@ namespace Application.MinecraftServer
         public MinecraftServerProperties(IEnumerable<string> lines)
         {
             Regex regex = new Regex("[^=]=[^=]");
-            foreach(var line in lines)
+            foreach (var line in lines)
             {
-                if(!regex.IsMatch(line))
+                if (!regex.IsMatch(line))
                     continue;
 
                 string[] parts = line.Split('=');

@@ -1,4 +1,4 @@
-﻿using Application.MinecraftServer;
+﻿using Application.Minecraft;
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;

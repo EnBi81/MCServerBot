@@ -1,6 +1,7 @@
-﻿using Application.MinecraftServer.Enums;
+﻿using Application.Minecraft.Enums;
+using Application.Minecraft.MinecraftServers;
 
-namespace Application.MinecraftServer.States
+namespace Application.Minecraft.States
 {
     /// <summary>
     /// Represents the Shutting Down state.

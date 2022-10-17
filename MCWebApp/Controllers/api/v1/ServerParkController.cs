@@ -1,5 +1,6 @@
-﻿using Application.MinecraftServer;
-using Application.MinecraftServer.Enums;
+﻿using Application.Minecraft;
+using Application.Minecraft.Enums;
+using Application.Minecraft.MinecraftServers;
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.Serialization;

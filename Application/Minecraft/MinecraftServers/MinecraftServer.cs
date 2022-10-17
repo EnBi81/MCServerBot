@@ -1,14 +1,14 @@
 ﻿using Loggers;
-using Application.MinecraftServer.Util;
-using Application.MinecraftServer.Enums;
-using Application.MinecraftServer.States;
+using Application.Minecraft.Util;
+using Application.Minecraft.Enums;
+using Application.Minecraft.States;
 
-namespace Application.MinecraftServer
+namespace Application.Minecraft.MinecraftServers
 {
     /// <summary>
     /// A representation of a single minecraft server.
     /// </summary>
-    internal class MinecraftServer : IMinecraftServer 
+    internal class MinecraftServer : IMinecraftServer
     {
 
         private string _serverName = null!;
@@ -17,7 +17,7 @@ namespace Application.MinecraftServer
         /// </summary>
         public string ServerName
         {
-            get => _serverName; 
+            get => _serverName;
             set
             {
                 if (value is null || value.Length < IMinecraftServer.NAME_MIN_LENGTH || value.Length > IMinecraftServer.NAME_MAX_LENGTH)
@@ -25,7 +25,7 @@ namespace Application.MinecraftServer
 
                 _serverName = value;
                 RaiseEvent(NameChanged, value);
-            } 
+            }
         }
 
         private IServerState _serverState;
@@ -106,11 +106,11 @@ namespace Application.MinecraftServer
                 throw new Exception("MinecraftConfig instance is not created.");
 
             McServerProcess = new MinecraftServerProcess(
-                serverFileName:     serverFileName,
-                javaLocation:       config.JavaLocation,
-                serverHandlerPath:  config.MinecraftServerHandlerPath,
-                maxRam:             config.MinecraftServerMaxRamMB,
-                initRam:            config.MinecraftServerInitRamMB);
+                serverFileName: serverFileName,
+                javaLocation: config.JavaLocation,
+                serverHandlerPath: config.MinecraftServerHandlerPath,
+                maxRam: config.MinecraftServerMaxRamMB,
+                initRam: config.MinecraftServerInitRamMB);
 
             SubscribeToProcessEvents();
 
@@ -169,7 +169,7 @@ namespace Application.MinecraftServer
         /// Shuts down the minecraft server if it is online.
         /// </summary>
         /// <param name="user">username of the user who initiates the start of the server.</param>
-        public void Shutdown(string user = "Admin") => 
+        public void Shutdown(string user = "Admin") =>
             _serverState.Stop(user);
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace Application.MinecraftServer
         /// <typeparam name="T">Type of the event argument of the event handler.</typeparam>
         /// <param name="evt">Event handler to invoke.</param>
         /// <param name="param">Event data to invoke the handler with.</param>
-        protected void RaiseEvent<T>(EventHandler<T> evt, T param) 
+        protected void RaiseEvent<T>(EventHandler<T> evt, T param)
             => evt?.Invoke(this, param);
 
 
@@ -227,9 +227,9 @@ namespace Application.MinecraftServer
             var type = typeof(T);
 
             // here we check that the type is neither abstract nor interface, and it has a constructor which takes a minecraft server.
-            if(type.IsAbstract ||      
+            if (type.IsAbstract ||
                type.IsInterface ||
-               type.GetConstructor(new Type[] {typeof(MinecraftServer)}) == null) //last line: check if T contains a public constructor which takes a MinecraftServer object
+               type.GetConstructor(new Type[] { typeof(MinecraftServer) }) == null) //last line: check if T contains a public constructor which takes a MinecraftServer object
             {
                 throw new Exception("Invalid State " + type.FullName);
             }
@@ -287,7 +287,7 @@ namespace Application.MinecraftServer
             RaiseEvent(LogReceived, logMessage);
         }
 
-        
+
 
 
         public static bool operator ==(MinecraftServer s1, MinecraftServer s2)
@@ -321,7 +321,7 @@ namespace Application.MinecraftServer
             unchecked // disable overflow, for the unlikely possibility that you
             {         // are compiling with overflow-checking enabled
                 int hash = 27;
-                hash = (13 * hash) + ServerName.GetHashCode();
+                hash = 13 * hash + ServerName.GetHashCode();
                 return hash;
             }
         }

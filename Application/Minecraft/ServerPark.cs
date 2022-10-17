@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Application;
-using Application.MinecraftServer.Enums;
-using Application.MinecraftServer.EventHandlers;
-using Application.MinecraftServer.Util;
+using Application.Minecraft.Enums;
+using Application.Minecraft.EventHandlers;
+using Application.Minecraft.MinecraftServers;
+using Application.Minecraft.Util;
 using Loggers;
 
-namespace Application.MinecraftServer
+namespace Application.Minecraft
 {
     /// <summary>
     /// Class holding all the Minecraft Server Instances
@@ -16,15 +17,15 @@ namespace Application.MinecraftServer
         /// <summary>
         /// Path of the folder the minecraft servers are stored
         /// </summary>
-        public static string ServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Servers\\";
+        internal static string ServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Servers\\";
         /// <summary>
         /// Path of the folder which contains the previously deleted servers
         /// </summary>
-        public static string DeletedServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Deleted Servers\\";
+        internal static string DeletedServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Deleted Servers\\";
         /// <summary>
         /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
         /// </summary>
-        public static string EmptyServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Empty Server\\";
+        internal static string EmptyServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Empty Server\\";
 
 
 
@@ -259,7 +260,7 @@ namespace Application.MinecraftServer
         /// <param name="folderPath"></param>
         private static IMinecraftServer RegisterMcServer(string serverName, string folderPath)
         {
-            IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
+            IMinecraftServer mcServer = new MinecraftServers.MinecraftServer(serverName, folderPath);
             MCServers.Add(serverName, mcServer);
             InvokeServerAdded(mcServer);
 

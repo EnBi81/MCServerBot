@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "HamachiHelper": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:52185;http://localhost:52186"
+    }
+  }
+}
