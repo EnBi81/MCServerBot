@@ -290,10 +290,10 @@ namespace Application.Minecraft.MinecraftServers
 
 
 
-        public static bool operator ==(MinecraftServer s1, MinecraftServer s2)
+        public static bool operator ==(MinecraftServer? s1, MinecraftServer? s2)
             => s1?.Equals(s2) ?? s2?.Equals(s1) ?? true;
 
-        public static bool operator !=(MinecraftServer s1, MinecraftServer s2)
+        public static bool operator !=(MinecraftServer? s1, MinecraftServer? s2)
             => !(s1 == s2);
 
         /// <summary>

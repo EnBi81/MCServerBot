@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Application;
-using Application.Minecraft.Enums;
+﻿using Application.Minecraft.Enums;
 using Application.Minecraft.EventHandlers;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
@@ -9,10 +6,7 @@ using Loggers;
 
 namespace Application.Minecraft
 {
-    /// <summary>
-    /// Class holding all the Minecraft Server Instances
-    /// </summary>
-    public class ServerPark
+    internal class ServerPark : IServerPark
     {
         /// <summary>
         /// Path of the folder the minecraft servers are stored
@@ -30,7 +24,7 @@ namespace Application.Minecraft
 
 
 
-        static ServerPark()
+        public ServerPark()
         {
             DirectoryInfo info = new(ServersFolder);
 
@@ -56,12 +50,12 @@ namespace Application.Minecraft
         /// <summary>
         /// Online minecraft server (only one can be online at a time)
         /// </summary>
-        public static IMinecraftServer? ActiveServer { get; private set; }
+        public IMinecraftServer? ActiveServer { get; private set; }
 
         /// <summary>
         /// List of all minecraft server instances
         /// </summary>
-        public static Dictionary<string, IMinecraftServer> MCServers { get; } = new ();
+        public Dictionary<string, IMinecraftServer> MCServers { get; } = new();
 
 
         /// <summary>
@@ -69,11 +63,11 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="server">Server to set as active</param>
         /// <exception cref="Exception">If another server is already running.</exception>
-        private static void SetActiveServer(string serverName)
+        private void SetActiveServer(string serverName)
         {
-            if(ActiveServer != null)
+            if (ActiveServer != null)
             {
-                if(ActiveServer.IsRunning)
+                if (ActiveServer.IsRunning)
                     throw new Exception("Another Server is Running Already!");
             }
 
@@ -97,7 +91,7 @@ namespace Application.Minecraft
         /// Start the active server.
         /// </summary>
         /// <param name="username">username who initiates the start</param>
-        public static void StartServer(string serverName, string username)
+        public void StartServer(string serverName, string username)
         {
             ValidateMaxStorage();
 
@@ -109,7 +103,7 @@ namespace Application.Minecraft
         /// Stop the active server.
         /// </summary>
         /// <param name="username">username who initiates the stop</param>
-        public static void StopActiveServer(string username)
+        public void StopActiveServer(string username)
         {
             ActiveServer?.Shutdown(username);
         }
@@ -120,9 +114,9 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="serverName">server to toggle</param>
         /// <param name="username">username who initiated this action</param>
-        public static void ToggleServer(string serverName, string username = "Admin")
+        public void ToggleServer(string serverName, string username = "Admin")
         {
-            if(ActiveServer?.IsRunning ?? false)
+            if (ActiveServer?.IsRunning ?? false)
             {
                 ActiveServer.Shutdown(username);
             }
@@ -130,7 +124,7 @@ namespace Application.Minecraft
             {
                 SetActiveServer(serverName);
                 ActiveServer!.Start(username);
-            } 
+            }
         }
 
 
@@ -139,7 +133,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public static IMinecraftServer CreateServer(string name)
+        public IMinecraftServer CreateServer(string name)
         {
             ValidateNameLength(name);
 
@@ -148,7 +142,7 @@ namespace Application.Minecraft
 
             ValidateMaxStorage();
 
-            
+
             string destDir = ServersFolder + name;
             Directory.CreateDirectory(destDir);
 
@@ -165,7 +159,7 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public static void RenameServer(string oldName, string newName)
+        public void RenameServer(string oldName, string newName)
         {
             ValidateNameLength(newName);
 
@@ -197,7 +191,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public static void DeleteServer(string name)
+        public void DeleteServer(string name)
         {
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");
@@ -209,8 +203,8 @@ namespace Application.Minecraft
             FileHelper.MoveDirectory(ServersFolder + name, newDir);
 
             MCServers.Remove(name, out IMinecraftServer? server);
-            
-            if(server != null)
+
+            if (server != null)
                 InvokeServerDeleted(server);
         }
 
@@ -219,7 +213,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name to check</param>
         /// <returns>true if it exists, else false.</returns>
-        private static bool ServerNameExist(string name) => MCServers.ContainsKey(name);
+        private bool ServerNameExist(string name) => MCServers.ContainsKey(name);
 
         /// <summary>
         /// Checks if the name's length is valid, throws exception if yes.
@@ -228,7 +222,7 @@ namespace Application.Minecraft
         /// <exception cref="Exception">if the name is not valid.</exception>
         private static void ValidateNameLength(string name)
         {
-            if(!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
+            if (!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
                 throw new Exception($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
         }
 
@@ -249,18 +243,18 @@ namespace Application.Minecraft
                 throw new Exception($"Disk space full. Max disk space allocated: {MinecraftConfig.Instance.MaxSumOfDiskSpaceGB} GB." +
                     $" Current storage: {measuredString}.");
             }
-                
+
         }
-        
-        
+
+
         /// <summary>
         /// Register a new minecraft server object to the program.
         /// </summary>
         /// <param name="serverName"></param>
         /// <param name="folderPath"></param>
-        private static IMinecraftServer RegisterMcServer(string serverName, string folderPath)
+        private IMinecraftServer RegisterMcServer(string serverName, string folderPath)
         {
-            IMinecraftServer mcServer = new MinecraftServers.MinecraftServer(serverName, folderPath);
+            IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
             MCServers.Add(serverName, mcServer);
             InvokeServerAdded(mcServer);
 
@@ -272,47 +266,47 @@ namespace Application.Minecraft
         /// <summary>
         /// Event fired when the active server has changed.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
+        public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
 
         /// <summary>
         /// Event fired when the active server's status has changed.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange;
+        public event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange;
 
         /// <summary>
         /// Event fired when a log message has been received from the active server.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<LogMessage>> ActiveServerLogReceived;
+        public event EventHandler<ValueEventArgs<LogMessage>> ActiveServerLogReceived;
 
         /// <summary>
         /// Event fired when a player joins the active server.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerJoined;
+        public event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerJoined;
 
         /// <summary>
         /// Event fired when a player leaves the active server.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerLeft;
+        public event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerLeft;
 
         /// <summary>
         /// Event fired when a performance measurement data has been received.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured;
+        public event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured;
 
         /// <summary>
         /// Event fired when a server's name is changed.
         /// </summary>
-        public static event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged;
+        public event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged;
 
         /// <summary>
         /// Event fired when a server is added to the ServerPark.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
+        public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
 
         /// <summary>
         /// Event fired when a server is deleted from the ServerPark.
         /// </summary>
-        public static event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted;
+        public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted;
 
 
 
@@ -321,7 +315,7 @@ namespace Application.Minecraft
         /// Subscribe ServerPark events on a specific minecraft server.
         /// </summary>
         /// <param name="server">server to subscribe</param>
-        private static void SubscribeEventTrackers(IMinecraftServer server)
+        private void SubscribeEventTrackers(IMinecraftServer server)
         {
             server.StatusChange += InvokeStatusTracker;
             server.LogReceived += InvokeLogReceived;
@@ -334,7 +328,7 @@ namespace Application.Minecraft
         /// Unsubscribe ServerPark events from a minecraft server.
         /// </summary>
         /// <param name="server">server to unsubscribe from</param>
-        private static void UnSubscribeEventTrackers(IMinecraftServer? server)
+        private void UnSubscribeEventTrackers(IMinecraftServer? server)
         {
             if (server == null)
                 return;
@@ -348,26 +342,26 @@ namespace Application.Minecraft
 
 
         // IMinecraft events
-        private static void InvokePerformanceMeasured(object? sender, (string CPU, string Memory) e) =>
-            ActiveServerPerformanceMeasured?.Invoke(sender, new (e));
-        private static void InvokePlayerJoined(object? sender, MinecraftPlayer e) =>
-            ActiveServerPlayerJoined?.Invoke(sender, new (e));
-        private static void InvokePlayerLeft(object? sender, MinecraftPlayer e) =>
-            ActiveServerPlayerLeft?.Invoke(sender, new (e));
-        private static void InvokeLogReceived(object? sender, LogMessage e) =>
-            ActiveServerLogReceived?.Invoke(sender, new (e));
-        private static void InvokeStatusTracker(object? sender, ServerStatus e) =>
+        private void InvokePerformanceMeasured(object? sender, (string CPU, string Memory) e) =>
+            ActiveServerPerformanceMeasured?.Invoke(sender, new(e));
+        private void InvokePlayerJoined(object? sender, MinecraftPlayer e) =>
+            ActiveServerPlayerJoined?.Invoke(sender, new(e));
+        private void InvokePlayerLeft(object? sender, MinecraftPlayer e) =>
+            ActiveServerPlayerLeft?.Invoke(sender, new(e));
+        private void InvokeLogReceived(object? sender, LogMessage e) =>
+            ActiveServerLogReceived?.Invoke(sender, new(e));
+        private void InvokeStatusTracker(object? sender, ServerStatus e) =>
             ActiveServerStatusChange?.Invoke(sender, new(e));
-            
+
 
         // ServerPark events
-        private static void InvokeActiveServerChanged(IMinecraftServer activeServer) =>
-            ActiveServerChange?.Invoke(typeof(ServerPark), new(activeServer));
-        private static void InvokeServerNameChange(string oldName, string newName) =>
-            ServerNameChanged?.Invoke(typeof(ServerPark), new (oldName, newName));
-        private static void InvokeServerAdded(IMinecraftServer addedServer) =>
-            ServerAdded?.Invoke(typeof(ServerPark), new (addedServer));
-        private static void InvokeServerDeleted(IMinecraftServer deletedServer) =>
-            ServerDeleted?.Invoke(typeof(ServerPark), new (deletedServer));
+        private void InvokeActiveServerChanged(IMinecraftServer activeServer) =>
+            ActiveServerChange?.Invoke(this, new(activeServer));
+        private void InvokeServerNameChange(string oldName, string newName) =>
+            ServerNameChanged?.Invoke(this, new(oldName, newName));
+        private void InvokeServerAdded(IMinecraftServer addedServer) =>
+            ServerAdded?.Invoke(this, new(addedServer));
+        private void InvokeServerDeleted(IMinecraftServer deletedServer) =>
+            ServerDeleted?.Invoke(this, new(deletedServer));
     }
 }

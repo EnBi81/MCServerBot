@@ -6,6 +6,9 @@ namespace Application.Minecraft
 {
     public interface IServerPark
     {
+        public static IServerPark Instance { get; } = new ServerPark();
+
+
 
         /// <summary>
         /// Online minecraft server (only one can be online at a time)

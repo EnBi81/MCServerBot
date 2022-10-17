@@ -10,10 +10,18 @@ namespace MCWebApp.Controllers.api.v1
     [Route("/api/v1/minecraftserver/{serverName}")]
     public class MinecraftServerController : MCControllerBase
     {
+        private IServerPark serverPark;
+
+        public MinecraftServerController(IServerPark serverPark)
+        {
+            this.serverPark = serverPark;
+        }
+
+
         [HttpGet]
         public IActionResult GetFullServer(string serverName)
         {
-            if (!ServerPark.MCServers.TryGetValue(serverName, out var server))
+            if (!serverPark.MCServers.TryGetValue(serverName, out var server))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
             return Ok(server);
@@ -24,7 +32,7 @@ namespace MCWebApp.Controllers.api.v1
         {
             try
             {
-                ServerPark.DeleteServer(serverName);
+                serverPark.DeleteServer(serverName);
                 return Ok();
             }
             catch (Exception e)
@@ -36,7 +44,7 @@ namespace MCWebApp.Controllers.api.v1
         [HttpPut]
         public IActionResult ModifyServer(string serverName, [FromBody] Dictionary<string, object?>? data)
         {
-            if (!ServerPark.MCServers.ContainsKey(serverName))
+            if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
             if (data == null)
@@ -46,7 +54,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string newName = ControllerUtils.TryGetStringFromJson(data, "new-name");
-                ServerPark.RenameServer(serverName, newName);
+                serverPark.RenameServer(serverName, newName);
 
                 return Ok();
             }
@@ -61,7 +69,7 @@ namespace MCWebApp.Controllers.api.v1
         [HttpPost("commands")]
         public IActionResult WriteCommand(string serverName, [FromBody] Dictionary<string, object?>? data)
         {
-            if (!ServerPark.MCServers.ContainsKey(serverName))
+            if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
             if (data == null)
@@ -70,7 +78,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string command = ControllerUtils.TryGetStringFromJson(data, "command-data");
-                ServerPark.MCServers[serverName].WriteCommand(command);
+                serverPark.MCServers[serverName].WriteCommand(command);
                 return Ok();
             }
             catch (Exception e)
@@ -83,12 +91,12 @@ namespace MCWebApp.Controllers.api.v1
         [HttpPost("toggle")]
         public IActionResult ToggleServer(string serverName)
         {
-            if (!ServerPark.MCServers.ContainsKey(serverName))
+            if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
             try
             {
-                ServerPark.ToggleServer(serverName);
+                serverPark.ToggleServer(serverName);
                 return Ok();
             }
             catch (Exception e)

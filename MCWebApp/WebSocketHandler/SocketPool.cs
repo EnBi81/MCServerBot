@@ -48,16 +48,18 @@ namespace Application.WebSocketHandler
         {
             LogService.GetService<WebLogger>().Log("socket-pool", "Setting up listeners");
 
-            ServerPark.ActiveServerChange += ActiveServerChange;
-            ServerPark.ActiveServerPlayerLeft += ActiveServerPlayerLeft;
-            ServerPark.ActiveServerPlayerJoined += ActiveServerPlayerJoined;
-            ServerPark.ActiveServerLogReceived += ActiveServerLogReceived;
-            ServerPark.ActiveServerPerformanceMeasured += ActiveServerPerformanceMeasured;
-            ServerPark.ActiveServerStatusChange += ActiveServerStatusChange;
+            IServerPark serverPark = IServerPark.Instance;
 
-            ServerPark.ServerAdded += ServerAdded;
-            ServerPark.ServerDeleted += ServerDeleted;
-            ServerPark.ServerNameChanged += ServerNameChanged;
+            serverPark.ActiveServerChange += ActiveServerChange;
+            serverPark.ActiveServerPlayerLeft += ActiveServerPlayerLeft;
+            serverPark.ActiveServerPlayerJoined += ActiveServerPlayerJoined;
+            serverPark.ActiveServerLogReceived += ActiveServerLogReceived;
+            serverPark.ActiveServerPerformanceMeasured += ActiveServerPerformanceMeasured;
+            serverPark.ActiveServerStatusChange += ActiveServerStatusChange;
+            
+            serverPark.ServerAdded += ServerAdded;
+            serverPark.ServerDeleted += ServerDeleted;
+            serverPark.ServerNameChanged += ServerNameChanged;
 
             WebsitePermission.PermissionRemoved += PermissionRemoved;
 

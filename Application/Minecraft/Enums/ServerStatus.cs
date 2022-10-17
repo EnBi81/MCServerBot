@@ -39,7 +39,7 @@
         public static string DisplayString(this ServerStatus status)
         {
             if (status == ServerStatus.Online)
-                return $"Server Online on {HamachiHelper.HamachiClient.Address}:{ServerPark.ActiveServer?.Port}";
+                return $"Server Online on {HamachiHelper.HamachiClient.Address}:{IServerPark.Instance.ActiveServer?.Port}";
             if (status == ServerStatus.Offline)
                 return "Server Offline";
             if (status == ServerStatus.Starting)

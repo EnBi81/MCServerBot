@@ -11,6 +11,15 @@ namespace MCWebApp.Controllers.api.v1
     [Route("/api/v1/serverpark")]
     public class ServerParkController : MCControllerBase
     {
+        private IServerPark serverPark;
+
+        public ServerParkController(IServerPark serverPark)
+        {
+            this.serverPark = serverPark;
+        }
+
+
+
         [HttpGet]
         public IActionResult GetAllServers()
         {
@@ -33,7 +42,7 @@ namespace MCWebApp.Controllers.api.v1
                 };
             }
 
-            var servers = ServerPark.MCServers.Values.Select(GetSimplifiedServer);
+            var servers = serverPark.MCServers.Values.Select(GetSimplifiedServer);
             return Ok(servers);
         }
 
@@ -46,7 +55,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string name = ControllerUtils.TryGetStringFromJson(data, "new-name");
-                IMinecraftServer server = ServerPark.CreateServer(name);
+                IMinecraftServer server = serverPark.CreateServer(name);
                 return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);
             }
             catch (Exception e)
@@ -58,7 +67,7 @@ namespace MCWebApp.Controllers.api.v1
         [HttpGet("running")]
         public IActionResult GetActiveServer()
         {
-            if (ServerPark.ActiveServer is not IMinecraftServer server || !server.IsRunning)
+            if (serverPark.ActiveServer is not IMinecraftServer server || !server.IsRunning)
                 return Ok(new { Message = "No running server." });
 
             return Redirect("/api/v1/minecraftserver/" + server.ServerName);

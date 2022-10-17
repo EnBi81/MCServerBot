@@ -1,3 +1,4 @@
+using Application.Minecraft;
 using Application.PermissionControll;
 using Application.WebSocketHandler;
 using Loggers;
@@ -16,6 +17,7 @@ namespace MCWebApp
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddRazorPages();
+            builder.Services.AddSingleton(IServerPark.Instance);
 
             var app = builder.Build();
 
