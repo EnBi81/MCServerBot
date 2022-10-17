@@ -52,7 +52,7 @@ namespace Web_Test
 
             //Start Discord bot
             if(args.Contains("--discord-bot"))
-                await DiscordBot.Discord.DiscordBot.Initialize(config.DiscordBotToken);
+                await DiscordBot.Bot.DiscordBot.Initialize(config.DiscordBotToken);
 
             await Task.Delay(-1);
         }

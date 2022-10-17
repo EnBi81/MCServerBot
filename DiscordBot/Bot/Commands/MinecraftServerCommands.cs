@@ -1,0 +1,97 @@
+﻿using Application.Minecraft;
+using Discord;
+using Discord.Interactions;
+using DiscordBot.Bot.Commands.Autocompletes;
+using DiscordBot.Bot.Helpers;
+
+namespace DiscordBot.Bot.Commands
+{
+   
+    public class MinecraftServerCommands : InteractionModuleBase<SocketInteractionContext>
+    {
+        private IServerPark _serverPark;
+
+        public MinecraftServerCommands(IServerPark serverPark)
+        {
+            _serverPark = serverPark;
+        }
+
+
+
+
+        [SlashCommand("start-server", "Start the minecraft server")]
+        public async Task StartServer([Summary("server-name", "Name of the server to start"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
+        {
+            await DeferAsync();
+
+            try
+            {
+                _serverPark.StartServer(serverName, Context.User.Username);
+                await RespondAsync($"Starting **{serverName}**.");
+            }
+            catch (Exception e)
+            {
+                await RespondAsync($"Starting failed: **{e.Message}**.");
+            }
+        }
+
+
+        [SlashCommand("stop-server", "Stop the minecraft server")]
+        public async Task ShutDownServer()
+        {
+            await DeferAsync();
+
+            try
+            {
+                _serverPark.StopActiveServer(Context.User.Username);
+                await RespondAsync($"Shutting Down **{_serverPark.ActiveServer?.ServerName}**.");
+            }
+            catch (Exception ex)
+            {
+                await RespondAsync($"Shutting Down failed: **{ex.Message}**.", ephemeral: true);
+            }
+        }
+
+
+        [SlashCommand("create-server", "Create a new server")]
+        public async Task CreateServer([Summary("server-name", "Name of the new server"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
+        {
+            try
+            {
+                _serverPark.CreateServer(serverName);
+                await RespondAsync($"Server **{serverName}** has been created");
+            } catch (Exception e)
+            {
+                await RespondAsync($"Server **{serverName}** cannot be created: **{e.Message}**");
+            }
+        }
+
+        [SlashCommand("rename-server", "Rename a server")]
+        public async Task RenameServer([Summary("name", "Name of the server to rename"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName,
+                                        [Summary("new-name", "New name of the server"), Autocomplete(typeof(ServerNameAutocomplete))] string newName)
+        {
+            try
+            {
+                _serverPark.RenameServer(serverName, newName);
+                await RespondAsync($"**{serverName}** has been renamed to **{newName}**");
+            }
+            catch (Exception e)
+            {
+                await RespondAsync($"**{serverName}** cannot be renamed: **{e.Message}**");
+            }
+        }
+
+        [SlashCommand("delete-server", "Delete a server")]
+        public async Task DeleteServer([Summary("server-name", "Name of the server to delete"), Autocomplete(typeof(ServerNameAutocomplete))] string serverName)
+        {
+            await DeferAsync();
+
+            var cancelButton = ButtonHelper.CreateCancelButton("delete-cancel");
+            var proceedButton = ButtonHelper.CreateProceedButton("delete-server", "Delete");
+
+            var messageComponent = ButtonHelper.JoinButtons(cancelButton, proceedButton);
+
+            await RespondAsync($"Do you really want to delete **{serverName}**?", components: messageComponent);
+        }
+    }
+}

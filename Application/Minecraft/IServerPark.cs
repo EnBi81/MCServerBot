@@ -4,6 +4,9 @@ using Application.Minecraft.MinecraftServers;
 
 namespace Application.Minecraft
 {
+    /// <summary>
+    /// A cozy place to manage the minecraft servers
+    /// </summary>
     public interface IServerPark
     {
         public static IServerPark Instance { get; } = new ServerPark();
@@ -16,9 +19,9 @@ namespace Application.Minecraft
         public IMinecraftServer? ActiveServer { get; }
 
         /// <summary>
-        /// List of all minecraft server instances
+        /// Readonly collection of the minecraft servers
         /// </summary>
-        public Dictionary<string, IMinecraftServer> MCServers { get; }
+        public  IReadOnlyDictionary<string, IMinecraftServer> MCServers { get; } 
 
 
         /// <summary>

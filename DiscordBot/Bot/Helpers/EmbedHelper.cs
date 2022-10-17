@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Application.PermissionControll;
 
-namespace DiscordBot.Discord.Helpers
+namespace DiscordBot.Bot.Helpers
 {
     public static class EmbedHelper
     {

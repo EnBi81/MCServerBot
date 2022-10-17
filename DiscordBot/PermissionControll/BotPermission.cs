@@ -75,7 +75,7 @@ namespace DiscordBot.PermissionControll
             if (user == null)
                 return null;
 
-            IUser discordUser = await Discord.DiscordBot.Bot.SocketClient.GetUserAsync(id);
+            IUser discordUser = await Bot.DiscordBot.Bot.SocketClient.GetUserAsync(id);
             user.Refresh(discordUser);
 
             return user;

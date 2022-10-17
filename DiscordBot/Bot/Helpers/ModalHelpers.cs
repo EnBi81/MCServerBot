@@ -1,7 +1,7 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Discord;
 
-namespace DiscordBot.Discord.Helpers
+namespace DiscordBot.Bot.Helpers
 {
     public class ModalHelpers
     {

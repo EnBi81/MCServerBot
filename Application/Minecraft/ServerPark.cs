@@ -3,6 +3,7 @@ using Application.Minecraft.EventHandlers;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
 using Loggers;
+using System.Collections.ObjectModel;
 
 namespace Application.Minecraft
 {
@@ -24,13 +25,13 @@ namespace Application.Minecraft
 
 
 
-        public ServerPark()
+        internal ServerPark()
         {
             DirectoryInfo info = new(ServersFolder);
 
             var servers = info.GetDirectories();
 
-            MCServers.Clear();
+            ServerCollection.Clear();
             foreach (var server in servers)  // loop through all the directories and create the server instances
                 RegisterMcServer(server.Name, server.FullName);
 
@@ -53,9 +54,19 @@ namespace Application.Minecraft
         public IMinecraftServer? ActiveServer { get; private set; }
 
         /// <summary>
+        /// Readonly collection of the minecraft servers
+        /// </summary>
+        public IReadOnlyDictionary<string, IMinecraftServer> MCServers => new ReadOnlyDictionary<string, IMinecraftServer>(ServerCollection);
+
+
+
+
+        /// <summary>
         /// List of all minecraft server instances
         /// </summary>
-        public Dictionary<string, IMinecraftServer> MCServers { get; } = new();
+        internal Dictionary<string, IMinecraftServer> ServerCollection { get; } = new();
+
+
 
 
         /// <summary>
@@ -174,13 +185,13 @@ namespace Application.Minecraft
 
             FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
 
-            MCServers.Remove(oldName, out IMinecraftServer? server);
+            ServerCollection.Remove(oldName, out IMinecraftServer? server);
 
             if (server == null)
                 return;
 
 
-            MCServers.Add(newName, server);
+            ServerCollection.Add(newName, server);
             server.ServerName = newName;
 
             InvokeServerNameChange(oldName, newName);
@@ -202,7 +213,7 @@ namespace Application.Minecraft
             string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             FileHelper.MoveDirectory(ServersFolder + name, newDir);
 
-            MCServers.Remove(name, out IMinecraftServer? server);
+            ServerCollection.Remove(name, out IMinecraftServer? server);
 
             if (server != null)
                 InvokeServerDeleted(server);
@@ -255,7 +266,7 @@ namespace Application.Minecraft
         private IMinecraftServer RegisterMcServer(string serverName, string folderPath)
         {
             IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
-            MCServers.Add(serverName, mcServer);
+            ServerCollection.Add(serverName, mcServer);
             InvokeServerAdded(mcServer);
 
             return mcServer;
