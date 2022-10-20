@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft;
 using Application.PermissionControll;
+using DataStorage.DataObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebApp.Controllers.Utils
@@ -19,6 +20,11 @@ namespace MCWebApp.Controllers.Utils
 
                 Response.Cookies.Append(WebsitePermission.CookieName, value);
             }
+        }
+
+        public async Task<DataUser> GetUser()
+        {
+            return null!;
         }
 
         public IActionResult GetBadRequest(string message)

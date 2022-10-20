@@ -1,6 +1,7 @@
 ﻿using Application.Minecraft.Enums;
 using Application.Minecraft.EventHandlers;
 using Application.Minecraft.MinecraftServers;
+using DataStorage.DataObjects;
 
 namespace Application.Minecraft
 {
@@ -9,7 +10,7 @@ namespace Application.Minecraft
     /// </summary>
     public interface IServerPark
     {
-        public static IServerPark Instance { get; } = new ServerPark();
+        public static IServerPark Instance { get; } = new ServerParkProxy();
 
 
 
@@ -27,22 +28,22 @@ namespace Application.Minecraft
         /// <summary>
         /// Start the active server.
         /// </summary>
-        /// <param name="username">username who initiates the start</param>
-        public ulong StartServer(string serverName, string username);
+        /// <param name="user">user who initiated the start</param>
+        public Task StartServer(string serverName, DataUser user);
 
         /// <summary>
         /// Stop the active server.
         /// </summary>
-        /// <param name="username">username who initiates the stop</param>
-        public ulong StopActiveServer(string username);
+        /// <param name="user">user who initiated the stop</param>
+        public Task StopActiveServer(DataUser user);
 
 
         /// <summary>
         /// Toggles a server, e.g. it starts if it's offline, and stops if it's online.
         /// </summary>
         /// <param name="serverName">server to toggle</param>
-        /// <param name="username">username who initiated this action</param>
-        public void ToggleServer(string serverName, string username = "Admin");
+        /// <param name="user">user who initiated this action</param>
+        public Task ToggleServer(string serverName, DataUser user);
 
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public IMinecraftServer CreateServer(string name);
+        public Task<IMinecraftServer> CreateServer(string name, DataUser user);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -60,14 +61,14 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public ulong RenameServer(string oldName, string newName);
+        public Task RenameServer(string oldName, string newName, DataUser user);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public ulong DeleteServer(string name);
+        public Task DeleteServer(string name, DataUser user);
 
 
 

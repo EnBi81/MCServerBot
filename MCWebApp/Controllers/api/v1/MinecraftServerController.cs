@@ -26,11 +26,12 @@ namespace MCWebApp.Controllers.api.v1
         }
 
         [HttpDelete]
-        public IActionResult DeleteServer(string serverName)
+        public async Task<IActionResult> DeleteServer(string serverName)
         {
             try
             {
-                serverPark.DeleteServer(serverName);
+                var user = await GetUser();
+                serverPark.DeleteServer(serverName, user);
                 return Ok();
             }
             catch (Exception e)
@@ -40,7 +41,7 @@ namespace MCWebApp.Controllers.api.v1
         }
 
         [HttpPut]
-        public IActionResult ModifyServer(string serverName, [FromBody] Dictionary<string, object?>? data)
+        public async Task <IActionResult> ModifyServer(string serverName, [FromBody] Dictionary<string, object?>? data)
         {
             if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
@@ -52,7 +53,9 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string newName = ControllerUtils.TryGetStringFromJson(data, "new-name");
-                serverPark.RenameServer(serverName, newName);
+                var user = await GetUser();
+
+                serverPark.RenameServer(serverName, newName, user);
 
                 return Ok();
             }
@@ -87,14 +90,15 @@ namespace MCWebApp.Controllers.api.v1
 
 
         [HttpPost("toggle")]
-        public IActionResult ToggleServer(string serverName)
+        public async Task<IActionResult> ToggleServer(string serverName)
         {
             if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
             try
             {
-                serverPark.ToggleServer(serverName);
+                var user = await GetUser();
+                serverPark.ToggleServer(serverName, user);
                 return Ok();
             }
             catch (Exception e)

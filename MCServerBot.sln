@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCWebServer - deprecated", "MCWebServer\MCWebServer - deprecated.csproj", "{0826C131-CBEB-4EA7-A13A-A640B9F80BD9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCServerHandler", "MCServerHandler\MCServerHandler.csproj", "{7EDB49AA-9B4F-44FC-A4C5-8C167276F16E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox\Sandbox.csproj", "{F6A0C4E3-8433-4C09-AB0A-57263CB4F368}"
@@ -27,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0826C131-CBEB-4EA7-A13A-A640B9F80BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0826C131-CBEB-4EA7-A13A-A640B9F80BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0826C131-CBEB-4EA7-A13A-A640B9F80BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0826C131-CBEB-4EA7-A13A-A640B9F80BD9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7EDB49AA-9B4F-44FC-A4C5-8C167276F16E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EDB49AA-9B4F-44FC-A4C5-8C167276F16E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EDB49AA-9B4F-44FC-A4C5-8C167276F16E}.Release|Any CPU.ActiveCfg = Release|Any CPU

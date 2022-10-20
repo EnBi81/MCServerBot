@@ -9,6 +9,10 @@ namespace DataStorage.Interfaces
     public interface IServerParkAccessObject
     {
         string GetName(ulong id);
-        ulong CreateMCServer(long storage);
+        Task<ulong> CreateServer(ulong userId, string serverName, long storageSpace);
+        Task DeleteServer(ulong userId, ulong serverId);
+        Task RenameServer(ulong userId, ulong serverId, string newName);
+        Task StartServer(ulong userId, ulong serverId);
+        Task StopServer(ulong userId, ulong serverId);
     }
 }

@@ -46,7 +46,7 @@ namespace MCWebApp.Controllers.api.v1
         }
 
         [HttpPost]
-        public IActionResult CreateServer([FromBody] Dictionary<string, object?>? data)
+        public async Task<IActionResult> CreateServer([FromBody] Dictionary<string, object?>? data)
         {
             if (data == null)
                 return GetBadRequest("No data provided in the body.");
@@ -54,7 +54,9 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string name = ControllerUtils.TryGetStringFromJson(data, "new-name");
-                IMinecraftServer server = serverPark.CreateServer(name);
+                var user = await GetUser();
+
+                IMinecraftServer server = await serverPark.CreateServer(name, user);
                 return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);
             }
             catch (Exception e)

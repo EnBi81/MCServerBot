@@ -8,6 +8,14 @@ namespace DataStorage.DataObjects
 {
     public class DataUser
     {
+        public static DataUser System { get; } = new DataUser()
+        {
+            Id = 1,
+            Username = "System",
+            ProfilePicUrl = null,
+            WebAccessToken = null
+        };
+
         public ulong Id { get; internal init; }
         public string Username { get; internal init; } = null!;
         public string? ProfilePicUrl { get; internal init; }

@@ -13,18 +13,16 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Bot.Handlers
 {
-    public class DeleteServerCommands : InteractionModuleBase<SocketInteractionContext>
+    public class DeleteServerCommands : MCInteractionModuleBase
     {
 
         private IServerPark _serverPark;
         private DeleteServerService _deleteServerService;
-        private IDiscordEventRegister _deleteServerEventRegister;
 
-        public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService, IDiscordEventRegister eventRegister)
+        public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService, IDiscordEventRegister eventRegister) : base(eventRegister)
         {
             _serverPark = serverPark;
             _deleteServerService = deleteServerService;
-            _deleteServerEventRegister = eventRegister;
         }
 
 
@@ -88,8 +86,9 @@ namespace DiscordBot.Bot.Handlers
 
             string serverName = deleteObj.MinecraftServer.ServerName;
 
-            ulong serverId = _serverPark.DeleteServer(serverName);
-            await _deleteServerEventRegister.DeleteServer(Context.User.Id, serverId);
+            var user = await GetUser();
+            await _serverPark.DeleteServer(serverName, user);
+
             await message.ModifyAsync(prop => 
             {
                 prop.Content = $"**{serverName}** is **deleted**.";
