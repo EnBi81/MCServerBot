@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataStorage.Interfaces
 {
-    public interface IServerParkAccessObject
+    public interface IServerParkEventRegister
     {
-        string GetName(ulong id);
-        Task<ulong> CreateServer(ulong userId, string serverName, long storageSpace);
+        Task<string> GetName(ulong id);
+        Task<ulong> CreateServer(ulong userId, string serverName);
         Task DeleteServer(ulong userId, ulong serverId);
         Task RenameServer(ulong userId, ulong serverId, string newName);
         Task StartServer(ulong userId, ulong serverId);

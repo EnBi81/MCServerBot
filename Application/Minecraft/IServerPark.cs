@@ -51,7 +51,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public Task<IMinecraftServer> CreateServer(string name, DataUser user);
+        public Task<IMinecraftServer> CreateServer(string serverName, DataUser user);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -61,14 +61,14 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public Task RenameServer(string oldName, string newName, DataUser user);
+        public Task<IMinecraftServer> RenameServer(string oldName, string newName, DataUser user);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public Task DeleteServer(string name, DataUser user);
+        public Task<IMinecraftServer> DeleteServer(string name, DataUser user);
 
 
 

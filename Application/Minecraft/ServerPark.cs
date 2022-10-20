@@ -3,6 +3,7 @@ using Application.Minecraft.EventHandlers;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
 using DataStorage.DataObjects;
+using DataStorage.Interfaces;
 using Loggers;
 using System.Collections.ObjectModel;
 
@@ -28,13 +29,7 @@ namespace Application.Minecraft
 
         internal ServerPark()
         {
-            DirectoryInfo info = new(ServersFolder);
-
-            var servers = info.GetDirectories();
-
             ServerCollection.Clear();
-            foreach (var server in servers)  // loop through all the directories and create the server instances
-                RegisterMcServer(server.Name, server.FullName);
 
             ActiveServerChange = null!;
             ActiveServerPlayerLeft = null!;
@@ -48,15 +43,29 @@ namespace Application.Minecraft
             ServerNameChanged = null!;
         }
 
+        internal async Task InitializeAsync(IServerParkEventRegister serverParkEventRegister)
+        {
+            DirectoryInfo info = new(ServersFolder);
+            var serverFolders = info.GetDirectories();
 
-        /// <summary>
-        /// Online minecraft server (only one can be online at a time)
-        /// </summary>
+            foreach (var serverFolder in serverFolders)  // loop through all the directories and create the server instances
+            {
+                if(!ulong.TryParse(serverFolder.Name, out ulong serverId))
+                {
+                    throw new NotImplementedException();
+                }
+
+                string name = await serverParkEventRegister.GetName(serverId);
+                var mcServer = (MinecraftServer)RegisterMcServer(name, serverFolder.FullName);
+                mcServer.Id = serverId;
+            }
+        }
+
+
+        /// <inheritdoc/>
         public IMinecraftServer? ActiveServer { get; private set; }
 
-        /// <summary>
-        /// Readonly collection of the minecraft servers
-        /// </summary>
+        /// <inheritdoc/>
         public IReadOnlyDictionary<string, IMinecraftServer> MCServers => new ReadOnlyDictionary<string, IMinecraftServer>(ServerCollection);
 
 
@@ -70,11 +79,7 @@ namespace Application.Minecraft
 
 
 
-        /// <summary>
-        /// Set a server as active.
-        /// </summary>
-        /// <param name="server">Server to set as active</param>
-        /// <exception cref="Exception">If another server is already running.</exception>
+        /// <inheritdoc/>
         private void SetActiveServer(string serverName)
         {
             if (ActiveServer != null)
@@ -100,10 +105,7 @@ namespace Application.Minecraft
         }
 
 
-        /// <summary>
-        /// Start the active server.
-        /// </summary>
-        /// <param name="username">user who initiated the start</param>
+        /// <inheritdoc/>
         public Task StartServer(string serverName, DataUser user)
         {
             ValidateMaxStorage();
@@ -114,10 +116,7 @@ namespace Application.Minecraft
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Stop the active server.
-        /// </summary>
-        /// <param name="user">user who initiated the stop</param>
+        /// <inheritdoc/>
         public Task StopActiveServer(DataUser user)
         {
             if (ActiveServer == null || !ActiveServer.IsRunning)
@@ -129,11 +128,7 @@ namespace Application.Minecraft
         }
 
 
-        /// <summary>
-        /// Toggles a server, e.g. it starts if it's offline, and stops if it's online.
-        /// </summary>
-        /// <param name="serverName">server to toggle</param>
-        /// <param name="user">user who initiated this action</param>
+        /// <inheritdoc/>
         public Task ToggleServer(string serverName, DataUser user) =>
             ActiveServer?.IsRunning ?? false 
             ? StopActiveServer(user) 
@@ -141,37 +136,37 @@ namespace Application.Minecraft
 
 
         /// <summary>
-        /// Creates a new server folder by copying the empty folder to the servers folder.
+        /// PLEASE DONT USE THIS METHOD THANK YOU <3
         /// </summary>
-        /// <param name="name">name of the new </param>
-        /// <exception cref="Exception"></exception>
-        public Task<IMinecraftServer> CreateServer(string name, DataUser user)
+        /// <param name="serverName"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">You will received this nice exception in your exception handler.</exception>
+        public Task<IMinecraftServer> CreateServer(string serverName, DataUser user)
         {
-            ValidateNameLength(name);
-
-            if (ServerNameExist(name))
-                throw new Exception($"The name {name} is already taken");
-
-            ValidateMaxStorage();
-
-
-            string destDir = ServersFolder + name;
-            Directory.CreateDirectory(destDir);
-
-            FileHelper.CopyDirectory(EmptyServersFolder, destDir);
-
-            return Task.FromResult(RegisterMcServer(name, destDir));
+            //this needs to be inherited from the IServerPark, but we have to use the method below this instead
+            throw new NotSupportedException();
         }
 
-        /// <summary>
-        /// Changes an already existing minecraft server's name if it is not running
-        /// </summary>
-        /// <param name="oldName">Name of the server to change</param>
-        /// <param name="newName">New name of the server</param>
-        /// <exception cref="Exception">If the name has invalid length</exception>
-        /// <exception cref="Exception">If the new name is already taken</exception>
-        /// <exception cref="Exception">If the server to change is running</exception>
-        public Task RenameServer(string oldName, string newName, DataUser user)
+        public async Task<IMinecraftServer> CreateServer(string serverName, DataUser user, Func<ulong, string, Task<ulong>> getIdCallback)
+        {
+            CreateServerCheck(serverName);
+
+            ulong newServerId = await getIdCallback(user.Id, serverName);
+
+            string destDir = ServersFolder + newServerId;
+            Directory.CreateDirectory(destDir);
+            FileHelper.CopyDirectory(EmptyServersFolder, destDir);
+
+            var mcServer = (MinecraftServer)RegisterMcServer(serverName, destDir);
+            mcServer.Id = newServerId;
+
+            return mcServer;
+        }
+
+
+        /// <inheritdoc/>
+        public Task<IMinecraftServer> RenameServer(string oldName, string newName, DataUser user)
         {
             ValidateNameLength(newName);
 
@@ -195,15 +190,11 @@ namespace Application.Minecraft
 
             InvokeServerNameChange(oldName, newName);
 
-            return Task.CompletedTask;
+            return Task.FromResult(notNullServer);
         }
 
-        /// <summary>
-        /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
-        /// </summary>
-        /// <param name="name">Server to be moved.</param>
-        /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public Task DeleteServer(string name, DataUser user)
+        /// <inheritdoc/>
+        public Task<IMinecraftServer> DeleteServer(string name, DataUser user)
         {
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");
@@ -219,7 +210,7 @@ namespace Application.Minecraft
             if (server != null)
                 InvokeServerDeleted(server);
 
-            return Task.CompletedTask;
+            return Task.FromResult(server!);
         }
 
         /// <summary>
@@ -240,6 +231,8 @@ namespace Application.Minecraft
                 throw new Exception($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
         }
 
+
+
         private static void ValidateMaxStorage()
         {
             var dir = MinecraftConfig.Instance.MinecraftServersBaseFolder;
@@ -257,7 +250,6 @@ namespace Application.Minecraft
                 throw new Exception($"Disk space full. Max disk space allocated: {MinecraftConfig.Instance.MaxSumOfDiskSpaceGB} GB." +
                     $" Current storage: {measuredString}.");
             }
-
         }
 
 
@@ -276,50 +268,48 @@ namespace Application.Minecraft
         }
 
 
-
         /// <summary>
-        /// Event fired when the active server has changed.
+        /// Checks if a server with the specific name can be created.
         /// </summary>
+        /// <param name="serverName"></param>
+        /// <exception cref="Exception">If the server cannot be created.</exception>
+        private void CreateServerCheck(string serverName)
+        {
+            ValidateNameLength(serverName);
+
+            if (ServerNameExist(serverName))
+                throw new Exception($"The name {serverName} is already taken");
+
+            ValidateMaxStorage();
+        }
+
+
+
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
 
-        /// <summary>
-        /// Event fired when the active server's status has changed.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange;
 
-        /// <summary>
-        /// Event fired when a log message has been received from the active server.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<LogMessage>> ActiveServerLogReceived;
 
-        /// <summary>
-        /// Event fired when a player joins the active server.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerJoined;
 
-        /// <summary>
-        /// Event fired when a player leaves the active server.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<MinecraftPlayer>> ActiveServerPlayerLeft;
 
-        /// <summary>
-        /// Event fired when a performance measurement data has been received.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured;
 
-        /// <summary>
-        /// Event fired when a server's name is changed.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged;
 
-        /// <summary>
-        /// Event fired when a server is added to the ServerPark.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
 
-        /// <summary>
-        /// Event fired when a server is deleted from the ServerPark.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted;
 
 

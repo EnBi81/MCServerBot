@@ -9,7 +9,6 @@ namespace DataStorage.Interfaces
 {
     public interface IWebsiteEventRegister
     {
-
         Task<bool> HasPermission(string token);
     }
 }

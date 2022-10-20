@@ -23,7 +23,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Id number, unique for a minecraft server.
         /// </summary>
-        public ulong Id { get; } = 0;
+        public ulong Id { get; internal set; } = 0;
 
         private string _serverName = null!;
         /// <summary>
