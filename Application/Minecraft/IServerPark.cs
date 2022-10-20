@@ -29,13 +29,13 @@ namespace Application.Minecraft
         /// Start the active server.
         /// </summary>
         /// <param name="user">user who initiated the start</param>
-        public Task StartServer(string serverName, DataUser user);
+        public Task StartServer(string serverName, UserEventData user);
 
         /// <summary>
         /// Stop the active server.
         /// </summary>
         /// <param name="user">user who initiated the stop</param>
-        public Task StopActiveServer(DataUser user);
+        public Task StopActiveServer(UserEventData user);
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="serverName">server to toggle</param>
         /// <param name="user">user who initiated this action</param>
-        public Task ToggleServer(string serverName, DataUser user);
+        public Task ToggleServer(string serverName, UserEventData user);
 
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public Task<IMinecraftServer> CreateServer(string serverName, DataUser user);
+        public Task<IMinecraftServer> CreateServer(string serverName, UserEventData user);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -61,14 +61,14 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public Task<IMinecraftServer> RenameServer(string oldName, string newName, DataUser user);
+        public Task<IMinecraftServer> RenameServer(string oldName, string newName, UserEventData user);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public Task<IMinecraftServer> DeleteServer(string name, DataUser user);
+        public Task<IMinecraftServer> DeleteServer(string name, UserEventData user);
 
 
 

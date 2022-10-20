@@ -85,52 +85,52 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> CreateServer(string serverName, DataUser user)
+        public async Task<IMinecraftServer> CreateServer(string serverName, UserEventData user)
         {
             var res = await _serverPark.CreateServer(serverName, user);
-            await _serverParkEventRegister.CreateServer(user.Id, res.Id, res.ServerName);
+            await _serverParkEventRegister.CreateServer(res.Id, res.ServerName, user);
 
             return res;
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> DeleteServer(string name, DataUser user)
+        public async Task<IMinecraftServer> DeleteServer(string name, UserEventData user)
         {
             var server = await _serverPark.DeleteServer(name, user);
-            await _serverParkEventRegister.DeleteServer(user.Id, server.Id);
+            await _serverParkEventRegister.DeleteServer(server.Id, user);
 
             return server;
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> RenameServer(string oldName, string newName, DataUser user)
+        public async Task<IMinecraftServer> RenameServer(string oldName, string newName, UserEventData user)
         {
             var server = await _serverPark.RenameServer(oldName, newName, user);
-            await _serverParkEventRegister.RenameServer(user.Id, server.Id, newName);
+            await _serverParkEventRegister.RenameServer(server.Id, newName, user);
 
             return server;
         }
 
         /// <inheritdoc/>
-        public async Task StartServer(string serverName, DataUser user)
+        public async Task StartServer(string serverName, UserEventData user)
         {
             await _serverPark.StartServer(serverName, user);
 
             var server = ActiveServer;
-            await _serverParkEventRegister.StartServer(user.Id, server!.Id);
+            await _serverParkEventRegister.StartServer(server!.Id, user);
         }
 
         /// <inheritdoc/>
-        public async Task StopActiveServer(DataUser user)
+        public async Task StopActiveServer(UserEventData user)
         {
             await _serverPark.StopActiveServer(user);
 
             var server = ActiveServer;
-            await _serverParkEventRegister.StopServer(user.Id, server!.Id);
+            await _serverParkEventRegister.StopServer(server!.Id, user);
         }
 
         /// <inheritdoc/>
-        public async Task ToggleServer(string serverName, DataUser user)
+        public async Task ToggleServer(string serverName, UserEventData user)
         {
             bool isRunning = ActiveServer?.IsRunning ?? false;
 
@@ -138,9 +138,9 @@ namespace Application.Minecraft
 
             var server = ActiveServer;
             if (isRunning)
-                await _serverParkEventRegister.StopServer(user.Id, server!.Id);
+                await _serverParkEventRegister.StopServer(server!.Id, user);
             else
-                await _serverParkEventRegister.StartServer(user.Id, server!.Id);
+                await _serverParkEventRegister.StartServer(server!.Id, user);
         }
     }
 }

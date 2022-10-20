@@ -22,7 +22,7 @@ namespace MCWebApp.Controllers.Utils
             }
         }
 
-        public async Task<DataUser> GetUser()
+        public async Task<UserEventData> GetUser()
         {
             return null!;
         }

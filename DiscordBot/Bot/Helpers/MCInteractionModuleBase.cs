@@ -14,7 +14,7 @@ namespace DiscordBot.Bot.Helpers
         }
 
 
-        public async Task<DataUser> GetUser()
+        public async Task<UserEventData> GetUser()
         {
             return await _eventRegister.GetUser(Context.User.Id) ?? throw new Exception("No permission for this user.");
         }

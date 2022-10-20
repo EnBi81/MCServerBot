@@ -112,7 +112,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task StartServer(string serverName, DataUser user)
+        public Task StartServer(string serverName, UserEventData user)
         {
             ValidateMaxStorage();
 
@@ -123,7 +123,7 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public Task StopActiveServer(DataUser user)
+        public Task StopActiveServer(UserEventData user)
         {
             if (ActiveServer == null || !ActiveServer.IsRunning)
                 throw new Exception("Server is not running!");
@@ -135,7 +135,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task ToggleServer(string serverName, DataUser user) =>
+        public Task ToggleServer(string serverName, UserEventData user) =>
             ActiveServer?.IsRunning ?? false 
             ? StopActiveServer(user) 
             : StartServer(serverName, user);
@@ -143,7 +143,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> CreateServer(string serverName, DataUser user)
+        public Task<IMinecraftServer> CreateServer(string serverName, UserEventData user)
         {
             CreateServerCheck(serverName);
 
@@ -161,7 +161,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> RenameServer(string oldName, string newName, DataUser user)
+        public Task<IMinecraftServer> RenameServer(string oldName, string newName, UserEventData user)
         {
             ValidateNameLength(newName);
 
@@ -189,7 +189,7 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> DeleteServer(string name, DataUser user)
+        public Task<IMinecraftServer> DeleteServer(string name, UserEventData user)
         {
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");

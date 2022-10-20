@@ -116,7 +116,7 @@ namespace DataStorage.Implementations.SQLite
             CREATE TABLE minecraft_server_name (
                 event_id   INTEGER REFERENCES user_event (event_id),
                 server_id  INTEGER REFERENCES minecraft_server (server_id),
-                sever_name TEXT
+                server_name TEXT
             );
             
             

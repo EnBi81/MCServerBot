@@ -8,7 +8,7 @@ namespace DataStorage.DataObjects
 {
     public class DataUser
     {
-        public static DataUser System { get; } = new DataUser()
+        public static DataUser System { get; } = new ()
         {
             Id = 1,
             Username = "System",

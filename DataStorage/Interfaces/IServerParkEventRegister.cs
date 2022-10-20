@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DataStorage.DataObjects;
+using DataStorage.DataObjects.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +11,10 @@ namespace DataStorage.Interfaces
     public interface IServerParkEventRegister
     {
         Task<ulong> GetMaxServerId();
-        Task CreateServer(ulong userId, ulong serverId, string serverName);
-        Task DeleteServer(ulong userId, ulong serverId);
-        Task RenameServer(ulong userId, ulong serverId, string newName);
-        Task StartServer(ulong userId, ulong serverId);
-        Task StopServer(ulong userId, ulong serverId);
+        Task CreateServer(ulong serverId, string serverName, UserEventData userEventData);
+        Task DeleteServer(ulong serverId, UserEventData userEventData);
+        Task RenameServer(ulong serverId, string? newName, UserEventData userEventData);
+        Task StartServer(ulong serverId, UserEventData userEventData);
+        Task StopServer(ulong serverId, UserEventData userEventData);
     }
 }
