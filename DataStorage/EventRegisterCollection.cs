@@ -1,6 +1,5 @@
 ﻿using DataStorage.Implementations.SQLite;
 using DataStorage.Interfaces;
-using System.Net.NetworkInformation;
 
 namespace DataStorage
 {
@@ -8,5 +7,6 @@ namespace DataStorage
     {
         public static IDiscordEventRegister DiscordEventRegister { get; } = new DiscordEventRegister();
         public static IMinecraftEventRegister MinecraftEventRegister { get; } = new MinecraftEventRegister();
+        public static IWebsiteEventRegister WebsiteEventRegister { get; } = new WebsiteEventRegister();
     }
 }

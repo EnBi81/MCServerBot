@@ -39,7 +39,7 @@ if (args.Contains("--start-hamachi"))
 
 // Start Webserver
 if (args.Contains("--web-server"))
-    await MCWebServer.StartWebServer(args);
+    await MCWebServer.StartWebServer(args, config.WebServerPortHttp, config.WebServerPortHttp);
 
 //Start Discord bot
 if (args.Contains("--discord-bot"))

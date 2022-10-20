@@ -26,7 +26,7 @@ namespace DiscordBot.Bot.Handlers
             try
             {
                 ulong serverId = _serverPark.StartServer(serverName, Context.User.Username);
-                _eventRegister.StartServer(Context.User.Id, serverId);
+                await _eventRegister.StartServer(Context.User.Id, serverId);
 
                 await RespondAsync($"Starting **{serverName}**.");
             }
@@ -44,7 +44,7 @@ namespace DiscordBot.Bot.Handlers
             try
             {
                 ulong serverId = _serverPark.StopActiveServer(Context.User.Username);
-                _eventRegister.StopServer(Context.User.Id, serverId);
+                await _eventRegister.StopServer(Context.User.Id, serverId);
 
                 await RespondAsync($"Shutting Down **{_serverPark.ActiveServer?.ServerName}**.");
             }
@@ -61,7 +61,7 @@ namespace DiscordBot.Bot.Handlers
             try
             {
                 var mcServer = _serverPark.CreateServer(serverName);
-                _eventRegister.CreateServer(Context.User.Id, mcServer.ServerName, mcServer.StorageBytes);
+                await _eventRegister.CreateServer(Context.User.Id, mcServer.ServerName, mcServer.StorageBytes);
 
                 await RespondAsync($"Server **{serverName}** has been created");
             } catch (Exception e)
@@ -77,7 +77,7 @@ namespace DiscordBot.Bot.Handlers
             try
             {
                 ulong serverId = _serverPark.RenameServer(serverName, newName);
-                _eventRegister.RenameServer(Context.User.Id, serverId, newName);
+                await _eventRegister.RenameServer(Context.User.Id, serverId, newName);
 
                 await RespondAsync($"**{serverName}** has been renamed to **{newName}**");
             }

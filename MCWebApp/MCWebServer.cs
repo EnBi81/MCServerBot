@@ -1,6 +1,7 @@
 using Application.Minecraft;
 using Application.PermissionControll;
 using Application.WebSocketHandler;
+using DataStorage;
 using Loggers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +11,7 @@ namespace MCWebApp
 {
     internal static class MCWebServer
     {
-        public static async Task StartWebServer(string[] args)
+        public static async Task StartWebServer(string[] args, int httpsPort = 443, int httpPort = 80)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ namespace MCWebApp
             builder.Services.AddControllers();
             builder.Services.AddRazorPages();
             builder.Services.AddSingleton(IServerPark.Instance);
+            builder.Services.AddSingleton(EventRegisterCollection.WebsiteEventRegister);
+            builder.WebHost.UseUrls($"https://*:{httpsPort}", $"http://*:{httpPort}");
 
             var app = builder.Build();
 
@@ -47,6 +50,7 @@ namespace MCWebApp
 
             app.MapControllers();
             app.MapRazorPages();
+
 
             app.Use(ReceiveSockets);
             await app.StartAsync();

@@ -11,10 +11,10 @@ namespace MCWebApp.Controllers.api.v1
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshUserInfoAsync()
         {
-            string? cookie = Request.Cookies[WebsitePermission.CookieName];
+            string? cookie = UserToken;
 
             if (cookie == null)
-                return GetBadRequest("No access to refresh the token");
+                return GetBadRequest("No access token to refresh");
 
             try
             {

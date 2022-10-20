@@ -89,7 +89,7 @@ namespace DiscordBot.Bot.Handlers
             string serverName = deleteObj.MinecraftServer.ServerName;
 
             ulong serverId = _serverPark.DeleteServer(serverName);
-            _deleteServerEventRegister.DeleteServer(Context.User.Id, serverId);
+            await _deleteServerEventRegister.DeleteServer(Context.User.Id, serverId);
             await message.ModifyAsync(prop => 
             {
                 prop.Content = $"**{serverName}** is **deleted**.";

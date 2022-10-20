@@ -11,5 +11,6 @@ namespace DataStorage.DataObjects
         public ulong Id { get; internal init; }
         public string Username { get; internal init; } = null!;
         public string? ProfilePicUrl { get; internal init; }
+        public string? WebAccessToken { get; internal init; }
     }
 }

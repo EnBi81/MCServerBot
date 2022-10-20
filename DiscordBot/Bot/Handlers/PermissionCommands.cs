@@ -11,6 +11,9 @@ namespace DiscordBot.Bot.Handlers
 {
     internal class PermissionCommands
     {
+
+        // do refresh here
+
         //[Command("Grant Permission for a User")]
         //[CommandOption("user", "User to grant permission for", ApplicationCommandOptionType.User, true)]
         //public static async Task GrantPermission(SocketSlashCommand command)

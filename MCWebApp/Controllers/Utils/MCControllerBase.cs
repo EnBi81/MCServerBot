@@ -1,10 +1,26 @@
 ﻿using Application.Minecraft;
+using Application.PermissionControll;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebApp.Controllers.Utils
 {
     public class MCControllerBase : ControllerBase
     {
+        public string? UserToken
+        {
+            get
+            {
+                return Request.Cookies[WebsitePermission.CookieName];
+            }
+            set
+            {
+                if(value == null)
+                    throw new ArgumentNullException(nameof(value));
+
+                Response.Cookies.Append(WebsitePermission.CookieName, value);
+            }
+        }
+
         public IActionResult GetBadRequest(string message)
         {
             var errorMessage = FormatErrorMessage(message);

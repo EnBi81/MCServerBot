@@ -3,7 +3,6 @@ using Application.Minecraft.Enums;
 using Application.Minecraft.MinecraftServers;
 using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.Serialization;
 
 namespace MCWebApp.Controllers.api.v1
 {
