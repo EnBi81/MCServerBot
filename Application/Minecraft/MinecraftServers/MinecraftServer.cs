@@ -2,6 +2,8 @@
 using Application.Minecraft.Util;
 using Application.Minecraft.Enums;
 using Application.Minecraft.States;
+using DataStorage.Interfaces;
+using DataStorage;
 
 namespace Application.Minecraft.MinecraftServers
 {
@@ -10,11 +12,18 @@ namespace Application.Minecraft.MinecraftServers
     /// </summary>
     internal class MinecraftServer : IMinecraftServer
     {
+        /// <summary>
+        /// Global event register for the minecraft servers.
+        /// </summary>
+        private static readonly IMinecraftEventRegister _eventRegister = EventRegisterCollection.MinecraftEventRegister;
+
+
+
 
         /// <summary>
         /// Id number, unique for a minecraft server.
         /// </summary>
-        public int Id { get; } = 0;
+        public ulong Id { get; } = 0;
 
         private string _serverName = null!;
         /// <summary>
@@ -69,7 +78,16 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Phisical storage space on the disk of the server in BYTES.
         /// </summary>
-        public long StorageBytes { get; internal set; }
+        public long StorageBytes 
+        { 
+            get => _storageBytes; 
+            internal set 
+            {
+                _storageBytes = value;
+                _eventRegister.SetDiskSize(Id, value);
+            } 
+        }
+        private long _storageBytes;
 
         /// <summary>
         /// All of the log messages the server or the users wrote.
@@ -90,6 +108,9 @@ namespace Application.Minecraft.MinecraftServers
         /// Low level process handling of the minecraft server.
         /// </summary>
         internal MinecraftServerProcess McServerProcess { get; }
+
+
+        
 
 
 
@@ -151,7 +172,18 @@ namespace Application.Minecraft.MinecraftServers
             {
                 PerformanceReporter = new ProcessPerformanceReporter(processId);
                 PerformanceReporter.Start();
-                PerformanceReporter.PerformanceMeasured += (s, data) => RaiseEvent(PerformanceMeasured, data);
+                PerformanceReporter.PerformanceMeasured += (s, data) =>
+                {
+                    (double cpu, long memory) = data;
+
+                    var cpuString = cpu.ToString("0.00") + " %";
+                    var memoryString = (memory / (1024 * 1024)) + " MB";
+                    
+
+                    RaiseEvent(PerformanceMeasured, (cpuString, memoryString));
+
+                    _eventRegister.AddMeasurement(Id, cpu, memory);
+                };
             };
         }
 
@@ -262,6 +294,8 @@ namespace Application.Minecraft.MinecraftServers
 
             Players[username].SetOnline();
             RaiseEvent(PlayerJoined, Players[username]);
+
+            _eventRegister.PlayerJoined(Id, username);
         }
 
         /// <summary>
@@ -277,6 +311,8 @@ namespace Application.Minecraft.MinecraftServers
 
             player.SetOffline();
             RaiseEvent(PlayerLeft, player);
+
+            _eventRegister.PlayerLeft(Id, username);
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft;
+using DataStorage.Interfaces;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -17,11 +18,13 @@ namespace DiscordBot.Bot.Handlers
 
         private IServerPark _serverPark;
         private DeleteServerService _deleteServerService;
+        private IDiscordEventRegister _deleteServerEventRegister;
 
-        public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService)
+        public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService, IDiscordEventRegister eventRegister)
         {
             _serverPark = serverPark;
             _deleteServerService = deleteServerService;
+            _deleteServerEventRegister = eventRegister;
         }
 
 
@@ -84,15 +87,14 @@ namespace DiscordBot.Bot.Handlers
             }
 
             string serverName = deleteObj.MinecraftServer.ServerName;
+
+            ulong serverId = _serverPark.DeleteServer(serverName);
+            _deleteServerEventRegister.DeleteServer(Context.User.Id, serverId);
+            await message.ModifyAsync(prop => 
             {
-                _serverPark.DeleteServer(serverName);
-                await message.ModifyAsync(prop => 
-                {
-                    prop.Content = $"**{serverName}** is **deleted**.";
-                    prop.Components = null;
-                });
-            }
-            
+                prop.Content = $"**{serverName}** is **deleted**.";
+                prop.Components = null;
+            });
         }
     }
 }

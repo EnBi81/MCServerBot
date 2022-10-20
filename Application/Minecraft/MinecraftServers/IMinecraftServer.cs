@@ -20,7 +20,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Id number, unique for a minecraft server.
         /// </summary>
-        public int Id { get; }
+        public ulong Id { get; }
 
         /// <summary>
         /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.

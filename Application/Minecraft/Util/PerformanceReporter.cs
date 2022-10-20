@@ -1,8 +1,4 @@
-﻿using Loggers;
-using Application.Minecraft.Enums;
-using System.Management;
-using System.Threading;
-using System;
+﻿using System.Management;
 using System.Diagnostics;
 
 namespace Application.Minecraft.Util
@@ -89,15 +85,16 @@ namespace Application.Minecraft.Util
 
 
                         _mcProcess.Refresh();
-                        memory = (_mcProcess.WorkingSet64 / (1024 * 1024)) + " MB";
-                        cpu = ProcessorUsage.ToString("0.00") + " %";
 
-                        RaiseEvent(PerformanceMeasured, (cpu, memory));
+                        var cpuPercentage = ProcessorUsage;
+                        var memoryByte = _mcProcess.WorkingSet64;
+                        
+
+                        RaiseEvent(PerformanceMeasured, (cpuPercentage, memoryByte));
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        Console.WriteLine(ex.Message + ex.StackTrace);
-                        Console.WriteLine(ex.InnerException.Message);
+
                     }
                 }
 
@@ -113,13 +110,13 @@ namespace Application.Minecraft.Util
 
 
             moSearcher.Dispose();
-            RaiseEvent(PerformanceMeasured, ("0 %", "0 MB"));
+            RaiseEvent(PerformanceMeasured, (0, 0));
         }
 
         /// <summary>
         /// Raised when a measurement result is ready.
         /// </summary>
-        public event EventHandler<(string CPU, string Memory)> PerformanceMeasured;
+        public event EventHandler<(double CPU, long Memory)> PerformanceMeasured;
 
         /// <summary>
         /// Helper method for raising events.

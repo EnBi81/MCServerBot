@@ -102,21 +102,28 @@ namespace Application.Minecraft
         /// Start the active server.
         /// </summary>
         /// <param name="username">username who initiates the start</param>
-        public void StartServer(string serverName, string username)
+        public ulong StartServer(string serverName, string username)
         {
             ValidateMaxStorage();
 
             SetActiveServer(serverName);
             ActiveServer?.Start(username);
+
+            return ActiveServer!.Id;
         }
 
         /// <summary>
         /// Stop the active server.
         /// </summary>
         /// <param name="username">username who initiates the stop</param>
-        public void StopActiveServer(string username)
+        public ulong StopActiveServer(string username)
         {
+            if (ActiveServer == null || !ActiveServer.IsRunning)
+                throw new Exception("Server is not running!");
+
             ActiveServer?.Shutdown(username);
+
+            return ActiveServer!.Id;
         }
 
 
@@ -170,7 +177,7 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public void RenameServer(string oldName, string newName)
+        public ulong RenameServer(string oldName, string newName)
         {
             ValidateNameLength(newName);
 
@@ -187,14 +194,14 @@ namespace Application.Minecraft
 
             ServerCollection.Remove(oldName, out IMinecraftServer? server);
 
-            if (server == null)
-                return;
+            IMinecraftServer notNullServer = server!;
 
-
-            ServerCollection.Add(newName, server);
-            server.ServerName = newName;
+            ServerCollection.Add(newName, notNullServer);
+            notNullServer.ServerName = newName;
 
             InvokeServerNameChange(oldName, newName);
+
+            return notNullServer.Id;
         }
 
         /// <summary>
@@ -202,7 +209,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public void DeleteServer(string name)
+        public ulong DeleteServer(string name)
         {
             if (!ServerNameExist(name))
                 throw new Exception($"The server '{name}' does not exist.");
@@ -217,6 +224,8 @@ namespace Application.Minecraft
 
             if (server != null)
                 InvokeServerDeleted(server);
+
+            return server!.Id;
         }
 
         /// <summary>

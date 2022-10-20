@@ -28,13 +28,13 @@ namespace Application.Minecraft
         /// Start the active server.
         /// </summary>
         /// <param name="username">username who initiates the start</param>
-        public void StartServer(string serverName, string username);
+        public ulong StartServer(string serverName, string username);
 
         /// <summary>
         /// Stop the active server.
         /// </summary>
         /// <param name="username">username who initiates the stop</param>
-        public void StopActiveServer(string username);
+        public ulong StopActiveServer(string username);
 
 
         /// <summary>
@@ -60,14 +60,14 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public void RenameServer(string oldName, string newName);
+        public ulong RenameServer(string oldName, string newName);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public void DeleteServer(string name);
+        public ulong DeleteServer(string name);
 
 
 

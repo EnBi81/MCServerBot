@@ -1,8 +1,7 @@
 ﻿using Application.Minecraft;
-using Discord;
+using DataStorage.Interfaces;
 using Discord.Interactions;
 using DiscordBot.Bot.Handlers.Autocompletes;
-using DiscordBot.Bot.Helpers;
 
 namespace DiscordBot.Bot.Handlers
 {
@@ -10,10 +9,12 @@ namespace DiscordBot.Bot.Handlers
     public class MinecraftServerCommands : InteractionModuleBase<SocketInteractionContext>
     {
         private IServerPark _serverPark;
+        private IDiscordEventRegister _eventRegister;
 
-        public MinecraftServerCommands(IServerPark serverPark)
+        public MinecraftServerCommands(IServerPark serverPark, IDiscordEventRegister eventRegister)
         {
             _serverPark = serverPark;
+            _eventRegister = eventRegister;
         }
 
 
@@ -24,7 +25,9 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                _serverPark.StartServer(serverName, Context.User.Username);
+                ulong serverId = _serverPark.StartServer(serverName, Context.User.Username);
+                _eventRegister.StartServer(Context.User.Id, serverId);
+
                 await RespondAsync($"Starting **{serverName}**.");
             }
             catch (Exception e)
@@ -40,7 +43,9 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                _serverPark.StopActiveServer(Context.User.Username);
+                ulong serverId = _serverPark.StopActiveServer(Context.User.Username);
+                _eventRegister.StopServer(Context.User.Id, serverId);
+
                 await RespondAsync($"Shutting Down **{_serverPark.ActiveServer?.ServerName}**.");
             }
             catch (Exception ex)
@@ -55,7 +60,9 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                _serverPark.CreateServer(serverName);
+                var mcServer = _serverPark.CreateServer(serverName);
+                _eventRegister.CreateServer(Context.User.Id, mcServer.ServerName, mcServer.StorageBytes);
+
                 await RespondAsync($"Server **{serverName}** has been created");
             } catch (Exception e)
             {
@@ -69,7 +76,9 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                _serverPark.RenameServer(serverName, newName);
+                ulong serverId = _serverPark.RenameServer(serverName, newName);
+                _eventRegister.RenameServer(Context.User.Id, serverId, newName);
+
                 await RespondAsync($"**{serverName}** has been renamed to **{newName}**");
             }
             catch (Exception e)

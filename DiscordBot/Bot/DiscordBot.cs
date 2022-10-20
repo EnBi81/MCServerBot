@@ -8,6 +8,8 @@ using Application.Minecraft.MinecraftServers;
 using Discord.Interactions;
 using Application.Minecraft.Enums;
 using DiscordBot.Bot.Helpers;
+using DataStorage.Interfaces;
+using DataStorage;
 
 namespace DiscordBot.Bot
 {
@@ -115,6 +117,7 @@ namespace DiscordBot.Bot
             .AddSingleton<InteractionService>()
             .AddSingleton<CommandHandler>()
             .AddSingleton<DeleteServerService>()
+            .AddSingleton(EventRegisterCollection.DiscordEventRegister)
             .BuildServiceProvider();
     }
 }

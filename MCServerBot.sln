@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HamachiHelper", "HamachiHel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCWebApp", "MCWebApp\MCWebApp.csproj", "{92B8F99F-1A50-4CEB-BC81-24E2648D770E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStorage", "DataStorage\DataStorage.csproj", "{009B0D0E-6859-41F3-9E0A-5CC84F2FFE3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92B8F99F-1A50-4CEB-BC81-24E2648D770E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{009B0D0E-6859-41F3-9E0A-5CC84F2FFE3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{009B0D0E-6859-41F3-9E0A-5CC84F2FFE3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{009B0D0E-6859-41F3-9E0A-5CC84F2FFE3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{009B0D0E-6859-41F3-9E0A-5CC84F2FFE3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
