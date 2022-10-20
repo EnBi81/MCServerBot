@@ -31,7 +31,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 var user = await GetUser();
-                serverPark.DeleteServer(serverName, user);
+                await serverPark.DeleteServer(serverName, user);
                 return Ok();
             }
             catch (Exception e)
@@ -55,7 +55,7 @@ namespace MCWebApp.Controllers.api.v1
                 string newName = ControllerUtils.TryGetStringFromJson(data, "new-name");
                 var user = await GetUser();
 
-                serverPark.RenameServer(serverName, newName, user);
+                await serverPark.RenameServer(serverName, newName, user);
 
                 return Ok();
             }
@@ -98,7 +98,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 var user = await GetUser();
-                serverPark.ToggleServer(serverName, user);
+                await serverPark.ToggleServer(serverName, user);
                 return Ok();
             }
             catch (Exception e)

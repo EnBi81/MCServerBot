@@ -50,7 +50,7 @@ namespace Application.Minecraft.MinecraftServers
         public void Start()
         {
             // get the server.jar fileinfo
-            FileInfo info = new FileInfo(_serverFileName);
+            FileInfo info = new (_serverFileName);
             var workingDir = info.DirectoryName;
             var simpleFileName = info.Name;
 

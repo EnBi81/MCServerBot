@@ -3,7 +3,6 @@ using Application.Minecraft.EventHandlers;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
 using DataStorage.DataObjects;
-using DataStorage.Interfaces;
 using Loggers;
 using System.Collections.ObjectModel;
 
@@ -25,10 +24,13 @@ namespace Application.Minecraft
         internal static string EmptyServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Empty Server\\";
 
 
+        private ulong _serverId;
 
 
-        internal ServerPark()
+        internal ServerPark(ulong serverId)
         {
+            _serverId = serverId;
+
             ServerCollection.Clear();
 
             ActiveServerChange = null!;
@@ -43,22 +45,26 @@ namespace Application.Minecraft
             ServerNameChanged = null!;
         }
 
-        internal async Task InitializeAsync(IServerParkEventRegister serverParkEventRegister)
+        internal ServerPark InitializeAsync()
         {
             DirectoryInfo info = new(ServersFolder);
             var serverFolders = info.GetDirectories();
 
             foreach (var serverFolder in serverFolders)  // loop through all the directories and create the server instances
             {
-                if(!ulong.TryParse(serverFolder.Name, out ulong serverId))
+                string folderName = serverFolder.Name;
+
+                if (!ulong.TryParse(folderName, out var _))
                 {
-                    throw new NotImplementedException();
+                    LogService.GetService<MinecraftLogger>().Log("serverpark", $"ERROR: cannot convert folder {folderName} to ulong.", ConsoleColor.Red);
+                    continue;
                 }
 
-                string name = await serverParkEventRegister.GetName(serverId);
-                var mcServer = (MinecraftServer)RegisterMcServer(name, serverFolder.FullName);
-                mcServer.Id = serverId;
+                var mcServer = new MinecraftServer(serverFolder.FullName);
+                RegisterMcServer(mcServer);
             }
+
+            return this;
         }
 
 
@@ -135,33 +141,22 @@ namespace Application.Minecraft
             : StartServer(serverName, user);
 
 
-        /// <summary>
-        /// PLEASE DONT USE THIS METHOD THANK YOU <3
-        /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        /// <exception cref="NotSupportedException">You will received this nice exception in your exception handler.</exception>
-        public Task<IMinecraftServer> CreateServer(string serverName, DataUser user)
-        {
-            //this needs to be inherited from the IServerPark, but we have to use the method below this instead
-            throw new NotSupportedException();
-        }
 
-        public async Task<IMinecraftServer> CreateServer(string serverName, DataUser user, Func<ulong, string, Task<ulong>> getIdCallback)
+        /// <inheritdoc/>
+        public Task<IMinecraftServer> CreateServer(string serverName, DataUser user)
         {
             CreateServerCheck(serverName);
 
-            ulong newServerId = await getIdCallback(user.Id, serverName);
+            ulong newServerId = _serverId++;
 
             string destDir = ServersFolder + newServerId;
             Directory.CreateDirectory(destDir);
             FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
-            var mcServer = (MinecraftServer)RegisterMcServer(serverName, destDir);
-            mcServer.Id = newServerId;
+            var mcServer = new MinecraftServer(newServerId, serverName, destDir);
+            RegisterMcServer(mcServer);
 
-            return mcServer;
+            return Task.FromResult((IMinecraftServer)mcServer);
         }
 
 
@@ -258,13 +253,10 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="serverName"></param>
         /// <param name="folderPath"></param>
-        private IMinecraftServer RegisterMcServer(string serverName, string folderPath)
+        private void RegisterMcServer(MinecraftServer server)
         {
-            IMinecraftServer mcServer = new MinecraftServer(serverName, folderPath);
-            ServerCollection.Add(serverName, mcServer);
-            InvokeServerAdded(mcServer);
-
-            return mcServer;
+            ServerCollection.Add(server.ServerName, server);
+            InvokeServerAdded(server);
         }
 
 

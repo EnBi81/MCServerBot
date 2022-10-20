@@ -19,7 +19,7 @@ namespace MCWebApp
             builder.Services.AddControllers();
             builder.Services.AddRazorPages();
             builder.Services.AddSingleton(IServerPark.Instance);
-            builder.Services.AddSingleton(EventRegisterCollection.WebsiteEventRegister);
+            builder.Services.AddSingleton(DatabaseAccess.SQLite.WebsiteEventRegister);
             builder.WebHost.UseUrls($"https://*:{httpsPort}", $"http://*:{httpPort}");
 
             var app = builder.Build();

@@ -15,11 +15,9 @@ namespace DiscordBot.Bot.Handlers.Autocompletes
         }
 
 
-        public override async Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
+        public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
         {
-            Console.WriteLine("Start suggestion");
             string currentValue = autocompleteInteraction.Data.Current.Value.ToString()!.ToLower();
-            Console.WriteLine("CurrentValue: " + currentValue);
 
             IEnumerable<IMinecraftServer> servers = _serverPark.MCServers.Values;
 
@@ -33,7 +31,7 @@ namespace DiscordBot.Bot.Handlers.Autocompletes
 
             // max - 25 suggestions at a time (API limit)
             var result = AutocompletionResult.FromSuccess(results.Take(25));
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

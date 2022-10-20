@@ -9,7 +9,8 @@ namespace DataStorage.Interfaces
 {
     public interface IDiscordEventRegister
     {
-        Task GrantPermission(ulong userId, ulong discordId, string username, string profilepic, string webAccessToken);
+        Task RegisterDiscordUser(ulong discordId, string username, string profilepic, string webAccessToken);
+        Task GrantPermission(ulong userId, ulong discordId);
         Task RevokePermission(ulong userId, ulong discordId);
         Task<bool> HasPermission(ulong id);
         Task<DataUser?> GetUser(ulong id);

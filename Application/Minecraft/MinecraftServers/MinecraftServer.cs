@@ -4,6 +4,7 @@ using Application.Minecraft.Enums;
 using Application.Minecraft.States;
 using DataStorage.Interfaces;
 using DataStorage;
+using System.Reactive;
 
 namespace Application.Minecraft.MinecraftServers
 {
@@ -15,7 +16,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Global event register for the minecraft servers.
         /// </summary>
-        private static readonly IMinecraftEventRegister _eventRegister = EventRegisterCollection.MinecraftEventRegister;
+        private static readonly IMinecraftEventRegister _eventRegister = DatabaseAccess.SQLite.MinecraftEventRegister;
 
 
 
@@ -23,7 +24,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Id number, unique for a minecraft server.
         /// </summary>
-        public ulong Id { get; internal set; } = 0;
+        public ulong Id { get; } 
 
         private string _serverName = null!;
         /// <summary>
@@ -39,6 +40,7 @@ namespace Application.Minecraft.MinecraftServers
 
                 _serverName = value;
                 RaiseEvent(NameChanged, value);
+                McServerInfos.Save(this);
             }
         }
 
@@ -109,27 +111,36 @@ namespace Application.Minecraft.MinecraftServers
         /// </summary>
         internal MinecraftServerProcess McServerProcess { get; }
 
+        internal MinecraftServerInfos McServerInfos { get; }
+
 
         
 
+        public MinecraftServer(string serverFolderName) : this(0, serverFolderName)
+        {
+            McServerInfos.Load();
+            Id = McServerInfos.Id;
+            ServerName = McServerInfos.Name;
+        }
 
 
-        /// <summary>
-        /// Initializes the MinecraftServer object
-        /// </summary>
-        /// <param name="serverName">Name of the server</param>
-        /// <param name="serverFolderName">Folder path of the server</param>
-        public MinecraftServer(string serverName, string serverFolderName)
+        public MinecraftServer(ulong id, string serverName, string serverFolderName) : this(id, serverFolderName)
+        {
+            ServerName = serverName;
+        }
+
+
+        private MinecraftServer(ulong id, string serverFolderName)
         {
             string serverFileName = serverFolderName + "\\server.jar";
             string serverPropertiesFileName = serverFolderName + "\\server.properties";
+            string serverInfoFile = serverFolderName + "\\server.info";
 
-            ServerName = serverName;
+            Id = id;
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
+            McServerInfos = new MinecraftServerInfos(serverInfoFile);
 
             var config = MinecraftConfig.Instance;
-            if (config == null)
-                throw new Exception("MinecraftConfig instance is not created.");
 
             McServerProcess = new MinecraftServerProcess(
                 serverFileName: serverFileName,
@@ -139,6 +150,7 @@ namespace Application.Minecraft.MinecraftServers
                 initRam: config.MinecraftServerInitRamMB);
 
             SubscribeToProcessEvents();
+
 
             _serverState = null!;
             SetServerState<OfflineState>();
@@ -151,6 +163,7 @@ namespace Application.Minecraft.MinecraftServers
             PerformanceMeasured = null!;
             NameChanged = null!;
         }
+
 
         /// <summary>
         /// Subscribes to the events fired by the <see cref="McServerProcess"/>

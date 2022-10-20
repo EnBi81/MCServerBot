@@ -9,7 +9,7 @@ namespace Application.Minecraft
 {
     internal class ServerParkProxy : IServerPark
     {
-        private static readonly IServerParkEventRegister _serverParkEventRegister = EventRegisterCollection.ServerParkEventRegister;
+        private static readonly IServerParkEventRegister _serverParkEventRegister = DatabaseAccess.SQLite.ServerParkEventRegister;
 
 
 
@@ -19,7 +19,8 @@ namespace Application.Minecraft
 
         internal ServerParkProxy()
         {
-            _serverPark = new ServerPark();
+            ulong maxServerId = _serverParkEventRegister.GetMaxServerId().GetAwaiter().GetResult();
+            _serverPark = new ServerPark(maxServerId);
         }
 
         /// <inheritdoc/>
@@ -87,7 +88,7 @@ namespace Application.Minecraft
         public async Task<IMinecraftServer> CreateServer(string serverName, DataUser user)
         {
             var res = await _serverPark.CreateServer(serverName, user);
-            await _serverPark.CreateServer(serverName, user, _serverParkEventRegister.CreateServer);
+            await _serverParkEventRegister.CreateServer(user.Id, res.Id, res.ServerName);
 
             return res;
         }

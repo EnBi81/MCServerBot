@@ -21,6 +21,7 @@ namespace Application.Minecraft.Util
         {
             _mcProcess = Process.GetProcessById(processId);
             _measurementThread = new Thread(PerformanceReporter);
+            PerformanceMeasured = null!;
         }
 
         /// <summary>
@@ -54,8 +55,6 @@ namespace Application.Minecraft.Util
             double ProcessorUsage = 20;
             double msPassed;
             ulong u_OldCPU = 0;
-            string cpu = "";
-            string memory = "";
             while (_isRunning)
             {
                 var gets = moSearcher.Get();

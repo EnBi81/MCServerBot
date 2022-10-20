@@ -30,7 +30,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <param name="props">instance to save</param>
         public static void SaveProperties(string file, MinecraftServerProperties props)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
             foreach (var (key, value) in props)
                 sb.AppendLine(key + "=" + value.ToString());
 
@@ -51,7 +51,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <param name="lines"></param>
         public MinecraftServerProperties(IEnumerable<string> lines)
         {
-            Regex regex = new Regex("[^=]=[^=]");
+            Regex regex = new ("[^=]=[^=]");
             foreach (var line in lines)
             {
                 if (!regex.IsMatch(line))

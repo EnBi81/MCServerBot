@@ -60,7 +60,7 @@ namespace DiscordBot.Bot.Handlers
             try
             {
                 var user = await GetUser();
-                _serverPark.CreateServer(serverName, user);
+                await _serverPark.CreateServer(serverName, user);
                 await RespondAsync($"Server **{serverName}** has been created");
             } catch (Exception e)
             {
