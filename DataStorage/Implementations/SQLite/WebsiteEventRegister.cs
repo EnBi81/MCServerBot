@@ -16,20 +16,7 @@ namespace DataStorage.Implementations.SQLite
             cmd.CommandText = "SELECT user_id, username, profile_pic_url, web_access_token FROM discord_user WHERE web_access_token = @token;";
             cmd.Parameters.AddWithValue("@token", token);
 
-            using var reader = await cmd.ExecuteReaderAsync();
-
-            if (!reader.HasRows)
-                return null;
-
-            DataUser user = new()
-            {
-                Id = (ulong)reader.GetInt64(0),
-                Username = reader.GetString(1),
-                ProfilePicUrl = reader.GetString(2),
-                WebAccessToken = reader.GetString(3),
-            };
-
-            return user;
+            return await GetUserFromCommand(cmd);
         }
 
         public async Task<bool> HasPermission(string token)
@@ -44,7 +31,7 @@ namespace DataStorage.Implementations.SQLite
 
             object? res = await cmd.ExecuteScalarAsync();
 
-            return res is int accessCode && accessCode == (int)AccessEventType.Granted;
+            return res is long accessCode && accessCode == (int)AccessEventType.Granted;
         }
     }
 }

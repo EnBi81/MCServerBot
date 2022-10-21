@@ -5,19 +5,14 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.Bot.Handlers.Autocompletes;
 using DiscordBot.Bot.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordBot.Bot.Handlers
 {
     public class DeleteServerCommands : MCInteractionModuleBase
     {
 
-        private IServerPark _serverPark;
-        private DeleteServerService _deleteServerService;
+        private readonly IServerPark _serverPark;
+        private readonly DeleteServerService _deleteServerService;
 
         public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService, IDiscordEventRegister eventRegister) : base(eventRegister)
         {
@@ -86,7 +81,7 @@ namespace DiscordBot.Bot.Handlers
 
             string serverName = deleteObj.MinecraftServer.ServerName;
 
-            var user = await GetUser();
+            var user = await GetUserEventData();
             await _serverPark.DeleteServer(serverName, user);
 
             await message.ModifyAsync(prop => 

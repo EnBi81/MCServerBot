@@ -9,5 +9,6 @@ namespace DataStorage.Interfaces
     public interface IDatabaseSetup
     {
         public Task Setup(string connectionString);
+        public Task ResetDatabase();
     }
 }

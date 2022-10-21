@@ -9,7 +9,10 @@ namespace DataStorage
         public IMinecraftEventRegister MinecraftEventRegister { get; internal init; } = null!;
         public IWebsiteEventRegister WebsiteEventRegister { get; internal init; } = null!;
         public IServerParkEventRegister ServerParkEventRegister { get; internal init; } = null!;
-        public IDatabaseSetup DatabaseSetup { get; internal init; } = null!;
+        public IDatabaseSetup DatabaseSetup { get; init; } = null!;
+
+        public async Task Setup(string connectionString) => 
+            await DatabaseSetup.Setup(connectionString);
 
 
         public static DatabaseAccess SQLite { get; } = new DatabaseAccess()

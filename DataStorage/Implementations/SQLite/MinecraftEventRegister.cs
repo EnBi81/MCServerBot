@@ -13,7 +13,7 @@ namespace DataStorage.Implementations.SQLite
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = "INSERT INTO measurements(server_id, time_at, cpu, memory) VALUES (@serverId, @timeAt, @cpu, @memory);";
-            cmd.Parameters.AddWithValue("@serverId", serverId);
+            cmd.Parameters.AddWithValue("@serverId", serverId.ToString());
             cmd.Parameters.AddWithValue("@timeAt", CurrentDateTime);
             cmd.Parameters.AddWithValue("@cpu", cpu);
             cmd.Parameters.AddWithValue("@memory", memory);
@@ -35,7 +35,7 @@ namespace DataStorage.Implementations.SQLite
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = "INSERT INTO mc_player_event(server_id, player_id, time_at, event_type) VALUES (@serverId, @playerId, @timeAt, @eventType);";
-            cmd.Parameters.AddWithValue("@serverId", serverId);
+            cmd.Parameters.AddWithValue("@serverId", serverId.ToString());
             cmd.Parameters.AddWithValue("@playerId", playerId);
             cmd.Parameters.AddWithValue("@timeAt", CurrentDateTime);
             cmd.Parameters.AddWithValue("@eventType", (int)eventType);
@@ -74,7 +74,7 @@ namespace DataStorage.Implementations.SQLite
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = "UPDATE minecraft_server SET disk_size = @diskSize WHERE server_id = @serverId;";
-            cmd.Parameters.AddWithValue("@serverId", serverId);
+            cmd.Parameters.AddWithValue("@serverId", serverId.ToString());
             cmd.Parameters.AddWithValue("@diskSize", diskSize);
 
             cmd.ExecuteNonQuery();

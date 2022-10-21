@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft;
+using DataStorage.DataObjects;
 using DataStorage.Interfaces;
 using Discord.Interactions;
 using DiscordBot.Bot.Handlers.Autocompletes;
@@ -24,7 +25,7 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                var user = await GetUser();
+                var user = await GetUserEventData();
                 await _serverPark.StartServer(serverName, user);
 
                 await RespondAsync($"Starting **{serverName}**.");
@@ -42,7 +43,7 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                var user = await GetUser();
+                var user = await GetUserEventData();
                 await _serverPark.StopActiveServer(user);
 
                 await RespondAsync($"Shutting Down **{_serverPark.ActiveServer?.ServerName}**.");
@@ -59,7 +60,7 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                var user = await GetUser();
+                var user = await GetUserEventData();
                 await _serverPark.CreateServer(serverName, user);
                 await RespondAsync($"Server **{serverName}** has been created");
             } catch (Exception e)
@@ -74,7 +75,7 @@ namespace DiscordBot.Bot.Handlers
         {
             try
             {
-                var user = await GetUser();
+                var user = await GetUserEventData();
                 await _serverPark.RenameServer(serverName, newName, user);
 
                 await RespondAsync($"**{serverName}** has been renamed to **{newName}**");

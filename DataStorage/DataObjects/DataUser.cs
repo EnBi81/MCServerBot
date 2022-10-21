@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DataStorage.DataObjects
 {
@@ -20,5 +17,10 @@ namespace DataStorage.DataObjects
         public string Username { get; internal init; } = null!;
         public string? ProfilePicUrl { get; internal init; }
         public string? WebAccessToken { get; internal init; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this,  new JsonSerializerOptions { WriteIndented = true });
+        }
     }
 }

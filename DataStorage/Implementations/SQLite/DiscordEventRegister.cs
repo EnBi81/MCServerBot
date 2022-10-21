@@ -13,22 +13,9 @@ namespace DataStorage.Implementations.SQLite
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT user_id, username, profile_pic_url, web_access_token FROM discord_user WHERE user_id = @userId;";
-            cmd.Parameters.AddWithValue("@userId", id);
+            cmd.Parameters.AddWithValue("@userId", id.ToString());
 
-            using var reader = await cmd.ExecuteReaderAsync();
-            
-            if(!reader.HasRows)
-                return null;
-
-            DataUser user = new ()
-            {
-                Id = (ulong)reader.GetInt64(0),
-                Username = reader.GetString(1),
-                ProfilePicUrl = reader.GetString(2),
-                WebAccessToken = reader.GetString(3),
-            };
-
-            return user;
+            return await GetUserFromCommand(cmd);
         }
 
 
@@ -42,11 +29,11 @@ namespace DataStorage.Implementations.SQLite
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT type FROM access_tracker WHERE affected_id = @userId ORDER BY event_id DESC LIMIT 1;";
-            cmd.Parameters.AddWithValue("@userId", id);
+            cmd.Parameters.AddWithValue("@userId", id.ToString());
 
             object? res = await cmd.ExecuteScalarAsync();
 
-            return res is int accessCode && accessCode == (int)AccessEventType.Granted;
+            return res is long accessCode && accessCode == (int)AccessEventType.Granted;
         }
 
 
@@ -58,7 +45,7 @@ namespace DataStorage.Implementations.SQLite
             cmd.CommandText = "UPDATE discord_user SET username = @username, profile_pic_url = @prof_pic WHERE user_id = @userId;";
             cmd.Parameters.AddWithValue("@username", username);
             cmd.Parameters.AddWithValue("@prof_pic", profilePicUrl);
-            cmd.Parameters.AddWithValue("@userId", id);
+            cmd.Parameters.AddWithValue("@userId", id.ToString());
 
             await cmd.ExecuteNonQueryAsync();
         }
@@ -69,7 +56,7 @@ namespace DataStorage.Implementations.SQLite
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = "INSERT INTO discord_user(user_id, username, profile_pic_url, web_access_token) VALUES (@user_id, @username, @prof_pic, @webaccesstoken);";
-            cmd.Parameters.AddWithValue("@user_id", discordId);
+            cmd.Parameters.AddWithValue("@user_id", discordId.ToString());
             cmd.Parameters.AddWithValue("@username", username);
             cmd.Parameters.AddWithValue("@prof_pic", profilepic);
             cmd.Parameters.AddWithValue("@webaccesstoken", webAccessToken);
@@ -90,7 +77,7 @@ namespace DataStorage.Implementations.SQLite
 
             cmd.CommandText = "INSERT INTO access_tracker(event_id, affected_id, type) VALUES (@eventId, @affectedId, @accessType);";
             cmd.Parameters.AddWithValue("@eventId", userEventId);
-            cmd.Parameters.AddWithValue("@affectedId", discordId);
+            cmd.Parameters.AddWithValue("@affectedId", discordId.ToString());
             cmd.Parameters.AddWithValue("@accessType", (int)type);
 
             await cmd.ExecuteNonQueryAsync();

@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="3.8.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <ProjectReference Include="..\DataStorage\DataStorage.csproj" />
   </ItemGroup>
 
 </Project>

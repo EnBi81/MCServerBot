@@ -1,61 +1,38 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace Sandbox
 {
     public class SandBoxClass
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            StartServer();
+            var sqLite = DataStorage.DatabaseAccess.SQLite;
+            await sqLite.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\Sandbox\\mydb.db;Version=3;");
+
+            var discordStorage = sqLite.DiscordEventRegister;
+
+
+            await discordStorage.RefreshUser(ulong.MaxValue, "refreshedUsername", "refreshedProfPic");
+            var user = await discordStorage.GetUser(ulong.MaxValue);
+            Console.WriteLine("user: " + user);
         }
 
-        static void StartServer()
+
+        static async Task TestUser()
         {
-            var _serverHandlerPath = "C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCServerHandler\\bin\\Debug\\net5.0\\MCServerHandler.exe";
-            var _javaLocation = "C:\\Program Files\\Java\\jdk-17.0.2\\bin\\java.exe";
+            var sqLite = DataStorage.DatabaseAccess.SQLite;
+            var discordStorage = sqLite.DiscordEventRegister;
 
-            FileInfo info = new FileInfo("A:\\MinecraftServerTest\\jar files\\server.jar");
-            var workingDir = "A:\\MinecraftServerTest\\Empty Server";
-            var simpleFileName = "A:\\MinecraftServerTest\\jar files\\server.jar";
+            //await discordStorage.RegisterDiscordUser(ulong.MaxValue, "Minimillian", "profpic", "haha");
+            var user = await discordStorage.GetUser(ulong.MaxValue);
 
-            var processStartInfo = new ProcessStartInfo
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = false,
-                //Arguments = $"\"{serverHandlerPath}\" {simpleFileName} \"{_javaLocation}\" \"{workingDir}\" {maxRam} {initRam}",
-                FileName = "cmd.exe",
-                WorkingDirectory = workingDir
-            };
-
-            var _serverHandlerProcess = new Process()
-            {
-                StartInfo = processStartInfo,
-                EnableRaisingEvents = true,
-            };
-
-           
-            _serverHandlerProcess.Start();
-            _serverHandlerProcess.StandardInput.WriteLine($"\"{_serverHandlerPath}\" \"{simpleFileName}\" \"{_javaLocation}\" \"{workingDir}\" {8000} {8000} & exit");
-            _serverHandlerProcess.BeginErrorReadLine();
-            _serverHandlerProcess.BeginOutputReadLine();
-
-
-
-            int messageCount = 0;
-            _serverHandlerProcess.OutputDataReceived += (s, e) =>
-            {
-                if (e.Data == null)
-                    return;
-
-                Console.WriteLine(e.Data);
-            };
-
-            _serverHandlerProcess.WaitForExit();
+            Console.WriteLine("Has permission first: " + await discordStorage.HasPermission(ulong.MaxValue));
+            await discordStorage.GrantPermission(ulong.MaxValue, ulong.MaxValue);
+            Console.WriteLine("Has permission true: " + await discordStorage.HasPermission(ulong.MaxValue));
+            await discordStorage.RevokePermission(ulong.MaxValue, ulong.MaxValue);
+            Console.WriteLine("Has permission false: " + await discordStorage.HasPermission(ulong.MaxValue));
+            Console.WriteLine("user: " + user);
         }
     }
 }
