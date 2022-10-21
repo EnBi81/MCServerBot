@@ -110,24 +110,6 @@ class ServerPark{
         return [...this.#errorMessages];
     }
 
-    /**
-     * Refreshes the discord user's data with the latest info.
-     * @param discordId discord id of the user
-     * @param callback callback which will be called when the data is ready. It should take a DiscordUser as param.
-     */
-    getRefreshedProfile(discordId, callback){
-        let convertingCallback = obj => {
-            let discordUser = new DiscordUser(
-                obj["profPic"],
-                obj["id"],
-                obj["username"],
-            );
-
-            callback(discordUser);
-        };
-
-        this.#mcNetworking.sendHandler.getRefreshedProfPic(discordId, convertingCallback);
-    }
 
     /**
      * Adds a listener to the ServerPark.

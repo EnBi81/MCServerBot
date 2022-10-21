@@ -120,13 +120,4 @@ class MCSender {
         let data = { "command-data": command };
         this.#post(this.BASE_API_URL + `minecraftserver/${serverName}/commands`, data);
     }
-
-    getRefreshedProfPic(discordId, callback){
-        let networkCallback = request => {
-            if (request.readyState === 4 && request.status === 200)
-                callback(JSON.parse(request.responseText));
-        }
-
-        this.#get(this.BASE_API_URL + "discord/user/refresh", networkCallback);
-    }
 }
