@@ -1,111 +1,73 @@
 ﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using Application.PermissionControll;
 using DiscordBot.Bot.Helpers;
 using DiscordBot.PermissionControll;
+using Discord.Interactions;
+using DataStorage.Interfaces;
+using HamachiHelper;
 
 namespace DiscordBot.Bot.Handlers
 {
-    internal class PermissionCommands
+    internal class PermissionCommands : MCInteractionModuleBase
     {
+        private readonly DiscordPermission _discordPermission;
+
+        public PermissionCommands(IDiscordEventRegister discordEventRegister, DiscordPermission discordPermission) : base(discordEventRegister)
+        {
+            _discordPermission = discordPermission;
+        }
+
 
         // do refresh here
+        [SlashCommand("refresh-user-info", "Refreshes user info in the database such as username and profile pic")]
+        public async Task RefreshUser()
+        {
+            await _discordPermission.RefreshUser(Context.User);
+            await RespondAsync("User successfully refreshed!");
+        }
 
-        //[Command("Grant Permission for a User")]
-        //[CommandOption("user", "User to grant permission for", ApplicationCommandOptionType.User, true)]
-        //public static async Task GrantPermission(SocketSlashCommand command)
-        //{
-        //    var option = command.Data.Options.First();
+        [SlashCommand("grant-permission", "Grant Permission for a User")]
+        public async Task GrantPermission([Summary("user", "User to give permission to")] IUser user)
+        {
+            try
+            {
+                await _discordPermission.GrantPermission(Context.User.Id, user);
+                await RespondAsync($"Permission **Granted** for user **{user.Username}**", ephemeral: true);
+            }
+            catch (Exception e)
+            {
+                await RespondAsync(e.Message, ephemeral: true);
+            }
+        }
 
-        //    if (option.Value is not IUser user)
-        //    {
-        //        var embed = EmbedHelper.CreateTitleEmbed("No user provided :x:");
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //        return;
-        //    }
+        [SlashCommand("revoke-permission", "Revoke Permission for a User")]
+        public async Task RevokePermission([Summary("user", "User to revoke permission from")] IUser user)
+        {
+            try
+            {
+                await _discordPermission.RevokePermission(Context.User.Id, user);
+                await RespondAsync($"Permission **Revoked** for **{user.Username}**", ephemeral: true);
+            }
+            catch (Exception e)
+            {
+                await RespondAsync(e.Message, ephemeral: true); 
+            }
+        }
 
-        //    try
-        //    {
-        //        BotPermission.GrantPermission(user);
-        //        var embed = EmbedHelper.CreateTitleEmbed($"Permission Granted for {user.Username} :white_check_mark:", author: user);
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        var embed = EmbedHelper.CreateTitleEmbed($"Permission for {user.Username} is already granted :x:", author: user);
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //    }
-        //}
+        [SlashCommand("get-web-url", "Get the login link to the server manager page")]
+        public async Task GetWebLoginPage()
+        {
+            var user = await GetUser();
 
-        //[Command("Revoke Permission for a User")]
-        //[CommandOption("user", "User to revoke permission from", ApplicationCommandOptionType.User, true)]
-        //public static async Task RevokePermission(SocketSlashCommand command)
-        //{
-        //    var option = command.Data.Options.First();
+            if(user == null)
+            {
+                await RespondAsync("You don't have permission to do this :(((");
+                return;
+            }
 
-        //    if (option.Value is not IUser user)
-        //    {
-        //        var embed = EmbedHelper.CreateTitleEmbed("No user provided :x:");
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //        return;
-        //    }
+            string createLink = $"https://{HamachiClient.Address}/servers?token={user.WebAccessToken}";
+            var button = ButtonHelper.CreateLinkButton("Website", createLink);
 
-        //    ulong id = user.Id;
-        //    if (id == DiscordBot.Bot.BotOwnerId)
-        //    {
-        //        var embed = EmbedHelper.CreateTitleEmbed("You cannot remove the bot owner, darling ;)", author: user);
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        BotPermission.RevokePermission(id);
-        //        var embed = EmbedHelper.CreateTitleEmbed($"Permission Revoked for {user.Username} :white_check_mark:", author: user);
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        var embed = EmbedHelper.CreateTitleEmbed($"{user.Username} does not have active permission:x:", author: user);
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //    }
-        //}
-
-        //[Command("Get the login link to the server manager page")]
-        //public static async Task GetWebLoginPage(SocketSlashCommand command)
-        //{
-        //    var id = command.User.Id;
-        //    try
-        //    {
-        //        string code = WebsitePermission.GetCode(id);
-
-        //        string hamachiSite = WebsitePermission.CreatePrivateUrl(WebsitePermission.WebsiteHamachiUrl, code);
-        //        string publicDomain = WebsitePermission.CreatePrivateUrl(WebsitePermission.WebsiteDomainUrl, code);
-
-        //        string description = $"Your code is: \n?code={code}\n" +
-        //            $"[{WebsitePermission.WebsiteHamachiUrl}]({hamachiSite})\n" +
-        //            $"[{WebsitePermission.WebsiteDomainUrl}]({publicDomain})\n";
-               
-
-        //        if(id == DiscordBot.Bot.BotOwnerId)
-        //        {
-        //            string localSite = WebsitePermission.CreatePrivateUrl(WebsitePermission.WebsiteLocalUrl, code);
-
-        //            description += $"[{WebsitePermission.WebsiteLocalUrl}]({localSite})\n";
-        //        }
-
-        //        description += "(Please don't share this link with anyone!)";
-
-        //        var embed = EmbedHelper.CreateTitleEmbed("Unique Link to website", description: description, includeWebsiteLink: false);
-        //        await command.RespondAsync(embed: embed, ephemeral: true);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //    }
-        //}
+            await RespondAsync("Here is your link", components: ButtonHelper.JoinButtons(button));
+        }
     }
 }

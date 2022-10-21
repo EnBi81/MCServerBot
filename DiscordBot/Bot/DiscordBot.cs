@@ -118,6 +118,7 @@ namespace DiscordBot.Bot
             .AddSingleton<CommandHandler>()
             .AddSingleton<DeleteServerService>()
             .AddSingleton(DatabaseAccess.SQLite.DiscordEventRegister)
+            .AddSingleton<DiscordPermission>()
             .BuildServiceProvider();
     }
 }
