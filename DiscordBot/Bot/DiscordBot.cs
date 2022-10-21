@@ -94,6 +94,8 @@ namespace DiscordBot.Bot
         private static IServiceProvider SetupServices()
             => new ServiceCollection()
             .AddSingleton(IServerPark.Instance)
+            .AddSingleton(DatabaseAccess.SQLite.DiscordEventRegister)
+            .AddSingleton<DiscordPermission>()
             .AddSingleton(new DiscordSocketConfig
             {
                 AlwaysDownloadUsers = false,
@@ -117,8 +119,6 @@ namespace DiscordBot.Bot
             .AddSingleton<InteractionService>()
             .AddSingleton<CommandHandler>()
             .AddSingleton<DeleteServerService>()
-            .AddSingleton(DatabaseAccess.SQLite.DiscordEventRegister)
-            .AddSingleton<DiscordPermission>()
             .BuildServiceProvider();
     }
 }

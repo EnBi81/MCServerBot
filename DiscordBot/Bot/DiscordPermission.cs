@@ -9,23 +9,16 @@ namespace DiscordBot.Bot
     public class DiscordPermission
     {
         private readonly IDiscordEventRegister _discordEventRegister;
-        private readonly CommandHandler _commandHandler;
 
-        public DiscordPermission(IDiscordEventRegister discordEventRegister, CommandHandler cmdHandler)
+        public DiscordPermission(IDiscordEventRegister discordEventRegister)
         {
             _discordEventRegister = discordEventRegister;
-            _commandHandler = cmdHandler;
         }
 
 
 
-        public async Task<bool> HasPermission(ulong id)
-        {
-            if (id == _commandHandler.BotOwnerId)
-                return true;
-
-            return await _discordEventRegister.HasPermission(id);
-        }
+        public async Task<bool> HasPermission(ulong id) =>
+            await _discordEventRegister.HasPermission(id);
 
 
 
