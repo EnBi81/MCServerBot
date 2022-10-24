@@ -30,7 +30,7 @@ namespace MCWebApp.Controllers.api.v1
         {
             try
             {
-                var user = await GetUser();
+                var user = await GetUserEventData();
                 await serverPark.DeleteServer(serverName, user);
                 return Ok();
             }
@@ -53,7 +53,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string newName = ControllerUtils.TryGetStringFromJson(data, "new-name");
-                var user = await GetUser();
+                var user = await GetUserEventData();
 
                 await serverPark.RenameServer(serverName, newName, user);
 
@@ -97,7 +97,7 @@ namespace MCWebApp.Controllers.api.v1
 
             try
             {
-                var user = await GetUser();
+                var user = await GetUserEventData();
                 await serverPark.ToggleServer(serverName, user);
                 return Ok();
             }

@@ -1,38 +1,72 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Sandbox
 {
     public class SandBoxClass
     {
-        static async Task Main(string[] args)
+        const string Server_Jar = "A:\\mc-server-test\\server.jar";
+        const string Server_Folder = "A:\\mc-server-test\\server1\\";
+        static async Task Main(string[] args) // this is how to create a new server
         {
-            var sqLite = DataStorage.DatabaseAccess.SQLite;
-            await sqLite.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\Sandbox\\mydb.db;Version=3;");
+            if(args.Contains("reset"))
+            {
+                Console.WriteLine("Deleting " + Server_Folder);
+                try
+                {
+                    Directory.Delete(Server_Folder, true);
+                    Console.WriteLine("Delete done");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                
+                return;
+            }
 
-            var discordStorage = sqLite.DiscordEventRegister;
+            var serverFile = new FileInfo(Server_Jar);
 
-
-            await discordStorage.RefreshUser(ulong.MaxValue, "refreshedUsername", "refreshedProfPic");
-            var user = await discordStorage.GetUser(ulong.MaxValue);
-            Console.WriteLine("user: " + user);
+            CreateDirAndCopyFile(Server_Folder, serverFile);
+            RunStartupServerFile(serverFile, Server_Folder);
+            AcceptEula(new FileInfo(Server_Folder + "eula.txt"));
+            RunStartupServerFile(serverFile, Server_Folder);
         }
 
-
-        static async Task TestUser()
+        static void CreateDirAndCopyFile(string dir, FileInfo file)
         {
-            var sqLite = DataStorage.DatabaseAccess.SQLite;
-            var discordStorage = sqLite.DiscordEventRegister;
+            Console.WriteLine("Creating directory " + dir);
+            Directory.CreateDirectory(dir);
+        }
 
-            //await discordStorage.RegisterDiscordUser(ulong.MaxValue, "Minimillian", "profpic", "haha");
-            var user = await discordStorage.GetUser(ulong.MaxValue);
+        static void RunStartupServerFile(FileInfo info, string dir)
+        {
+            string dirPath = dir;
+            string filename = info.Name;
 
-            Console.WriteLine("Has permission first: " + await discordStorage.HasPermission(ulong.MaxValue));
-            await discordStorage.GrantPermission(ulong.MaxValue, ulong.MaxValue);
-            Console.WriteLine("Has permission true: " + await discordStorage.HasPermission(ulong.MaxValue));
-            await discordStorage.RevokePermission(ulong.MaxValue, ulong.MaxValue);
-            Console.WriteLine("Has permission false: " + await discordStorage.HasPermission(ulong.MaxValue));
-            Console.WriteLine("user: " + user);
+            Console.WriteLine("Starting process");
+
+            Process? p = Process.Start(new ProcessStartInfo
+            {
+                FileName = "C:\\Program Files\\Java\\jdk-17.0.2\\bin\\java.exe",
+                WorkingDirectory = dirPath,
+                CreateNoWindow = true,
+                Arguments = "-jar " + info.FullName,
+            });
+            p.OutputDataReceived += (s, d) => Console.WriteLine(d.Data);
+
+            p.WaitForExit();
+        }
+
+        static void AcceptEula(FileInfo eula)
+        {
+            string fullPath = eula.FullName;
+            Console.WriteLine("Reading eula");
+            string text = File.ReadAllText(fullPath);
+            var newEula = text.Replace("eula=false", "eula=true");
+            File.WriteAllText(fullPath, newEula);
+            Console.WriteLine("New eula created");
         }
     }
 }

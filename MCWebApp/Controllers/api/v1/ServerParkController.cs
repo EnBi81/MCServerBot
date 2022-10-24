@@ -54,7 +54,7 @@ namespace MCWebApp.Controllers.api.v1
             try
             {
                 string name = ControllerUtils.TryGetStringFromJson(data, "new-name");
-                var user = await GetUser();
+                var user = await GetUserEventData();
 
                 IMinecraftServer server = await serverPark.CreateServer(name, user);
                 return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);

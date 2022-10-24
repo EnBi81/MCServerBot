@@ -2,6 +2,7 @@ using Application.Minecraft;
 using Application.PermissionControll;
 using Application.WebSocketHandler;
 using DataStorage;
+using DataStorage.Interfaces;
 using Loggers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -64,12 +65,12 @@ namespace MCWebApp
                 LogService.GetService<WebLogger>().Log("ws-request", "Request received from " + ip);
 
 
-                if (!context.Request.Query.ContainsKey(WebsitePermission.CookieName))
+                if (!context.Request.Query.ContainsKey(WebConstants.AUTH_COOKIE_NAME))
                 {
                     LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no request query found"); return;
                 }
 
-                var code = context.Request.Query[WebsitePermission.CookieName];
+                var code = context.Request.Query[WebConstants.AUTH_COOKIE_NAME];
                 if (!WebsitePermission.HasAccess(code))
                 {
                     LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no access");

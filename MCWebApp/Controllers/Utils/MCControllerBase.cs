@@ -1,30 +1,38 @@
-﻿using Application.Minecraft;
-using Application.PermissionControll;
-using DataStorage.DataObjects;
+﻿using DataStorage.DataObjects;
+using DataStorage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebApp.Controllers.Utils
 {
     public class MCControllerBase : ControllerBase
     {
+        protected IWebsiteEventRegister WebsiteEventRegister { get; set; }
+
         public string? UserToken
         {
             get
             {
-                return Request.Cookies[WebsitePermission.CookieName];
+                return Request.Cookies[WebConstants.AUTH_COOKIE_NAME];
             }
             set
             {
                 if(value == null)
                     throw new ArgumentNullException(nameof(value));
 
-                Response.Cookies.Append(WebsitePermission.CookieName, value);
+                Response.Cookies.Append(WebConstants.AUTH_COOKIE_NAME, value);
             }
         }
 
-        public async Task<UserEventData> GetUser()
+        public async Task<UserEventData> GetUserEventData()
         {
-            return null!;
+            if (UserToken == null)
+                throw new Exception("User is not logged in!");
+
+            var user = await WebsiteEventRegister.GetUser(UserToken);
+            if (user == null)
+                throw new Exception($"Cannot find user {UserToken} in database");
+
+            return new UserEventData { Id = user.Id, Username = user.Username, Platform = DataStorage.DataObjects.Enums.Platform.Website };
         }
 
         public IActionResult GetBadRequest(string message)

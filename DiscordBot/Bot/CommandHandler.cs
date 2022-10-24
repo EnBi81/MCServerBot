@@ -31,6 +31,7 @@ namespace DiscordBot.Bot
             _client.InteractionCreated += ExecuteSocketInteraction;
 
             BotOwnerId = (await _client.GetApplicationInfoAsync()).Owner.Id;
+            _discordPermissions.BotOwnerId = BotOwnerId;
         }
 
         private async Task ExecuteSocketInteraction(SocketInteraction arg) 

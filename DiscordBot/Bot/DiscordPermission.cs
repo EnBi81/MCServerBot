@@ -9,6 +9,7 @@ namespace DiscordBot.Bot
     public class DiscordPermission
     {
         private readonly IDiscordEventRegister _discordEventRegister;
+        public ulong BotOwnerId { get; set; }
 
         public DiscordPermission(IDiscordEventRegister discordEventRegister)
         {
@@ -44,7 +45,7 @@ namespace DiscordBot.Bot
             
         public async Task RevokePermission(ulong revokedBy, IUser user)
         {
-            if (user.Id == _commandHandler.BotOwnerId)
+            if (user.Id == BotOwnerId)
                 throw new Exception("Cannot remove the owner of the bot.");
 
             if (!(await _discordEventRegister.HasPermission(user.Id)))

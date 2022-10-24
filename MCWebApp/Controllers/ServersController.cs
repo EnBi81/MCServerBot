@@ -1,4 +1,6 @@
 ﻿using Application.PermissionControll;
+using DataStorage.Interfaces;
+using MCWebApp.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebApp.Controllers
@@ -6,31 +8,41 @@ namespace MCWebApp.Controllers
     [Route("[controller]")]
     public class ServersController : Controller
     {
-        [HttpGet]
-        public IActionResult Index([FromQuery] string? token)
-        {
-            string? cookieValue = Request.Cookies[WebsitePermission.CookieName];
-            DiscordUser? user = WebsitePermission.GetUser(cookieValue ?? "");
+        private readonly IWebsiteEventRegister _websiteEventRegister;
 
-            if (user == null)
+        public ServersController(IWebsiteEventRegister websiteEventRegister)
+        {
+            _websiteEventRegister = websiteEventRegister;
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery] string? token)
+        {
+            try
             {
-                Console.WriteLine("User is null");
+                string? userToken = token ?? Request.Query[WebConstants.AUTH_COOKIE_NAME];
+
+                if (await _websiteEventRegister.HasPermission(token ?? ""))
+                    throw new Exception();
+
+                var user = await _websiteEventRegister.GetUser(token!);
+
+                ViewData["Token"] = userToken;
+                ViewData["DiscordUser"] = user;
+                ViewData["BGImage"] = GetRandomImage();
+
+                return View();
+            }
+            catch 
+            {
                 if (token != null)
                 {
                     return LocalRedirect($"~/login?redirectUrl=%2Fservers&token={token}");
                 }
-                else
-                {
-                    return RedirectToPage("/noperm");
-                }
+                
+                return RedirectToPage("/noperm");
             }
-
-            ViewData["Token"] = cookieValue;
-            ViewData["DiscordUser"] = user;
-            ViewData["BGImage"] = GetRandomImage();
-
-
-            return View();
         }
 
         //bg-images-compressed/bg5-min.png

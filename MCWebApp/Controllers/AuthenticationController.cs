@@ -16,7 +16,7 @@ namespace MCWebApp.Controllers
             if (!WebsitePermission.HasAccess(token))
                 return Unauthorized("This token is invalid.");
 
-            Response.Cookies.Append(WebsitePermission.CookieName, token);
+            Response.Cookies.Append(WebConstants.AUTH_COOKIE_NAME, token);
 
             try
             {
@@ -32,7 +32,7 @@ namespace MCWebApp.Controllers
         [HttpGet]
         public IActionResult Logout([FromQuery] string? redirectUrl)
         {
-            Response.Cookies.Delete(WebsitePermission.CookieName);
+            Response.Cookies.Delete(WebConstants.AUTH_COOKIE_NAME);
 
             try
             {

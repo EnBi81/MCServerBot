@@ -24,6 +24,8 @@ var config = Config.Instance;
 
 HamachiClient.Setup(config.HamachiLocation);
 
+await DataStorage.DatabaseAccess.SQLite.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;");
+
 
 Application.MinecraftConfig.SetupConfig(
     config.MinecraftServersBaseFolder, config.JavaLocation,

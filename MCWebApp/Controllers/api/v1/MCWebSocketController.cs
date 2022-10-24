@@ -1,5 +1,6 @@
 ﻿using Application.PermissionControll;
 using Application.WebSocketHandler;
+using DataStorage.Interfaces;
 using Loggers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
@@ -10,14 +11,21 @@ namespace MCWebApp.Controllers.api.v1
     [Route("api/v1/ws/{accessCode}")]
     public class MCWebSocketController : ControllerBase
     {
+        private readonly IWebsiteEventRegister _eventRegister;
+
+        public MCWebSocketController(IWebsiteEventRegister eventRegister)
+        {
+            _eventRegister = eventRegister;
+        }
+
         [HttpGet]
-        public async void ForwardToWebsocket(string accessCode)
+        public async Task ForwardToWebsocket(string accessCode)
         {
             var context = Request.HttpContext;
 
             var ip = context.Connection.LocalIpAddress;
 
-            if (!WebsitePermission.HasAccess(accessCode))
+            if (!await _eventRegister.HasPermission(accessCode))
             {
                 LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no access");
                 return;
