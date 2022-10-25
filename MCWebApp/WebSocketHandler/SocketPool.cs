@@ -78,7 +78,7 @@ namespace Application.WebSocketHandler
         public async Task AddSocket(string code, WebSocket socket)
         {
             var user = WebsitePermission.GetUser(code);
-            LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user.Username);
+            LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user!.Username);
 
             MCWebSocket socketHandler = new MCWebSocket(socket, user, code);
 

@@ -120,7 +120,7 @@ namespace Application.Minecraft.MinecraftServers
         {
             McServerInfos.Load();
             Id = McServerInfos.Id;
-            ServerName = McServerInfos.Name;
+            ServerName = McServerInfos.Name!;
         }
 
 

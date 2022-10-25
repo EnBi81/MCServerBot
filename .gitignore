@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 */Resources/*.json
+*/*.db
 
 .idea/
 */.idea/
@@ -366,3 +367,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/MCWebApp/Resources/eventdata.db

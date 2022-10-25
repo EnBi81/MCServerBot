@@ -10,28 +10,29 @@ namespace Sandbox
         const string Server_Folder = "A:\\mc-server-test\\server1\\";
         static async Task Main(string[] args) // this is how to create a new server
         {
-            if(args.Contains("reset"))
-            {
-                Console.WriteLine("Deleting " + Server_Folder);
-                try
-                {
-                    Directory.Delete(Server_Folder, true);
-                    Console.WriteLine("Delete done");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+
+            //if(args.Contains("reset"))
+            //{
+            //    Console.WriteLine("Deleting " + Server_Folder);
+            //    try
+            //    {
+            //        Directory.Delete(Server_Folder, true);
+            //        Console.WriteLine("Delete done");
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Console.WriteLine(e.Message);
+            //    }
                 
-                return;
-            }
+            //    return;
+            //}
 
-            var serverFile = new FileInfo(Server_Jar);
+            //var serverFile = new FileInfo(Server_Jar);
 
-            CreateDirAndCopyFile(Server_Folder, serverFile);
-            RunStartupServerFile(serverFile, Server_Folder);
-            AcceptEula(new FileInfo(Server_Folder + "eula.txt"));
-            RunStartupServerFile(serverFile, Server_Folder);
+            //CreateDirAndCopyFile(Server_Folder, serverFile);
+            //RunStartupServerFile(serverFile, Server_Folder);
+            //AcceptEula(new FileInfo(Server_Folder + "eula.txt"));
+            //RunStartupServerFile(serverFile, Server_Folder);
         }
 
         static void CreateDirAndCopyFile(string dir, FileInfo file)
