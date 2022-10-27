@@ -6,9 +6,9 @@ namespace DiscordBot.Bot.Helpers
 {
     public class MCInteractionModuleBase : InteractionModuleBase<SocketInteractionContext>
     {
-        protected readonly IDiscordEventRegister _eventRegister;
+        protected readonly IDiscordDatabaseAccess _eventRegister;
 
-        public MCInteractionModuleBase(IDiscordEventRegister eventRegister)
+        public MCInteractionModuleBase(IDiscordDatabaseAccess eventRegister)
         {
             _eventRegister = eventRegister;
         }

@@ -14,7 +14,7 @@ namespace DiscordBot.Bot.Handlers
         private readonly IServerPark _serverPark;
         private readonly DeleteServerService _deleteServerService;
 
-        public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService, IDiscordEventRegister eventRegister) : base(eventRegister)
+        public DeleteServerCommands(IServerPark serverPark, DeleteServerService deleteServerService, IDiscordDatabaseAccess eventRegister) : base(eventRegister)
         {
             _serverPark = serverPark;
             _deleteServerService = deleteServerService;

@@ -7,6 +7,9 @@ using DataStorage.Interfaces;
 
 namespace Application.Minecraft
 {
+    /// <summary>
+    /// Proxy object for ServerPark, it handles all the database registrations.
+    /// </summary>
     internal class ServerParkProxy : IServerPark
     {
         private static readonly IServerParkEventRegister _serverParkEventRegister = DatabaseAccess.SQLite.ServerParkEventRegister;

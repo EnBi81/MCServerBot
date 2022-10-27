@@ -17,7 +17,7 @@ LogService logService = new LogService()
 LogService.RegisterLogService(logService);
 
 //check internet connection
-NetworkingTools.CheckNetworking();
+bool internetConnected = NetworkingTools.CheckNetworking();
 
 // Invoke importing the config
 var config = Config.Instance;
@@ -41,11 +41,18 @@ if (args.Contains("--start-hamachi"))
 
 // Start Webserver
 if (args.Contains("--web-server"))
-    await MCWebServer.StartWebServer(args, config.WebServerPortHttp, config.WebServerPortHttp);
+    await MCWebServer.StartWebServer(args, config.WebServerPortHttps, config.WebServerPortHttp);
 
 //Start Discord bot
 if (args.Contains("--discord-bot"))
-    await DiscordBot.Bot.DiscordBot.Initialize(config.DiscordBotToken);
+{
+    if (internetConnected)
+        await DiscordBot.Bot.DiscordBot.Initialize(config.DiscordBotToken);
+    else
+        LogService.GetService<DiscordLogger>().LogError("Cannot start discord bot: NO INTERNET CONNECTION");
+
+}
+    
 
 await Task.Delay(-1);
 

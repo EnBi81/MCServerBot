@@ -8,10 +8,10 @@ namespace DiscordBot.Bot
 {
     public class DiscordPermission
     {
-        private readonly IDiscordEventRegister _discordEventRegister;
+        private readonly IDiscordDatabaseAccess _discordEventRegister;
         public ulong BotOwnerId { get; set; }
 
-        public DiscordPermission(IDiscordEventRegister discordEventRegister)
+        public DiscordPermission(IDiscordDatabaseAccess discordEventRegister)
         {
             _discordEventRegister = discordEventRegister;
         }

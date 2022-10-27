@@ -2,10 +2,7 @@ using Application.Minecraft;
 using Application.PermissionControll;
 using Application.WebSocketHandler;
 using DataStorage;
-using DataStorage.Interfaces;
 using Loggers;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
 using System.Net.WebSockets;
 
 namespace MCWebApp
@@ -57,6 +54,7 @@ namespace MCWebApp
             await app.StartAsync();
         }
 
+        //https://stackoverflow.com/questions/35554128/opening-a-websocket-channel-inside-mvc-controller
         public static async Task ReceiveSockets(HttpContext context, RequestDelegate next)
         {
             if (context.Request.Path == "/ws")

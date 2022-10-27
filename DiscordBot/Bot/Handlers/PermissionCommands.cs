@@ -11,7 +11,7 @@ namespace DiscordBot.Bot.Handlers
     {
         private readonly DiscordPermission _discordPermission;
 
-        public PermissionCommands(IDiscordEventRegister discordEventRegister, DiscordPermission discordPermission) : base(discordEventRegister)
+        public PermissionCommands(IDiscordDatabaseAccess discordEventRegister, DiscordPermission discordPermission) : base(discordEventRegister)
         {
             _discordPermission = discordPermission;
         }

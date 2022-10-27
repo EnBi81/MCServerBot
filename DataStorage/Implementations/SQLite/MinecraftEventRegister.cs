@@ -5,7 +5,7 @@ using DataStorage.Interfaces;
 
 namespace DataStorage.Implementations.SQLite
 {
-    internal class MinecraftEventRegister : BaseSQLiteController, IMinecraftEventRegister
+    internal class MinecraftEventRegister : BaseSQLiteController, IMinecraftDatabaseAccess
     {
         public void AddMeasurement(ulong serverId, double cpu, long memory)
         {

@@ -20,7 +20,7 @@ namespace DataStorageTest.Tests
 
 
 
-        private IDiscordEventRegister discordEventRegister = null!;
+        private IDiscordDatabaseAccess discordEventRegister = null!;
         private IWebsiteEventRegister websiteEventRegister = null!;
 
 

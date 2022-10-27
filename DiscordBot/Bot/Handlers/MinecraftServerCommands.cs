@@ -12,7 +12,7 @@ namespace DiscordBot.Bot.Handlers
     {
         private IServerPark _serverPark;
 
-        public MinecraftServerCommands(IServerPark serverPark, IDiscordEventRegister eventRegister) : base(eventRegister)
+        public MinecraftServerCommands(IServerPark serverPark, IDiscordDatabaseAccess eventRegister) : base(eventRegister)
         {
             _serverPark = serverPark;
         }

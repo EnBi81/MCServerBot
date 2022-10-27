@@ -5,7 +5,7 @@ using DataStorage.Interfaces;
 
 namespace DataStorage.Implementations.SQLite
 {
-    internal class DiscordEventRegister : BaseSQLiteController, IDiscordEventRegister
+    internal class DiscordEventRegister : BaseSQLiteController, IDiscordDatabaseAccess
     {
         public async Task<DataUser?> GetUser(ulong id)
         {

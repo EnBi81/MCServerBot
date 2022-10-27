@@ -1,28 +1,39 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Application.Minecraft.MinecraftServers
 {
+    /// <summary>
+    /// Minecraft server info collection. This class is responsible for saving and retrieving data of a minecraft server from a file.
+    /// </summary>
     internal class MinecraftServerInfos
     {
         [JsonIgnore]
-        private readonly string _filename;
+        private readonly string _filename; // absolute path and file name of the info file.
 
+        /// <summary>
+        /// Id of the server.
+        /// </summary>
         public ulong Id { get; set; }
-        public string? Name { get; set; }
+
+        /// <summary>
+        /// Name of the server.
+        /// </summary>
+        public string Name { get; set; } = null!;
 
 
+        /// <summary>
+        /// This constructor is for json deserialization. pls dont delete it, ty.
+        /// </summary>
         private MinecraftServerInfos()
         {
             // for json
             _filename = null!;
         }
 
+        /// <summary>
+        /// Creates
+        /// </summary>
+        /// <param name="filename"></param>
         public MinecraftServerInfos(string filename)
         {
             _filename = filename;

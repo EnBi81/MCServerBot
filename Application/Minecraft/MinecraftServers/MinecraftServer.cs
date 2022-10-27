@@ -16,7 +16,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Global event register for the minecraft servers.
         /// </summary>
-        private static readonly IMinecraftEventRegister _eventRegister = DatabaseAccess.SQLite.MinecraftEventRegister;
+        private static readonly IMinecraftDatabaseAccess _eventRegister = DatabaseAccess.SQLite.MinecraftEventRegister;
 
 
 

@@ -14,10 +14,10 @@ namespace HamachiHelper
         /// <summary>
         /// 
         /// </summary>
-        public static void CheckNetworking()
+        public static bool CheckNetworking()
         {
-            _ = CheckForInternetConnection();
             _ = GetLocalIp();
+            return CheckForInternetConnection();
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace HamachiHelper
 
             }
 
-            LogService.GetService<NetworkLogger>().LogFatal("No Internet Connection.");
+            LogService.GetService<NetworkLogger>().Log("No Internet Connection.");
             return false;
         }
     }

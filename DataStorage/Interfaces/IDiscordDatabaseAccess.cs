@@ -1,13 +1,11 @@
 ﻿using DataStorage.DataObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataStorage.Interfaces
 {
-    public interface IDiscordEventRegister
+    /// <summary>
+    /// Database access for discord.
+    /// </summary>
+    public interface IDiscordDatabaseAccess
     {
         Task RegisterDiscordUser(ulong discordId, string username, string profilepic, string webAccessToken);
         Task GrantPermission(ulong userId, ulong discordId);

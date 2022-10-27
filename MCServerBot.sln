@@ -19,7 +19,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCWebApp", "MCWebApp\MCWebA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStorage", "DataStorage\DataStorage.csproj", "{009B0D0E-6859-41F3-9E0A-5CC84F2FFE3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStorageTest", "DataStorageTest\DataStorageTest.csproj", "{86FDB359-3687-446D-9EA2-627507FE8B99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStorageTest", "DataStorageTest\DataStorageTest.csproj", "{86FDB359-3687-446D-9EA2-627507FE8B99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataTier", "DataTier", "{57C70874-3C62-4322-93BE-D02D817BE738}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{92BDC0AC-E739-4E67-B750-E0E286079EB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logic", "Logic", "{E8A4F788-F80B-4570-A510-8FA88E505635}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{AFD935ED-C171-44B6-8CA6-6846E8EE9E0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
