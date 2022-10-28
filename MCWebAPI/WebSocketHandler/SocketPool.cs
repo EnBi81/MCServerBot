@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 using Application.Minecraft.MinecraftServers;
 using Shared.Model;
 using Shared.EventHandlers;
+using Application.DAOs.Database;
+using Application.Permissions;
 
 namespace MCWebAPI.WebSocketHandler
 {
@@ -21,14 +23,16 @@ namespace MCWebAPI.WebSocketHandler
 
 
         private readonly IServerPark _serverPark;
+        private readonly IPermissionLogic _permissionLogic;
 
 
         /// <summary>
         /// Initializes the SocketPool.
         /// </summary>
-        public SocketPool(IServerPark serverPark)
+        public SocketPool(IServerPark serverPark, IPermissionLogic permissionLogic)
         {
             _serverPark = serverPark;
+            _permissionLogic = permissionLogic;
 
             LogService.GetService<WebLogger>().Log("socket-pool", "Socket Pool Initalizing");
             SetupListeners();
@@ -66,15 +70,14 @@ namespace MCWebAPI.WebSocketHandler
         /// <summary>
         /// Adds a socket to the SocketPool
         /// </summary>
-        /// <param name="code">code of the user.</param>
         /// <param name="socket">captured websocket.</param>
         /// <returns></returns>
-        public async Task AddSocket(string code, WebSocket socket)
+        public async Task AddSocket(ulong id, WebSocket socket)
         {
-            var user = WebsitePermission.GetUser(code);
-            LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user!.Username);
+            var user = await _permissionLogic.GetUser(id);
 
-            MCWebSocket socketHandler = new MCWebSocket(socket, user, code);
+            LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user!.Username);
+            MCWebSocket socketHandler = new MCWebSocket(socket, user);
 
             RegisterSocket(socketHandler);
 

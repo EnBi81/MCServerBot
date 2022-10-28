@@ -13,13 +13,14 @@ namespace DataStorageSQLite.Implementation.SQLite
             using var conn = CreateOpenConnection;
 
             var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT user_id, username, profile_pic_url, web_access_token FROM discord_user WHERE user_id = @userId;";
+            cmd.CommandText = "SELECT user_id, username, profile_pic_url FROM discord_user WHERE user_id = @userId;";
             cmd.Parameters.AddWithValue("@userId", id.ToString());
 
             return await GetUserFromCommand(cmd);
         }
 
 
+        /// <inheritdoc/>
         public async Task RevokePermission(ulong userId, ulong discordId) =>
             await InsertIntoAccessTracker(userId, discordId, AccessEventType.Revoked);
 
@@ -89,7 +90,7 @@ namespace DataStorageSQLite.Implementation.SQLite
             using var conn = CreateOpenConnection;
 
             var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT user_id, username, profile_pic_url, web_access_token FROM discord_user WHERE web_access_token = @token;";
+            cmd.CommandText = "SELECT user_id, username, profile_pic_url FROM discord_user WHERE web_access_token = @token;";
             cmd.Parameters.AddWithValue("@token", token);
 
             return await GetUserFromCommand(cmd);

@@ -1,11 +1,13 @@
-﻿using Application.Minecraft;
-using MCWebApp.Controllers.Utils;
+﻿using MCWebAPI.Controllers.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Model;
 
 namespace MCWebAPI.Controllers.api.v1
 {
     [ApiController]
     [Route("/api/v1/minecraftserver/{serverName}")]
+    [Authorize]
     public class MinecraftServerController : MCControllerBase
     {
         private IServerPark serverPark;

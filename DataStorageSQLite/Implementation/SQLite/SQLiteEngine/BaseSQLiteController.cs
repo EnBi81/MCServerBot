@@ -42,7 +42,6 @@ namespace DataStorageSQLite.Implementations.SQLite.SQLiteEngine
                 Id = ulong.Parse(reader.GetString(0)),
                 Username = reader.GetString(1),
                 ProfilePicUrl = reader.GetString(2),
-                WebAccessToken = reader.GetString(3),
                 UserType = DataUserType.User
             };
 

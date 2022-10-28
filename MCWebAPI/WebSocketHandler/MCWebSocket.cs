@@ -1,4 +1,5 @@
 ﻿using Loggers;
+using Shared.DTOs;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -20,18 +21,12 @@ namespace MCWebAPI.WebSocketHandler
         /// <summary>
         /// Discord user associated with this socket.
         /// </summary>
-        public DiscordUser DiscordUser { get; }
+        public DataUser DiscordUser { get; }
 
-        /// <summary>
-        /// Code of the Discord user.
-        /// </summary>
-        public string Code { get; }
-
-        public MCWebSocket(WebSocket socket, DiscordUser discordUser, string code)
+        public MCWebSocket(WebSocket socket, DataUser discordUser)
         {
             _socket = socket;
             DiscordUser = discordUser;
-            Code = code;
 
             LogService.GetService<WebLogger>().Log("socket", $"Socket Initialized for {DiscordUser.Username}");
         }

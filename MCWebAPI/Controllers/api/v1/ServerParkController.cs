@@ -1,13 +1,13 @@
-﻿using Application.Minecraft;
-using Application.Minecraft.Enums;
-using Application.Minecraft.MinecraftServers;
-using MCWebApp.Controllers.Utils;
+﻿using MCWebAPI.Controllers.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Model;
 
 namespace MCWebPIApp.Controllers.api.v1
 {
     [ApiController]
     [Route("/api/v1/serverpark")]
+    [Authorize]
     public class ServerParkController : MCControllerBase
     {
         private IServerPark serverPark;

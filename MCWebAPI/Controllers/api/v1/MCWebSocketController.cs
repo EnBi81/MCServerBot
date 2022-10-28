@@ -1,14 +1,16 @@
 ﻿using Application.DAOs.Database;
 using Loggers;
+using MCWebAPI.Controllers.Utils;
 using MCWebAPI.WebSocketHandler;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.WebSockets;
 
 namespace MCWebAPI.Controllers.api.v1
 {
     [ApiController]
-    [Route("api/v1/ws/{accessCode}")]
-    public class MCWebSocketController : ControllerBase
+    [Route("api/v1/ws")]
+    [Authorize]
+    public class MCWebSocketController : MCControllerBase
     {
         private readonly IPermissionDataAccess _permissionDataAccess;
         private readonly SocketPool _socketPool;
@@ -20,7 +22,7 @@ namespace MCWebAPI.Controllers.api.v1
         }
 
         [HttpGet]
-        public async Task ForwardToWebsocket(string accessCode)
+        public async Task<IActionResult> ForwardToWebsocket(string accessCode)
         {
             var context = Request.HttpContext;
 
@@ -29,20 +31,17 @@ namespace MCWebAPI.Controllers.api.v1
             if (!await _permissionDataAccess.HasPermission(accessCode))
             {
                 LogService.GetService<WebLogger>().Log("ws-request", $"WS request denied from ip {ip}: no access");
-                return;
+                return BadRequest("User denied");
             }
 
             if (context.WebSockets.IsWebSocketRequest)
             {
                 LogService.GetService<WebLogger>().Log("ws-request", "Websocket accepted for " + ip);
 
-                WebSocket ws = await context.WebSockets.AcceptWebSocketAsync();
-                await _socketPool.AddSocket(accessCode, ws);
+                return new WebSocketActionResult(_socketPool, 0);
             }
-            else
-            {
-                LogService.GetService<WebLogger>().Log("ws-request", "Not a websocket request: " + ip);
-            }
+
+            return GetBadRequest("Not a websocket request.");
         }
     }
 }
