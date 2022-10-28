@@ -1,5 +1,5 @@
-﻿using Application.Minecraft.Enums;
-using Application.Minecraft.MinecraftServers;
+﻿using Application.Minecraft.MinecraftServers;
+using Shared.Model;
 using System.Text.RegularExpressions;
 
 namespace Application.Minecraft.States

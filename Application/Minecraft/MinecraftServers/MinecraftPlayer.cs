@@ -1,12 +1,12 @@
 ﻿using Loggers;
-using System;
+using Shared.Model;
 
 namespace Application.Minecraft.MinecraftServers
 {
     /// <summary>
     /// Holds information of a minecraft player in
     /// </summary>
-    public class MinecraftPlayer
+    public class MinecraftPlayer : IMinecraftPlayer
     {
         /// <summary>
         /// Username of the player

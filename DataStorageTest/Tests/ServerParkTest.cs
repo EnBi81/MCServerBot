@@ -1,10 +1,6 @@
-﻿using DataStorage.DataObjects;
-using DataStorage.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.DAOs.Database;
+using Shared.DTOs;
+using Shared.DTOs.Enums;
 
 namespace DataStorageTest.Tests
 {
@@ -15,24 +11,24 @@ namespace DataStorageTest.Tests
         public static async Task ClassInitialize(TestContext testContext)
         {
             await Initializing.TestSubject.DatabaseSetup.ResetDatabase();
-            await Initializing.TestSubject.ServerParkEventRegister.CreateServer(321, "Created server name", Data);
+            await Initializing.TestSubject.ServerParkDataAccess.CreateServer(321, "Created server name", Data);
         }
 
 
 
-        private IServerParkEventRegister serverParkEventRegister = null!;
+        private IServerParkDataAccess serverParkDataAccess = null!;
         private static UserEventData Data = new UserEventData
         {
             Id = 1,
             Username = "System",
-            Platform = DataStorage.DataObjects.Enums.Platform.Discord
+            Platform = Platform.Discord
         };
 
 
         [TestInitialize]
         public void TestInitialize()
         {
-            serverParkEventRegister = Initializing.TestSubject.ServerParkEventRegister;
+            serverParkDataAccess = Initializing.TestSubject.ServerParkDataAccess;
         }
 
 
@@ -40,7 +36,7 @@ namespace DataStorageTest.Tests
         [TestMethod]
         public async Task AddMinecraftServer()
         {
-            string? name = await serverParkEventRegister.GetServerName(321);
+            string? name = await serverParkDataAccess.GetServerName(321);
 
             Assert.AreEqual("Created server name", name);
         }
@@ -48,18 +44,18 @@ namespace DataStorageTest.Tests
         [TestMethod]
         public async Task RenameMinecraftServer()
         {
-            await serverParkEventRegister.RenameServer(321, "Renamed", Data);
+            await serverParkDataAccess.RenameServer(321, "Renamed", Data);
 
-            string? name = await serverParkEventRegister.GetServerName(321);
+            string? name = await serverParkDataAccess.GetServerName(321);
             Assert.AreEqual("Renamed", name);
         }
 
         [TestMethod]
         public async Task DeleteMinecraftServer()
         {
-            await serverParkEventRegister.DeleteServer(321, Data);
+            await serverParkDataAccess.DeleteServer(321, Data);
 
-            string? name = await serverParkEventRegister.GetServerName(321);
+            string? name = await serverParkDataAccess.GetServerName(321);
             Assert.IsNull(name);
         }
     }

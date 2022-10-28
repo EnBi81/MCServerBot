@@ -1,4 +1,5 @@
-﻿using DataStorage.DataObjects;
+﻿using Application.DAOs.Database;
+using DataStorage.DataObjects;
 using DataStorage.Interfaces;
 using Discord.Interactions;
 
@@ -6,9 +7,9 @@ namespace DiscordBot.Bot.Helpers
 {
     public class MCInteractionModuleBase : InteractionModuleBase<SocketInteractionContext>
     {
-        protected readonly IDiscordDatabaseAccess _eventRegister;
+        protected readonly IDiscordDataAccess _eventRegister;
 
-        public MCInteractionModuleBase(IDiscordDatabaseAccess eventRegister)
+        public MCInteractionModuleBase(IDiscordDataAccess eventRegister)
         {
             _eventRegister = eventRegister;
         }

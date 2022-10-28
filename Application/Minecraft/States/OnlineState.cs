@@ -1,8 +1,9 @@
 ﻿using Loggers;
-using Application.Minecraft.Enums;
 using System.Text.RegularExpressions;
-using LogMessage = Application.Minecraft.Enums.LogMessage;
+using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 using Application.Minecraft.MinecraftServers;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.States
 {
@@ -101,7 +102,7 @@ namespace Application.Minecraft.States
         public override void WriteCommand(string command, string username)
         {
             _server.McServerProcess.WriteToStandardInput(command);
-            var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessage.LogMessageType.User_Message);
+            var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessageType.User_Message);
             _server.AddLog(logMess);
         }
     }

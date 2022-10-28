@@ -4,6 +4,7 @@ using DiscordBot.PermissionControll;
 using Discord.Interactions;
 using DataStorage.Interfaces;
 using HamachiHelper;
+using Application.DAOs.Database;
 
 namespace DiscordBot.Bot.Handlers
 {
@@ -11,7 +12,7 @@ namespace DiscordBot.Bot.Handlers
     {
         private readonly DiscordPermission _discordPermission;
 
-        public PermissionCommands(IDiscordDatabaseAccess discordEventRegister, DiscordPermission discordPermission) : base(discordEventRegister)
+        public PermissionCommands(IDiscordDataAccess discordEventRegister, DiscordPermission discordPermission) : base(discordEventRegister)
         {
             _discordPermission = discordPermission;
         }

@@ -1,8 +1,9 @@
 ﻿using Discord;
-using Application.Minecraft.Enums;
 using System.Data.SqlTypes;
-using LogMessage = Application.Minecraft.Enums.LogMessage;
+using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 using Application.Minecraft.MinecraftServers;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.States
 {
@@ -51,7 +52,7 @@ namespace Application.Minecraft.States
         public override void Start(string username)
         {
             _server.SetServerState<StartingState>();
-            var logMessage = new LogMessage(username + ": " + "Starting Server " + _server.ServerName, LogMessage.LogMessageType.User_Message);
+            var logMessage = new LogMessage(username + ": " + "Starting Server " + _server.ServerName, LogMessageType.User_Message);
             _server.AddLog(logMessage);
             _server.McServerProcess.Start();
         }

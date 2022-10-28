@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Application.Minecraft;
 using Application.Minecraft.EventHandlers;
-using Application.Minecraft.Enums;
 using Application.Minecraft.MinecraftServers;
 
 namespace Application.WebSocketHandler

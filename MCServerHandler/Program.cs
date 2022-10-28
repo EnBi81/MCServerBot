@@ -30,7 +30,7 @@ namespace MCServerHandler
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
                 CreateNoWindow = true,
-                Arguments = $"-Xmx{maxRam}M -Xms{initRam}M -jar {simpleFileName} nogui",
+                Arguments = $"-Xmx{maxRam}M -Xms{initRam}M -jar \"{simpleFileName}\" nogui",
                 FileName = _javaLocation,
                 WorkingDirectory = workingDir
             };

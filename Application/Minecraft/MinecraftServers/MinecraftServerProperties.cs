@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using Shared.Model;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,7 +8,7 @@ namespace Application.Minecraft.MinecraftServers
     /// <summary>
     /// Class managing the properties file for a minecraft server.
     /// </summary>
-    public class MinecraftServerProperties
+    public class MinecraftServerProperties : IMinecraftServerProperties
     {
         /// <summary>
         /// Reads the file specified in the argument and creates a new instance of the MinecraftServerProperties.
@@ -40,9 +38,7 @@ namespace Application.Minecraft.MinecraftServers
 
 
 
-        /// <summary>
-        /// Dictionary of each of the property key and value.
-        /// </summary>
+        /// <inheritdoc/>
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
 
         /// <summary>
@@ -65,15 +61,15 @@ namespace Application.Minecraft.MinecraftServers
             }
         }
 
+        /// <inheritdoc/>
         public string this[string key]
         {
             get => Properties[key];
             set => Properties[key] = value;
         }
 
-        public Dictionary<string, string>.Enumerator GetEnumerator()
-        {
-            return Properties.GetEnumerator();
-        }
+        /// <inheritdoc/>
+        public Dictionary<string, string>.Enumerator GetEnumerator() 
+            => Properties.GetEnumerator();
     }
 }

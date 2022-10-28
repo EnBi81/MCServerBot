@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using Application.Minecraft.Enums;
+using Application.Minecraft.MinecraftServers;
 
 namespace Application.WebSocketHandler
 {

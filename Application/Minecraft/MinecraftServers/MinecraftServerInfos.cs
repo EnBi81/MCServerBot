@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Shared.Model;
 
 namespace Application.Minecraft.MinecraftServers
 {
@@ -31,7 +32,7 @@ namespace Application.Minecraft.MinecraftServers
         }
 
         /// <summary>
-        /// Creates
+        /// Initializes the server info file handler object.
         /// </summary>
         /// <param name="filename"></param>
         public MinecraftServerInfos(string filename)
@@ -40,6 +41,10 @@ namespace Application.Minecraft.MinecraftServers
         }
 
         
+        /// <summary>
+        /// Saves information of a server into the server info file.
+        /// </summary>
+        /// <param name="server">server to save.</param>
         public void Save(IMinecraftServer server)
         {
             Id = server.Id;
@@ -49,6 +54,10 @@ namespace Application.Minecraft.MinecraftServers
             File.WriteAllText(_filename, json);
         }
 
+        /// <summary>
+        /// Loads server infomation from a file.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         public void Load()
         {
             string json = File.ReadAllText(_filename);

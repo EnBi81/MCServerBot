@@ -1,4 +1,5 @@
-﻿using DataStorage.DataObjects;
+﻿using Application.DAOs.Database;
+using DataStorage.DataObjects;
 using DataStorage.Interfaces;
 using Discord;
 using System.Security.Cryptography;
@@ -8,10 +9,10 @@ namespace DiscordBot.Bot
 {
     public class DiscordPermission
     {
-        private readonly IDiscordDatabaseAccess _discordEventRegister;
+        private readonly IDiscordDataAccess _discordEventRegister;
         public ulong BotOwnerId { get; set; }
 
-        public DiscordPermission(IDiscordDatabaseAccess discordEventRegister)
+        public DiscordPermission(IDiscordDataAccess discordEventRegister)
         {
             _discordEventRegister = discordEventRegister;
         }

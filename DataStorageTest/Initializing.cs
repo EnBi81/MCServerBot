@@ -1,21 +1,16 @@
-﻿using DataStorage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.DAOs;
 
 namespace DataStorageTest
 {
     [TestClass]
     public class Initializing
     {
-        public static DatabaseAccess TestSubject { get; } = DatabaseAccess.SQLite;
+        public static IDatabaseAccess TestSubject { get; } = new DataStorageSQLite.Implementation.DataStorageSQLiteImpl();
 
         [AssemblyInitialize]
         public static async Task AssemblyInitialize(TestContext testContext)
         {
-            await TestSubject.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\DataStorageTest\\test.db;Version=3;");
+            await TestSubject.DatabaseSetup.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\DataStorageTest\\test.db;Version=3;");
         }
     }
 }

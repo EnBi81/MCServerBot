@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataStorage\DataStorage.csproj" />
+    <ProjectReference Include="..\DataStorageSQLite\DataStorageSQLite.csproj" />
   </ItemGroup>
 
 </Project>

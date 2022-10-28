@@ -1,4 +1,5 @@
-﻿using Application.Minecraft;
+﻿using Application.DAOs.Database;
+using Application.Minecraft;
 using DataStorage.DataObjects;
 using DataStorage.Interfaces;
 using Discord.Interactions;
@@ -7,12 +8,12 @@ using DiscordBot.Bot.Helpers;
 
 namespace DiscordBot.Bot.Handlers
 {
-   
+
     public class MinecraftServerCommands : MCInteractionModuleBase
     {
         private IServerPark _serverPark;
 
-        public MinecraftServerCommands(IServerPark serverPark, IDiscordDatabaseAccess eventRegister) : base(eventRegister)
+        public MinecraftServerCommands(IServerPark serverPark, IDiscordDataAccess eventRegister) : base(eventRegister)
         {
             _serverPark = serverPark;
         }

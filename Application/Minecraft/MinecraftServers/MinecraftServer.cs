@@ -1,10 +1,9 @@
 ﻿using Loggers;
 using Application.Minecraft.Util;
-using Application.Minecraft.Enums;
 using Application.Minecraft.States;
-using DataStorage.Interfaces;
-using DataStorage;
-using System.Reactive;
+using Application.DAOs.Database;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.MinecraftServers
 {
@@ -13,23 +12,17 @@ namespace Application.Minecraft.MinecraftServers
     /// </summary>
     internal class MinecraftServer : IMinecraftServer
     {
-        /// <summary>
-        /// Global event register for the minecraft servers.
-        /// </summary>
-        private static readonly IMinecraftDatabaseAccess _eventRegister = DatabaseAccess.SQLite.MinecraftEventRegister;
+        private readonly IMinecraftDataAccess _eventRegister;
 
 
 
 
-        /// <summary>
-        /// Id number, unique for a minecraft server.
-        /// </summary>
+        /// <inheritdoc/>
         public ulong Id { get; } 
 
         private string _serverName = null!;
-        /// <summary>
-        /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.
-        /// </summary>
+
+        /// <inheritdoc/>
         public string ServerName
         {
             get => _serverName;
@@ -46,40 +39,26 @@ namespace Application.Minecraft.MinecraftServers
 
         private IServerState _serverState;
 
-        /// <summary>
-        /// Gets the status of the server.
-        /// </summary>
+        /// <inheritdoc/>
         public ServerStatus Status => _serverState.Status;
 
-        /// <summary>
-        /// Gets if the server process is running.
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsRunning => _serverState.IsRunning;
 
 
-        /// <summary>
-        /// The time of the server when it became online, or null if the server is offline
-        /// </summary>
+        /// <inheritdoc/>
         public DateTime? OnlineFrom { get; internal set; }
 
-        /// <summary>
-        /// Access to the properties file of the server.
-        /// </summary>
-        public MinecraftServerProperties Properties { get; }
+        /// <inheritdoc/>
+        public IMinecraftServerProperties Properties { get; }
 
-        /// <summary>
-        /// Gets the port associated with the server.
-        /// </summary>
+        /// <inheritdoc/>
         public int Port => int.Parse(Properties["server-port"]);
 
-        /// <summary>
-        /// Phisical storage space on the disk of the server.
-        /// </summary>
+        /// <inheritdoc/>
         public string StorageSpace => FileHelper.StorageFormatter(StorageBytes);
 
-        /// <summary>
-        /// Phisical storage space on the disk of the server in BYTES.
-        /// </summary>
+        /// <inheritdoc/>
         public long StorageBytes 
         { 
             get => _storageBytes; 
@@ -91,15 +70,11 @@ namespace Application.Minecraft.MinecraftServers
         }
         private long _storageBytes;
 
-        /// <summary>
-        /// All of the log messages the server or the users wrote.
-        /// </summary>
-        public List<LogMessage> Logs { get; } = new List<LogMessage>();
+        /// <inheritdoc/>
+        public List<ILogMessage> Logs { get; } = new List<ILogMessage>();
 
-        /// <summary>
-        /// Holding all the players who have played in the server, from the beginning of the current runtime.
-        /// </summary>
-        public Dictionary<string, MinecraftPlayer> Players { get; } = new Dictionary<string, MinecraftPlayer>();
+        /// <inheritdoc/>
+        public Dictionary<string, IMinecraftPlayer> Players { get; } = new Dictionary<string, IMinecraftPlayer>();
 
         /// <summary>
         /// Performance reporter class, which measures the cpu and memory usage of the running minecraft server.
@@ -116,7 +91,7 @@ namespace Application.Minecraft.MinecraftServers
 
         
 
-        public MinecraftServer(string serverFolderName) : this(0, serverFolderName)
+        public MinecraftServer(IMinecraftDataAccess dataAccess, string serverFolderName) : this(dataAccess, 0, serverFolderName)
         {
             McServerInfos.Load();
             Id = McServerInfos.Id;
@@ -124,13 +99,13 @@ namespace Application.Minecraft.MinecraftServers
         }
 
 
-        public MinecraftServer(ulong id, string serverName, string serverFolderName) : this(id, serverFolderName)
+        public MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverName, string serverFolderName) : this(dataAccess, id, serverFolderName)
         {
             ServerName = serverName;
         }
 
 
-        private MinecraftServer(ulong id, string serverFolderName)
+        private MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverFolderName)
         {
             string serverFileName = serverFolderName + "\\server.jar";
             string serverPropertiesFileName = serverFolderName + "\\server.properties";
@@ -172,12 +147,12 @@ namespace Application.Minecraft.MinecraftServers
         {
             McServerProcess.ErrorDataReceived += (s, e) =>
             {
-                var logMess = new LogMessage(e, LogMessage.LogMessageType.Error_Message);
+                var logMess = new LogMessage(e, LogMessageType.Error_Message);
                 HandleLog(logMess);
             };
             McServerProcess.OutputDataReceived += (s, e) =>
             {
-                var logMess = new LogMessage(e, LogMessage.LogMessageType.System_Message);
+                var logMess = new LogMessage(e, LogMessageType.System_Message);
                 HandleLog(logMess);
             };
             McServerProcess.Exited += (s, e) => SetServerState<OfflineState>();
@@ -200,25 +175,15 @@ namespace Application.Minecraft.MinecraftServers
             };
         }
 
-        /// <summary>
-        /// Starts the server
-        /// </summary>
-        /// <param name="user">username of the user who initiates the start of the server.</param>
+        /// <inheritdoc/>
         public void Start(string user = "Admin") =>
             _serverState.Start(user);
 
-        /// <summary>
-        /// Writes a command to the minecraft serves based on the state of the server.
-        /// </summary>
-        /// <param name="command">command to send to the minecraft server.</param>
-        /// <param name="user">username of the user who sends the command.</param>
+        /// <inheritdoc/>
         public void WriteCommand(string command, string user = "Admin") =>
             _serverState.WriteCommand(command, user);
 
-        /// <summary>
-        /// Shuts down the minecraft server if it is online.
-        /// </summary>
-        /// <param name="user">username of the user who initiates the start of the server.</param>
+        /// <inheritdoc/>
         public void Shutdown(string user = "Admin") =>
             _serverState.Stop(user);
 
@@ -231,29 +196,17 @@ namespace Application.Minecraft.MinecraftServers
 
 
 
-        /// <summary>
-        /// Fired when the server has changed status.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<ServerStatus> StatusChange;
-        /// <summary>
-        /// Fired when a log message received.
-        /// </summary>
-        public event EventHandler<LogMessage> LogReceived;
-        /// <summary>
-        /// Fired when a player has joined to the server.
-        /// </summary>
-        public event EventHandler<MinecraftPlayer> PlayerJoined;
-        /// <summary>
-        /// Fired when a player has left the server.
-        /// </summary>
-        public event EventHandler<MinecraftPlayer> PlayerLeft;
-        /// <summary>
-        /// Fired when performance has been measured of the minecraft server process.
-        /// </summary>
+        /// <inheritdoc/>
+        public event EventHandler<ILogMessage> LogReceived;
+        /// <inheritdoc/>
+        public event EventHandler<IMinecraftPlayer> PlayerJoined;
+        /// <inheritdoc/>
+        public event EventHandler<IMinecraftPlayer> PlayerLeft;
+        /// <inheritdoc/>
         public event EventHandler<(string CPU, string Memory)> PerformanceMeasured;
-        /// <summary>
-        /// Fired when the server has changed its name.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<string> NameChanged;
 
 
@@ -305,7 +258,7 @@ namespace Application.Minecraft.MinecraftServers
             if (!Players.ContainsKey(username))
                 Players.Add(username, new MinecraftPlayer(username));
 
-            Players[username].SetOnline();
+            ((MinecraftPlayer)Players[username]).SetOnline();
             RaiseEvent(PlayerJoined, Players[username]);
 
             _eventRegister.PlayerJoined(Id, username);
@@ -317,12 +270,12 @@ namespace Application.Minecraft.MinecraftServers
         /// <param name="username">Username of the player.</param>
         internal void SetPlayerOffline(string username)
         {
-            Players.TryGetValue(username, out MinecraftPlayer? player);
+            Players.TryGetValue(username, out IMinecraftPlayer? player);
 
             if (player == null)
                 return;
 
-            player.SetOffline();
+            ((MinecraftPlayer)player).SetOffline();
             RaiseEvent(PlayerLeft, player);
 
             _eventRegister.PlayerLeft(Id, username);

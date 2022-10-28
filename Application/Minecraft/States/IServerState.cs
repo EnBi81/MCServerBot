@@ -1,4 +1,5 @@
-﻿using Application.Minecraft.Enums;
+﻿using Application.Minecraft.MinecraftServers;
+using Shared.Model;
 
 namespace Application.Minecraft.States
 {
