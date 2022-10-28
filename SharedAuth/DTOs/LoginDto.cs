@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.DTOs.Enums;
 
 namespace SharedAuth.DTOs
 {
     public class LoginDto
     {
         public string? Token { get; set; }
+        public string? Platform { get; set; }
     }
 }

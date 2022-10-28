@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Shared.DTOs;
+using Shared.DTOs.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -8,7 +9,7 @@ namespace MCWebAPI.Controllers.Utils
 {
     public class AuthUtils
     {
-        public static List<Claim> GenerateClaims(DataUser user, IConfiguration config)
+        public static List<Claim> GenerateClaims(DataUser user, Platform platform, IConfiguration config)
         {
             var claims = new[]
             {
@@ -17,15 +18,16 @@ namespace MCWebAPI.Controllers.Utils
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Sid, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.UserType.ToString())
+                new Claim(ClaimTypes.Role, user.UserType.ToString()),
+                new Claim("Platform", platform.ToString())
             };
 
             return claims.ToList();
         }
 
-        public static string GenerateJwt(DataUser user, IConfiguration config)
+        public static string GenerateJwt(DataUser user, Platform platform, IConfiguration config)
         {
-            List<Claim> claims = GenerateClaims(user, config);
+            List<Claim> claims = GenerateClaims(user, platform, config);
 
             SymmetricSecurityKey key = new (Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             SigningCredentials signIn = new (key, SecurityAlgorithms.HmacSha512);

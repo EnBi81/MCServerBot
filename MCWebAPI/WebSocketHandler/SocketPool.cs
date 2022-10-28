@@ -1,11 +1,10 @@
 ﻿using Loggers;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
-using Application.Minecraft.MinecraftServers;
 using Shared.Model;
 using Shared.EventHandlers;
-using Application.DAOs.Database;
 using Application.Permissions;
+using Shared.DTOs;
 
 namespace MCWebAPI.WebSocketHandler
 {
@@ -59,7 +58,7 @@ namespace MCWebAPI.WebSocketHandler
             _serverPark.ServerDeleted += ServerDeleted;
             _serverPark.ServerNameChanged += ServerNameChanged;
 
-            WebsitePermission.PermissionRemoved += PermissionRemoved;
+            _permissionLogic.PermissionRevoked += PermissionRevoked;
 
             LogService.GetService<WebLogger>().Log("socket-pool", "Listeners have been set up");
         }
@@ -70,6 +69,7 @@ namespace MCWebAPI.WebSocketHandler
         /// <summary>
         /// Adds a socket to the SocketPool
         /// </summary>
+        /// <param name="id">id of the user</param>
         /// <param name="socket">captured websocket.</param>
         /// <returns></returns>
         public async Task AddSocket(ulong id, WebSocket socket)
@@ -77,7 +77,7 @@ namespace MCWebAPI.WebSocketHandler
             var user = await _permissionLogic.GetUser(id);
 
             LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user!.Username);
-            MCWebSocket socketHandler = new MCWebSocket(socket, user);
+            MCWebSocket socketHandler = new (socket, user);
 
             RegisterSocket(socketHandler);
 
@@ -89,13 +89,11 @@ namespace MCWebAPI.WebSocketHandler
         /// Broadcast a message to the connected sockets.
         /// </summary>
         /// <param name="message">Message to broadcast.</param>
-        /// <param name="code">user's code to broadcast the message to. If not specified, it broadcasts the message to all the sockets.</param>
+        /// <param name="id">user's id to broadcast the message to. If not specified, it broadcasts the message to all the sockets.</param>
         /// <returns></returns>
-        public async Task BroadcastMessage(string message, string? code = null)
+        public async Task BroadcastMessage(string message, ulong? id = null)
         {
-            List<Task> tasks = new();
-
-            var socketsToBroadcast = code == null ? GetAllSockets() : GetAllSockets(code);
+            var socketsToBroadcast = id == null ? GetAllSockets() : GetAllSockets(id ?? 0);
 
             foreach (var socket in socketsToBroadcast)
             {
@@ -187,7 +185,7 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-    private async void ServerDeleted(object? sender, ValueEventArgs<IMinecraftServer> e)
+        private async void ServerDeleted(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
             string name = e.NewValue.ServerName;
             string message = MessageFormatter.ServerDeleted(name);
@@ -205,18 +203,18 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void PermissionRemoved(object? sender, string e)
+        private async void PermissionRevoked(object? sender, DataUser user)
         {
-            string code = e;
+            ulong id = user.Id;
 
             string message = MessageFormatter.Logout();
-            await BroadcastMessage(message, code);
+            await BroadcastMessage(message, id);
 
-            var sockets = GetAllSockets(code);
+            var sockets = GetAllSockets(id);
 
-            RemoveSockets(code);
+            RemoveSockets(id);
 
-            foreach (var item in GetAllSockets(code))
+            foreach (var item in sockets)
             {
                 _ = item.Close();
             }
@@ -249,9 +247,9 @@ namespace MCWebAPI.WebSocketHandler
         /// </summary>
         /// <param name="code">associated code to remove.</param>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void RemoveSockets(string code)
+        private void RemoveSockets(ulong id)
         {
-            var sockets = GetAllSockets(code);
+            var sockets = GetAllSockets(id);
 
             foreach (var s in sockets)
                 Sockets.Remove(s);
@@ -271,8 +269,8 @@ namespace MCWebAPI.WebSocketHandler
         /// <param name="code">the specified code.</param>
         /// <returns>All the sockets which is registered by the specified code.</returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private IEnumerable<MCWebSocket> GetAllSockets(string code) =>
-            from s in Sockets where s.Code == code select s;
+        private IEnumerable<MCWebSocket> GetAllSockets(ulong id) =>
+            from s in Sockets where s.DiscordUser.Id == id select s;
 
         #endregion
 

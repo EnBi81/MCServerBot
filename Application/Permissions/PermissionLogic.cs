@@ -21,9 +21,13 @@ namespace Application.Permissions
 
         private readonly IPermissionDataAccess _permissionAccess;
 
+        public event EventHandler<DataUser> PermissionRevoked;
+
         public PermissionLogic(IDatabaseAccess databaseAccess)
         {
             _permissionAccess = databaseAccess.PermissionDataAccess;
+
+            PermissionRevoked = null!;
         }
 
 
@@ -42,6 +46,16 @@ namespace Application.Permissions
                 return user;
 
             return await _permissionAccess.GetUser(token) ?? throw new Exception("User is not registered in the system.");
+        }
+
+        public async Task<DataUser> GetUser(ulong id)
+        {
+            var builtinUsers = from builtinUser in BuiltInUsers.Values where builtinUser.Id == id select builtinUser;
+
+            if (builtinUsers.Any())
+                return builtinUsers.First();
+
+            return await _permissionAccess.GetUser(id) ?? throw new Exception("User is not registered in the system.");
         }
 
         public async Task<bool> HasAccess(string token)
@@ -89,5 +103,7 @@ namespace Application.Permissions
 
             return sb.ToString();
         }
+
+        
     }
 }

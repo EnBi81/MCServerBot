@@ -6,11 +6,18 @@ namespace Sandbox
 {
     public class SandBoxClass
     {
+        enum e
+        {
+            A,
+            B
+        }
+
         const string Server_Jar = "A:\\mc-server-test\\server.jar";
         const string Server_Folder = "A:\\mc-server-test\\server1\\";
         static async Task Main(string[] args) // this is how to create a new server
         {
-
+            Console.WriteLine(e.A.ToString());
+            Console.WriteLine((int) Enum.Parse<e>(e.A.ToString()));
             //if(args.Contains("reset"))
             //{
             //    Console.WriteLine("Deleting " + Server_Folder);

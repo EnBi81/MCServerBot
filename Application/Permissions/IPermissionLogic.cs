@@ -9,5 +9,6 @@ namespace Application.Permissions
         public Task<DataUser> GetUser(ulong id);
         public Task<bool> HasAccess(string token);
         public Task<string> GetToken(ulong id);
+        public event EventHandler<DataUser> PermissionRevoked;
     }
 }

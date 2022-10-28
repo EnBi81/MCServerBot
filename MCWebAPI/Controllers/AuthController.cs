@@ -3,6 +3,7 @@ using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
+using Shared.DTOs.Enums;
 using SharedAuth.DTOs;
 
 namespace MCWebAPI.Controllers
@@ -27,8 +28,18 @@ namespace MCWebAPI.Controllers
         {
             try
             {
+                foreach(var prop in userLoginDto.GetType().GetProperties())
+                {
+                    if(prop.GetValue(userLoginDto) is null)
+                        throw new Exception("You must provide a " + prop.Name);
+                }
+
+                if (Enum.TryParse(userLoginDto.Platform, true, out Platform platform))
+                    throw new Exception("Unrecognized platform: " + userLoginDto.Platform);
+
                 DataUser user = await authService.GetUser(userLoginDto.Token);
-                string token = AuthUtils.GenerateJwt(user, config);
+                
+                string token = AuthUtils.GenerateJwt(user, platform, config);
 
                 return Ok(token);
             }
