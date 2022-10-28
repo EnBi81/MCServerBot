@@ -16,7 +16,7 @@ namespace MCWebAPI.Auth
         }
 
 
-        public async Task<DataUser> GetUser(string token)
+        public async Task<DataUser> GetUser(string? token)
         {
             DataUser? user = await _permissionLogic.GetUser(token);
 
@@ -26,9 +26,5 @@ namespace MCWebAPI.Auth
             return user;
         }
 
-        public async Task RegisterUser(RegisterDto dto) => 
-            await _permissionLogic.RegisterUser(dto.Id, dto.DiscordName, dto.ProfilePic);
-
-        public async Task<string> GetToken(ulong discordId) => await _permissionLogic.GetToken(discordId);
     }
 }

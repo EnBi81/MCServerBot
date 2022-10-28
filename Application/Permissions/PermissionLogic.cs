@@ -40,8 +40,11 @@ namespace Application.Permissions
             await _permissionAccess.GetWebAccessCode(id) ?? 
             throw new Exception("User is not registered in the system.");
 
-        public async Task<DataUser> GetUser(string token)
+        public async Task<DataUser> GetUser(string? token)
         {
+            if (token == null)
+                throw new Exception("No token provided");
+
             if (BuiltInUsers.TryGetValue(token, out DataUser? user))
                 return user;
 
@@ -58,8 +61,11 @@ namespace Application.Permissions
             return await _permissionAccess.GetUser(id) ?? throw new Exception("User is not registered in the system.");
         }
 
-        public async Task<bool> HasAccess(string token)
+        public async Task<bool> HasAccess(string? token)
         {
+            if (token == null)
+                throw new Exception("No token provided");
+
             if (BuiltInUsers.ContainsKey(token))
                 return true;
 
@@ -73,6 +79,9 @@ namespace Application.Permissions
 
             if (profPic is null)
                 throw new ArgumentNullException(nameof(profPic));
+
+            if (await _permissionAccess.GetUser(discordId) != null)
+                return;
 
             string webAccessCode = GetHashString(DateTime.Now.ToString("G") + discordId.ToString());
             await _permissionAccess.RegisterDiscordUser(discordId, discordUsername, profPic, webAccessCode);
@@ -104,6 +113,16 @@ namespace Application.Permissions
             return sb.ToString();
         }
 
-        
+        public async Task RefreshUser(ulong discordId, string? discordUsername, string? profPic)
+        {
+            if (discordUsername is null)
+                throw new Exception("Discord username must not be null");
+
+            if (profPic is null)
+                throw new Exception("Discord profile pic must not be null");
+
+
+            await _permissionAccess.RefreshUser(discordId, discordUsername, profPic);
+        }
     }
 }

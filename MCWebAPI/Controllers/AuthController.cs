@@ -48,34 +48,5 @@ namespace MCWebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
-        [HttpPost("register"), Authorize("DiscordBot")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
-        {
-            try
-            {
-                await authService.RegisterUser(registerDto);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpGet("accesstoken/{id:ulong}"), Authorize("DiscordBot")]
-        public async Task<IActionResult> GetUserAccessToken([FromRoute] ulong id)
-        {
-            try
-            {
-                string token = await authService.GetToken(id);
-                return Ok(token);
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
     }
 }

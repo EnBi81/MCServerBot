@@ -39,7 +39,7 @@ namespace MCWebAPI.Controllers.Utils
                 config["Jwt:Audience"],
                 claims,
                 null,
-                DateTime.UtcNow.AddMinutes(60));
+                DateTime.UtcNow.AddDays(10));
 
             JwtSecurityToken token = new (header, payload);
 

@@ -9,7 +9,6 @@ namespace MCWebAPI.Controllers.api.v1
 {
     [ApiController]
     [Route("api/v1/ws")]
-    [Authorize]
     public class MCWebSocketController : MCControllerBase
     {
         private readonly IPermissionDataAccess _permissionDataAccess;

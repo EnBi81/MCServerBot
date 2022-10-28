@@ -1,4 +1,5 @@
 using Application.Minecraft;
+using Application.Permissions;
 using DataStorageSQLite.Implementation;
 using MCWebAPI.Auth;
 using MCWebAPI.WebSocketHandler;
@@ -20,6 +21,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<DataStorageSQLiteImpl>();
 builder.Services.AddSingleton<ServerPark>();
+builder.Services.AddSingleton<PermissionLogic>();
 
 builder.Services.AddSingleton<SocketPool>();
 
