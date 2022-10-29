@@ -16,10 +16,10 @@ namespace Application.Minecraft
 
         private bool _initialized = false;
 
-        public ServerPark(IDatabaseAccess databaseAccess)
+        public ServerPark(IDatabaseAccess databaseAccess, MinecraftConfig config)
         {
             _serverParkEventRegister = databaseAccess.ServerParkDataAccess;
-            _serverPark = new ServerParkLogic(databaseAccess);
+            _serverPark = new ServerParkLogic(databaseAccess, config);
         }
 
         /// <inheritdoc/>

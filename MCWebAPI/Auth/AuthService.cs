@@ -2,7 +2,6 @@
 using Application.DAOs.Database;
 using Application.Permissions;
 using Shared.DTOs;
-using SharedAuth.DTOs;
 
 namespace MCWebAPI.Auth
 {

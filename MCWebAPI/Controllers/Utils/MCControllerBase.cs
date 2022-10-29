@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using APIModel.DTOs;
+using APIModel.Responses;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
 using Shared.DTOs.Enums;
 using System.Security.Claims;
@@ -12,19 +15,19 @@ namespace MCWebAPI.Controllers.Utils
         public Platform ClaimPlatform => Enum.Parse<Platform>(User.Claims.First(claim => claim.Type.Equals("Platform")).Value);
 
 
-        public IActionResult GetBadRequest(string message)
+        protected IActionResult GetBadRequest(string message)
         {
-            var errorMessage = FormatErrorMessage(message);
+            var errorMessage = new ExceptionDTO()
+            {
+                Message = message
+            };
+
             return BadRequest(errorMessage);
         }
 
 
-        public static object FormatErrorMessage(string errorMessage)
-        {
-            return new { ErrorMessage = errorMessage };
-        }
 
-        public Task<UserEventData> GetUserEventData()
+        protected Task<UserEventData> GetUserEventData()
         {
             var userEventData = new UserEventData
             {

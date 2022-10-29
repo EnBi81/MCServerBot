@@ -1,6 +1,4 @@
-﻿using Shared.DTOs.Enums;
-
-namespace SharedAuth.DTOs
+﻿namespace APIModel.DTOs
 {
     public class LoginDto
     {

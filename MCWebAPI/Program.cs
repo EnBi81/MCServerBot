@@ -1,13 +1,31 @@
+using Application.DAOs;
 using Application.Minecraft;
 using Application.Permissions;
 using DataStorageSQLite.Implementation;
+using Loggers;
+using MCWebAPI;
 using MCWebAPI.Auth;
 using MCWebAPI.WebSocketHandler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Shared.DTOs;
+using Shared.Model;
 using System.Security.Claims;
 using System.Text;
+
+
+LogService logService = new LogService()
+                .SetupLogger<DiscordLogger>()
+                .SetupLogger<HamachiLogger>()
+                .SetupLogger<MinecraftLogger>()
+                .SetupLogger<WebLogger>()
+                .SetupLogger<ConfigLogger>()
+                .SetupLogger<NetworkLogger>();
+
+LogService.RegisterLogService(logService);
+
+var config = Config.Instance;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +36,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton(new MinecraftConfig
+{
+    JavaLocation = config.JavaLocation,
+    MaxSumOfDiskSpaceGB = config.MinecraftMaxDiskSpaceGB,
+    MinecraftServerHandlerPath = config.MinecraftServerHandlerPath,
+    MinecraftServerInitRamMB = config.MinecraftServerInitRamMB,
+    MinecraftServerMaxRamMB = config.MinecraftServerMaxRamMB,
+    MinecraftServersBaseFolder = config.MinecraftServersBaseFolder
+});
 
-builder.Services.AddSingleton<DataStorageSQLiteImpl>();
-builder.Services.AddSingleton<ServerPark>();
-builder.Services.AddSingleton<PermissionLogic>();
+builder.Services.AddSingleton<IDatabaseAccess, DataStorageSQLiteImpl>();
+builder.Services.AddSingleton<IServerPark, ServerPark>();
+builder.Services.AddSingleton<IPermissionLogic, PermissionLogic>();
+
 
 builder.Services.AddSingleton<SocketPool>();
 
@@ -46,11 +74,10 @@ builder.Services.AddAuthorizationCore(options =>
 });
 
 
-
 var app = builder.Build();
 
-
-await app.Services.GetRequiredService<ServerPark>().InitializeAsync();
+await app.Services.GetRequiredService<IDatabaseAccess>().DatabaseSetup.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;");
+await app.Services.GetRequiredService<IServerPark>().InitializeAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -91,7 +91,7 @@ namespace Application.Minecraft.MinecraftServers
 
         
 
-        public MinecraftServer(IMinecraftDataAccess dataAccess, string serverFolderName) : this(dataAccess, 0, serverFolderName)
+        public MinecraftServer(IMinecraftDataAccess dataAccess, string serverFolderName, MinecraftConfig config) : this(dataAccess, 0, serverFolderName, config)
         {
             McServerInfos.Load();
             Id = McServerInfos.Id;
@@ -99,13 +99,13 @@ namespace Application.Minecraft.MinecraftServers
         }
 
 
-        public MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverName, string serverFolderName) : this(dataAccess, id, serverFolderName)
+        public MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverName, string serverFolderName, MinecraftConfig config) : this(dataAccess, id, serverFolderName, config)
         {
             ServerName = serverName;
         }
 
 
-        private MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverFolderName)
+        private MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverFolderName, MinecraftConfig config)
         {
             string serverFileName = serverFolderName + "\\server.jar";
             string serverPropertiesFileName = serverFolderName + "\\server.properties";
@@ -115,7 +115,6 @@ namespace Application.Minecraft.MinecraftServers
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
 
-            var config = MinecraftConfig.Instance;
 
             McServerProcess = new MinecraftServerProcess(
                 serverFileName: serverFileName,

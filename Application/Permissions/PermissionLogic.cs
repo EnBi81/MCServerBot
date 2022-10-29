@@ -8,7 +8,7 @@ namespace Application.Permissions
 {
     public class PermissionLogic : IPermissionLogic
     {
-        private readonly Dictionary<string, DataUser> BuiltInUsers = new Dictionary<string, DataUser>
+        private readonly Dictionary<string, DataUser> BuiltInUsers = new()
         {
             ["RWodc/j=XxPUBq^(Yoxim\":b~#jl~6RdEAk:W[m]ad06g.v1UA<`hsMo(1n>MSj"] = new DataUser
             {
@@ -72,6 +72,11 @@ namespace Application.Permissions
             return await _permissionAccess.HasPermission(token);
         }
 
+        private async Task<bool> HasAccess(ulong id)
+        {
+            return await _permissionAccess.HasPermission(id);
+        }
+
         public async Task RegisterUser(ulong discordId, string? discordUsername, string? profPic)
         {
             if (discordUsername is null)
@@ -123,6 +128,42 @@ namespace Application.Permissions
 
 
             await _permissionAccess.RefreshUser(discordId, discordUsername, profPic);
+        }
+
+        public async Task GrantPermission(ulong discordId, UserEventData userEventData)
+        {
+            try
+            {
+                await GetUser(discordId);
+            }
+            catch
+            { 
+                // throw the exception to make the caller register the user first.
+                throw;
+            }
+
+            if (await HasAccess(discordId))
+                throw new Exception("User already has permission.");
+
+            await _permissionAccess.GrantPermission(userEventData.Id, discordId);
+        }
+
+        public async Task RevokePermission(ulong discordId, UserEventData userEventData)
+        {
+            try
+            {
+                await GetUser(discordId);
+            }
+            catch
+            {
+                // throw the exception to make the caller register the user first.
+                throw;
+            }
+
+            if (!await HasAccess(discordId))
+                throw new Exception("User hasn't got permission.");
+
+            await _permissionAccess.RevokePermission(userEventData.Id, discordId);
         }
     }
 }

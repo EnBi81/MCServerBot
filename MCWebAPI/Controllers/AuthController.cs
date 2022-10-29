@@ -1,16 +1,17 @@
-﻿using MCWebAPI.Auth;
+﻿using APIModel.DTOs;
+using APIModel.Responses;
+using MCWebAPI.Auth;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
 using Shared.DTOs.Enums;
-using SharedAuth.DTOs;
 
 namespace MCWebAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : MCControllerBase
     {
         private readonly IConfiguration config;
         private readonly IAuthService authService;
@@ -38,14 +39,15 @@ namespace MCWebAPI.Controllers
                     throw new Exception("Unrecognized platform: " + userLoginDto.Platform);
 
                 DataUser user = await authService.GetUser(userLoginDto.Token);
-                
                 string token = AuthUtils.GenerateJwt(user, platform, config);
 
-                return Ok(token);
+                var authResponse = new AuthenticatedResponse { Token = token };
+
+                return Ok(authResponse);
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return GetBadRequest(e.Message);
             }
         }
     }

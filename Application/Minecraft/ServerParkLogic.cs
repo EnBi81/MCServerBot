@@ -14,26 +14,31 @@ namespace Application.Minecraft
         /// <summary>
         /// Path of the folder the minecraft servers are stored
         /// </summary>
-        internal static string ServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Servers\\";
+        internal string ServersFolder { get; }
         /// <summary>
         /// Path of the folder which contains the previously deleted servers
         /// </summary>
-        internal static string DeletedServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Deleted Servers\\";
+        internal string DeletedServersFolder { get; } 
         /// <summary>
         /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
         /// </summary>
-        internal static string EmptyServersFolder { get; } = MinecraftConfig.Instance.MinecraftServersBaseFolder + "Empty Server\\";
+        internal string EmptyServersFolder { get; } 
 
 
         private ulong _serverIdCounter;
         private readonly IDatabaseAccess _databaseAccess;
+        private readonly MinecraftConfig _config;
 
 
-        internal ServerParkLogic(IDatabaseAccess dataAccess)
+        internal ServerParkLogic(IDatabaseAccess dataAccess, MinecraftConfig config)
         {
             _databaseAccess = dataAccess;
+            _config = config;
 
-            ServerCollection.Clear();
+            ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
+            DeletedServersFolder = _config.MinecraftServersBaseFolder + "Deleted Servers\\";
+            EmptyServersFolder = _config.MinecraftServersBaseFolder + "Empty Server\\";
+
 
             ActiveServerChange = null!;
             ActiveServerPlayerLeft = null!;
@@ -45,7 +50,9 @@ namespace Application.Minecraft
             ServerAdded = null!;
             ServerDeleted = null!;
             ServerNameChanged = null!;
-        }
+
+            
+    }
 
         public async Task InitializeAsync()
         {
@@ -64,7 +71,7 @@ namespace Application.Minecraft
                     continue;
                 }
 
-                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, serverFolder.FullName);
+                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, serverFolder.FullName, _config);
                 RegisterMcServer(mcServer);
             }
         }
@@ -155,7 +162,7 @@ namespace Application.Minecraft
             Directory.CreateDirectory(destDir);
             FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
-            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, newServerId, serverName, destDir);
+            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, newServerId, serverName, destDir, _config);
             RegisterMcServer(mcServer);
 
             return Task.FromResult((IMinecraftServer)mcServer);
@@ -230,10 +237,10 @@ namespace Application.Minecraft
 
 
 
-        private static void ValidateMaxStorage()
+        private void ValidateMaxStorage()
         {
-            var dir = MinecraftConfig.Instance.MinecraftServersBaseFolder;
-            long maxDiskSpaceByte = (long)MinecraftConfig.Instance.MaxSumOfDiskSpaceGB * (1024 * 1024 * 1024);
+            var dir = _config.MinecraftServersBaseFolder;
+            long maxDiskSpaceByte = (long)_config.MaxSumOfDiskSpaceGB * (1024 * 1024 * 1024);
 
             (bool overflow, long measured) = FileHelper.CheckStorageOverflow(dir, maxDiskSpaceByte);
 
@@ -244,7 +251,7 @@ namespace Application.Minecraft
             if (overflow)
             {
                 LogService.GetService<MinecraftLogger>().Log("serverpark", "Storage OVERFLOW", ConsoleColor.Red);
-                throw new Exception($"Disk space full. Max disk space allocated: {MinecraftConfig.Instance.MaxSumOfDiskSpaceGB} GB." +
+                throw new Exception($"Disk space full. Max disk space allocated: {_config.MaxSumOfDiskSpaceGB} GB." +
                     $" Current storage: {measuredString}.");
             }
         }

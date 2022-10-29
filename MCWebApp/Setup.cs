@@ -1,4 +1,5 @@
-﻿using HamachiHelper;
+﻿using Application.Minecraft;
+using HamachiHelper;
 using Loggers;
 using MCWebApp;
 using MCWebApp.Config;
@@ -27,7 +28,7 @@ HamachiClient.Setup(config.HamachiLocation);
 await DataStorage.DatabaseAccess.SQLite.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;");
 
 
-Application.MinecraftConfig.SetupConfig(
+MinecraftConfig.SetupConfig(
     config.MinecraftServersBaseFolder, config.JavaLocation,
     config.MinecraftServerHandlerPath, config.MinecraftServerMaxRamMB,
     config.MinecraftServerInitRamMB, config.MinecraftMaxDiskSpaceGB);

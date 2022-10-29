@@ -1,8 +1,9 @@
-﻿using Application.Permissions;
+﻿using APIModel.DTOs;
+using APIModel.Responses;
+using Application.Permissions;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SharedAuth.DTOs;
 
 namespace MCWebAPI.Controllers.api.v1
 {
@@ -25,7 +26,8 @@ namespace MCWebAPI.Controllers.api.v1
             try
             {
                 string token = await permissionLogic.GetToken(id);
-                return Ok(token);
+                var userTokenResponse = new UserTokenResponse { UserToken = token };
+                return Ok(userTokenResponse);
             }
             catch (Exception e)
             {
