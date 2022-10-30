@@ -1,4 +1,5 @@
-﻿using MCWebAPI.Controllers.Utils;
+﻿using APIModel.DTOs;
+using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
@@ -46,14 +47,14 @@ namespace MCWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateServer([FromBody] Dictionary<string, object?>? data)
+        public async Task<IActionResult> CreateServer([FromBody] ServerCreationDto data)
         {
-            if (data == null)
+            if (data == null || data.NewName is null)
                 return GetBadRequest("No data provided in the body.");
 
             try
             {
-                string name = ControllerUtils.TryGetStringFromJson(data, "new-name");
+                string name = data.NewName;
                 var user = await GetUserEventData();
 
                 IMinecraftServer server = await serverPark.CreateServer(name, user);

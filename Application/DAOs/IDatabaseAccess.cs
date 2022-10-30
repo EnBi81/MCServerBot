@@ -3,7 +3,7 @@
 namespace Application.DAOs
 { 
     /// <summary>
-    /// Interface for holding the data access objects.
+    /// Holding the data access objects.
     /// </summary>
     public interface IDatabaseAccess
     {

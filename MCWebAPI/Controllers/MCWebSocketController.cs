@@ -21,6 +21,7 @@ namespace MCWebAPI.Controllers
         }
 
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ForwardToWebsocket(string accessCode)
         {
             var context = Request.HttpContext;

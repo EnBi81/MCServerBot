@@ -8,14 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 namespace MCWebAPI.Controllers
 {
 
+    /// <summary>
+    /// Controller for handling requests from the Discord Bot.
+    /// </summary>
     [Route("[controller]")]
     [ApiController]
     [Authorize("DiscordBot")]
+    [Consumes("application/json")]
     [Produces("application/json")]
     public class DiscordController : MCControllerBase
     {
         private readonly IPermissionLogic permissionLogic;
 
+        /// <summary>
+        /// Initializes the DiscordController.
+        /// </summary>
+        /// <param name="permissionLogic"></param>
         public DiscordController(IPermissionLogic permissionLogic)
         {
             this.permissionLogic = permissionLogic;
@@ -46,10 +54,17 @@ namespace MCWebAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Register a discord user to the system.
+        /// </summary>
+        /// <param name="registerDto">Registered user data.</param>
+        /// <returns></returns>
+        /// <response code="200">Returns Ok 200.</response>
+        /// <response code="400">If the DiscordName or the ProfilePic is null.</response>
         [HttpPost("user")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromBody] UserDataDto registerDto)
         {
             try
             {
@@ -62,14 +77,21 @@ namespace MCWebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Refreshes a user's data.
+        /// </summary>
+        /// <param name="userDto">Data of the user.</param>
+        /// <returns></returns>
+        /// <response code="200">Returns Ok 200.</response>
+        /// <response code="400">If the DiscordName or the ProfilePic is null, or the user is not registered.</response>
         [HttpPut("user")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RefreshUser([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> RefreshUser([FromBody] UserDataDto userDto)
         {
             try
             {
-                await permissionLogic.RefreshUser(registerDto.Id, registerDto.DiscordName, registerDto.ProfilePic);
+                await permissionLogic.RefreshUser(userDto.Id, userDto.DiscordName, userDto.ProfilePic);
                 return Ok();
             }
             catch (Exception e)

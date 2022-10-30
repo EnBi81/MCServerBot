@@ -126,6 +126,8 @@ namespace Application.Permissions
             if (profPic is null)
                 throw new Exception("Discord profile pic must not be null");
 
+            if (await GetUser(discordId) is null)
+                return;
 
             await _permissionAccess.RefreshUser(discordId, discordUsername, profPic);
         }

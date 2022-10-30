@@ -1,17 +1,28 @@
-﻿using MCWebAPI.Controllers.Utils;
+﻿using APIModel.DTOs;
+using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
+using System.Xml;
 
 namespace MCWebAPI.Controllers
 {
+    /// <summary>
+    /// Endpoint for managin the minecraft servers.
+    /// </summary>
     [ApiController]
-    [Route("minecraftserver/{serverName}")]
+    [Route("minecraftserver/{serverName:string}")]
     [Authorize]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class MinecraftServerController : MCControllerBase
     {
         private IServerPark serverPark;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serverPark"></param>
         public MinecraftServerController(IServerPark serverPark)
         {
             this.serverPark = serverPark;
@@ -43,21 +54,19 @@ namespace MCWebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> ModifyServer(string serverName, [FromBody] Dictionary<string, object?>? data)
+        public async Task<IActionResult> ModifyServer(string serverName, [FromBody] ModifyServerDto dto)
         {
             if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
-            if (data == null)
+            if (dto == null || dto.NewName is null)
                 return GetBadRequest("No data has been provided");
 
 
             try
             {
-                string newName = ControllerUtils.TryGetStringFromJson(data, "new-name");
                 var user = await GetUserEventData();
-
-                await serverPark.RenameServer(serverName, newName, user);
+                await serverPark.RenameServer(serverName, dto.NewName, user);
 
                 return Ok();
             }
@@ -70,17 +79,17 @@ namespace MCWebAPI.Controllers
 
 
         [HttpPost("commands")]
-        public IActionResult WriteCommand(string serverName, [FromBody] Dictionary<string, object?>? data)
+        public IActionResult WriteCommand(string serverName, [FromBody] CommandDto commandDto)
         {
             if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");
 
-            if (data == null)
+            if (commandDto == null || commandDto.Command is null)
                 return GetBadRequest("No data has been provided");
 
             try
             {
-                string command = ControllerUtils.TryGetStringFromJson(data, "command-data");
+                string command = commandDto.Command;
                 serverPark.MCServers[serverName].WriteCommand(command);
                 return Ok();
             }
@@ -91,6 +100,11 @@ namespace MCWebAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Toggles the minecraft server on and off.
+        /// </summary>
+        /// <param name="serverName">name of the </param>
+        /// <returns></returns>
         [HttpPost("toggle")]
         public async Task<IActionResult> ToggleServer(string serverName)
         {

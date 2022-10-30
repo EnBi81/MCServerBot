@@ -12,7 +12,7 @@ namespace HamachiHelper
     {
 
         /// <summary>
-        /// 
+        /// Checks if the networking is okay.
         /// </summary>
         public static bool CheckNetworking()
         {

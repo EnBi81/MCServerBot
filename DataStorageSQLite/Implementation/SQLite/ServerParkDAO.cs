@@ -7,6 +7,7 @@ namespace DataStorageSQLite.Implementations.SQLite
 {
     internal class ServerParkDAO : BaseSQLiteController, IServerParkDataAccess
     {
+        /// <inheritdoc/>
         public async Task<string?> GetServerName(ulong serverId)
         {
             using var conn = CreateOpenConnection;
@@ -22,6 +23,7 @@ namespace DataStorageSQLite.Implementations.SQLite
             return result is string s ? s : null;
         }
 
+        /// <inheritdoc/>
         public async Task CreateServer(ulong serverId, string serverName, UserEventData userEventData)
         {
             using var conn = CreateOpenConnection;
@@ -35,9 +37,11 @@ namespace DataStorageSQLite.Implementations.SQLite
             await RenameServer(serverId, serverName, userEventData);
         }
 
+        /// <inheritdoc/>
         public Task DeleteServer(ulong serverId, UserEventData userEventData) =>
             RenameServer(serverId, null, userEventData);
 
+        /// <inheritdoc/>
         public async Task RenameServer(ulong serverId, string? newName, UserEventData userEventData)
         {
             var eventId = await CreateUserEvent(userEventData.Id, userEventData.Platform, UserEventType.ServerNameChange);
@@ -53,6 +57,7 @@ namespace DataStorageSQLite.Implementations.SQLite
             await cmd.ExecuteNonQueryAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<ulong> GetMaxServerId()
         {
             using var conn = CreateOpenConnection;
@@ -65,12 +70,21 @@ namespace DataStorageSQLite.Implementations.SQLite
             return res is ulong num ? num : 0;
         }
 
+        /// <inheritdoc/>
         public async Task StartServer(ulong serverId, UserEventData userEventData) =>
             await InsertIntoServerStatus(serverId, ServerStatus.Start, userEventData);
 
+        /// <inheritdoc/>
         public async Task StopServer(ulong serverId, UserEventData userEventData) =>
             await InsertIntoServerStatus(serverId, ServerStatus.Stop, userEventData);
 
+        /// <summary>
+        /// Inserts a record into the server status change table
+        /// </summary>
+        /// <param name="serverId">id of the server.</param>
+        /// <param name="status">status of the server-</param>
+        /// <param name="userEventData">user event data.</param>
+        /// <returns></returns>
         private async Task InsertIntoServerStatus(ulong serverId, ServerStatus status, UserEventData userEventData)
         {
             var eventId = await CreateUserEvent(userEventData.Id, userEventData.Platform, UserEventType.ServerStatusChange);

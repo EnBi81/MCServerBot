@@ -14,17 +14,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/LoginDto"
               }
             },
             "text/json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/LoginDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/LoginDto"
               }
             }
           }
@@ -36,15 +36,17 @@
         }
       }
     },
-    "/api/v1/Discord/token/{id}": {
+    "/Discord/token/{id}": {
       "get": {
         "tags": [
           "Discord"
         ],
+        "summary": "Gets the user token for by a Discord Id. (Auth policies: DiscordBot)",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "Discord Id of the user.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -54,97 +56,130 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Returns a APIModel.Responses.UserTokenResponse object."
+          },
+          "400": {
+            "description": "If the user does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [
+              "DiscordBot"
+            ]
+          }
+        ]
       }
     },
-    "/api/v1/Discord/user": {
+    "/Discord/user": {
       "post": {
         "tags": [
           "Discord"
         ],
+        "summary": "Register a discord user to the system. (Auth policies: DiscordBot)",
         "requestBody": {
+          "description": "Registered user data.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
+                "$ref": "#/components/schemas/UserDataDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Returns Ok 200."
+          },
+          "400": {
+            "description": "If the DiscordName or the ProfilePic is null.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [
+              "DiscordBot"
+            ]
+          }
+        ]
       },
       "put": {
         "tags": [
           "Discord"
         ],
+        "summary": "Refreshes a user's data. (Auth policies: DiscordBot)",
         "requestBody": {
+          "description": "Data of the user.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterDto"
+                "$ref": "#/components/schemas/UserDataDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/v1/ws": {
-      "get": {
-        "tags": [
-          "MCWebSocket"
-        ],
-        "parameters": [
-          {
-            "name": "accessCode",
-            "in": "query",
-            "schema": {
-              "type": "string"
+            "description": "Returns Ok 200."
+          },
+          "400": {
+            "description": "If the DiscordName or the ProfilePic is null, or the user is not registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
+        },
+        "security": [
+          {
+            "Bearer": [
+              "DiscordBot"
+            ]
           }
-        }
+        ]
       }
     },
-    "/api/v1/minecraftserver/{serverName}": {
+    "/minecraftserver/{serverName}": {
       "get": {
         "tags": [
           "MinecraftServer"
         ],
+        "summary": " (Auth)",
         "parameters": [
           {
             "name": "serverName",
@@ -158,13 +193,25 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       },
       "delete": {
         "tags": [
           "MinecraftServer"
         ],
+        "summary": " (Auth)",
         "parameters": [
           {
             "name": "serverName",
@@ -178,13 +225,25 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       },
       "put": {
         "tags": [
           "MinecraftServer"
         ],
+        "summary": " (Auth)",
         "parameters": [
           {
             "name": "serverName",
@@ -199,20 +258,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": { }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": { }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": { }
+                "$ref": "#/components/schemas/ModifyServerDto"
               }
             }
           }
@@ -220,15 +266,27 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v1/minecraftserver/{serverName}/commands": {
+    "/minecraftserver/{serverName}/commands": {
       "post": {
         "tags": [
           "MinecraftServer"
         ],
+        "summary": " (Auth)",
         "parameters": [
           {
             "name": "serverName",
@@ -243,20 +301,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": { }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": { }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": { }
+                "$ref": "#/components/schemas/CommandDto"
               }
             }
           }
@@ -264,19 +309,32 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v1/minecraftserver/{serverName}/toggle": {
+    "/minecraftserver/{serverName}/toggle": {
       "post": {
         "tags": [
           "MinecraftServer"
         ],
+        "summary": "Toggles the minecraft server on and off. (Auth)",
         "parameters": [
           {
             "name": "serverName",
             "in": "path",
+            "description": "name of the",
             "required": true,
             "schema": {
               "type": "string"
@@ -286,15 +344,27 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v1/Permission/{id}/grant": {
+    "/Permission/{id}/grant": {
       "post": {
         "tags": [
           "Permission"
         ],
+        "summary": " (Auth)",
         "parameters": [
           {
             "name": "id",
@@ -309,15 +379,27 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v1/Permission/{id}/revoke": {
+    "/Permission/{id}/revoke": {
       "post": {
         "tags": [
           "Permission"
         ],
+        "summary": " (Auth)",
         "parameters": [
           {
             "name": "id",
@@ -332,43 +414,64 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v1/serverpark": {
+    "/ServerPark": {
       "get": {
         "tags": [
           "ServerPark"
         ],
+        "summary": " (Auth)",
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       },
       "post": {
         "tags": [
           "ServerPark"
         ],
+        "summary": " (Auth)",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": { }
+                "$ref": "#/components/schemas/ServerCreationDto"
               }
             },
             "text/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": { }
+                "$ref": "#/components/schemas/ServerCreationDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": { }
+                "$ref": "#/components/schemas/ServerCreationDto"
               }
             }
           }
@@ -376,26 +479,125 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
-    "/api/v1/serverpark/running": {
+    "/ServerPark/running": {
       "get": {
         "tags": [
           "ServerPark"
         ],
+        "summary": " (Auth)",
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     }
   },
   "components": {
     "schemas": {
-      "RegisterDto": {
+      "CommandDto": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "platform": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ModifyServerDto": {
+        "type": "object",
+        "properties": {
+          "newName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "ServerCreationDto": {
+        "type": "object",
+        "properties": {
+          "newName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserDataDto": {
+        "required": [
+          "discordName",
+          "id",
+          "profilePic"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -403,15 +605,23 @@
             "format": "int64"
           },
           "discordName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "profilePic": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Standard Authorization header using the Bearer scheme (JWT). Example: \"bearer {token}\"",
+        "name": "Authorization",
+        "in": "header"
       }
     }
   }

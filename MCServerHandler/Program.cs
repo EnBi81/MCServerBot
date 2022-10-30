@@ -6,7 +6,7 @@ namespace MCServerHandler
 {
     internal class Program
     {
-        static StreamWriter InputStream;
+        static StreamWriter MinecraftInputStream; // minecraft server stream
 
         //MCServerHandler.exe server.jar "C:\Program Files\Java\jdk-17.0.2\bin\java.exe" "D:\Games\Minecraft Things\McServer" 1024 1024
         static void Main(string[] args)
@@ -52,7 +52,7 @@ namespace MCServerHandler
             process.Start();
             Console.WriteLine(process.Id);
 
-            InputStream = process.StandardInput;
+            MinecraftInputStream = process.StandardInput;
             process.BeginOutputReadLine();
             process.OutputDataReceived += (sender, args) => Console.WriteLine(args.Data);
             process.Exited += (sender, args) => Environment.Exit(0);
@@ -74,7 +74,7 @@ namespace MCServerHandler
         {
             try
             {
-                InputStream.WriteLine("stop");
+                MinecraftInputStream.WriteLine("stop");
             }
             catch { }
         }

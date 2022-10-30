@@ -9,6 +9,9 @@ using System.Collections.ObjectModel;
 
 namespace Application.Minecraft
 {
+    /// <summary>
+    /// Main logic of the ServerPark.
+    /// </summary>
     internal class ServerParkLogic : IServerPark
     {
         /// <summary>
@@ -50,10 +53,9 @@ namespace Application.Minecraft
             ServerAdded = null!;
             ServerDeleted = null!;
             ServerNameChanged = null!;
+        }
 
-            
-    }
-
+        /// <inheritdoc/>
         public async Task InitializeAsync()
         {
             _serverIdCounter = await _databaseAccess.ServerParkDataAccess.GetMaxServerId();
