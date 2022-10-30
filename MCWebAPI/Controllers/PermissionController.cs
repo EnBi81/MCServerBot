@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
 
-namespace MCWebAPI.Controllers.api.v1
+namespace MCWebAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [Authorize]
     public class PermissionController : MCControllerBase
@@ -28,7 +28,7 @@ namespace MCWebAPI.Controllers.api.v1
                 await _permissionLogic.GrantPermission(id, userEventData);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return GetBadRequest(e.Message);
             }

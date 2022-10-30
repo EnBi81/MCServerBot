@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
 
-namespace MCWebPIApp.Controllers.api.v1
+namespace MCWebAPI.Controllers
 {
     [ApiController]
-    [Route("/api/v1/serverpark")]
+    [Route("[controller]")]
     [Authorize]
     public class ServerParkController : MCControllerBase
     {

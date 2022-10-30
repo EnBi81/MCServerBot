@@ -5,11 +5,13 @@ using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MCWebAPI.Controllers.api.v1
+namespace MCWebAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
+
+    [Route("[controller]")]
     [ApiController]
     [Authorize("DiscordBot")]
+    [Produces("application/json")]
     public class DiscordController : MCControllerBase
     {
         private readonly IPermissionLogic permissionLogic;
@@ -19,8 +21,16 @@ namespace MCWebAPI.Controllers.api.v1
             this.permissionLogic = permissionLogic;
         }
 
-
+        /// <summary>
+        /// Gets the user token for by a Discord Id.
+        /// </summary>
+        /// <param name="id">Discord Id of the user.</param>
+        /// <returns>A <see cref="UserTokenResponse"/> object.</returns>
+        /// <response code="200">Returns a <see cref="UserTokenResponse"/> object.</response>
+        /// <response code="400">If the user does not exist.</response>
         [HttpGet("token/{id:ulong}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetWebAccessToken([FromRoute] ulong id)
         {
             try
@@ -35,7 +45,10 @@ namespace MCWebAPI.Controllers.api.v1
             }
         }
 
+
         [HttpPost("user")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
@@ -50,6 +63,8 @@ namespace MCWebAPI.Controllers.api.v1
         }
 
         [HttpPut("user")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RefreshUser([FromBody] RegisterDto registerDto)
         {
             try

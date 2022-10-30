@@ -5,10 +5,10 @@ using MCWebAPI.WebSocketHandler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MCWebAPI.Controllers.api.v1
+namespace MCWebAPI.Controllers
 {
     [ApiController]
-    [Route("api/v1/ws")]
+    [Route("ws")]
     public class MCWebSocketController : MCControllerBase
     {
         private readonly IPermissionDataAccess _permissionDataAccess;

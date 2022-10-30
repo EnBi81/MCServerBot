@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
 
-namespace MCWebAPI.Controllers.api.v1
+namespace MCWebAPI.Controllers
 {
     [ApiController]
-    [Route("/api/v1/minecraftserver/{serverName}")]
+    [Route("minecraftserver/{serverName}")]
     [Authorize]
     public class MinecraftServerController : MCControllerBase
     {
@@ -43,7 +43,7 @@ namespace MCWebAPI.Controllers.api.v1
         }
 
         [HttpPut]
-        public async Task <IActionResult> ModifyServer(string serverName, [FromBody] Dictionary<string, object?>? data)
+        public async Task<IActionResult> ModifyServer(string serverName, [FromBody] Dictionary<string, object?>? data)
         {
             if (!serverPark.MCServers.ContainsKey(serverName))
                 return GetBadRequest($"No server found with name '{serverName}'");

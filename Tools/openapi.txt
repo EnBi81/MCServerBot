@@ -1,0 +1,18 @@
+
+#run this in project terminal
+dotnet new tool-manifest
+dotnet tool install swashbuckle.aspnetcore.cli
+
+
+# add this to project.csproj
+<Target Name="Generate OpenAPI Specification Document" AfterTargets="Build">
+  	<Exec Command="dotnet tool run swagger tofile --output swagger.json $(OutputPath)$(AssemblyName).dll v1" ContinueOnError="true" />
+  </Target>
+
+
+#powershell download https://github.com/swagger-api/swagger-codegen
+Invoke-WebRequest -OutFile swagger-codegen-cli.jar https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.20/swagger-codegen-cli-3.0.20.jar
+
+
+#generate api cmd
+java --add-opens=java.base/java.util=ALL-UNNAMED -jar swagger-codegen-cli.jar generate -i ../MCWebAPI/swagger.json -l javascript -o api/js
