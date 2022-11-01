@@ -4,6 +4,7 @@ using Application.Minecraft.Util;
 using Loggers;
 using Shared.DTOs;
 using Shared.EventHandlers;
+using Shared.Exceptions;
 using Shared.Model;
 using System.Collections.ObjectModel;
 
@@ -28,7 +29,7 @@ namespace Application.Minecraft
         internal string EmptyServersFolder { get; } 
 
 
-        private ulong _serverIdCounter;
+        private long _serverIdCounter;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly MinecraftConfig _config;
 
@@ -83,7 +84,7 @@ namespace Application.Minecraft
         public IMinecraftServer? ActiveServer { get; private set; }
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<string, IMinecraftServer> MCServers => new ReadOnlyDictionary<string, IMinecraftServer>(ServerCollection);
+        public IReadOnlyDictionary<long, IMinecraftServer> MCServers => new ReadOnlyDictionary<long, IMinecraftServer>(ServerCollection);
 
 
 
@@ -91,24 +92,32 @@ namespace Application.Minecraft
         /// <summary>
         /// List of all minecraft server instances
         /// </summary>
-        internal Dictionary<string, IMinecraftServer> ServerCollection { get; } = new();
+        internal Dictionary<long, IMinecraftServer> ServerCollection { get; } = new();
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public IMinecraftServer GetServer(long id)
+        {
+            ThrowIfServerNotExists(id);
+            return ServerCollection[id];
+        }
 
 
         /// <inheritdoc/>
-        private void SetActiveServer(string serverName)
+        private void SetActiveServer(long id)
         {
             if (ActiveServer != null)
             {
                 if (ActiveServer.IsRunning)
-                    throw new Exception("Another Server is Running Already!");
+                    throw new ServerParkException("Another Server is Running Already!");
             }
 
-            if (!MCServers.TryGetValue(serverName, out IMinecraftServer? server))
-            {
-                throw new Exception("Server not found!");
-            }
+            IMinecraftServer server = GetServer(id);
 
             if (ActiveServer == server)
                 return;
@@ -123,11 +132,11 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task StartServer(string serverName, UserEventData user)
+        public Task StartServer(long id, UserEventData user)
         {
             ValidateMaxStorage();
 
-            SetActiveServer(serverName);
+            SetActiveServer(id);
             ActiveServer?.Start(user.Username);
 
             return Task.CompletedTask;
@@ -137,7 +146,7 @@ namespace Application.Minecraft
         public Task StopActiveServer(UserEventData user)
         {
             if (ActiveServer == null || !ActiveServer.IsRunning)
-                throw new Exception("Server is not running!");
+                throw new ServerParkException("Server is not running!");
 
             ActiveServer?.Shutdown(user.Username);
 
@@ -146,10 +155,10 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task ToggleServer(string serverName, UserEventData user) =>
+        public Task ToggleServer(long id, UserEventData user) =>
             ActiveServer?.IsRunning ?? false 
             ? StopActiveServer(user) 
-            : StartServer(serverName, user);
+            : StartServer(id, user);
 
 
 
@@ -158,7 +167,7 @@ namespace Application.Minecraft
         {
             CreateServerCheck(serverName);
 
-            ulong newServerId = _serverIdCounter++;
+            long newServerId = _serverIdCounter++;
 
             string destDir = ServersFolder + newServerId;
             Directory.CreateDirectory(destDir);
@@ -172,46 +181,38 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> RenameServer(string oldName, string newName, UserEventData user)
+        public Task<IMinecraftServer> RenameServer(long id, string newName, UserEventData user)
         {
             ValidateNameLength(newName);
 
-            if (!ServerNameExist(oldName))
-                throw new Exception($"The server '{oldName}' does not exist.");
+            ThrowIfServerNotExists(id);
+            ThrowIfServerRunning(id);
+
 
             if (ServerNameExist(newName))
-                throw new Exception($"The name '{newName}' is already taken");
+                throw new ServerParkException($"The name '{newName}' is already taken");
 
-            if (ActiveServer != null && ActiveServer.ServerName == oldName && ActiveServer.IsRunning)
-                throw new Exception($"{oldName} is Runnning! Please stop the server first.");
 
-            FileHelper.MoveDirectory(ServersFolder + oldName, ServersFolder + newName);
 
-            ServerCollection.Remove(oldName, out IMinecraftServer? server);
-
-            IMinecraftServer notNullServer = server!;
-
-            ServerCollection.Add(newName, notNullServer);
-            notNullServer.ServerName = newName;
+            var server = ServerCollection[id];
+            var oldName = server.ServerName;
+            server.ServerName = newName;
 
             InvokeServerNameChange(oldName, newName);
 
-            return Task.FromResult(notNullServer);
+            return Task.FromResult(server);
         }
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> DeleteServer(string name, UserEventData user)
+        public Task<IMinecraftServer> DeleteServer(long id, UserEventData user)
         {
-            if (!ServerNameExist(name))
-                throw new Exception($"The server '{name}' does not exist.");
+            ThrowIfServerNotExists(id);
+            ThrowIfServerRunning(id);
 
-            if (ActiveServer != null && ActiveServer.ServerName == name && ActiveServer.IsRunning)
-                throw new Exception($"To delete this server, first make sure it is stopped.");
+            string newDir = $"{DeletedServersFolder}{id}-{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+            FileHelper.MoveDirectory(ServersFolder + id, newDir);
 
-            string newDir = DeletedServersFolder + name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-            FileHelper.MoveDirectory(ServersFolder + name, newDir);
-
-            ServerCollection.Remove(name, out IMinecraftServer? server);
+            ServerCollection.Remove(id, out IMinecraftServer? server);
 
             if (server != null)
                 InvokeServerDeleted(server);
@@ -224,7 +225,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name to check</param>
         /// <returns>true if it exists, else false.</returns>
-        private bool ServerNameExist(string name) => MCServers.ContainsKey(name);
+        private bool ServerNameExist(string name) => ServerCollection.Values.Any(server => server.ServerName == name);
 
         /// <summary>
         /// Checks if the name's length is valid, throws exception if yes.
@@ -234,7 +235,7 @@ namespace Application.Minecraft
         private static void ValidateNameLength(string name)
         {
             if (!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
-                throw new Exception($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
+                throw new ServerParkException($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
         }
 
 
@@ -253,7 +254,7 @@ namespace Application.Minecraft
             if (overflow)
             {
                 LogService.GetService<MinecraftLogger>().Log("serverpark", "Storage OVERFLOW", ConsoleColor.Red);
-                throw new Exception($"Disk space full. Max disk space allocated: {_config.MaxSumOfDiskSpaceGB} GB." +
+                throw new ServerParkException($"Disk space full. Max disk space allocated: {_config.MaxSumOfDiskSpaceGB} GB." +
                     $" Current storage: {measuredString}.");
             }
         }
@@ -266,7 +267,7 @@ namespace Application.Minecraft
         /// <param name="folderPath"></param>
         private void RegisterMcServer(MinecraftServer server)
         {
-            ServerCollection.Add(server.ServerName, server);
+            ServerCollection.Add(server.Id, server);
             InvokeServerAdded(server);
         }
 
@@ -281,9 +282,23 @@ namespace Application.Minecraft
             ValidateNameLength(serverName);
 
             if (ServerNameExist(serverName))
-                throw new Exception($"The name {serverName} is already taken");
+                throw new ServerParkException($"The name {serverName} is already taken");
 
             ValidateMaxStorage();
+        }
+
+        private bool ServerExists(long id) => ServerCollection.ContainsKey(id); 
+
+        private void ThrowIfServerRunning(long id)
+        {
+            if (ActiveServer != null && ActiveServer.Id == id && ActiveServer.IsRunning)
+                throw new ServerParkException($"To delete {ActiveServer.ServerName} server, first make sure it is stopped.");
+        }
+
+        private void ThrowIfServerNotExists(long id)
+        {
+            if (!ServerExists(id))
+                throw new ServerParkException($"The server '{id}' does not exist.");
         }
 
 
@@ -370,5 +385,6 @@ namespace Application.Minecraft
             ServerAdded?.Invoke(this, new(addedServer));
         private void InvokeServerDeleted(IMinecraftServer deletedServer) =>
             ServerDeleted?.Invoke(this, new(deletedServer));
+
     }
 }

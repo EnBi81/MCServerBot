@@ -1,9 +1,10 @@
-﻿using APIModel.DTOs;
+﻿using APIModel;
+using APIModel.DTOs;
+using APIModel.Responses;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
-using System.Xml;
 
 namespace MCWebAPI.Controllers
 {
@@ -11,8 +12,7 @@ namespace MCWebAPI.Controllers
     /// Endpoint for managin the minecraft servers.
     /// </summary>
     [ApiController]
-    [Route("minecraftserver/{serverName:string}")]
-    [Authorize]
+    [Route("minecraftserver/{id:long}")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public class MinecraftServerController : MCControllerBase
@@ -20,7 +20,7 @@ namespace MCWebAPI.Controllers
         private IServerPark serverPark;
 
         /// <summary>
-        /// 
+        /// Initializes the minecraft server controller.
         /// </summary>
         /// <param name="serverPark"></param>
         public MinecraftServerController(IServerPark serverPark)
@@ -29,22 +29,39 @@ namespace MCWebAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Gets the informations of a server.
+        /// </summary>
+        /// <param name="id">id of the server.</param>
+        /// <returns></returns>
+        /// <response code="200">Returns the requested server object.</response>
+        /// <response code="400">The server with the specified name does not exist.</response>
         [HttpGet]
-        public IActionResult GetFullServer(string serverName)
+        [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+        public IActionResult GetFullServer([FromRoute] long id)
         {
-            if (!serverPark.MCServers.TryGetValue(serverName, out var server))
-                return GetBadRequest($"No server found with name '{serverName}'");
+            var server = serverPark.GetServer(id);
 
-            return Ok(server);
+            var dto = server.ToDTO();
+            return Ok(dto);
         }
 
+
+        /// <summary>
+        /// Deletes a server from the system.
+        /// </summary>
+        /// <param name="id">id of the server</param>
+        /// <returns></returns>
         [HttpDelete]
-        public async Task<IActionResult> DeleteServer(string serverName)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteServer([FromRoute] long id)
         {
             try
             {
                 var user = await GetUserEventData();
-                await serverPark.DeleteServer(serverName, user);
+                await serverPark.DeleteServer(id, user);
                 return Ok();
             }
             catch (Exception e)
@@ -54,11 +71,10 @@ namespace MCWebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> ModifyServer(string serverName, [FromBody] ModifyServerDto dto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
         {
-            if (!serverPark.MCServers.ContainsKey(serverName))
-                return GetBadRequest($"No server found with name '{serverName}'");
-
             if (dto == null || dto.NewName is null)
                 return GetBadRequest("No data has been provided");
 
@@ -66,7 +82,7 @@ namespace MCWebAPI.Controllers
             try
             {
                 var user = await GetUserEventData();
-                await serverPark.RenameServer(serverName, dto.NewName, user);
+                await serverPark.RenameServer(id, dto.NewName, user);
 
                 return Ok();
             }
@@ -79,18 +95,19 @@ namespace MCWebAPI.Controllers
 
 
         [HttpPost("commands")]
-        public IActionResult WriteCommand(string serverName, [FromBody] CommandDto commandDto)
+        public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
         {
-            if (!serverPark.MCServers.ContainsKey(serverName))
-                return GetBadRequest($"No server found with name '{serverName}'");
+            
 
             if (commandDto == null || commandDto.Command is null)
                 return GetBadRequest("No data has been provided");
 
             try
             {
+                var server = serverPark.GetServer(id);
+
                 string command = commandDto.Command;
-                serverPark.MCServers[serverName].WriteCommand(command);
+                server.WriteCommand(command);
                 return Ok();
             }
             catch (Exception e)
@@ -106,15 +123,13 @@ namespace MCWebAPI.Controllers
         /// <param name="serverName">name of the </param>
         /// <returns></returns>
         [HttpPost("toggle")]
-        public async Task<IActionResult> ToggleServer(string serverName)
+        public async Task<IActionResult> ToggleServer([FromRoute] long id)
         {
-            if (!serverPark.MCServers.ContainsKey(serverName))
-                return GetBadRequest($"No server found with name '{serverName}'");
 
             try
             {
                 var user = await GetUserEventData();
-                await serverPark.ToggleServer(serverName, user);
+                await serverPark.ToggleServer(id, user);
                 return Ok();
             }
             catch (Exception e)

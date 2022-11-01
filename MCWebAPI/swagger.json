@@ -56,14 +56,21 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a APIModel.Responses.UserTokenResponse object."
+            "description": "Returns a APIModel.Responses.UserTokenResponse object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserTokenResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "If the user does not exist.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ExceptionDTO"
                 }
               }
             }
@@ -109,7 +116,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ExceptionDTO"
                 }
               }
             }
@@ -153,7 +160,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ExceptionDTO"
                 }
               }
             }
@@ -174,51 +181,61 @@
         ]
       }
     },
-    "/minecraftserver/{serverName}": {
+    "/minecraftserver/{id}": {
       "get": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
+        "summary": "Gets the informations of a server.",
         "parameters": [
           {
-            "name": "serverName",
+            "name": "id",
             "in": "path",
+            "description": "id of the server.",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Returns the requested server object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinecraftServerDTO"
+                }
+              }
+            }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+          "400": {
+            "description": "The server with the specified name does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
+        }
       },
       "delete": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
+        "summary": "Deletes a server from the system.",
         "parameters": [
           {
-            "name": "serverName",
+            "name": "id",
             "in": "path",
+            "description": "id of the server",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -226,31 +243,30 @@
           "200": {
             "description": "Success"
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
+        }
       },
       "put": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
         "parameters": [
           {
-            "name": "serverName",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -267,33 +283,32 @@
           "200": {
             "description": "Success"
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
+        }
       }
     },
-    "/minecraftserver/{serverName}/commands": {
+    "/minecraftserver/{id}/commands": {
       "post": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
         "parameters": [
           {
-            "name": "serverName",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -309,54 +324,32 @@
         "responses": {
           "200": {
             "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
+        }
       }
     },
-    "/minecraftserver/{serverName}/toggle": {
+    "/minecraftserver/{id}/toggle": {
       "post": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": "Toggles the minecraft server on and off. (Auth)",
+        "summary": "Toggles the minecraft server on and off.",
         "parameters": [
           {
-            "name": "serverName",
+            "name": "id",
             "in": "path",
-            "description": "name of the",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
+        }
       }
     },
     "/Permission/{id}/grant": {
@@ -531,6 +524,59 @@
         },
         "additionalProperties": false
       },
+      "ExceptionDTO": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ILogMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "messageType": {
+            "$ref": "#/components/schemas/LogMessageType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IMinecraftPlayer": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "pastOnline": {
+            "$ref": "#/components/schemas/TimeSpan"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogMessageType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "LoginDto": {
         "type": "object",
         "properties": {
@@ -545,6 +591,52 @@
         },
         "additionalProperties": false
       },
+      "MinecraftServerDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logMessages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ILogMessage"
+            },
+            "nullable": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IMinecraftPlayer"
+            },
+            "nullable": true
+          },
+          "storageBytes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
       "ModifyServerDto": {
         "type": "object",
         "properties": {
@@ -555,39 +647,72 @@
         },
         "additionalProperties": false
       },
-      "ProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": { }
-      },
       "ServerCreationDto": {
         "type": "object",
         "properties": {
           "newName": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeSpan": {
+        "type": "object",
+        "properties": {
+          "ticks": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "hours": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "milliseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "seconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "totalDays": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalHours": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMilliseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMinutes": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalSeconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -611,6 +736,16 @@
           "profilePic": {
             "minLength": 1,
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserTokenResponse": {
+        "type": "object",
+        "properties": {
+          "userToken": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

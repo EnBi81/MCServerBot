@@ -4,6 +4,7 @@ using Application.Minecraft.States;
 using Application.DAOs.Database;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
+using Shared.Exceptions;
 
 namespace Application.Minecraft.MinecraftServers
 {
@@ -18,7 +19,7 @@ namespace Application.Minecraft.MinecraftServers
 
 
         /// <inheritdoc/>
-        public ulong Id { get; } 
+        public long Id { get; } 
 
         private string _serverName = null!;
 
@@ -29,7 +30,7 @@ namespace Application.Minecraft.MinecraftServers
             set
             {
                 if (value is null || value.Length < IMinecraftServer.NAME_MIN_LENGTH || value.Length > IMinecraftServer.NAME_MAX_LENGTH)
-                    throw new ArgumentException($"Name length must be between {IMinecraftServer.NAME_MIN_LENGTH} and {IMinecraftServer.NAME_MAX_LENGTH}");
+                    throw new MinecraftServerArgumentException($"Name length must be between {IMinecraftServer.NAME_MIN_LENGTH} and {IMinecraftServer.NAME_MAX_LENGTH}");
 
                 _serverName = value;
                 RaiseEvent(NameChanged, value);
@@ -99,14 +100,16 @@ namespace Application.Minecraft.MinecraftServers
         }
 
 
-        public MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverName, string serverFolderName, MinecraftConfig config) : this(dataAccess, id, serverFolderName, config)
+        public MinecraftServer(IMinecraftDataAccess dataAccess, long id, string serverName, string serverFolderName, MinecraftConfig config) : this(dataAccess, id, serverFolderName, config)
         {
             ServerName = serverName;
         }
 
 
-        private MinecraftServer(IMinecraftDataAccess dataAccess, ulong id, string serverFolderName, MinecraftConfig config)
+        private MinecraftServer(IMinecraftDataAccess dataAccess, long id, string serverFolderName, MinecraftConfig config)
         {
+            _eventRegister = dataAccess;
+
             string serverFileName = serverFolderName + "\\server.jar";
             string serverPropertiesFileName = serverFolderName + "\\server.properties";
             string serverInfoFile = serverFolderName + "\\server.info";
@@ -233,7 +236,7 @@ namespace Application.Minecraft.MinecraftServers
                type.IsInterface ||
                type.GetConstructor(new Type[] { typeof(MinecraftServer) }) == null) //last line: check if T contains a public constructor which takes a MinecraftServer object
             {
-                throw new Exception("Invalid State " + type.FullName);
+                throw new MCInternalException("Invalid State " + type.FullName);
             }
 
 
@@ -241,7 +244,7 @@ namespace Application.Minecraft.MinecraftServers
 
             object? nullableState = Activator.CreateInstance(type, parameters);
             if (nullableState is not IServerState state)
-                throw new Exception($"Error creating {type.FullName}");
+                throw new MCInternalException($"Error creating {type.FullName}");
 
             _serverState = state;
             LogService.GetService<MinecraftLogger>().Log("server", $"Status Change: {_serverState.Status}");

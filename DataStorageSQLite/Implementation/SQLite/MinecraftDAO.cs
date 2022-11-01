@@ -6,7 +6,7 @@ namespace DataStorageSQLite.Implementations.SQLite
 {
     internal class MinecraftDAO : BaseSQLiteController, IMinecraftDataAccess
     {
-        public void AddMeasurement(ulong serverId, double cpu, long memory)
+        public void AddMeasurement(long serverId, double cpu, long memory)
         {
             using var conn = CreateOpenConnection;
 
@@ -20,13 +20,13 @@ namespace DataStorageSQLite.Implementations.SQLite
             cmd.ExecuteNonQuery();
         }
 
-        public void PlayerJoined(ulong serverId, string username) =>
+        public void PlayerJoined(long serverId, string username) =>
             InsertIntoMcPlayerEvent(serverId, username, PlayerEventType.Joined);
 
-        public void PlayerLeft(ulong serverId, string username) =>
+        public void PlayerLeft(long serverId, string username) =>
             InsertIntoMcPlayerEvent(serverId, username, PlayerEventType.Left);
 
-        private void InsertIntoMcPlayerEvent(ulong serverId, string username, PlayerEventType eventType)
+        private void InsertIntoMcPlayerEvent(long serverId, string username, PlayerEventType eventType)
         {
             long playerId = GetPlayerId(username);
 
@@ -67,7 +67,7 @@ namespace DataStorageSQLite.Implementations.SQLite
             return conn.LastInsertRowId;
         }
 
-        public void SetDiskSize(ulong serverId, long diskSize)
+        public void SetDiskSize(long serverId, long diskSize)
         {
             using var conn = CreateOpenConnection;
 

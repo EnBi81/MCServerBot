@@ -2,7 +2,6 @@
 using Loggers;
 using MCWebAPI.Controllers.Utils;
 using MCWebAPI.WebSocketHandler;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebAPI.Controllers

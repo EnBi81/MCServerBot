@@ -50,7 +50,7 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<string, IMinecraftServer> MCServers
+        public IReadOnlyDictionary<long, IMinecraftServer> MCServers
         { 
             get 
             { 
@@ -200,33 +200,33 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> DeleteServer(string name, UserEventData user)
+        public async Task<IMinecraftServer> DeleteServer(long id, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
-            var server = await _serverPark.DeleteServer(name, user);
+            var server = await _serverPark.DeleteServer(id, user);
             await _serverParkEventRegister.DeleteServer(server.Id, user);
 
             return server;
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> RenameServer(string oldName, string newName, UserEventData user)
+        public async Task<IMinecraftServer> RenameServer(long id, string newName, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
-            var server = await _serverPark.RenameServer(oldName, newName, user);
+            var server = await _serverPark.RenameServer(id, newName, user);
             await _serverParkEventRegister.RenameServer(server.Id, newName, user);
 
             return server;
         }
 
         /// <inheritdoc/>
-        public async Task StartServer(string serverName, UserEventData user)
+        public async Task StartServer(long id, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
-            await _serverPark.StartServer(serverName, user);
+            await _serverPark.StartServer(id, user);
 
             var server = ActiveServer;
             await _serverParkEventRegister.StartServer(server!.Id, user);
@@ -244,19 +244,25 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public async Task ToggleServer(string serverName, UserEventData user)
+        public async Task ToggleServer(long id, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
             bool isRunning = ActiveServer?.IsRunning ?? false;
 
-            await _serverPark.ToggleServer(serverName, user);
+            await _serverPark.ToggleServer(id, user);
 
             var server = ActiveServer;
             if (isRunning)
                 await _serverParkEventRegister.StopServer(server!.Id, user);
             else
                 await _serverParkEventRegister.StartServer(server!.Id, user);
+        }
+
+        public IMinecraftServer GetServer(long id)
+        {
+            ThrowExceptionIfNotInitialized();
+            return _serverPark.GetServer(id);
         }
     }
 }

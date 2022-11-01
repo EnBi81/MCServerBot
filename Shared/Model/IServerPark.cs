@@ -23,14 +23,22 @@ namespace Shared.Model
         /// <summary>
         /// Readonly collection of the minecraft servers
         /// </summary>
-        public IReadOnlyDictionary<string, IMinecraftServer> MCServers { get; }
+        public IReadOnlyDictionary<long, IMinecraftServer> MCServers { get; }
 
+
+        /// <summary>
+        /// Gets a server by id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception">If the server does not exist.</exception>
+        public IMinecraftServer GetServer(long id);
 
         /// <summary>
         /// Start the active server.
         /// </summary>
         /// <param name="user">user who initiated the start</param>
-        public Task StartServer(string serverName, UserEventData user);
+        public Task StartServer(long id, UserEventData user);
 
         /// <summary>
         /// Stop the active server.
@@ -44,7 +52,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="serverName">server to toggle</param>
         /// <param name="user">user who initiated this action</param>
-        public Task ToggleServer(string serverName, UserEventData user);
+        public Task ToggleServer(long id, UserEventData user);
 
 
         /// <summary>
@@ -52,7 +60,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public Task<IMinecraftServer> CreateServer(string serverName, UserEventData user);
+        public Task<IMinecraftServer> CreateServer(string name, UserEventData user);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -62,14 +70,14 @@ namespace Shared.Model
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public Task<IMinecraftServer> RenameServer(string oldName, string newName, UserEventData user);
+        public Task<IMinecraftServer> RenameServer(long id, string newName, UserEventData user);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public Task<IMinecraftServer> DeleteServer(string name, UserEventData user);
+        public Task<IMinecraftServer> DeleteServer(long id, UserEventData user);
 
 
 

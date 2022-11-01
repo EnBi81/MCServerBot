@@ -14,7 +14,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <summary>
         /// Id of the server.
         /// </summary>
-        public ulong Id { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
         /// Name of the server.

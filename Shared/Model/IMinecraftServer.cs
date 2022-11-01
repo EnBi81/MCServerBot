@@ -18,7 +18,7 @@ namespace Shared.Model
         /// <summary>
         /// Id number, unique for a minecraft server.
         /// </summary>
-        public ulong Id { get; }
+        public long Id { get; }
 
         /// <summary>
         /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.

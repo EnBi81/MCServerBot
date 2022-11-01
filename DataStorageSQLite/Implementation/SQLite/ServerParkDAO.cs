@@ -8,7 +8,7 @@ namespace DataStorageSQLite.Implementations.SQLite
     internal class ServerParkDAO : BaseSQLiteController, IServerParkDataAccess
     {
         /// <inheritdoc/>
-        public async Task<string?> GetServerName(ulong serverId)
+        public async Task<string?> GetServerName(long serverId)
         {
             using var conn = CreateOpenConnection;
 
@@ -24,7 +24,7 @@ namespace DataStorageSQLite.Implementations.SQLite
         }
 
         /// <inheritdoc/>
-        public async Task CreateServer(ulong serverId, string serverName, UserEventData userEventData)
+        public async Task CreateServer(long serverId, string serverName, UserEventData userEventData)
         {
             using var conn = CreateOpenConnection;
 
@@ -38,11 +38,11 @@ namespace DataStorageSQLite.Implementations.SQLite
         }
 
         /// <inheritdoc/>
-        public Task DeleteServer(ulong serverId, UserEventData userEventData) =>
+        public Task DeleteServer(long serverId, UserEventData userEventData) =>
             RenameServer(serverId, null, userEventData);
 
         /// <inheritdoc/>
-        public async Task RenameServer(ulong serverId, string? newName, UserEventData userEventData)
+        public async Task RenameServer(long serverId, string? newName, UserEventData userEventData)
         {
             var eventId = await CreateUserEvent(userEventData.Id, userEventData.Platform, UserEventType.ServerNameChange);
 
@@ -58,7 +58,7 @@ namespace DataStorageSQLite.Implementations.SQLite
         }
 
         /// <inheritdoc/>
-        public async Task<ulong> GetMaxServerId()
+        public async Task<long> GetMaxServerId()
         {
             using var conn = CreateOpenConnection;
 
@@ -67,15 +67,15 @@ namespace DataStorageSQLite.Implementations.SQLite
 
             object? res = await cmd.ExecuteScalarAsync();
 
-            return res is ulong num ? num : 0;
+            return res is long num ? num : 0;
         }
 
         /// <inheritdoc/>
-        public async Task StartServer(ulong serverId, UserEventData userEventData) =>
+        public async Task StartServer(long serverId, UserEventData userEventData) =>
             await InsertIntoServerStatus(serverId, ServerStatus.Start, userEventData);
 
         /// <inheritdoc/>
-        public async Task StopServer(ulong serverId, UserEventData userEventData) =>
+        public async Task StopServer(long serverId, UserEventData userEventData) =>
             await InsertIntoServerStatus(serverId, ServerStatus.Stop, userEventData);
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace DataStorageSQLite.Implementations.SQLite
         /// <param name="status">status of the server-</param>
         /// <param name="userEventData">user event data.</param>
         /// <returns></returns>
-        private async Task InsertIntoServerStatus(ulong serverId, ServerStatus status, UserEventData userEventData)
+        private async Task InsertIntoServerStatus(long serverId, ServerStatus status, UserEventData userEventData)
         {
             var eventId = await CreateUserEvent(userEventData.Id, userEventData.Platform, UserEventType.ServerStatusChange);
 
