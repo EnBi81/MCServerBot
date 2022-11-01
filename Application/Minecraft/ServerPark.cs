@@ -189,7 +189,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> CreateServer(string serverName, UserEventData user)
+        public async Task<IMinecraftServer> CreateServer(string? serverName, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
@@ -211,7 +211,7 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> RenameServer(long id, string newName, UserEventData user)
+        public async Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 

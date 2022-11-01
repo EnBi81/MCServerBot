@@ -163,9 +163,9 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> CreateServer(string serverName, UserEventData user)
+        public Task<IMinecraftServer> CreateServer(string? serverName, UserEventData user)
         {
-            CreateServerCheck(serverName);
+            CreateServerCheck(ref serverName);
 
             long newServerId = _serverIdCounter++;
 
@@ -173,7 +173,7 @@ namespace Application.Minecraft
             Directory.CreateDirectory(destDir);
             FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
-            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, newServerId, serverName, destDir, _config);
+            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, newServerId, serverName!, destDir, _config);
             RegisterMcServer(mcServer);
 
             return Task.FromResult((IMinecraftServer)mcServer);
@@ -181,9 +181,9 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> RenameServer(long id, string newName, UserEventData user)
+        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user)
         {
-            ValidateNameLength(newName);
+            ValidateNameLength(ref newName!);
 
             ThrowIfServerNotExists(id);
             ThrowIfServerRunning(id);
@@ -232,8 +232,13 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="name">name to check</param>
         /// <exception cref="Exception">if the name is not valid.</exception>
-        private static void ValidateNameLength(string name)
+        private static void ValidateNameLength(ref string? name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new MinecraftServerArgumentException("server name must not be null or white space");
+
+            name = name.Trim();
+
             if (!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
                 throw new ServerParkException($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
         }
@@ -277,9 +282,9 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="serverName"></param>
         /// <exception cref="Exception">If the server cannot be created.</exception>
-        private void CreateServerCheck(string serverName)
+        private void CreateServerCheck(ref string? serverName)
         {
-            ValidateNameLength(serverName);
+            ValidateNameLength(ref serverName!);
 
             if (ServerNameExist(serverName))
                 throw new ServerParkException($"The name {serverName} is already taken");

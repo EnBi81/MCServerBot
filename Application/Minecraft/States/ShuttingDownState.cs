@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.MinecraftServers;
+using Shared.Exceptions;
 using Shared.Model;
 
 namespace Application.Minecraft.States
@@ -42,12 +43,12 @@ namespace Application.Minecraft.States
 
 
         public override void Start(string username) =>
-            throw new Exception($"Please wait till {_server.ServerName} has shut down!");
+            throw new MinecraftServerException($"Please wait till {_server.ServerName} has shut down!");
 
         public override void Stop(string username) =>
-            throw new Exception($"{_server.ServerName} is shutting down!");
+            throw new MinecraftServerException($"{_server.ServerName} is shutting down!");
 
-        public override void WriteCommand(string command, string username) =>
-            throw new Exception(_server.ServerName + " is not online!");
+        public override void WriteCommand(string? command, string username) =>
+            throw new MinecraftServerException(_server.ServerName + " is not online!");
     }
 }

@@ -36,14 +36,17 @@ namespace MCWebAPI.Controllers
         /// <returns>A <see cref="UserTokenResponse"/> object.</returns>
         /// <response code="200">Returns a <see cref="UserTokenResponse"/> object.</response>
         /// <response code="400">If the user does not exist.</response>
-        [HttpGet("token/{id:ulong}")]
+        [HttpGet("token/{id:regex(\\d{{18}})}")]
         [ProducesResponseType(typeof(UserTokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetWebAccessToken([FromRoute] ulong id)
+        public async Task<IActionResult> GetWebAccessToken([FromRoute] string id)
         {
             try
             {
-                string token = await permissionLogic.GetToken(id);
+                if (!ulong.TryParse(id, out ulong userId))
+                    throw new Exception("id must be a number.");
+
+                string token = await permissionLogic.GetToken(userId);
                 var userTokenResponse = new UserTokenResponse { UserToken = token };
                 return Ok(userTokenResponse);
             }

@@ -4,6 +4,7 @@ using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 using Application.Minecraft.MinecraftServers;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
+using Shared.Exceptions;
 
 namespace Application.Minecraft.States
 {
@@ -82,7 +83,7 @@ namespace Application.Minecraft.States
         /// <param name="username"></param>
         /// <exception cref="Exception"></exception>
         public override void Start(string username) =>
-            throw new Exception(_server.ServerName + " is already running!");
+            throw new MinecraftServerException(_server.ServerName + " is already running!");
 
         /// <summary>
         /// Stops the server by writing stop to the server process window.
@@ -99,8 +100,11 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="command"></param>
         /// <param name="username"></param>
-        public override void WriteCommand(string command, string username)
+        public override void WriteCommand(string? command, string username)
         {
+            if (string.IsNullOrWhiteSpace(command))
+                throw new MinecraftServerArgumentException(nameof(command) + " command must not be null or empty.");
+
             _server.McServerProcess.WriteToStandardInput(command);
             var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessageType.User_Message);
             _server.AddLog(logMess);

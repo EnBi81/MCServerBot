@@ -2,7 +2,6 @@
 using APIModel.DTOs;
 using APIModel.Responses;
 using MCWebAPI.Controllers.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
 
@@ -42,7 +41,6 @@ namespace MCWebAPI.Controllers
         public IActionResult GetFullServer([FromRoute] long id)
         {
             var server = serverPark.GetServer(id);
-
             var dto = server.ToDTO();
             return Ok(dto);
         }
@@ -58,16 +56,9 @@ namespace MCWebAPI.Controllers
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteServer([FromRoute] long id)
         {
-            try
-            {
-                var user = await GetUserEventData();
-                await serverPark.DeleteServer(id, user);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            var user = await GetUserEventData();
+            await serverPark.DeleteServer(id, user);
+            return Ok();
         }
 
         [HttpPut]
@@ -75,21 +66,10 @@ namespace MCWebAPI.Controllers
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
         {
-            if (dto == null || dto.NewName is null)
-                return GetBadRequest("No data has been provided");
+            var user = await GetUserEventData();
+            await serverPark.RenameServer(id, dto?.NewName, user);
 
-
-            try
-            {
-                var user = await GetUserEventData();
-                await serverPark.RenameServer(id, dto.NewName, user);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            return Ok();
         }
 
 
@@ -97,23 +77,11 @@ namespace MCWebAPI.Controllers
         [HttpPost("commands")]
         public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
         {
-            
+            var server = serverPark.GetServer(id);
 
-            if (commandDto == null || commandDto.Command is null)
-                return GetBadRequest("No data has been provided");
-
-            try
-            {
-                var server = serverPark.GetServer(id);
-
-                string command = commandDto.Command;
-                server.WriteCommand(command);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            string? command = commandDto?.Command;
+            server.WriteCommand(command);
+            return Ok();
         }
 
 
@@ -125,17 +93,9 @@ namespace MCWebAPI.Controllers
         [HttpPost("toggle")]
         public async Task<IActionResult> ToggleServer([FromRoute] long id)
         {
-
-            try
-            {
-                var user = await GetUserEventData();
-                await serverPark.ToggleServer(id, user);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            var user = await GetUserEventData();
+            await serverPark.ToggleServer(id, user);
+            return Ok();
         }
     }
 }

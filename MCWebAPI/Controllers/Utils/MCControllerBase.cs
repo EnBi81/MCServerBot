@@ -10,9 +10,9 @@ namespace MCWebAPI.Controllers.Utils
 {
     public class MCControllerBase : ControllerBase
     {
-        public ulong ClaimUserId => ulong.Parse(User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Sid)).Value);
-        public string ClaimUserName => User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Name)).Value;
-        public Platform ClaimPlatform => Enum.Parse<Platform>(User.Claims.First(claim => claim.Type.Equals("Platform")).Value);
+        protected ulong ClaimUserId => ulong.Parse(User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Sid)).Value);
+        protected string ClaimUserName => User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Name)).Value;
+        protected Platform ClaimPlatform => Enum.Parse<Platform>(User.Claims.First(claim => claim.Type.Equals("Platform")).Value);
 
 
         protected IActionResult GetBadRequest(string message)

@@ -36,6 +36,6 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="command"></param>
         /// <param name="username"></param>
-        public void WriteCommand(string command, string username);
+        public void WriteCommand(string? command, string username);
     }
 }

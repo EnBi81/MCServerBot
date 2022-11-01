@@ -182,7 +182,7 @@ namespace Application.Minecraft.MinecraftServers
             _serverState.Start(user);
 
         /// <inheritdoc/>
-        public void WriteCommand(string command, string user = "Admin") =>
+        public void WriteCommand(string? command, string user = "Admin") =>
             _serverState.WriteCommand(command, user);
 
         /// <inheritdoc/>

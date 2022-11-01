@@ -19,13 +19,16 @@ namespace MCWebAPI.Controllers
         }
 
 
-        [HttpPost("{id:ulong}/grant")]
-        public async Task<IActionResult> GrantPermission([FromRoute] ulong id)
+        [HttpPost("{id:regex(\\d{{18}})}/grant")]
+        public async Task<IActionResult> GrantPermission([FromRoute] string id)
         {
             try
             {
+                if (!ulong.TryParse(id, out ulong userId))
+                    throw new Exception("id must be a number.");
+
                 UserEventData userEventData = await GetUserEventData();
-                await _permissionLogic.GrantPermission(id, userEventData);
+                await _permissionLogic.GrantPermission(userId, userEventData);
                 return Ok();
             }
             catch (Exception e)
@@ -34,13 +37,16 @@ namespace MCWebAPI.Controllers
             }
         }
 
-        [HttpPost("{id:ulong}/revoke")]
-        public async Task<IActionResult> RevokePermission([FromRoute] ulong id)
+        [HttpPost("{id:regex(\\d{{18}})}/revoke")]
+        public async Task<IActionResult> RevokePermission([FromRoute] string id)
         {
             try
             {
+                if (!ulong.TryParse(id, out ulong userId))
+                    throw new Exception("id must be a number.");
+
                 UserEventData userEventData = await GetUserEventData();
-                await _permissionLogic.RevokePermission(id, userEventData);
+                await _permissionLogic.RevokePermission(userId, userEventData);
                 return Ok();
             }
             catch (Exception e)

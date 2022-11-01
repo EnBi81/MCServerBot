@@ -3,11 +3,11 @@ using Shared.Exceptions;
 
 namespace MCWebAPI.Middlewares
 {
-    internal class ExceptionHandlerMiddleware
+    internal class MCExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+        public MCExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }

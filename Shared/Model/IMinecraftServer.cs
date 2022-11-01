@@ -87,7 +87,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="command">command to send to the minecraft server.</param>
         /// <param name="user">username of the user who sends the command.</param>
-        public void WriteCommand(string command, string user = "Admin");
+        public void WriteCommand(string? command, string user = "Admin");
 
         /// <summary>
         /// Shuts down the minecraft server if it is online.

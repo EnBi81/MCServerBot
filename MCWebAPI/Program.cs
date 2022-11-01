@@ -5,6 +5,7 @@ using DataStorageSQLite.Implementation;
 using Loggers;
 using MCWebAPI;
 using MCWebAPI.Auth;
+using MCWebAPI.Middlewares;
 using MCWebAPI.WebSocketHandler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -116,5 +117,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<MCExceptionHandlerMiddleware>();
 
 app.Run();

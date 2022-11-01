@@ -4,6 +4,7 @@ using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 using Application.Minecraft.MinecraftServers;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
+using Shared.Exceptions;
 
 namespace Application.Minecraft.States
 {
@@ -63,7 +64,7 @@ namespace Application.Minecraft.States
         /// <param name="username">username of the very intelligent user who tried to stop an offline server.</param>
         /// <exception cref="Exception">Always is thrown because yeah, the serve is offline.</exception>
         public override void Stop(string username) => // like who would want to stop a server when it's offline lol.
-            throw new Exception(_server.ServerName + " is already offline!");
+            throw new MinecraftServerException(_server.ServerName + " is already offline!");
 
         /// <summary>
         /// Throws exception as the server is offline.
@@ -71,7 +72,7 @@ namespace Application.Minecraft.States
         /// <param name="command">This parameter is ignored-</param>
         /// <param name="username">This parameter is also ignored</param>
         /// <exception cref="Exception">This is thrown always.</exception>
-        public override void WriteCommand(string command, string username) =>
-            throw new Exception(_server.ServerName +  " is not online!");
+        public override void WriteCommand(string? command, string username) =>
+            throw new MinecraftServerException(_server.ServerName +  " is not online!");
     }
 }

@@ -49,21 +49,10 @@ namespace MCWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateServer([FromBody] ServerCreationDto data)
         {
-            if (data == null || data.NewName is null)
-                return GetBadRequest("No data provided in the body.");
+            var user = await GetUserEventData();
 
-            try
-            {
-                string name = data.NewName;
-                var user = await GetUserEventData();
-
-                IMinecraftServer server = await serverPark.CreateServer(name, user);
-                return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            IMinecraftServer server = await serverPark.CreateServer(data?.NewName, user);
+            return CreatedAtRoute("/api/v1/minecraftserver/" + server.ServerName, server);
         }
 
         [HttpGet("running")]

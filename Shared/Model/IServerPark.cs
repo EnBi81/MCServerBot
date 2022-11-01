@@ -60,7 +60,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public Task<IMinecraftServer> CreateServer(string name, UserEventData user);
+        public Task<IMinecraftServer> CreateServer(string? name, UserEventData user);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -70,7 +70,7 @@ namespace Shared.Model
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public Task<IMinecraftServer> RenameServer(long id, string newName, UserEventData user);
+        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.

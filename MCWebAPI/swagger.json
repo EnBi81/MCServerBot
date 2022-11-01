@@ -49,8 +49,8 @@
             "description": "Discord Id of the user.",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "pattern": "\\d{18}",
+              "type": "string"
             }
           }
         ],
@@ -364,8 +364,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "pattern": "\\d{18}",
+              "type": "string"
             }
           }
         ],
@@ -399,8 +399,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "pattern": "\\d{18}",
+              "type": "string"
             }
           }
         ],
