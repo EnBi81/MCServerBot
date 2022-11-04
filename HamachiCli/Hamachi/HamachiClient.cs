@@ -1,7 +1,7 @@
 ﻿using Loggers;
 using System.Text.RegularExpressions;
 
-namespace HamachiHelper
+namespace HamachiCli
 {
     /// <summary>
     /// Retrieves information from the Hamachi client.
@@ -12,7 +12,7 @@ namespace HamachiHelper
             HamachiProcess.Setup(hamachiWorkingDir);
 
 
-
+        private static HamachiLogger _logger = LogService.GetService<HamachiLogger>();
 
         private static string? _address = null;
         /// <summary>
@@ -28,7 +28,7 @@ namespace HamachiHelper
         /// <returns>A <see cref="HamachiStatus"/> object containing the information.</returns>
         public static HamachiStatus GetStatus()
         {
-            LogService.GetService<HamachiLogger>().Log("Getting Hamachi Status");
+            _logger.Log("Getting Hamachi Status");
 
             var data = HamachiProcess.RequestData(null);
 
@@ -49,14 +49,14 @@ namespace HamachiHelper
                 }
             }
 
-            HamachiStatus hamachiStatus = new HamachiStatus()
+            HamachiStatus hamachiStatus = new ()
             {
                 Online = status?.Equals("logged in") ?? false,
                 Address = address ?? "Unknown",
                 NickName = nickname ?? "Unknown",
             };
 
-            LogService.GetService<HamachiLogger>().Log($"Returning Hamachi Status: (online: {hamachiStatus.Online}," +
+            _logger.Log($"Returning Hamachi Status: (online: {hamachiStatus.Online}," +
                 $" address: {hamachiStatus.Address}, nickname: {hamachiStatus.NickName})");
 
             return hamachiStatus;
@@ -68,9 +68,9 @@ namespace HamachiHelper
         /// <returns>the text hamachi returned.</returns>
         public static string LogOn()
         {
-            LogService.GetService<HamachiLogger>().Log("Logging on");
+            _logger.Log("Logging on");
             var data = HamachiProcess.RequestData("logon");
-            LogService.GetService<HamachiLogger>().Log(data[0]);
+            _logger.Log(data[0]);
             return data[0];
         }
 
@@ -80,9 +80,9 @@ namespace HamachiHelper
         /// <returns>the text hamachi returned.</returns>
         public static string LogOff()
         {
-            LogService.GetService<HamachiLogger>().Log("Logging off");
+            _logger.Log("Logging off");
             var data = HamachiProcess.RequestData("logoff");
-            LogService.GetService<HamachiLogger>().Log(data[0]);
+            _logger.Log(data[0]);
             return data[0];
         }
     }

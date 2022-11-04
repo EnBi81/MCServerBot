@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Loggers\Loggers.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

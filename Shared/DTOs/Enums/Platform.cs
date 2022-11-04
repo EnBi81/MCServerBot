@@ -4,5 +4,6 @@
     {
         Discord = 1,
         Website = 2,
+        SystemAdmin = 10000
     }
 }

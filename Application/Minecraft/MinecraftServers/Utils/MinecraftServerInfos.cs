@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Shared.Model;
 
-namespace Application.Minecraft.MinecraftServers
+namespace Application.Minecraft.MinecraftServers.Utils
 {
     /// <summary>
     /// Minecraft server info collection. This class is responsible for saving and retrieving data of a minecraft server from a file.
@@ -40,7 +40,7 @@ namespace Application.Minecraft.MinecraftServers
             _filename = filename;
         }
 
-        
+
         /// <summary>
         /// Saves information of a server into the server info file.
         /// </summary>
@@ -61,7 +61,7 @@ namespace Application.Minecraft.MinecraftServers
         public void Load()
         {
             string json = File.ReadAllText(_filename);
-            JsonSerializerSettings settings = new ()
+            JsonSerializerSettings settings = new()
             {
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
             };

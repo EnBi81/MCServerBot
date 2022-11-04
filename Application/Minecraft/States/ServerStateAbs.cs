@@ -5,8 +5,8 @@ namespace Application.Minecraft.States
 {
     internal abstract class ServerStateAbs : IServerState
     {
-        protected readonly MinecraftServer _server;
-        public ServerStateAbs(MinecraftServer server)
+        protected readonly MinecraftServerLogic _server;
+        public ServerStateAbs(MinecraftServerLogic server)
         {
             _server = server;
         }

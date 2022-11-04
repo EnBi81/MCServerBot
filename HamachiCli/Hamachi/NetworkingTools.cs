@@ -1,15 +1,19 @@
 ﻿using Loggers;
+using Loggers.Loggers;
+using Shared.Exceptions;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 
-namespace HamachiHelper
+namespace HamachiCli
 {
     /// <summary>
     /// Tools for networking part
     /// </summary>
     public static class NetworkingTools
     {
+        private static NetworkLogger _logger = LogService.GetService<NetworkLogger>();
+
 
         /// <summary>
         /// Checks if the networking is okay.
@@ -26,21 +30,19 @@ namespace HamachiHelper
         /// <returns>the local ip address if found, else null</returns>
         public static string GetLocalIp()
         {
-            LogService.GetService<NetworkLogger>().Log("Getting Local Ip");
+            _logger.Log("Getting Local Ip");
 
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != HamachiClient.Address)
                 {
-                    LogService.GetService<NetworkLogger>().Log("Local Ip Found: " + ip.ToString());
+                    _logger.Log("Local Ip Found: " + ip.ToString());
                     return ip.ToString();
                 }
             }
 
-            LogService.GetService<NetworkLogger>().LogFatal("No network adapters with an IPv4 address in the system!");
-
-            return null;
+            throw new MCInternalException("No network adapters with an IPv4 address in the system!");
         }
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace HamachiHelper
         /// <returns>true if the computer is connected to the internet, else false</returns>
         public static bool CheckForInternetConnection()
         {
-            LogService.GetService<NetworkLogger>().Log("Checking internet connection.");
+            _logger.Log("Checking internet connection.");
 
             try
             {
@@ -66,7 +68,7 @@ namespace HamachiHelper
                 client.BaseAddress = new Uri(url);
                 
                 using var response = client.Send(new HttpRequestMessage());
-                LogService.GetService<NetworkLogger>().Log("Connected to Internet");
+                _logger.Log("Connected to Internet");
 
                 return true;
             }
@@ -75,7 +77,7 @@ namespace HamachiHelper
 
             }
 
-            LogService.GetService<NetworkLogger>().Log("No Internet Connection.");
+            _logger.Log("No Internet Connection.");
             return false;
         }
     }

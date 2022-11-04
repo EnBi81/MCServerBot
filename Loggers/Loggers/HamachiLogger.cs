@@ -1,11 +1,13 @@
-﻿namespace Loggers
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Loggers
 {
     public class HamachiLogger : Logger
     {
-        public void Log(string message)
-        {
-            var log = $"[{CurrentTime}] Hamachi: {message}";
-            WriteLog(log, System.ConsoleColor.Cyan);
-        }
+        public void Log(string message) => AddLog("hamachi", message, ConsoleColor.Cyan);
     }
 }

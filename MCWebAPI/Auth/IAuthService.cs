@@ -1,5 +1,4 @@
-﻿using Discord;
-using Shared.DTOs;
+﻿using Shared.DTOs;
 
 namespace MCWebAPI.Auth
 {

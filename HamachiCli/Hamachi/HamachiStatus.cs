@@ -1,4 +1,4 @@
-﻿namespace HamachiHelper
+﻿namespace HamachiCli
 {
     /// <summary>
     /// Data class for representing Hamachi Status

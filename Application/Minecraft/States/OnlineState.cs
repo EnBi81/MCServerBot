@@ -19,7 +19,7 @@ namespace Application.Minecraft.States
         /// Initializes the Online state, and does the online state routine.
         /// </summary>
         /// <param name="server"></param>
-        public OnlineState(MinecraftServer server) : base(server)
+        public OnlineState(MinecraftServerLogic server) : base(server)
         {
             _server.OnlineFrom = DateTime.Now;
         }
@@ -91,7 +91,6 @@ namespace Application.Minecraft.States
         /// <param name="username"></param>
         public override void Stop(string username)
         {
-            LogService.GetService<MinecraftLogger>().Log("server", $"Shutdown request by: " + username);
             WriteCommand("stop", username);
         }
 

@@ -15,7 +15,7 @@ namespace Application.Minecraft.States
         /// Initializes the Shutting Down state, and does the routine
         /// </summary>
         /// <param name="server"></param>
-        public ShuttingDownState(MinecraftServer server) : base(server)
+        public ShuttingDownState(MinecraftServerLogic server) : base(server)
         {
             foreach (var player in ((IMinecraftServer)server).OnlinePlayers)
             {

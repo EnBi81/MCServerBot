@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 
-namespace Application.Minecraft.MinecraftServers
+namespace Application.Minecraft.MinecraftServers.Utils
 {
     /// <summary>
     /// Class managing the properties file for a minecraft server.
@@ -28,7 +28,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <param name="props">instance to save</param>
         public static void SaveProperties(string file, MinecraftServerProperties props)
         {
-            StringBuilder sb = new ();
+            StringBuilder sb = new();
             foreach (var (key, value) in props)
                 sb.AppendLine(key + "=" + value.ToString());
 
@@ -47,7 +47,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <param name="lines"></param>
         public MinecraftServerProperties(IEnumerable<string> lines)
         {
-            Regex regex = new ("[^=]=[^=]");
+            Regex regex = new("[^=]=[^=]");
             foreach (var line in lines)
             {
                 if (!regex.IsMatch(line))
@@ -69,7 +69,7 @@ namespace Application.Minecraft.MinecraftServers
         }
 
         /// <inheritdoc/>
-        public Dictionary<string, string>.Enumerator GetEnumerator() 
+        public Dictionary<string, string>.Enumerator GetEnumerator()
             => Properties.GetEnumerator();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace HamachiHelper
+namespace HamachiCli
 {
     /// <summary>
     /// Low level process handling for Hamachi.

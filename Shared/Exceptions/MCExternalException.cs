@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Shared.Exceptions
 {
-    public class MinecraftServerException : MCExternalException
+    public class MCExternalException : MCException
     {
-        public MinecraftServerException(string? message = null) : base(message) { }
+        public MCExternalException(string? message) : base(message) { }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Exceptions
 {
-    public class ServerParkException : MCException
+    public class ServerParkException : MCExternalException
     {
         public ServerParkException(string? message = null) : base(message) { }
     }

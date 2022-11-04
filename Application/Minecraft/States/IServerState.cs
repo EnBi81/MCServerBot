@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Shared.Model;
+using Shared.Exceptions;
 
 namespace Application.Minecraft.States
 {
@@ -20,11 +21,13 @@ namespace Application.Minecraft.States
         /// Starts the server process if the server is offline.
         /// </summary>
         /// <param name="username"></param>
+        /// <exception cref="MinecraftServerException">If the server is not Offline.</exception>
         public void Start(string username);
         /// <summary>
         /// Stops the server if the server is online.
         /// </summary>
         /// <param name="username"></param>
+        /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
         public void Stop(string username);
         /// <summary>
         /// Handles a log message, extracts data of it and calls events based on it.
@@ -36,6 +39,7 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="command"></param>
         /// <param name="username"></param>
+        /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
         public void WriteCommand(string? command, string username);
     }
 }

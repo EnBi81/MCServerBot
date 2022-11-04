@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,5 +37,12 @@ namespace Application.DAOs.Database
         /// <param name="serverId">server id the player left.</param>
         /// <param name="username">player's username.</param>
         void PlayerLeft(long serverId, string username);
+        /// <summary>
+        /// Registers a command written by a user.
+        /// </summary>
+        /// <param name="serverId">id of the server the command was written</param>
+        /// <param name="command">the command</param>
+        /// <param name="userEventData">user event data</param>
+        void WriteCommand(long serverId, string command, UserEventData userEventData);
     }
 }

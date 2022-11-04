@@ -17,12 +17,7 @@ namespace DataStorageTest.Tests
 
 
         private IServerParkDataAccess serverParkDataAccess = null!;
-        private static UserEventData Data = new UserEventData
-        {
-            Id = 1,
-            Username = "System",
-            Platform = Platform.Discord
-        };
+        private static UserEventData Data = default;
 
 
         [TestInitialize]

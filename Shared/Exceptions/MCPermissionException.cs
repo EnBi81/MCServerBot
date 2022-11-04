@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Shared.Exceptions
 {
-    public class MinecraftServerException : MCExternalException
+    public class MCPermissionException : MCExternalException
     {
-        public MinecraftServerException(string? message = null) : base(message) { }
+        public MCPermissionException(string? message = null) : base(message) { }
     }
 }

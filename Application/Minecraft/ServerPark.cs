@@ -1,7 +1,9 @@
 ﻿using Application.DAOs;
 using Application.DAOs.Database;
+using Loggers;
 using Shared.DTOs;
 using Shared.EventHandlers;
+using Shared.Exceptions;
 using Shared.Model;
 
 namespace Application.Minecraft
@@ -13,14 +15,26 @@ namespace Application.Minecraft
     {
         private readonly IServerParkDataAccess _serverParkEventRegister;
         private readonly ServerParkLogic _serverPark;
+        private readonly MinecraftLogger _logger;
 
         private bool _initialized = false;
 
-        public ServerPark(IDatabaseAccess databaseAccess, MinecraftConfig config)
+        public ServerPark(IDatabaseAccess databaseAccess, MinecraftConfig config, MinecraftLogger logger)
         {
             _serverParkEventRegister = databaseAccess.ServerParkDataAccess;
-            _serverPark = new ServerParkLogic(databaseAccess, config);
+            _logger = logger;
+
+            try
+            {
+                _serverPark = new ServerParkLogic(databaseAccess, config, logger);
+            }
+            catch(Exception e)
+            {
+                logger.Error(logger.ServerPark, e);
+                throw;
+            }
         }
+
 
         /// <inheritdoc/>
         public async Task InitializeAsync()
@@ -36,7 +50,7 @@ namespace Application.Minecraft
         private void ThrowExceptionIfNotInitialized()
         {
             if (!_initialized)
-                throw new Exception("ServerPark not initialized!");
+                throw new MCInternalException("ServerPark not initialized!");
         }
 
         /// <inheritdoc/>
@@ -74,7 +88,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange
+        public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
         {
             add 
             {
@@ -88,7 +102,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<ILogMessage>> ActiveServerLogReceived
+        public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived
         {
             add 
             {
@@ -102,7 +116,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined
+        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined
         {
             add 
             {
@@ -116,7 +130,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft
+        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft
         {
             add 
             {
@@ -130,7 +144,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured
+        public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured
         {
             add
             {
@@ -144,7 +158,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged
+        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged
         {
             add 
             {

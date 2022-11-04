@@ -1,1 +1,6 @@
 ﻿GET https://localhost:443/minecraftserver/1
+
+
+###
+
+GET http://api.positionstack.com/v1/forward?access_key=7a05b023ffaf3864eb2d6f859a946876&query=Lilli%20Gyldenkildes%20Torv%201%2C%20Horsens&country=dk

@@ -3,6 +3,7 @@ using Application.Minecraft;
 using Application.Permissions;
 using DataStorageSQLite.Implementation;
 using Loggers;
+using Loggers.Loggers;
 using MCWebAPI;
 using MCWebAPI.Auth;
 using MCWebAPI.Middlewares;
@@ -18,15 +19,11 @@ using System.Security.Claims;
 using System.Text;
 
 
-LogService logService = new LogService()
-                .SetupLogger<DiscordLogger>()
-                .SetupLogger<HamachiLogger>()
-                .SetupLogger<MinecraftLogger>()
-                .SetupLogger<WebLogger>()
-                .SetupLogger<ConfigLogger>()
-                .SetupLogger<NetworkLogger>();
 
-LogService.RegisterLogService(logService);
+LogService.CreateLogService()
+                .AddLogger<NetworkLogger>()
+                .AddLogger<HamachiLogger>()
+                .AddLogger<MinecraftLogger>();
 
 var config = Config.Instance;
 
@@ -64,6 +61,7 @@ builder.Services.AddSingleton(new MinecraftConfig
     MinecraftServerMaxRamMB = config.MinecraftServerMaxRamMB,
     MinecraftServersBaseFolder = config.MinecraftServersBaseFolder
 });
+
 
 builder.Services.AddSingleton<IDatabaseAccess, DataStorageSQLiteImpl>();
 builder.Services.AddSingleton<IServerPark, ServerPark>();

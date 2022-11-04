@@ -1,11 +1,8 @@
 ﻿using Loggers;
 using System.Diagnostics;
-using System.IO;
-using System;
 using Application.Minecraft.Util;
-using System.Threading.Tasks;
 
-namespace Application.Minecraft.MinecraftServers
+namespace Application.Minecraft.MinecraftServers.Utils
 {
     /// <summary>
     /// Class for handling low level process events handling of a minecraft server.
@@ -50,7 +47,7 @@ namespace Application.Minecraft.MinecraftServers
         public void Start()
         {
             // get the server.jar fileinfo
-            FileInfo info = new (_serverFileName);
+            FileInfo info = new(_serverFileName);
             var workingDir = info.DirectoryName;
             var simpleFileName = info.Name;
 
@@ -81,7 +78,6 @@ namespace Application.Minecraft.MinecraftServers
             _serverHandlerProcess.BeginErrorReadLine();
             _serverHandlerProcess.BeginOutputReadLine();
 
-            LogService.GetService<MinecraftLogger>().Log("server-process", $"Starting server {simpleFileName} with max-ram {_maxRam}.");
 
             _serverHandlerProcess.ErrorDataReceived += (s, e) =>
             {
@@ -127,9 +123,6 @@ namespace Application.Minecraft.MinecraftServers
         {
             var info = new FileInfo(_serverFileName);
             long dirSize = FileHelper.DirSize(info.Directory);
-
-            string storage = FileHelper.StorageFormatter(dirSize);
-            LogService.GetService<MinecraftLogger>().Log("server", $"Storage measured: " + storage);
 
             return dirSize;
         }

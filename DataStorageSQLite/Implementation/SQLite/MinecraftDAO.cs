@@ -1,5 +1,6 @@
 ﻿using Application.DAOs.Database;
 using DataStorageSQLite.Implementations.SQLite.SQLiteEngine;
+using Shared.DTOs;
 using Shared.DTOs.Enums;
 
 namespace DataStorageSQLite.Implementations.SQLite
@@ -77,6 +78,21 @@ namespace DataStorageSQLite.Implementations.SQLite
             cmd.Parameters.AddWithValue("@diskSize", diskSize);
 
             cmd.ExecuteNonQuery();
+        }
+
+        public async void WriteCommand(long serverId, string command, UserEventData userEventData)
+        {
+            var eventId = await CreateUserEvent(userEventData.Id, userEventData.Platform, UserEventType.ServerStatusChange);
+
+            using var conn = CreateOpenConnection;
+
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = "INSERT INTO minecraft_server_command(event_id, server_id, command) VALUES (@eventId, @serverId, @command);";
+            cmd.Parameters.AddWithValue("@eventId", eventId);
+            cmd.Parameters.AddWithValue("@serverId", serverId.ToString());
+            cmd.Parameters.AddWithValue("@command", command);
+
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

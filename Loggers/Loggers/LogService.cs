@@ -6,15 +6,21 @@ namespace Loggers
     public class LogService
     {
         private readonly Dictionary<Type, Logger> _loggers = new();
-        private static LogService _instance = new LogService();
+        private static LogService _instance = new ();
 
-        public LogService()
+        private LogService()
         {
 
         }
 
 
-        public LogService SetupLogger<T>() where T : Logger
+        /// <summary>
+        /// Adds a logger to the logservice
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public LogService AddLogger<T>() where T : Logger
         {
             Type loggerType = typeof(T);
 
@@ -23,58 +29,28 @@ namespace Loggers
                 throw new Exception(loggerType.FullName + " is already present in the loggers");
             }
 
-            T logger = (T)Activator.CreateInstance(loggerType);
+            T logger = (T)Activator.CreateInstance(loggerType)!;
             _loggers.Add(loggerType, logger);
 
             return this;
         }
 
-        
-
-        public static void RegisterLogService(LogService service)
-        {
-            _instance = service;
-        }
 
 
-        public static T GetService<T>() where T : Logger
-        {
-            return (T)_instance._loggers[typeof(T)];
-        }
+        /// <summary>
+        /// Creates a log service and assigns it as a global log service
+        /// </summary>
+        /// <returns></returns>
+        public static LogService CreateLogService() =>
+            _instance = new LogService();
 
 
-        
-
-        // type: 
-        //   0: debug
-        //   1: info
-        //   2: error
-        //[MethodImpl(MethodImplOptions.Synchronized)]
-        //private void Log<T>(string message, int type) where T : Logger
-        //{
-        //    var loggerType = typeof(T);
-        //    if (_loggers.TryGetValue(loggerType, out Logger logger))
-        //        logger.Log(message, type);
-        //}
-
-        //public static void LogDebug<T>(string message) where T : Logger
-        //{
-        //    _instance.Log<T>(message, 0);
-        //}
-
-        //public static void LogInfo<T>(string message) where T : Logger
-        //{
-        //    _instance.Log<T>(message, 1);
-        //}
-
-        //public static void LogError<T>(string message) where T : Logger
-        //{
-        //    _instance.Log<T>(message, 2);
-        //}
-
-        //public static void LogError<T>(Exception e) where T : Logger
-        //{
-        //    _instance.Log<T>(e.Message, 2);
-        //}
+        /// <summary>
+        /// Gets the log service
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T GetService<T>() where T : Logger =>
+            (T)_instance._loggers[typeof(T)];
     }
 }

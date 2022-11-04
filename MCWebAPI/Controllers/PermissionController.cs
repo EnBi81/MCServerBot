@@ -1,4 +1,5 @@
-﻿using Application.Permissions;
+﻿using APIModel.APIExceptions;
+using Application.Permissions;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,21 @@ namespace MCWebAPI.Controllers
             _permissionLogic = permissionLogic;
         }
 
+        private ulong ConvertStringToId(string id)
+        {
+            if (!ulong.TryParse(id, out ulong userId))
+                throw new WebApiArgumentException("id must be a number.");
+
+            return userId;
+        }
+
 
         [HttpPost("{id:regex(\\d{{18}})}/grant")]
         public async Task<IActionResult> GrantPermission([FromRoute] string id)
         {
             try
             {
-                if (!ulong.TryParse(id, out ulong userId))
-                    throw new Exception("id must be a number.");
+                var userId = ConvertStringToId(id);
 
                 UserEventData userEventData = await GetUserEventData();
                 await _permissionLogic.GrantPermission(userId, userEventData);
@@ -42,8 +50,7 @@ namespace MCWebAPI.Controllers
         {
             try
             {
-                if (!ulong.TryParse(id, out ulong userId))
-                    throw new Exception("id must be a number.");
+                var userId = ConvertStringToId(id);
 
                 UserEventData userEventData = await GetUserEventData();
                 await _permissionLogic.RevokePermission(userId, userEventData);

@@ -32,12 +32,14 @@ namespace Application.Minecraft
         private long _serverIdCounter;
         private readonly IDatabaseAccess _databaseAccess;
         private readonly MinecraftConfig _config;
+        private readonly MinecraftLogger _logger;
 
 
-        internal ServerParkLogic(IDatabaseAccess dataAccess, MinecraftConfig config)
+        internal ServerParkLogic(IDatabaseAccess dataAccess, MinecraftConfig config, MinecraftLogger logger)
         {
             _databaseAccess = dataAccess;
             _config = config;
+            _logger = logger;
 
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
             DeletedServersFolder = _config.MinecraftServersBaseFolder + "Deleted Servers\\";
@@ -70,11 +72,10 @@ namespace Application.Minecraft
 
                 if (!ulong.TryParse(folderName, out var _))
                 {
-                    LogService.GetService<MinecraftLogger>().Log("serverpark", $"ERROR: cannot convert folder {folderName} to ulong.", ConsoleColor.Red);
-                    continue;
+                    throw new MCInternalException($"ERROR: cannot convert folder {folderName} to ulong. Please remove that folder from the Servers directory!");
                 }
 
-                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, serverFolder.FullName, _config);
+                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config);
                 RegisterMcServer(mcServer);
             }
         }
@@ -137,7 +138,7 @@ namespace Application.Minecraft
             ValidateMaxStorage();
 
             SetActiveServer(id);
-            ActiveServer?.Start(user.Username);
+            ActiveServer?.Start(user);
 
             return Task.CompletedTask;
         }
@@ -148,7 +149,7 @@ namespace Application.Minecraft
             if (ActiveServer == null || !ActiveServer.IsRunning)
                 throw new ServerParkException("Server is not running!");
 
-            ActiveServer?.Shutdown(user.Username);
+            ActiveServer?.Shutdown(user);
 
             return Task.CompletedTask;
         }
@@ -173,7 +174,7 @@ namespace Application.Minecraft
             Directory.CreateDirectory(destDir);
             FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
-            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, newServerId, serverName!, destDir, _config);
+            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, newServerId, serverName!, destDir, _config);
             RegisterMcServer(mcServer);
 
             return Task.FromResult((IMinecraftServer)mcServer);
@@ -198,7 +199,7 @@ namespace Application.Minecraft
             var oldName = server.ServerName;
             server.ServerName = newName;
 
-            InvokeServerNameChange(oldName, newName);
+            InvokeServerNameChange(server, oldName, newName);
 
             return Task.FromResult(server);
         }
@@ -258,7 +259,6 @@ namespace Application.Minecraft
 
             if (overflow)
             {
-                LogService.GetService<MinecraftLogger>().Log("serverpark", "Storage OVERFLOW", ConsoleColor.Red);
                 throw new ServerParkException($"Disk space full. Max disk space allocated: {_config.MaxSumOfDiskSpaceGB} GB." +
                     $" Current storage: {measuredString}.");
             }
@@ -270,7 +270,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <param name="serverName"></param>
         /// <param name="folderPath"></param>
-        private void RegisterMcServer(MinecraftServer server)
+        private void RegisterMcServer(IMinecraftServer server)
         {
             ServerCollection.Add(server.Id, server);
             InvokeServerAdded(server);
@@ -312,22 +312,22 @@ namespace Application.Minecraft
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
 
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange;
+        public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange;
 
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<ILogMessage>> ActiveServerLogReceived;
+        public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived;
 
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined;
+        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined;
 
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft;
+        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft;
 
         /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured;
+        public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
 
         /// <inheritdoc/>
-        public event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged;
+        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged;
 
         /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
@@ -369,23 +369,23 @@ namespace Application.Minecraft
 
 
         // IMinecraft events
-        private void InvokePerformanceMeasured(object? sender, (string CPU, string Memory) e) =>
-            ActiveServerPerformanceMeasured?.Invoke(sender, new(e));
+        private void InvokePerformanceMeasured(object? sender, (double CPU, long Memory) e) =>
+            ActiveServerPerformanceMeasured?.Invoke(sender, new(e, (IMinecraftServer)sender!));
         private void InvokePlayerJoined(object? sender, IMinecraftPlayer e) =>
-            ActiveServerPlayerJoined?.Invoke(sender, new(e));
+            ActiveServerPlayerJoined?.Invoke(sender, new(e, (IMinecraftServer)sender!));
         private void InvokePlayerLeft(object? sender, IMinecraftPlayer e) =>
-            ActiveServerPlayerLeft?.Invoke(sender, new(e));
+            ActiveServerPlayerLeft?.Invoke(sender, new(e, (IMinecraftServer)sender!));
         private void InvokeLogReceived(object? sender, ILogMessage e) =>
-            ActiveServerLogReceived?.Invoke(sender, new(e));
+            ActiveServerLogReceived?.Invoke(sender, new(e, (IMinecraftServer)sender!));
         private void InvokeStatusTracker(object? sender, ServerStatus e) =>
-            ActiveServerStatusChange?.Invoke(sender, new(e));
+            ActiveServerStatusChange?.Invoke(sender, new(e, (IMinecraftServer)sender!));
 
 
         // ServerPark events
         private void InvokeActiveServerChanged(IMinecraftServer activeServer) =>
             ActiveServerChange?.Invoke(this, new(activeServer));
-        private void InvokeServerNameChange(string oldName, string newName) =>
-            ServerNameChanged?.Invoke(this, new(oldName, newName));
+        private void InvokeServerNameChange(IMinecraftServer server, string oldName, string newName) =>
+            ServerNameChanged?.Invoke(this, new(oldName, newName, server));
         private void InvokeServerAdded(IMinecraftServer addedServer) =>
             ServerAdded?.Invoke(this, new(addedServer));
         private void InvokeServerDeleted(IMinecraftServer deletedServer) =>

@@ -1,23 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Loggers
+namespace Loggers.Loggers
 {
     public class NetworkLogger : Logger
     {
-        public void Log(string text)
-        {
-            var log = $"[{CurrentTime}] Networking: {text}";
-            WriteLog(log, ConsoleColor.White);
-        }
-
-        public void LogFatal(string text)
-        {
-            var log = $"[{CurrentTime}] Networking-fatal: {text}";
-            WriteLog(log, ConsoleColor.Red);
-            WriteLog("Press any button to exit...");
-
-            Console.ReadKey();
-            Environment.Exit(1);
-        }
+        public void Log(string message) => AddLog("networking", message, ConsoleColor.White);
     }
 }

@@ -8,14 +8,14 @@ using MCWebApp.Config;
 //https://learn.microsoft.com/en-us/aspnet/core/security/authorization/simple?source=recommendations&view=aspnetcore-6.0
 
 LogService logService = new LogService()
-                .SetupLogger<DiscordLogger>()
-                .SetupLogger<HamachiLogger>()
-                .SetupLogger<MinecraftLogger>()
-                .SetupLogger<WebLogger>()
-                .SetupLogger<ConfigLogger>()
-                .SetupLogger<NetworkLogger>();
+                .AddLogger<DiscordLogger>()
+                .AddLogger<HamachiLogger>()
+                .AddLogger<MinecraftLogger>()
+                .AddLogger<WebLogger>()
+                .AddLogger<ConfigLogger>()
+                .AddLogger<NetworkLogger>();
 
-LogService.RegisterLogService(logService);
+LogService.CreateLogService(logService);
 
 //check internet connection
 bool internetConnected = NetworkingTools.CheckNetworking();

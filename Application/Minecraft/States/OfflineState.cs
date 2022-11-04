@@ -1,6 +1,4 @@
-﻿using Discord;
-using System.Data.SqlTypes;
-using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
+﻿using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 using Application.Minecraft.MinecraftServers;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
@@ -19,7 +17,7 @@ namespace Application.Minecraft.States
         /// Initializes the Offline state, and does the offline state routine.
         /// </summary>
         /// <param name="server"></param>
-        public OfflineState(MinecraftServer server) : base(server)
+        public OfflineState(MinecraftServerLogic server) : base(server)
         {
             _server.StorageBytes = server.McServerProcess.GetStorage();
             _server.OnlineFrom = null;
@@ -62,7 +60,7 @@ namespace Application.Minecraft.States
         /// Throws exception as the server is offline. 
         /// </summary>
         /// <param name="username">username of the very intelligent user who tried to stop an offline server.</param>
-        /// <exception cref="Exception">Always is thrown because yeah, the serve is offline.</exception>
+        /// <exception cref="MinecraftServerException">Always is thrown because yeah, the serve is offline.</exception>
         public override void Stop(string username) => // like who would want to stop a server when it's offline lol.
             throw new MinecraftServerException(_server.ServerName + " is already offline!");
 

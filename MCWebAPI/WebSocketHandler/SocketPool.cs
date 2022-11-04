@@ -5,6 +5,7 @@ using Shared.Model;
 using Shared.EventHandlers;
 using Application.Permissions;
 using Shared.DTOs;
+using Loggers.Loggers;
 
 namespace MCWebAPI.WebSocketHandler
 {
@@ -23,19 +24,21 @@ namespace MCWebAPI.WebSocketHandler
 
         private readonly IServerPark _serverPark;
         private readonly IPermissionLogic _permissionLogic;
+        private readonly WebApiLogger _logger;
 
 
         /// <summary>
         /// Initializes the SocketPool.
         /// </summary>
-        public SocketPool(IServerPark serverPark, IPermissionLogic permissionLogic)
+        public SocketPool(IServerPark serverPark, IPermissionLogic permissionLogic, WebApiLogger logger)
         {
             _serverPark = serverPark;
             _permissionLogic = permissionLogic;
+            _logger = logger;
 
-            LogService.GetService<WebLogger>().Log("socket-pool", "Socket Pool Initalizing");
+            _logger.Log("socket-pool", "Socket Pool Initalizing");
             SetupListeners();
-            LogService.GetService<WebLogger>().Log("socket-pool", "Socket Pool Initalized");
+            _logger.Log("socket-pool", "Socket Pool Initalized");
         }
 
         #region Base methods
@@ -45,7 +48,7 @@ namespace MCWebAPI.WebSocketHandler
         /// </summary>
         private void SetupListeners()
         {
-            LogService.GetService<WebLogger>().Log("socket-pool", "Setting up listeners");
+            _logger.Log("socket-pool", "Setting up listeners");
 
             _serverPark.ActiveServerChange += ActiveServerChange;
             _serverPark.ActiveServerPlayerLeft += ActiveServerPlayerLeft;
@@ -60,7 +63,7 @@ namespace MCWebAPI.WebSocketHandler
 
             _permissionLogic.PermissionRevoked += PermissionRevoked;
 
-            LogService.GetService<WebLogger>().Log("socket-pool", "Listeners have been set up");
+            _logger.Log("socket-pool", "Listeners have been set up");
         }
 
         
@@ -76,7 +79,7 @@ namespace MCWebAPI.WebSocketHandler
         {
             var user = await _permissionLogic.GetUser(id);
 
-            LogService.GetService<WebLogger>().Log("socket-pool", "New socket received from " + user!.Username);
+            _logger.Log("socket-pool", "New socket received from " + user!.Username);
             MCWebSocket socketHandler = new (socket, user);
 
             RegisterSocket(socketHandler);
@@ -119,7 +122,7 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerPlayerLeft(object? sender, ValueEventArgs<IMinecraftPlayer> e)
+        private async void ActiveServerPlayerLeft(object? sender, ServerValueEventArgs<IMinecraftPlayer> e)
         {
             if (sender is not IMinecraftServer server)
                 return;
@@ -130,7 +133,7 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerPlayerJoined(object? sender, ValueEventArgs<IMinecraftPlayer> e)
+        private async void ActiveServerPlayerJoined(object? sender, ServerValueEventArgs<IMinecraftPlayer> e)
         {
             if (sender is not IMinecraftServer server)
                 return;
@@ -144,7 +147,7 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerLogReceived(object? sender, ValueEventArgs<ILogMessage> e)
+        private async void ActiveServerLogReceived(object? sender, ServerValueEventArgs<ILogMessage> e)
         {
             if (sender is not IMinecraftServer server)
                 return;
@@ -155,19 +158,19 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerPerformanceMeasured(object? sender, ValueEventArgs<(string CPU, string Memory)> e)
+        private async void ActiveServerPerformanceMeasured(object? sender, ServerValueEventArgs<(double CPU, long Memory)> e)
         {
             if (sender is not IMinecraftServer server)
                 return;
 
-            string cpu = e.NewValue.CPU;
-            string memory = e.NewValue.Memory;
+            string cpu = e.NewValue.CPU.ToString("0.00") + " %";
+            string memory = e.NewValue.Memory / (1024 * 1024) + " MB";
 
             string mess = MessageFormatter.PcUsage(server.ServerName, cpu, memory);
             await BroadcastMessage(mess);
         }
 
-        private async void ActiveServerStatusChange(object? sender, ValueEventArgs<ServerStatus> e)
+        private async void ActiveServerStatusChange(object? sender, ServerValueEventArgs<ServerStatus> e)
         {
             if (sender is not IMinecraftServer mcServer)
                 return;
@@ -193,7 +196,7 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void ServerNameChanged(object? sender, ValueChangedEventArgs<string> e)
+        private async void ServerNameChanged(object? sender, ServerValueChangedEventArgs<string> e)
         {
             string oldName = e.OldValue;
             string newName = e.NewValue;

@@ -1,4 +1,6 @@
-﻿
+﻿using Shared.DTOs;
+using Shared.Exceptions;
+
 namespace Shared.Model
 {
     /// <summary>
@@ -80,20 +82,22 @@ namespace Shared.Model
         /// Starts the server
         /// </summary>
         /// <param name="user">username of the user who initiates the start of the server.</param>
-        public void Start(string user = "Admin");
+        /// <exception cref="MinecraftServerException">If the server is not Offline.</exception>
+        public void Start(UserEventData data = default);
 
         /// <summary>
         /// Writes a command to the minecraft serves based on the state of the server.
         /// </summary>
         /// <param name="command">command to send to the minecraft server.</param>
-        /// <param name="user">username of the user who sends the command.</param>
-        public void WriteCommand(string? command, string user = "Admin");
+        /// <param name="data">user data of the user who sends the command.</param>
+        /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
+        public void WriteCommand(string? command, UserEventData data = default);
 
         /// <summary>
         /// Shuts down the minecraft server if it is online.
         /// </summary>
-        /// <param name="user">username of the user who initiates the start of the server.</param>
-        public void Shutdown(string user = "Admin");
+        /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
+        public void Shutdown(UserEventData data = default);
 
         /// <summary>
         /// Fired when the server has changed status.
@@ -112,12 +116,16 @@ namespace Shared.Model
         /// </summary>
         public event EventHandler<IMinecraftPlayer> PlayerLeft;
         /// <summary>
-        /// Fired when performance has been measured of the minecraft server process.
+        /// Fired when performance has been measured of the minecraft server process. CPU is in percentage, Memory in Bytes.
         /// </summary>
-        public event EventHandler<(string CPU, string Memory)> PerformanceMeasured;
+        public event EventHandler<(double CPU, long Memory)> PerformanceMeasured;
         /// <summary>
         /// Fired when the server has changed its name.
         /// </summary>
         public event EventHandler<string> NameChanged;
+        /// <summary>
+        /// Fired when the server's storage has been measured. Unit is in bytes.
+        /// </summary>
+        public event EventHandler<long> StorageMeasured;
     }
 }

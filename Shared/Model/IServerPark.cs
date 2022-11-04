@@ -38,13 +38,13 @@ namespace Shared.Model
         /// Start the active server.
         /// </summary>
         /// <param name="user">user who initiated the start</param>
-        public Task StartServer(long id, UserEventData user);
+        public Task StartServer(long id, UserEventData user = default);
 
         /// <summary>
         /// Stop the active server.
         /// </summary>
         /// <param name="user">user who initiated the stop</param>
-        public Task StopActiveServer(UserEventData user);
+        public Task StopActiveServer(UserEventData user = default);
 
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="serverName">server to toggle</param>
         /// <param name="user">user who initiated this action</param>
-        public Task ToggleServer(long id, UserEventData user);
+        public Task ToggleServer(long id, UserEventData user = default);
 
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="name">name of the new </param>
         /// <exception cref="Exception"></exception>
-        public Task<IMinecraftServer> CreateServer(string? name, UserEventData user);
+        public Task<IMinecraftServer> CreateServer(string? name, UserEventData user = default);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -70,14 +70,14 @@ namespace Shared.Model
         /// <exception cref="Exception">If the name has invalid length</exception>
         /// <exception cref="Exception">If the new name is already taken</exception>
         /// <exception cref="Exception">If the server to change is running</exception>
-        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user);
+        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user = default);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
         /// </summary>
         /// <param name="name">Server to be moved.</param>
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
-        public Task<IMinecraftServer> DeleteServer(long id, UserEventData user);
+        public Task<IMinecraftServer> DeleteServer(long id, UserEventData user = default);
 
 
 
@@ -89,32 +89,32 @@ namespace Shared.Model
         /// <summary>
         /// Event fired when the active server's status has changed.
         /// </summary>
-        public event EventHandler<ValueEventArgs<ServerStatus>> ActiveServerStatusChange;
+        public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange;
 
         /// <summary>
         /// Event fired when a log message has been received from the active server.
         /// </summary>
-        public event EventHandler<ValueEventArgs<ILogMessage>> ActiveServerLogReceived;
+        public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived;
 
         /// <summary>
         /// Event fired when a player joins the active server.
         /// </summary>
-        public event EventHandler<ValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined;
+        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined;
 
         /// <summary>
         /// Event fired when a player leaves the active server.
         /// </summary>
-        public event EventHandler<ValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft;
+        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft;
 
         /// <summary>
-        /// Event fired when a performance measurement data has been received.
+        /// Event fired when a performance measurement data has been received. CPU in percentage, Memory in bytes.
         /// </summary>
-        public event EventHandler<ValueEventArgs<(string CPU, string Memory)>> ActiveServerPerformanceMeasured;
+        public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
 
         /// <summary>
         /// Event fired when a server's name is changed.
         /// </summary>
-        public event EventHandler<ValueChangedEventArgs<string>> ServerNameChanged;
+        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged;
 
         /// <summary>
         /// Event fired when a server is added to the ServerPark.

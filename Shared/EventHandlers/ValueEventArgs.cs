@@ -1,6 +1,8 @@
-﻿namespace Shared.EventHandlers
+﻿using Shared.Model;
+
+namespace Shared.EventHandlers
 {
-    public class ValueEventArgs<T> : EventArgs
+    public class ValueEventArgs<T>
     {
         public T NewValue { get; set; }
 

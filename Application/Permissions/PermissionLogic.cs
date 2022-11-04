@@ -1,6 +1,7 @@
 ﻿using Application.DAOs;
 using Application.DAOs.Database;
 using Shared.DTOs;
+using Shared.Exceptions;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -30,25 +31,27 @@ namespace Application.Permissions
             PermissionRevoked = null!;
         }
 
+        private Exception GetException(string message) => throw new MCPermissionException(message);
+
 
         public async Task<string> GetWebAccessCode(ulong user)
         {
-            return await _permissionAccess.GetWebAccessCode(user) ?? throw new Exception("User is not registered in the system.");
+            return await _permissionAccess.GetWebAccessCode(user) ?? throw GetException("User is not registered in the system.");
         }
 
         public async Task<string> GetToken(ulong id) =>
             await _permissionAccess.GetWebAccessCode(id) ?? 
-            throw new Exception("User is not registered in the system.");
+            throw GetException("User is not registered in the system.");
 
         public async Task<DataUser> GetUser(string? token)
         {
             if (token == null)
-                throw new Exception("No token provided");
+                throw GetException("No token provided");
 
             if (BuiltInUsers.TryGetValue(token, out DataUser? user))
                 return user;
 
-            return await _permissionAccess.GetUser(token) ?? throw new Exception("User is not registered in the system.");
+            return await _permissionAccess.GetUser(token) ?? throw GetException("User is not registered in the system.");
         }
 
         public async Task<DataUser> GetUser(ulong id)
@@ -58,13 +61,13 @@ namespace Application.Permissions
             if (builtinUsers.Any())
                 return builtinUsers.First();
 
-            return await _permissionAccess.GetUser(id) ?? throw new Exception("User is not registered in the system.");
+            return await _permissionAccess.GetUser(id) ?? throw GetException("User is not registered in the system.");
         }
 
         public async Task<bool> HasAccess(string? token)
         {
             if (token == null)
-                throw new Exception("No token provided");
+                throw GetException("No token provided");
 
             if (BuiltInUsers.ContainsKey(token))
                 return true;
@@ -80,10 +83,10 @@ namespace Application.Permissions
         public async Task RegisterUser(ulong discordId, string? discordUsername, string? profPic)
         {
             if (discordUsername is null)
-                throw new ArgumentNullException(nameof(discordUsername));
+                throw GetException(nameof(discordUsername));
 
             if (profPic is null)
-                throw new ArgumentNullException(nameof(profPic));
+                throw GetException(nameof(profPic));
 
             if (await _permissionAccess.GetUser(discordId) != null)
                 return;
@@ -121,10 +124,10 @@ namespace Application.Permissions
         public async Task RefreshUser(ulong discordId, string? discordUsername, string? profPic)
         {
             if (discordUsername is null)
-                throw new Exception("Discord username must not be null");
+                throw GetException("Discord username must not be null");
 
             if (profPic is null)
-                throw new Exception("Discord profile pic must not be null");
+                throw GetException("Discord profile pic must not be null");
 
             if (await GetUser(discordId) is null)
                 return;
@@ -145,7 +148,7 @@ namespace Application.Permissions
             }
 
             if (await HasAccess(discordId))
-                throw new Exception("User already has permission.");
+                throw GetException("User already has permission.");
 
             await _permissionAccess.GrantPermission(userEventData.Id, discordId);
         }
@@ -163,7 +166,7 @@ namespace Application.Permissions
             }
 
             if (!await HasAccess(discordId))
-                throw new Exception("User hasn't got permission.");
+                throw GetException("User hasn't got permission.");
 
             await _permissionAccess.RevokePermission(userEventData.Id, discordId);
         }

@@ -8,7 +8,7 @@ using Shared.Model;
 namespace MCWebAPI.Controllers
 {
     /// <summary>
-    /// Endpoint for managin the minecraft servers.
+    /// Endpoint for managing the minecraft servers.
     /// </summary>
     [ApiController]
     [Route("minecraftserver/{id:long}")]
@@ -61,6 +61,12 @@ namespace MCWebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Modifies the server information.
+        /// </summary>
+        /// <param name="id">id of the server to modify</param>
+        /// <param name="dto">new values</param>
+        /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
@@ -74,7 +80,15 @@ namespace MCWebAPI.Controllers
 
 
 
+        /// <summary>
+        /// Writes a command to the server.
+        /// </summary>
+        /// <param name="id">id of the minecraft server</param>
+        /// <param name="commandDto">command data</param>
+        /// <returns></returns>
         [HttpPost("commands")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
         {
             var server = serverPark.GetServer(id);
@@ -88,9 +102,11 @@ namespace MCWebAPI.Controllers
         /// <summary>
         /// Toggles the minecraft server on and off.
         /// </summary>
-        /// <param name="serverName">name of the </param>
+        /// <param name="id">id of the minecraft server.</param>
         /// <returns></returns>
         [HttpPost("toggle")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ToggleServer([FromRoute] long id)
         {
             var user = await GetUserEventData();

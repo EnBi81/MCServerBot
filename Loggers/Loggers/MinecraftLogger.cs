@@ -2,10 +2,13 @@
 {
     public class MinecraftLogger : Logger
     {
-        public void Log(string source, string message, System.ConsoleColor color = System.ConsoleColor.Green)
-        {
-            var log = $"[{CurrentTime}] Minecraft-{source}: {message}";
-            WriteLog(log, color);
-        }
+        public string ServerPark => "serverpark";
+        public string MinecraftServer => "mcserver";
+
+        public void Log(string source, string message) =>
+            AddLog("Minecraft-" + source, message, ConsoleColor.Green);
+
+        public void Error(string source, Exception e) =>
+            AddLogException(source, e);
     }
 }

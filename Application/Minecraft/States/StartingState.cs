@@ -14,7 +14,7 @@ namespace Application.Minecraft.States
         /// Initializes the starting state.
         /// </summary>
         /// <param name="server"></param>
-        public StartingState(MinecraftServer server) : base(server) { }
+        public StartingState(MinecraftServerLogic server) : base(server) { }
 
         /// <summary>
         /// Returns <see cref="ServerStatus.Starting"/>
