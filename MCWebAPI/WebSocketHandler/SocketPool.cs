@@ -80,7 +80,7 @@ namespace MCWebAPI.WebSocketHandler
             var user = await _permissionLogic.GetUser(id);
 
             _logger.Log("socket-pool", "New socket received from " + user!.Username);
-            MCWebSocket socketHandler = new (socket, user);
+            MCWebSocket socketHandler = new (socket, user, _logger);
 
             RegisterSocket(socketHandler);
 

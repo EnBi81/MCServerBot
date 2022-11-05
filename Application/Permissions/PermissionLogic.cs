@@ -31,7 +31,7 @@ namespace Application.Permissions
             PermissionRevoked = null!;
         }
 
-        private Exception GetException(string message) => throw new MCPermissionException(message);
+        private static Exception GetException(string message) => throw new MCPermissionException(message);
 
 
         public async Task<string> GetWebAccessCode(ulong user)

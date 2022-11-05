@@ -1,4 +1,5 @@
 ﻿using Loggers;
+using Loggers.Loggers;
 using Shared.DTOs;
 using System.Net.WebSockets;
 using System.Text;
@@ -10,6 +11,7 @@ namespace MCWebAPI.WebSocketHandler
     /// </summary>
     public class MCWebSocket
     {
+        private readonly WebApiLogger _logger;
         private readonly WebSocket _socket;
         private bool _readInput = true; // true if it should read input from the socket, false if not.
 
@@ -23,12 +25,13 @@ namespace MCWebAPI.WebSocketHandler
         /// </summary>
         public DataUser DiscordUser { get; }
 
-        public MCWebSocket(WebSocket socket, DataUser discordUser)
+        public MCWebSocket(WebSocket socket, DataUser discordUser, WebApiLogger logger)
         {
+            _logger = logger;
             _socket = socket;
             DiscordUser = discordUser;
 
-            LogService.GetService<WebLogger>().Log("socket", $"Socket Initialized for {DiscordUser.Username}");
+            _logger.Log("socket", $"Socket Initialized for {DiscordUser.Username}");
         }
 
         public async Task Initialize()
@@ -44,7 +47,7 @@ namespace MCWebAPI.WebSocketHandler
         /// <returns></returns>
         public async Task SendBackErrorMessage(string message)
         {
-            LogService.GetService<WebLogger>().Log("socket", $"Error from {DiscordUser.Username}, data: {message}");
+            _logger.Log("socket", $"Error from {DiscordUser.Username}, data: {message}");
 
             string mess = MessageFormatter.ErrorMessage(message);
             await SendMessage(mess);
@@ -136,7 +139,7 @@ namespace MCWebAPI.WebSocketHandler
         /// <returns></returns>
         public async Task Close()
         {
-            LogService.GetService<WebLogger>().Log("socket", "Closing socket for " + DiscordUser.Username);
+            _logger.Log("socket", "Closing socket for " + DiscordUser.Username);
 
             _readInput = false;
             try

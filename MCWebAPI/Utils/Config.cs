@@ -1,7 +1,10 @@
-﻿using Loggers;
+﻿using APIModel.APIExceptions;
+using Loggers;
+using Loggers.Loggers;
 using Newtonsoft.Json;
+using Shared.Exceptions;
 
-namespace MCWebAPI
+namespace MCWebAPI.Utils
 {
     /// <summary>
     /// Handling config file for the whole program.
@@ -18,27 +21,42 @@ namespace MCWebAPI
         /// </summary>
         public static Config Instance { get; }
 
+        private static readonly ConfigLogger _logger = LogService.GetService<ConfigLogger>();
+
         static Config()
         {
-            LogService.GetService<ConfigLogger>().Log("Setting up Config from file " + ConfigFile);
+            try
+            {
+                Instance = Setup();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e);
+                throw;
+            }
+        }
+
+        private static Config Setup()
+        {
+            _logger.Log("Setting up Config from file " + ConfigFile);
 
             //check if file exists
             if (!File.Exists(ConfigFile))
             {
                 //if file doesnt exist, create a new one and exit the app
                 CreateConfigFile();
-                LogService.GetService<ConfigLogger>().LogFatal("Config file not found! A new one is created.");
+                throw new ConfigException("Config file not found! A new one is created.");
             }
 
             //deserialize the json file
             var conf = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFile));
             if (conf == null)
             {
-                LogService.GetService<ConfigLogger>().LogFatal("Could not parse config file. " +
+                throw new ConfigException("Could not parse config file. " +
                     "To create a new config file, delete the old one, and restart this program.");
             }
 
-            LogService.GetService<ConfigLogger>().Log("Config File Parsed");
+            _logger.Log("Config File Parsed");
 
             try
             {
@@ -47,11 +65,12 @@ namespace MCWebAPI
             }
             catch (Exception ex)
             {
-                LogService.GetService<ConfigLogger>().LogFatal(ex.Message);
+                throw new ConfigException(ex.Message);
             }
 
-            Instance = conf;
-            LogService.GetService<ConfigLogger>().Log("Config File Initialized");
+            _logger.Log("Config File Initialized");
+
+            return conf;
         }
 
         /// <summary>
@@ -88,15 +107,13 @@ namespace MCWebAPI
         private void Check()
         {
             if (string.IsNullOrWhiteSpace(HamachiLocation))
-                throw new Exception("Please enter a valid value for " + nameof(HamachiLocation));
+                throw new ConfigException("Please enter a valid value for " + nameof(HamachiLocation));
             if (!Directory.Exists(HamachiLocation))
-                throw new Exception(nameof(HamachiLocation) + $" directory does not exist! ({HamachiLocation})");
-
-
+                throw new ConfigException(nameof(HamachiLocation) + $" directory does not exist! ({HamachiLocation})");
 
 
             if (string.IsNullOrWhiteSpace(MinecraftServersBaseFolder))
-                throw new Exception("Invalid Minecraft Server Folder Name!");
+                throw new ConfigException("Invalid Minecraft Server Folder Name!");
         }
     }
 }

@@ -19,6 +19,10 @@
     <ProjectReference Include="..\DataStorageSQLite\DataStorageSQLite.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="logs\" />
+  </ItemGroup>
+
   <Target Name="Generate OpenAPI Specification Document" AfterTargets="Build">
   	<Exec Command="dotnet tool run swagger tofile --output swagger.json $(OutputPath)$(AssemblyName).dll v1" ContinueOnError="true" />
   </Target>

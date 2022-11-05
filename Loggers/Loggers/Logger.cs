@@ -19,10 +19,10 @@ namespace Loggers
         /// <param name="source">source of the message</param>
         /// <param name="log">the actual message</param>
         /// <param name="color">color of the message</param>
-        protected static void AddLog(string source, string log, ConsoleColor color = ConsoleColor.Gray)
+        protected static void AddLog(string source, string log, ConsoleColor color = ConsoleColor.Gray, ConsoleColor bgColor = ConsoleColor.Black)
         {
             string logMessage = $"[{CurrentTime}] {source}: {log}";
-            WriteLog(logMessage, color);
+            WriteLog(logMessage, color, bgColor);
         }
 
         /// <summary>
@@ -30,8 +30,8 @@ namespace Loggers
         /// </summary>
         /// <param name="source">source of the exception</param>
         /// <param name="e">exception</param>
-        protected static void AddLogException(string source, Exception e) =>
-            AddLog(source, e.ToString(), ConsoleColor.Red);
+        protected static void AddLogException(string source, Exception e, bool fatal = false) =>
+            AddLog(source, e.ToString(), fatal ? ConsoleColor.White : ConsoleColor.Red, fatal ? ConsoleColor.Red : ConsoleColor.Black);
 
 
 
@@ -42,17 +42,17 @@ namespace Loggers
         /// </summary>
         /// <param name="logMessage"></param>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private static void WriteLog(string logMessage, ConsoleColor color)
+        private static void WriteLog(string logMessage, ConsoleColor color, ConsoleColor bgColor)
         {
             if(Filename is null)
             {
                 Directory.CreateDirectory("logs");
-                Filename = $"logs/{CurrentTime}.txt";
+                Filename = $"logs/{DateTime.Now:yyyy-MM-dd-HH-mm-ss-FFFF}.txt";
             }
 
             Console.ForegroundColor = color;
             Console.WriteLine(logMessage, color);
-            File.AppendAllText(Filename, logMessage);
+            File.AppendAllText(Filename, logMessage + Environment.NewLine);
         }
     }
 }
