@@ -3,6 +3,7 @@ using Application.Minecraft;
 using Application.Permissions;
 using DataStorageSQLite.Implementation;
 using Loggers;
+using Loggers.Loggers;
 using MCWebAPI.Auth;
 using MCWebAPI.Middlewares;
 using MCWebAPI.Utils;
@@ -13,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Shared.DTOs;
 using Shared.Model;
 using Swashbuckle.AspNetCore.Filters;
+using System.Management;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -36,10 +38,12 @@ namespace MCWebAPI
 
             #region Register Services
 
-            builder.Services.AddControllers();
+            IServiceCollection serviceCollection = builder.Services;
+
+            serviceCollection.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
+            serviceCollection.AddEndpointsApiExplorer();
+            serviceCollection.AddSwaggerGen(options =>
             {
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -57,8 +61,10 @@ namespace MCWebAPI
             });
 
 
+
+
             // Configs
-            builder.Services.AddSingleton(new MinecraftConfig
+            serviceCollection.AddSingleton(new MinecraftConfig
             {
                 JavaLocation = config.JavaLocation,
                 MaxSumOfDiskSpaceGB = config.MinecraftMaxDiskSpaceGB,
@@ -69,23 +75,23 @@ namespace MCWebAPI
             });
 
             // Loggers
-            builder.Services.AddSingleton(LogService.GetService<MinecraftLogger>());
-
+            serviceCollection.AddSingleton(LogService.GetService<MinecraftLogger>());
+            serviceCollection.AddSingleton(LogService.GetService<WebApiLogger>());
 
             //Model
-            builder.Services.AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
+            serviceCollection.AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
                 (async databaseAccess => await databaseAccess.DatabaseSetup.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;"));
-            builder.Services.AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync());
-            builder.Services.AddSingleton<IPermissionLogic, PermissionLogic>();
+            serviceCollection.AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync());
+            serviceCollection.AddSingleton<IPermissionLogic, PermissionLogic>();
 
 
             // API
-            builder.Services.AddSingleton<SocketPool>();
+            serviceCollection.AddSingleton<SocketPool>();
 
 
             // API Auth
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            serviceCollection.AddScoped<IAuthService, AuthService>();
+            serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -98,7 +104,7 @@ namespace MCWebAPI
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
-            builder.Services.AddAuthorizationCore(options =>
+            serviceCollection.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("DiscordBot", a =>
                     a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, DataUserType.Discord.ToString()));
@@ -107,8 +113,6 @@ namespace MCWebAPI
             #endregion
 
             var app = builder.Build();
-
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

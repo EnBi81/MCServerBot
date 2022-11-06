@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace APIModel.DTOs
 {
     public class ServerCreationDto
     {
+        [Required]
         public string? NewName { get; set; }
     }
 }

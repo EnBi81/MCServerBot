@@ -10,19 +10,11 @@
         "tags": [
           "Auth"
         ],
+        "summary": "Generates a Bearer token and returns it.",
         "requestBody": {
+          "description": "",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginDto"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/LoginDto"
               }
@@ -31,7 +23,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Returns a APIModel.Responses.AuthenticatedResponse object with the token included.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If the authentication fails.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           }
         }
       }
@@ -42,6 +51,7 @@
           "Discord"
         ],
         "summary": "Gets the user token for by a Discord Id. (Auth policies: DiscordBot)",
+        "operationId": "GetWebAccessToken",
         "parameters": [
           {
             "name": "id",
@@ -97,6 +107,7 @@
           "Discord"
         ],
         "summary": "Register a discord user to the system. (Auth policies: DiscordBot)",
+        "operationId": "RegisterUser",
         "requestBody": {
           "description": "Registered user data.",
           "content": {
@@ -141,6 +152,7 @@
           "Discord"
         ],
         "summary": "Refreshes a user's data. (Auth policies: DiscordBot)",
+        "operationId": "RefreshUser",
         "requestBody": {
           "description": "Data of the user.",
           "content": {
@@ -186,7 +198,8 @@
         "tags": [
           "MinecraftServer"
         ],
-        "summary": "Gets the informations of a server.",
+        "summary": "Gets the informations of a server. (Auth)",
+        "operationId": "GetServer",
         "parameters": [
           {
             "name": "id",
@@ -211,7 +224,7 @@
             }
           },
           "400": {
-            "description": "The server with the specified name does not exist.",
+            "description": "The server with the specified id does not exist.",
             "content": {
               "application/json": {
                 "schema": {
@@ -219,14 +232,27 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
-      },
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/minecraftserver/{id}/DeleteServer": {
       "delete": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": "Deletes a server from the system.",
+        "summary": "Deletes a server from the system. (Auth)",
         "parameters": [
           {
             "name": "id",
@@ -240,11 +266,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "The server is deleted. Nothing more."
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The server with the specified id does not exist or an exception happened during the deletion.",
             "content": {
               "application/json": {
                 "schema": {
@@ -252,17 +278,32 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
-      },
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/minecraftserver/{id}/ModifyServer": {
       "put": {
         "tags": [
           "MinecraftServer"
         ],
+        "summary": "Modifies the server information. (Auth)",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "id of the server to modify",
             "required": true,
             "schema": {
               "type": "integer",
@@ -271,6 +312,7 @@
           }
         ],
         "requestBody": {
+          "description": "new values",
           "content": {
             "application/json": {
               "schema": {
@@ -280,11 +322,11 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "The server is deleted. Nothing more."
           },
           "400": {
-            "description": "Bad Request",
+            "description": "The server with the specified id does not exist or an exception happened during the deletion.",
             "content": {
               "application/json": {
                 "schema": {
@@ -292,8 +334,19 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/minecraftserver/{id}/commands": {
@@ -301,10 +354,13 @@
         "tags": [
           "MinecraftServer"
         ],
+        "summary": "Writes a command to the server. (Auth)",
+        "operationId": "WriteCommandToServer",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "id of the minecraft server",
             "required": true,
             "schema": {
               "type": "integer",
@@ -313,6 +369,7 @@
           }
         ],
         "requestBody": {
+          "description": "command data",
           "content": {
             "application/json": {
               "schema": {
@@ -322,10 +379,31 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "The command is executed."
+          },
+          "400": {
+            "description": "The server with the specified id does not exist or an exception happened during the command execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/minecraftserver/{id}/toggle": {
@@ -333,11 +411,13 @@
         "tags": [
           "MinecraftServer"
         ],
-        "summary": "Toggles the minecraft server on and off.",
+        "summary": "Toggles the minecraft server on and off. (Auth)",
+        "operationId": "ToggleServer",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "id of the minecraft server.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -346,10 +426,31 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "The server is either started or deleted, depending on the state of it."
+          },
+          "400": {
+            "description": "The server with the specified id does not exist or an exception happened during the toggle.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/Permission/{id}/grant": {
@@ -357,11 +458,12 @@
         "tags": [
           "Permission"
         ],
-        "summary": " (Auth)",
+        "summary": "Grants permission to a user. Note: the user must have been registered before. (Auth)",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "pattern": "\\d{18}",
@@ -371,7 +473,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "If the request got successfully handled."
+          },
+          "400": {
+            "description": "An exception has been occured during the process.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -392,11 +514,12 @@
         "tags": [
           "Permission"
         ],
-        "summary": " (Auth)",
+        "summary": "Revokes permission from a user. Note: the user must have been registered before. (Auth)",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "pattern": "\\d{18}",
@@ -406,7 +529,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "If the request got successfully handled."
+          },
+          "400": {
+            "description": "An exception has been occured during the process.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -427,10 +570,21 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": " (Auth)",
+        "summary": "Gets all the minecraft servers from the system. (Auth)",
+        "operationId": "GetAllServers",
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MinecraftServerDTO"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -449,20 +603,12 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": " (Auth)",
+        "summary": "Creates a server. (Auth)",
+        "operationId": "CreateServer",
         "requestBody": {
+          "description": "data which are required to create the server",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ServerCreationDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ServerCreationDto"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ServerCreationDto"
               }
@@ -470,8 +616,25 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinecraftServerDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -492,10 +655,28 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": " (Auth)",
+        "summary": "Gets the currently running server (Auth)",
+        "operationId": "GetRunningServer",
         "responses": {
-          "200": {
-            "description": "Success"
+          "302": {
+            "description": "Redirects to the minecraft server api endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinecraftServerDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If there is no running server currently.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDTO"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -514,6 +695,16 @@
   },
   "components": {
     "schemas": {
+      "AuthenticatedResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CommandDto": {
         "type": "object",
         "properties": {
@@ -648,11 +839,14 @@
         "additionalProperties": false
       },
       "ServerCreationDto": {
+        "required": [
+          "newName"
+        ],
         "type": "object",
         "properties": {
           "newName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false

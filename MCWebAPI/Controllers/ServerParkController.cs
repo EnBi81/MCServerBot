@@ -4,6 +4,7 @@ using APIModel.Responses;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Exceptions;
 using Shared.Model;
 
 namespace MCWebAPI.Controllers
@@ -34,7 +35,7 @@ namespace MCWebAPI.Controllers
         /// Gets all the minecraft servers from the system.
         /// </summary>
         /// <returns>All the minecraft servers from the system.</returns>
-        [HttpGet]
+        [HttpGet(Name = nameof(GetAllServers))]
         [ProducesResponseType(typeof(IEnumerable<MinecraftServerDTO>), StatusCodes.Status200OK)]
         public IActionResult GetAllServers()
         {
@@ -42,22 +43,37 @@ namespace MCWebAPI.Controllers
             return Ok(servers);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Creates a server.
+        /// </summary>
+        /// <param name="data">data which are required to create the server</param>
+        /// <returns></returns>
+        [HttpPost(Name = nameof(CreateServer))]
+        [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateServer([FromBody] ServerCreationDto data)
         {
             var user = await GetUserEventData();
 
             IMinecraftServer server = await serverPark.CreateServer(data?.NewName, user);
-            return CreatedAtRoute("minecraftserver/" + server.Id, server);
+            return CreatedAtRoute("minecraftserver/" + server.Id, server.ToDTO());
         }
 
-        [HttpGet("running")]
+        /// <summary>
+        /// Gets the currently running server
+        /// </summary>
+        /// <returns>the currently running server</returns>
+        /// <response code="302">Redirects to the minecraft server api endpoint.</response>
+        /// <response code="400">If there is no running server currently.</response>
+        [HttpGet("running", Name = "GetRunningServer")]
+        [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status302Found)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult GetActiveServer()
         {
             if (serverPark.ActiveServer is not IMinecraftServer server || !server.IsRunning)
-                return Ok(new { Message = "No running server." });
+                throw new MCExternalException("There is no currently running server.");
 
-            return Redirect("minecraftserver/" + server.Id);
+            return RedirectToRoute("minecraftserver/" + server.Id);
         }
     }
 }

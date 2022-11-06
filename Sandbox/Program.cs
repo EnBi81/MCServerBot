@@ -4,28 +4,26 @@ using System.Text.RegularExpressions;
 
 namespace Sandbox
 {
+    public class Hi
+    {
+
+    }
+
     public class SandBoxClass
     {
-        public struct S
-        {
-            private int? num;
-
-            public int Num => num ?? 43;
-
-            public S()
-            {
-                num = null;
-            }
-        }
-
 
         const string Server_Jar = "A:\\mc-server-test\\server.jar";
         const string Server_Folder = "A:\\mc-server-test\\server1\\";
         static async Task Main(string[] args) // this is how to create a new server
         {
 
-            S val = default;
-            Console.WriteLine(val.Num);
+            var type = typeof(Hi);
+
+            var constructor = type.GetConstructors()[0];
+
+            Console.WriteLine("public: " + constructor.IsPublic);
+            foreach (var c in constructor.GetParameters())
+                Console.WriteLine("parameter: " + c.Name);
 
 
             //if(args.Contains("reset"))
