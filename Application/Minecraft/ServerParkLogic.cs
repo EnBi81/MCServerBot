@@ -96,28 +96,15 @@ namespace Application.Minecraft
         internal Dictionary<long, IMinecraftServer> ServerCollection { get; } = new();
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public IMinecraftServer GetServer(long id)
-        {
-            ThrowIfServerNotExists(id);
-            return ServerCollection[id];
-        }
+        /// <inheritdoc/>
+        public IMinecraftServer GetServer(long id) => 
+            ServerCollection[id];
+        
 
 
         /// <inheritdoc/>
         private void SetActiveServer(long id)
         {
-            if (ActiveServer != null)
-            {
-                if (ActiveServer.IsRunning)
-                    throw new ServerParkException("Another Server is Running Already!");
-            }
-
             IMinecraftServer server = GetServer(id);
 
             if (ActiveServer == server)
@@ -127,7 +114,6 @@ namespace Application.Minecraft
             ActiveServer = server;
             SubscribeEventTrackers(ActiveServer);
 
-
             InvokeActiveServerChanged(ActiveServer);
         }
 
@@ -135,8 +121,6 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public Task StartServer(long id, UserEventData user)
         {
-            ValidateMaxStorage();
-
             SetActiveServer(id);
             ActiveServer?.Start(user);
 
@@ -146,9 +130,6 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public Task StopActiveServer(UserEventData user)
         {
-            if (ActiveServer == null || !ActiveServer.IsRunning)
-                throw new ServerParkException("Server is not running!");
-
             ActiveServer?.Shutdown(user);
 
             return Task.CompletedTask;
@@ -166,9 +147,8 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public Task<IMinecraftServer> CreateServer(string? serverName, UserEventData user)
         {
-            CreateServerCheck(ref serverName);
-
-            long newServerId = _serverIdCounter++;
+            // synchronization increment
+            long newServerId = Interlocked.Increment(ref _serverIdCounter);
 
             string destDir = ServersFolder + newServerId;
             Directory.CreateDirectory(destDir);
@@ -184,22 +164,13 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user)
         {
-            ValidateNameLength(ref newName!);
-
-            ThrowIfServerNotExists(id);
-            ThrowIfServerRunning(id);
-
-
-            if (ServerNameExist(newName))
-                throw new ServerParkException($"The name '{newName}' is already taken");
-
-
+            string serverName = newName!;
 
             var server = ServerCollection[id];
             var oldName = server.ServerName;
-            server.ServerName = newName;
+            server.ServerName = serverName;
 
-            InvokeServerNameChange(server, oldName, newName);
+            InvokeServerNameChange(server, oldName, serverName);
 
             return Task.FromResult(server);
         }
@@ -207,9 +178,6 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public Task<IMinecraftServer> DeleteServer(long id, UserEventData user)
         {
-            ThrowIfServerNotExists(id);
-            ThrowIfServerRunning(id);
-
             string newDir = $"{DeletedServersFolder}{id}-{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
             FileHelper.MoveDirectory(ServersFolder + id, newDir);
 
@@ -222,50 +190,6 @@ namespace Application.Minecraft
         }
 
         /// <summary>
-        /// Check if the name already exists.
-        /// </summary>
-        /// <param name="name">name to check</param>
-        /// <returns>true if it exists, else false.</returns>
-        private bool ServerNameExist(string name) => ServerCollection.Values.Any(server => server.ServerName == name);
-
-        /// <summary>
-        /// Checks if the name's length is valid, throws exception if yes.
-        /// </summary>
-        /// <param name="name">name to check</param>
-        /// <exception cref="Exception">if the name is not valid.</exception>
-        private static void ValidateNameLength(ref string? name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new MinecraftServerArgumentException("server name must not be null or white space");
-
-            name = name.Trim();
-
-            if (!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
-                throw new ServerParkException($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
-        }
-
-
-
-        private void ValidateMaxStorage()
-        {
-            var dir = _config.MinecraftServersBaseFolder;
-            long maxDiskSpaceByte = (long)_config.MaxSumOfDiskSpaceGB * (1024 * 1024 * 1024);
-
-            (bool overflow, long measured) = FileHelper.CheckStorageOverflow(dir, maxDiskSpaceByte);
-
-            string measuredString = FileHelper.StorageFormatter(measured);
-
-            LogService.GetService<MinecraftLogger>().Log("serverpark", "Storage measured: " + measuredString);
-
-            if (overflow)
-            {
-                throw new ServerParkException($"Disk space full. Max disk space allocated: {_config.MaxSumOfDiskSpaceGB} GB." +
-                    $" Current storage: {measuredString}.");
-            }
-        }
-
-
-        /// <summary>
         /// Register a new minecraft server object to the program.
         /// </summary>
         /// <param name="serverName"></param>
@@ -274,36 +198,6 @@ namespace Application.Minecraft
         {
             ServerCollection.Add(server.Id, server);
             InvokeServerAdded(server);
-        }
-
-
-        /// <summary>
-        /// Checks if a server with the specific name can be created.
-        /// </summary>
-        /// <param name="serverName"></param>
-        /// <exception cref="Exception">If the server cannot be created.</exception>
-        private void CreateServerCheck(ref string? serverName)
-        {
-            ValidateNameLength(ref serverName!);
-
-            if (ServerNameExist(serverName))
-                throw new ServerParkException($"The name {serverName} is already taken");
-
-            ValidateMaxStorage();
-        }
-
-        private bool ServerExists(long id) => ServerCollection.ContainsKey(id); 
-
-        private void ThrowIfServerRunning(long id)
-        {
-            if (ActiveServer != null && ActiveServer.Id == id && ActiveServer.IsRunning)
-                throw new ServerParkException($"To delete {ActiveServer.ServerName} server, first make sure it is stopped.");
-        }
-
-        private void ThrowIfServerNotExists(long id)
-        {
-            if (!ServerExists(id))
-                throw new ServerParkException($"The server '{id}' does not exist.");
         }
 
 

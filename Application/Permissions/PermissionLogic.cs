@@ -155,9 +155,10 @@ namespace Application.Permissions
 
         public async Task RevokePermission(ulong discordId, UserEventData userEventData)
         {
+            DataUser user;
             try
             {
-                await GetUser(discordId);
+                user = await GetUser(discordId);
             }
             catch
             {
@@ -169,6 +170,7 @@ namespace Application.Permissions
                 throw GetException("User hasn't got permission.");
 
             await _permissionAccess.RevokePermission(userEventData.Id, discordId);
+            PermissionRevoked?.Invoke(this, user);
         }
     }
 }

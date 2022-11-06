@@ -8,17 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MCWebAPI.Controllers
 {
+    /// <summary>
+    /// Handles the websocket request
+    /// </summary>
     [ApiController]
     [Route("ws")]
     [Authorize]
     public class MCWebSocketController : MCControllerBase
     {
-        private readonly IPermissionDataAccess _permissionDataAccess;
         private readonly SocketPool _socketPool;
 
-        public MCWebSocketController(IPermissionDataAccess permissionDataAccess, SocketPool socketPool)
+        /// <summary>
+        /// Initializes the MCWebSocketController
+        /// </summary>
+        /// <param name="socketPool"></param>
+        public MCWebSocketController(SocketPool socketPool)
         {
-            _permissionDataAccess = permissionDataAccess;
             _socketPool = socketPool;
         }
 

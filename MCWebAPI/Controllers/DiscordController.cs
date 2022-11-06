@@ -1,4 +1,5 @@
-﻿using APIModel.DTOs;
+﻿using APIModel.APIExceptions;
+using APIModel.DTOs;
 using APIModel.Responses;
 using Application.Permissions;
 using MCWebAPI.Controllers.Utils;
@@ -36,24 +37,17 @@ namespace MCWebAPI.Controllers
         /// <returns>A <see cref="UserTokenResponse"/> object.</returns>
         /// <response code="200">Returns a <see cref="UserTokenResponse"/> object.</response>
         /// <response code="400">If the user does not exist.</response>
-        [HttpGet("token/{id:regex(\\d{{18}})}")]
+        [HttpGet("token/{id:regex(\\d{{18}})}", Name = nameof(GetWebAccessToken))]
         [ProducesResponseType(typeof(UserTokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetWebAccessToken([FromRoute] string id)
         {
-            try
-            {
-                if (!ulong.TryParse(id, out ulong userId))
-                    throw new Exception("id must be a number.");
+            if (!ulong.TryParse(id, out ulong userId))
+                throw new WebApiArgumentException("id must be a number.");
 
-                string token = await permissionLogic.GetToken(userId);
-                var userTokenResponse = new UserTokenResponse { UserToken = token };
-                return Ok(userTokenResponse);
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            string token = await permissionLogic.GetToken(userId);
+            var userTokenResponse = new UserTokenResponse { UserToken = token };
+            return Ok(userTokenResponse);
         }
 
 
@@ -64,7 +58,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="200">Returns Ok 200.</response>
         /// <response code="400">If the DiscordName or the ProfilePic is null.</response>
-        [HttpPost("user")]
+        [HttpPost("user", Name = "RegisterUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] UserDataDto registerDto)
@@ -87,7 +81,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="200">Returns Ok 200.</response>
         /// <response code="400">If the DiscordName or the ProfilePic is null, or the user is not registered.</response>
-        [HttpPut("user")]
+        [HttpPut("user", Name = nameof(RefreshUser))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RefreshUser([FromBody] UserDataDto userDto)

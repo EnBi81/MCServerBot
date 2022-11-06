@@ -35,7 +35,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="200">Returns the requested server object.</response>
         /// <response code="400">The server with the specified name does not exist.</response>
-        [HttpGet]
+        [HttpGet(Name = "GetServer")]
         [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult GetFullServer([FromRoute] long id)
@@ -51,7 +51,7 @@ namespace MCWebAPI.Controllers
         /// </summary>
         /// <param name="id">id of the server</param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("DeleteServer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteServer([FromRoute] long id)
@@ -67,7 +67,7 @@ namespace MCWebAPI.Controllers
         /// <param name="id">id of the server to modify</param>
         /// <param name="dto">new values</param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("ModifyServer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
@@ -86,7 +86,7 @@ namespace MCWebAPI.Controllers
         /// <param name="id">id of the minecraft server</param>
         /// <param name="commandDto">command data</param>
         /// <returns></returns>
-        [HttpPost("commands")]
+        [HttpPost("commands", Name = "WriteCommandToServer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
@@ -104,7 +104,7 @@ namespace MCWebAPI.Controllers
         /// </summary>
         /// <param name="id">id of the minecraft server.</param>
         /// <returns></returns>
-        [HttpPost("toggle")]
+        [HttpPost("toggle", Name = "ToggleServer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ToggleServer([FromRoute] long id)

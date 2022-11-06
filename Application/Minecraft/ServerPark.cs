@@ -1,5 +1,6 @@
 ﻿using Application.DAOs;
 using Application.DAOs.Database;
+using Application.Minecraft.States;
 using Loggers;
 using Shared.DTOs;
 using Shared.EventHandlers;
@@ -14,7 +15,7 @@ namespace Application.Minecraft
     public class ServerPark : IServerPark
     {
         private readonly IServerParkDataAccess _serverParkEventRegister;
-        private readonly ServerParkLogic _serverPark;
+        private readonly ServerParkInputValidation _serverPark;
         private readonly MinecraftLogger _logger;
 
         private bool _initialized = false;
@@ -24,15 +25,18 @@ namespace Application.Minecraft
             _serverParkEventRegister = databaseAccess.ServerParkDataAccess;
             _logger = logger;
 
+            _logger.Log(_logger.ServerPark, $"Initializing Serverpark");
             try
             {
-                _serverPark = new ServerParkLogic(databaseAccess, config, logger);
+                _serverPark = new ServerParkInputValidation(databaseAccess, config, logger);
             }
             catch(Exception e)
             {
                 logger.Error(logger.ServerPark, e);
                 throw;
             }
+
+            _logger.Log(_logger.ServerPark, $"Serverpark initialized");
         }
 
 
@@ -273,6 +277,7 @@ namespace Application.Minecraft
                 await _serverParkEventRegister.StartServer(server!.Id, user);
         }
 
+        /// <inheritdoc/>
         public IMinecraftServer GetServer(long id)
         {
             ThrowExceptionIfNotInitialized();
