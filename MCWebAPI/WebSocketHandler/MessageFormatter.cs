@@ -2,13 +2,12 @@
 using Application.Minecraft.MinecraftServers;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
+using MCWebAPI.Utils;
 
 namespace MCWebAPI.WebSocketHandler
 {
     public static class MessageFormatter
     {
-        
-
         public static string Logout()
         {
             var logout = new { datatype = "logout"};
@@ -22,8 +21,8 @@ namespace MCWebAPI.WebSocketHandler
             var nameChange = new
             {
                 datatype = "serverNameChange",
-                id,
-                newName
+                serverId = id,
+                newName,
             };
 
             return Serialize(nameChange);
@@ -31,63 +30,61 @@ namespace MCWebAPI.WebSocketHandler
 
         public static string ServerDeleted(long id)
         {
-            var deleted = new { datatype = "serverDeleted", id };
+            var deleted = new { datatype = "serverDeleted", serverId = id };
             return Serialize(deleted);
         }
 
-        public static string ServerAdded(long id)
+        public static string ServerAdded(long id, IMinecraftServer server)
         {
-            var added = new { datatype = "serverAdded", id };
+            var added = new { 
+                datatype = "serverAdded", 
+                serverId = id, 
+                server = server.ToDTO()
+            };
             return Serialize(added);
         }
 
-        public static string Log(string server, string message, int type)
+        public static string Log(long id, string message, int type)
         {
-            return Log(server, new LogMessage(message, (LogMessageType)type));
+            return Log(id, new LogMessage(message, (LogMessageType)type));
         }
 
-        public static string Log(string server, LogMessage message)
+        public static string Log(long id, LogMessage message)
         {
-            return Log(server, new List<LogMessage>() { message });
+            return Log(id, new List<LogMessage>() { message });
         }
 
-        public static string Log(string server, IEnumerable<LogMessage> messages)
+        public static string Log(long id, IEnumerable<LogMessage> messages)
         {
             var log = new
             {
                 datatype = "log",
-                server,
-                logs = (from logMessage in messages
-                       select new
-                       {
-                           message = logMessage.Message,
-                           type = (int)logMessage.MessageType
-                       }).ToList()
+                serverId = id,
+                logs = (from logMessage in messages select logMessage.ToDTO()).ToList()
             };
 
             return Serialize(log);
         }
 
-        public static string PlayerJoin(string server, string username, DateTime onlineFrom, TimeSpan pastUptime)
+        public static string PlayerJoin(long id, IMinecraftPlayer player)
         {
             var playerJoin = new
             {
                 datatype = "playerJoin",
-                server,
-                username = username,
-                onlineFrom = onlineFrom.DateToString(),
-                pastUptime = new {
-                    h = pastUptime.Hours, 
-                    m = pastUptime.Minutes,
-                    s = pastUptime.Seconds
-                }
+                serverId = id,
+                player = player.ToDTO()
             };
             return Serialize(playerJoin);
         }
 
-        public static string PlayerLeft(string server, string username)
+        public static string PlayerLeft(long id, IMinecraftPlayer player)
         {
-            var playerLeft = new { datatype = "playerLeft", server, username = username };
+            var playerLeft = new 
+            {
+                datatype = "playerLeft",
+                serverId = id, 
+                player = player.ToDTO() 
+            };
             return Serialize(playerLeft);
         }
 

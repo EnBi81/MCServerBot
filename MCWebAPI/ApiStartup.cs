@@ -82,7 +82,7 @@ namespace MCWebAPI
                 MinecraftServerHandlerPath = config.MinecraftServerHandlerPath,
                 MinecraftServerInitRamMB = config.MinecraftServerInitRamMB,
                 MinecraftServerMaxRamMB = config.MinecraftServerMaxRamMB,
-                MinecraftServersBaseFolder = config.MinecraftServersBaseFolder
+                MinecraftServersBaseFolder = config.MinecraftServersBaseFolder,
             })
 
             // Loggers
@@ -91,7 +91,7 @@ namespace MCWebAPI
 
             //Model
             .AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
-                (async databaseAccess => await databaseAccess.DatabaseSetup.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;"))
+                (async databaseAccess => await databaseAccess.DatabaseSetup.Setup(builder.Configuration["ConnectionStrings:SQLite"]))
             .AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync())
             .AddSingleton<IPermissionLogic, PermissionLogic>()
 

@@ -120,7 +120,7 @@ namespace MCWebAPI.WebSocketHandler
                 return;
 
             IMinecraftPlayer player = e.NewValue;
-            string mess = MessageFormatter.PlayerLeft(server.ServerName, player.Username);
+            string mess = MessageFormatter.PlayerLeft(server.Id, player);
 
             await BroadcastMessage(mess);
         }
@@ -134,7 +134,7 @@ namespace MCWebAPI.WebSocketHandler
             if (player.OnlineFrom is null)
                 return;
 
-            string mess = MessageFormatter.PlayerJoin(server.ServerName, player.Username, player.OnlineFrom.Value, player.PastOnline);
+            string mess = MessageFormatter.PlayerJoin(server.Id, player);
 
             await BroadcastMessage(mess);
         }
@@ -145,7 +145,7 @@ namespace MCWebAPI.WebSocketHandler
                 return;
 
             ILogMessage message = e.NewValue;
-            string mess = MessageFormatter.Log(server.ServerName, message.Message, type: (int)message.MessageType);
+            string mess = MessageFormatter.Log(server.Id, message.Message, type: (int)message.MessageType);
 
             await BroadcastMessage(mess);
         }
@@ -158,7 +158,7 @@ namespace MCWebAPI.WebSocketHandler
             string cpu = e.NewValue.CPU.ToString("0.00") + " %";
             string memory = e.NewValue.Memory / (1024 * 1024) + " MB";
 
-            string mess = MessageFormatter.PcUsage(server.ServerName, cpu, memory);
+            string mess = MessageFormatter.PcUsage(server.Id, cpu, memory);
             await BroadcastMessage(mess);
         }
 
@@ -167,33 +167,31 @@ namespace MCWebAPI.WebSocketHandler
             if (sender is not IMinecraftServer mcServer)
                 return;
 
-            string message = MessageFormatter.StatusUpdate(mcServer.ServerName, e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
+            string message = MessageFormatter.StatusUpdate(mcServer.Id, e.NewValue, mcServer.OnlineFrom, mcServer.StorageSpace);
             await BroadcastMessage(message);
         }
 
         private async void ServerAdded(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
-            string name = e.NewValue.ServerName;
-            string storage = e.NewValue.StorageSpace;
-            string message = MessageFormatter.ServerAdded(name, storage);
+            var id = e.NewValue.Id;
+            string message = MessageFormatter.ServerAdded(id, e.NewValue);
 
             await BroadcastMessage(message);
         }
 
         private async void ServerDeleted(object? sender, ValueEventArgs<IMinecraftServer> e)
         {
-            string name = e.NewValue.ServerName;
-            string message = MessageFormatter.ServerDeleted(name);
+            var id = e.NewValue.Id;
+            string message = MessageFormatter.ServerDeleted(id);
 
             await BroadcastMessage(message);
         }
 
         private async void ServerNameChanged(object? sender, ServerValueChangedEventArgs<string> e)
         {
-            string oldName = e.OldValue;
             string newName = e.NewValue;
 
-            string message = MessageFormatter.ServerNameChanged(oldName, newName);
+            string message = MessageFormatter.ServerNameChanged(e.Server.Id, newName);
 
             await BroadcastMessage(message);
         }

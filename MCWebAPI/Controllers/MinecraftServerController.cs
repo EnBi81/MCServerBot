@@ -2,6 +2,7 @@
 using APIModel.DTOs;
 using APIModel.Responses;
 using MCWebAPI.Controllers.Utils;
+using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
@@ -18,7 +19,7 @@ namespace MCWebAPI.Controllers
     [Produces("application/json")]
     public class MinecraftServerController : MCControllerBase
     {
-        private IServerPark serverPark;
+        private readonly IServerPark serverPark;
 
         /// <summary>
         /// Initializes the minecraft server controller.

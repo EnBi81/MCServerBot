@@ -1,7 +1,7 @@
-﻿using APIModel.APIExceptions;
-using APIModel.DTOs;
+﻿using APIModel.DTOs;
 using APIModel.Responses;
 using Application.Permissions;
+using MCWebAPI.APIExceptions;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

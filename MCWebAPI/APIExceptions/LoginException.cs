@@ -1,6 +1,6 @@
 ﻿using Shared.Exceptions;
 
-namespace APIModel.APIExceptions
+namespace MCWebAPI.APIExceptions
 {
     public class LoginException : MCExternalException
     {

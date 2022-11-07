@@ -1,9 +1,9 @@
-﻿using APIModel.APIExceptions;
-using APIModel.DTOs;
+﻿using APIModel.DTOs;
 using APIModel.Responses;
 using Application.DAOs;
 using Application.DAOs.Database;
 using Application.Permissions;
+using MCWebAPI.APIExceptions;
 using MCWebAPI.Controllers.Utils;
 using Shared.DTOs;
 using Shared.DTOs.Enums;

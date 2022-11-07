@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APIModel.APIExceptions
+namespace MCWebAPI.APIExceptions
 {
     public class WebsocketException : MCExternalException
     {

@@ -1,5 +1,4 @@
 ﻿using Application.DAOs.Database;
-using DataStorage.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +39,6 @@ namespace DataStorageTest.Tests
             Assert.AreEqual(ulong.MaxValue, user.Id);
             Assert.AreEqual("TestUsernameMax", user.Username);
             Assert.AreEqual("ProfPicMax", user.ProfilePicUrl);
-            Assert.AreEqual("accessTokenMax", user.WebAccessToken);
         }
 
         [TestMethod]
@@ -53,7 +51,6 @@ namespace DataStorageTest.Tests
             Assert.AreEqual(ulong.MinValue, user.Id);
             Assert.AreEqual("TestUsernameMin", user.Username);
             Assert.AreEqual("ProfPicMin", user.ProfilePicUrl);
-            Assert.AreEqual("accessTokenMin", user.WebAccessToken);
         }
 
         [TestMethod]

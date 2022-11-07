@@ -1,6 +1,6 @@
-﻿using APIModel.APIExceptions;
-using Loggers;
+﻿using Loggers;
 using Loggers.Loggers;
+using MCWebAPI.APIExceptions;
 using Newtonsoft.Json;
 using Shared.Exceptions;
 
@@ -91,11 +91,10 @@ namespace MCWebAPI.Utils
         public string MinecraftServersBaseFolder { get; set; }      //folder of the minecraft servers
         public int MinecraftServerMaxRamMB { get; set; }        // max ram for the minecraft server
         public int MinecraftServerInitRamMB { get; set; }       // ram to start the minecraft server with
-        public int MinecraftServerPerformaceReportDelayInSeconds { get; set; }   // time period to check the minecraft server resource consumption
         public int MinecraftMaxDiskSpaceGB { get; set; } // max disk space for the minecraft servers folder (including the deleted folder as well)
         public string JavaLocation { get; set; }    // java location
-        public int WebServerPortHttps { get; set; } // https port for web
-        public int WebServerPortHttp { get; set; }  // http port for web
+        public int WebApiPortHttps { get; set; } // https port for web
+        public int WebApiPortHttp { get; set; }  // http port for web
 
 #pragma warning restore
 
