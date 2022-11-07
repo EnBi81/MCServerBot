@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 namespace Application.Minecraft
 {
     /// <summary>
-    /// Main logic of the ServerPark.
+    /// ServerParkInputValidation already checks the important stuff, so here we need to execute the actions.
     /// </summary>
     internal class ServerParkLogic : IServerPark
     {
@@ -22,11 +22,11 @@ namespace Application.Minecraft
         /// <summary>
         /// Path of the folder which contains the previously deleted servers
         /// </summary>
-        internal string DeletedServersFolder { get; } 
+        internal string DeletedServersFolder { get; }
         /// <summary>
         /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
         /// </summary>
-        internal string EmptyServersFolder { get; } 
+        internal string EmptyServersFolder { get; }
 
 
         private long _serverIdCounter;
@@ -97,9 +97,9 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public IMinecraftServer GetServer(long id) => 
+        public IMinecraftServer GetServer(long id) =>
             ServerCollection[id];
-        
+
 
 
         /// <inheritdoc/>
@@ -138,8 +138,8 @@ namespace Application.Minecraft
 
         /// <inheritdoc/>
         public Task ToggleServer(long id, UserEventData user) =>
-            ActiveServer?.IsRunning ?? false 
-            ? StopActiveServer(user) 
+            ActiveServer?.IsRunning ?? false
+            ? StopActiveServer(user)
             : StartServer(id, user);
 
 

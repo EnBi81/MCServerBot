@@ -8,6 +8,9 @@ using Shared.Model;
 
 namespace Application.Minecraft
 {
+    /// <summary>
+    /// Checks and validates if a method is allowed to use. If not, an exception is thrown.
+    /// </summary>
     internal class ServerParkInputValidation : IServerPark
     {
         private readonly ServerParkLogic _serverParkLogic;
@@ -20,10 +23,13 @@ namespace Application.Minecraft
         }
 
 
+        /// <inheritdoc/>
         public Task InitializeAsync() => _serverParkLogic.InitializeAsync();
 
+        /// <inheritdoc/>
         public IMinecraftServer? ActiveServer => _serverParkLogic.ActiveServer;
 
+        /// <inheritdoc/>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers => _serverParkLogic.MCServers;
 
 
@@ -59,7 +65,7 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public Task ToggleServer(long id, UserEventData user = default) => 
+        public Task ToggleServer(long id, UserEventData user = default) =>
             _serverParkLogic.ToggleServer(id, user);
 
         /// <inheritdoc/>
@@ -114,7 +120,7 @@ namespace Application.Minecraft
 
             name = name.Trim();
 
-            if (!(name.Length <= IMinecraftServer.NAME_MAX_LENGTH && name.Length >= IMinecraftServer.NAME_MIN_LENGTH))
+            if (name.Length is not (<= IMinecraftServer.NAME_MAX_LENGTH and >= IMinecraftServer.NAME_MIN_LENGTH))
                 throw new MinecraftServerArgumentException($"Name must be no longer than {IMinecraftServer.NAME_MAX_LENGTH} characters and more than {IMinecraftServer.NAME_MIN_LENGTH}!");
         }
 

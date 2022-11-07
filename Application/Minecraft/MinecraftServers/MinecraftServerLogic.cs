@@ -1,10 +1,10 @@
-﻿using Application.Minecraft.Util;
+﻿using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
-using Application.Minecraft.MinecraftServers.Utils;
-using Shared.Model;
-using Shared.Exceptions;
-using static Shared.Model.ILogMessage;
+using Application.Minecraft.Util;
 using Shared.DTOs;
+using Shared.Exceptions;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.MinecraftServers
 {
@@ -15,7 +15,7 @@ namespace Application.Minecraft.MinecraftServers
     {
 
         /// <inheritdoc/>
-        public long Id { get; } 
+        public long Id { get; }
 
         private string _serverName = null!;
 
@@ -56,14 +56,14 @@ namespace Application.Minecraft.MinecraftServers
         public string StorageSpace => FileHelper.StorageFormatter(StorageBytes);
 
         /// <inheritdoc/>
-        public long StorageBytes 
-        { 
-            get => _storageBytes; 
-            internal set 
+        public long StorageBytes
+        {
+            get => _storageBytes;
+            internal set
             {
                 _storageBytes = value;
                 RaiseEvent(StorageMeasured, value);
-            } 
+            }
         }
         private long _storageBytes;
 
@@ -86,7 +86,7 @@ namespace Application.Minecraft.MinecraftServers
         internal MinecraftServerInfos McServerInfos { get; }
 
 
-        
+
 
         public MinecraftServerLogic(string serverFolderName, MinecraftConfig config) : this(0, serverFolderName, config)
         {

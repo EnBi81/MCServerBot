@@ -1,5 +1,5 @@
-﻿using System.Management;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Management;
 
 namespace Application.Minecraft.Util
 {
@@ -9,7 +9,7 @@ namespace Application.Minecraft.Util
     internal class ProcessPerformanceReporter
     {
         private readonly Process _mcProcess; // process to measure
-        private volatile bool _isRunning; 
+        private volatile bool _isRunning;
         private readonly Thread _measurementThread;
 
 
@@ -58,7 +58,7 @@ namespace Application.Minecraft.Util
             while (_isRunning)
             {
                 var gets = moSearcher.Get();
-                foreach (ManagementObject mObj in gets)
+                foreach (ManagementObject mObj in gets.Cast<ManagementObject>())
                 {
                     try
                     {
@@ -87,7 +87,7 @@ namespace Application.Minecraft.Util
 
                         var cpuPercentage = ProcessorUsage;
                         var memoryByte = _mcProcess.WorkingSet64;
-                        
+
 
                         RaiseEvent(PerformanceMeasured, (cpuPercentage, memoryByte));
                     }

@@ -1,6 +1,6 @@
-﻿using Loggers;
+﻿using Application.Minecraft.Util;
+using Loggers;
 using System.Diagnostics;
-using Application.Minecraft.Util;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {

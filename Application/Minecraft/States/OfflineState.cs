@@ -1,8 +1,8 @@
-﻿using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
-using Application.Minecraft.MinecraftServers;
+﻿using Application.Minecraft.MinecraftServers;
+using Shared.Exceptions;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
-using Shared.Exceptions;
+using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States
 {
@@ -71,6 +71,6 @@ namespace Application.Minecraft.States
         /// <param name="username">This parameter is also ignored</param>
         /// <exception cref="Exception">This is thrown always.</exception>
         public override void WriteCommand(string? command, string username) =>
-            throw new MinecraftServerException(_server.ServerName +  " is not online!");
+            throw new MinecraftServerException(_server.ServerName + " is not online!");
     }
 }

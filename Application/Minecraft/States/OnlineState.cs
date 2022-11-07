@@ -1,10 +1,9 @@
-﻿using Loggers;
-using System.Text.RegularExpressions;
-using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
-using Application.Minecraft.MinecraftServers;
-using Shared.Model;
-using static Shared.Model.ILogMessage;
+﻿using Application.Minecraft.MinecraftServers;
 using Shared.Exceptions;
+using Shared.Model;
+using System.Text.RegularExpressions;
+using static Shared.Model.ILogMessage;
+using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States
 {

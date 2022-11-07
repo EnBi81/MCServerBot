@@ -1,8 +1,4 @@
-﻿using Loggers;
-using System;
-using System.IO;
-
-namespace Application.Minecraft.Util
+﻿namespace Application.Minecraft.Util
 {
     internal class FileHelper
     {

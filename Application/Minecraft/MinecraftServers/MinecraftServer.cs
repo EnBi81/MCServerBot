@@ -23,7 +23,7 @@ namespace Application.Minecraft.MinecraftServers
         }
 
 
-        public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger, 
+        public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
             long id, string serverName, string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
         {
             _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config));
@@ -77,7 +77,7 @@ namespace Application.Minecraft.MinecraftServers
             _minecraftServerLogic.StorageMeasured += (s, e) =>
                 _eventRegister.SetDiskSize(Id, e);
         }
-        
+
         /// <summary>
         /// Handles the loggings.
         /// </summary>
@@ -85,17 +85,17 @@ namespace Application.Minecraft.MinecraftServers
         {
             string mcServer = _logger.MinecraftServer;
 
-            _minecraftServerLogic.LogReceived += (s, e) 
+            _minecraftServerLogic.LogReceived += (s, e)
                 => _logger.Log(mcServer + "-log", e.Message);
             _minecraftServerLogic.PerformanceMeasured += (s, e)
                 => _logger.Log(mcServer + "-performance", $"CPU: {e.CPU:0.00}%  Memory: {e.Memory / (1024 * 1024)} MB");
-            _minecraftServerLogic.PlayerJoined += (s, e) 
+            _minecraftServerLogic.PlayerJoined += (s, e)
                 => _logger.Log(mcServer + "-player", $"Player joined: " + e.Username);
             _minecraftServerLogic.PlayerLeft += (s, e)
                 => _logger.Log(mcServer + "-player", $"Player left: " + e.Username);
-            _minecraftServerLogic.StatusChange += (s, e) 
+            _minecraftServerLogic.StatusChange += (s, e)
                 => _logger.Log(mcServer + "-status", $"New status: " + e.DisplayString());
-            _minecraftServerLogic.StorageMeasured += (s, e) 
+            _minecraftServerLogic.StorageMeasured += (s, e)
                 => _logger.Log(mcServer + "-storage", $"Storage measured: {e / (1024 * 1024)} MB");
         }
 
@@ -135,7 +135,7 @@ namespace Application.Minecraft.MinecraftServers
         /// <inheritdoc/>
         public event EventHandler<ServerStatus> StatusChange
         {
-            add => _minecraftServerLogic.StatusChange += value; 
+            add => _minecraftServerLogic.StatusChange += value;
             remove => _minecraftServerLogic.StatusChange -= value;
         }
         /// <inheritdoc/>
@@ -189,6 +189,6 @@ namespace Application.Minecraft.MinecraftServers
             _minecraftServerLogic.WriteCommand(command, data);
             _eventRegister.WriteCommand(Id, command!, data);
         }
-            
+
     }
 }

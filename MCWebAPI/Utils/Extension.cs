@@ -45,7 +45,7 @@ namespace MCWebAPI.Utils
             // get the service descriptor from which we need the instance
             var service = serviceCollection
                 .Where(s => (s.ServiceType == serviceType) && 
-                            (serviceLifetime == null ? true : s.Lifetime == serviceLifetime))
+                            (serviceLifetime == null || s.Lifetime == serviceLifetime))
                 .FirstOrDefault();
 
 

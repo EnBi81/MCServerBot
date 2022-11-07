@@ -2,6 +2,7 @@
 {
     public class MinecraftLogger : Logger
     {
+
 #pragma warning disable CA1822 // Mark members as static
         public string ServerPark => "serverpark";
 

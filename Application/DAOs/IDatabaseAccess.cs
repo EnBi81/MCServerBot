@@ -1,7 +1,7 @@
 ﻿using Application.DAOs.Database;
 
 namespace Application.DAOs
-{ 
+{
     /// <summary>
     /// Holding the data access objects.
     /// </summary>
@@ -14,7 +14,7 @@ namespace Application.DAOs
         /// <summary>
         /// Minecraft Data Access Object.
         /// </summary>
-        public IMinecraftDataAccess MinecraftDataAccess { get; } 
+        public IMinecraftDataAccess MinecraftDataAccess { get; }
         /// <summary>
         /// ServerPark Data Access Object.
         /// </summary>
@@ -22,6 +22,6 @@ namespace Application.DAOs
         /// <summary>
         /// Database setup object.
         /// </summary>
-        public IDatabaseSetup DatabaseSetup { get; } 
+        public IDatabaseSetup DatabaseSetup { get; }
     }
 }

@@ -13,7 +13,7 @@ namespace Application.Permissions
         {
             ["RWodc/j=XxPUBq^(Yoxim\":b~#jl~6RdEAk:W[m]ad06g.v1UA<`hsMo(1n>MSj"] = new DataUser
             {
-                Id = 2, 
+                Id = 2,
                 Username = "DCBot",
                 ProfilePicUrl = "",
                 UserType = DataUserType.Discord
@@ -40,7 +40,7 @@ namespace Application.Permissions
         }
 
         public async Task<string> GetToken(ulong id) =>
-            await _permissionAccess.GetWebAccessCode(id) ?? 
+            await _permissionAccess.GetWebAccessCode(id) ??
             throw GetException("User is not registered in the system.");
 
         public async Task<DataUser> GetUser(string? token)
@@ -142,7 +142,7 @@ namespace Application.Permissions
                 await GetUser(discordId);
             }
             catch
-            { 
+            {
                 // throw the exception to make the caller register the user first.
                 throw;
             }

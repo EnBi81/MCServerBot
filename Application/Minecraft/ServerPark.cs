@@ -1,6 +1,5 @@
 ﻿using Application.DAOs;
 using Application.DAOs.Database;
-using Application.Minecraft.States;
 using Loggers;
 using Shared.DTOs;
 using Shared.EventHandlers;
@@ -30,7 +29,7 @@ namespace Application.Minecraft
             {
                 _serverPark = new ServerParkInputValidation(databaseAccess, config, logger);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.Error(logger.ServerPark, e);
                 throw;
@@ -58,32 +57,32 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public IMinecraftServer? ActiveServer 
-        { 
+        public IMinecraftServer? ActiveServer
+        {
             get
-            { 
-                ThrowExceptionIfNotInitialized(); 
+            {
+                ThrowExceptionIfNotInitialized();
                 return _serverPark.ActiveServer;
-            } 
+            }
         }
 
         /// <inheritdoc/>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers
-        { 
-            get 
-            { 
+        {
+            get
+            {
                 ThrowExceptionIfNotInitialized();
-                return _serverPark.MCServers; 
-            } 
-        } 
+                return _serverPark.MCServers;
+            }
+        }
 
         /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
-                _serverPark.ActiveServerChange += value; 
+                _serverPark.ActiveServerChange += value;
             }
             remove
             {
@@ -94,21 +93,21 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
-                _serverPark.ActiveServerStatusChange += value; 
+                _serverPark.ActiveServerStatusChange += value;
             }
             remove
             {
                 ThrowExceptionIfNotInitialized();
-                _serverPark.ActiveServerStatusChange -= value; 
+                _serverPark.ActiveServerStatusChange -= value;
             }
         }
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerLogReceived += value;
@@ -122,12 +121,12 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerPlayerJoined += value;
             }
-            remove 
+            remove
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerPlayerJoined -= value;
@@ -136,12 +135,12 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerPlayerLeft += value;
             }
-            remove 
+            remove
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerPlayerLeft -= value;
@@ -155,7 +154,7 @@ namespace Application.Minecraft
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerPerformanceMeasured += value;
             }
-            remove 
+            remove
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ActiveServerPerformanceMeasured -= value;
@@ -164,7 +163,7 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ServerNameChanged += value;
@@ -192,12 +191,12 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted
         {
-            add 
+            add
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ServerDeleted += value;
             }
-            remove 
+            remove
             {
                 ThrowExceptionIfNotInitialized();
                 _serverPark.ServerDeleted -= value;
