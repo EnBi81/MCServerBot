@@ -51,7 +51,7 @@ namespace Loggers
             }
 
             Console.ForegroundColor = color;
-            Console.WriteLine(logMessage, color);
+            Console.WriteLine(logMessage);
             File.AppendAllText(Filename, logMessage + Environment.NewLine);
         }
     }

@@ -26,6 +26,8 @@ WEB API features:
 - Grant permission for a discord user to use the system
 - Revoke permission for a discord user to not allow to use the system
 
+<img src="docs/images/api-endpoints.png">
+
 
 
 ## Setup

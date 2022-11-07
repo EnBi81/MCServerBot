@@ -729,48 +729,19 @@
         },
         "additionalProperties": false
       },
-      "ILogMessage": {
+      "LogMessageDto": {
         "type": "object",
         "properties": {
           "message": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "messageType": {
-            "$ref": "#/components/schemas/LogMessageType"
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
-      },
-      "IMinecraftPlayer": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "onlineFrom": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true
-          },
-          "pastOnline": {
-            "$ref": "#/components/schemas/TimeSpan"
-          }
-        },
-        "additionalProperties": false
-      },
-      "LogMessageType": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
-        "type": "integer",
-        "format": "int32"
       },
       "LoginDto": {
         "type": "object",
@@ -782,6 +753,24 @@
           "platform": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MinecraftPlayerDTO": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "pastOnline": {
+            "$ref": "#/components/schemas/TimeSpan"
           }
         },
         "additionalProperties": false
@@ -804,7 +793,7 @@
           "logMessages": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ILogMessage"
+              "$ref": "#/components/schemas/LogMessageDto"
             },
             "nullable": true
           },
@@ -821,7 +810,7 @@
           "players": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/IMinecraftPlayer"
+              "$ref": "#/components/schemas/MinecraftPlayerDTO"
             },
             "nullable": true
           },
