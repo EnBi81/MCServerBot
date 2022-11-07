@@ -88,15 +88,15 @@ namespace Application.Minecraft.MinecraftServers
             _minecraftServerLogic.LogReceived += (s, e)
                 => _logger.Log(mcServer + "-log", e.Message);
             _minecraftServerLogic.PerformanceMeasured += (s, e)
-                => _logger.Log(mcServer + "-performance", $"CPU: {e.CPU:0.00}%  Memory: {e.Memory / (1024 * 1024)} MB");
+                => _logger.Log(mcServer + "-performance", $"{Id}:{ServerName} measurement: CPU - {e.CPU:0.00}%  Memory - {e.Memory / (1024 * 1024)} MB");
             _minecraftServerLogic.PlayerJoined += (s, e)
-                => _logger.Log(mcServer + "-player", $"Player joined: " + e.Username);
+                => _logger.Log(mcServer + "-player", $"{e.Username} joined {Id}:{ServerName}");
             _minecraftServerLogic.PlayerLeft += (s, e)
-                => _logger.Log(mcServer + "-player", $"Player left: " + e.Username);
+                => _logger.Log(mcServer + "-player", $"{e.Username} left {Id}:{ServerName}");
             _minecraftServerLogic.StatusChange += (s, e)
-                => _logger.Log(mcServer + "-status", $"New status: " + e.DisplayString());
+                => _logger.Log(mcServer + "-status", $"{Id}:{ServerName} new status: " + e.DisplayString());
             _minecraftServerLogic.StorageMeasured += (s, e)
-                => _logger.Log(mcServer + "-storage", $"Storage measured: {e / (1024 * 1024)} MB");
+                => _logger.Log(mcServer + "-storage", $"{Id}:{ServerName} storage measured: {e / (1024 * 1024)} MB");
         }
 
         /// <inheritdoc/>

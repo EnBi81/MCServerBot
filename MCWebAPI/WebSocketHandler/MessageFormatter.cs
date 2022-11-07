@@ -7,13 +7,7 @@ namespace MCWebAPI.WebSocketHandler
 {
     public static class MessageFormatter
     {
-
-        public static string ErrorMessage(string errorMessage)
-        {
-            var error = new { datatype = "error", errorMessage };
-            return Serialize(error);
-        }
-
+        
 
         public static string Logout()
         {
@@ -23,36 +17,29 @@ namespace MCWebAPI.WebSocketHandler
 
 
 
-        public static string ServerNameChanged(string oldName, string newName)
+        public static string ServerNameChanged(long id, string newName)
         {
             var nameChange = new
             {
                 datatype = "serverNameChange",
-                oldName,
+                id,
                 newName
             };
 
             return Serialize(nameChange);
         }
 
-        public static string ServerDeleted(string name)
+        public static string ServerDeleted(long id)
         {
-            var deleted = new { datatype = "serverDeleted", name };
+            var deleted = new { datatype = "serverDeleted", id };
             return Serialize(deleted);
         }
 
-        public static string ServerAdded(string name, string storage)
+        public static string ServerAdded(long id)
         {
-            var added = new { datatype = "serverAdded", name, storage };
+            var added = new { datatype = "serverAdded", id };
             return Serialize(added);
         }
-
-        public static string ActiveServerChange(string newServer)
-        {
-            var active = new { datatype = "activeServerChange", newActive = newServer };
-            return Serialize(active);
-        }
-
 
         public static string Log(string server, string message, int type)
         {
@@ -104,13 +91,13 @@ namespace MCWebAPI.WebSocketHandler
             return Serialize(playerLeft);
         }
 
-        public static string PcUsage(string server, string cpuPerc, string memory)
+        public static string PcUsage(long serverId, string cpuPerc, string memory)
         {
-            var pcUsage = new { datatype = "pcUsage", server, cpu = cpuPerc, memory = memory };
+            var pcUsage = new { datatype = "pcUsage", serverId, cpu = cpuPerc, memory = memory };
             return Serialize(pcUsage);
         }
 
-        public static string StatusUpdate(string server, ServerStatus status, DateTime? onlineFrom, string storage)
+        public static string StatusUpdate(long serverId, ServerStatus status, DateTime? onlineFrom, string storage)
         {
             string stringStatus = status switch
             {
@@ -123,7 +110,7 @@ namespace MCWebAPI.WebSocketHandler
 
             var statusResponse = new { 
                 datatype = "status",
-                server,
+                serverId,
                 status = stringStatus, 
                 onlineFrom = onlineFrom?.DateToString(),
                 storage = storage

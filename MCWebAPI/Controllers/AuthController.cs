@@ -4,8 +4,6 @@ using APIModel.Responses;
 using MCWebAPI.Auth;
 using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Shared.DTOs;
-using Shared.DTOs.Enums;
 
 namespace MCWebAPI.Controllers
 {

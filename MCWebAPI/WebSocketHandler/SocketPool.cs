@@ -49,8 +49,7 @@ namespace MCWebAPI.WebSocketHandler
         private void SetupListeners()
         {
             _logger.Log("socket-pool", "Setting up listeners");
-
-            _serverPark.ActiveServerChange += ActiveServerChange;
+            
             _serverPark.ActiveServerPlayerLeft += ActiveServerPlayerLeft;
             _serverPark.ActiveServerPlayerJoined += ActiveServerPlayerJoined;
             _serverPark.ActiveServerLogReceived += ActiveServerLogReceived;
@@ -114,13 +113,6 @@ namespace MCWebAPI.WebSocketHandler
 
 
         #region Listeners
-        private async void ActiveServerChange(object? sender, ValueEventArgs<IMinecraftServer> e)
-        {
-            string newActiveServer = e.NewValue.ServerName;
-            string mess = MessageFormatter.ActiveServerChange(newActiveServer);
-
-            await BroadcastMessage(mess);
-        }
 
         private async void ActiveServerPlayerLeft(object? sender, ServerValueEventArgs<IMinecraftPlayer> e)
         {

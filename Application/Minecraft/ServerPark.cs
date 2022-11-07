@@ -8,6 +8,7 @@ using Shared.Model;
 
 namespace Application.Minecraft
 {
+
     /// <summary>
     /// Proxy object for ServerPark, it handles all the database registrations.
     /// </summary>
@@ -44,6 +45,15 @@ namespace Application.Minecraft
         {
             await _serverPark.InitializeAsync();
             _initialized = true;
+
+            SetupLogging();
+        }
+
+        private void SetupLogging()
+        {
+            _serverPark.ServerAdded += (s, e) => _logger.Log(_logger.ServerPark, $"{e.NewValue.Id}:{e.NewValue.ServerName} created");
+            _serverPark.ServerDeleted += (s, e) => _logger.Log(_logger.ServerPark, $"{e.NewValue.Id}:{e.NewValue.ServerName} deleted");
+            _serverPark.ServerNameChanged += (s, e) => _logger.Log(_logger.ServerPark, $"{e.Server.Id}:{e.OldValue} renamed to {e.NewValue}");
         }
 
         /// <summary>

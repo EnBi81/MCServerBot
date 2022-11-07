@@ -39,19 +39,7 @@ namespace MCWebAPI.WebSocketHandler
             await ReceiveDataAsync(null);
         }
 
-
-        /// <summary>
-        /// Sends an error message to the socket.
-        /// </summary>
-        /// <param name="message">error message</param>
-        /// <returns></returns>
-        public async Task SendBackErrorMessage(string message)
-        {
-            _logger.Log("socket", $"Error from {DiscordUser.Username}, data: {message}");
-
-            string mess = MessageFormatter.ErrorMessage(message);
-            await SendMessage(mess);
-        }
+        
 
 
 

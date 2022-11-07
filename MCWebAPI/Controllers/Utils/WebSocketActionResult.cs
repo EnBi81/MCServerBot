@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MCWebAPI.WebSocketHandler;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
 
-namespace MCWebAPI.WebSocketHandler
+namespace MCWebAPI.Controllers.Utils
 {
     public class WebSocketActionResult : IActionResult
     {
@@ -15,7 +16,7 @@ namespace MCWebAPI.WebSocketHandler
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            
+
             WebSocket ws = await context.HttpContext.WebSockets.AcceptWebSocketAsync();
             await _socketPool.AddSocket(_userId, ws);
         }
