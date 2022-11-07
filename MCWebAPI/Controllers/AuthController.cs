@@ -46,19 +46,7 @@ namespace MCWebAPI.Controllers
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginDto userLoginDto)
         {
-            foreach(var prop in userLoginDto.GetType().GetProperties())
-            {
-                if(prop.GetValue(userLoginDto) is null)
-                    throw new LoginException("You must provide a " + prop.Name);
-            }
-
-            if (Enum.TryParse(userLoginDto.Platform, true, out Platform platform))
-                throw new LoginException("Unrecognized platform: " + userLoginDto.Platform);
-
-            DataUser user = await _authService.GetUser(userLoginDto.Token);
-            string token = AuthUtils.GenerateJwt(user, platform, _config);
-
-            var authResponse = new AuthenticatedResponse { Token = token };
+            var authResponse = await _authService.Login(userLoginDto);
 
             return Ok(authResponse);
         }

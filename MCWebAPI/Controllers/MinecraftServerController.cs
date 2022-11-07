@@ -13,7 +13,7 @@ namespace MCWebAPI.Controllers
     /// </summary>
     [ApiController]
     [Authorize]
-    [Route("minecraftserver/{id:long}")]
+    [Route("[controller]/{id:long}")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public class MinecraftServerController : MCControllerBase

@@ -193,7 +193,7 @@
         ]
       }
     },
-    "/minecraftserver/{id}": {
+    "/MinecraftServer/{id}": {
       "get": {
         "tags": [
           "MinecraftServer"
@@ -247,7 +247,7 @@
         ]
       }
     },
-    "/minecraftserver/{id}/DeleteServer": {
+    "/MinecraftServer/{id}/DeleteServer": {
       "delete": {
         "tags": [
           "MinecraftServer"
@@ -293,7 +293,7 @@
         ]
       }
     },
-    "/minecraftserver/{id}/ModifyServer": {
+    "/MinecraftServer/{id}/ModifyServer": {
       "put": {
         "tags": [
           "MinecraftServer"
@@ -349,7 +349,7 @@
         ]
       }
     },
-    "/minecraftserver/{id}/commands": {
+    "/MinecraftServer/{id}/commands": {
       "post": {
         "tags": [
           "MinecraftServer"
@@ -406,7 +406,7 @@
         ]
       }
     },
-    "/minecraftserver/{id}/toggle": {
+    "/MinecraftServer/{id}/toggle": {
       "post": {
         "tags": [
           "MinecraftServer"
@@ -701,6 +701,10 @@
           "token": {
             "type": "string",
             "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -832,6 +836,8 @@
         "type": "object",
         "properties": {
           "newName": {
+            "maxLength": 35,
+            "minLength": 4,
             "type": "string",
             "nullable": true
           }
@@ -845,7 +851,8 @@
         "type": "object",
         "properties": {
           "newName": {
-            "minLength": 1,
+            "maxLength": 35,
+            "minLength": 4,
             "type": "string"
           }
         },
@@ -953,5 +960,10 @@
         "in": "header"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }

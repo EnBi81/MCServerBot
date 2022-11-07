@@ -17,6 +17,13 @@ namespace Application.Permissions
                 Username = "DCBot",
                 ProfilePicUrl = "",
                 UserType = DataUserType.Discord
+            },
+            ["test-acc"] = new DataUser
+            {
+                Id = 0,
+                Username = "Tester",
+                ProfilePicUrl = "",
+                UserType = DataUserType.System
             }
         };
 

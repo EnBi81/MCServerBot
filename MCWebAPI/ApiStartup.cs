@@ -14,7 +14,6 @@ using Microsoft.OpenApi.Models;
 using Shared.DTOs;
 using Shared.Model;
 using Swashbuckle.AspNetCore.Filters;
-using System.Management;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -42,8 +41,8 @@ namespace MCWebAPI
 
             serviceCollection.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            serviceCollection.AddEndpointsApiExplorer();
-            serviceCollection.AddSwaggerGen(options =>
+            serviceCollection.AddEndpointsApiExplorer()
+            .AddSwaggerGen(options =>
             {
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -51,20 +50,32 @@ namespace MCWebAPI
                 options.OperationFilter<SecurityRequirementsOperationFilter>(true, "Bearer");
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "Standard Authorization header using the Bearer scheme (JWT). Example: \"bearer {token}\"",
                     Name = "Authorization",
-                    In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Standard Authorization header using the Bearer scheme (JWT). Example: \"bearer {token}\"",
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
                 });
                 options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-            });
+            })
 
 
 
 
             // Configs
-            serviceCollection.AddSingleton(new MinecraftConfig
+            .AddSingleton(new MinecraftConfig
             {
                 JavaLocation = config.JavaLocation,
                 MaxSumOfDiskSpaceGB = config.MinecraftMaxDiskSpaceGB,
@@ -72,26 +83,31 @@ namespace MCWebAPI
                 MinecraftServerInitRamMB = config.MinecraftServerInitRamMB,
                 MinecraftServerMaxRamMB = config.MinecraftServerMaxRamMB,
                 MinecraftServersBaseFolder = config.MinecraftServersBaseFolder
-            });
+            })
 
             // Loggers
-            serviceCollection.AddSingleton(LogService.GetService<MinecraftLogger>());
-            serviceCollection.AddSingleton(LogService.GetService<WebApiLogger>());
+            .AddSingleton(LogService.GetService<MinecraftLogger>())
+            .AddSingleton(LogService.GetService<WebApiLogger>())
 
             //Model
-            serviceCollection.AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
-                (async databaseAccess => await databaseAccess.DatabaseSetup.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;"));
-            serviceCollection.AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync());
-            serviceCollection.AddSingleton<IPermissionLogic, PermissionLogic>();
+            .AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
+                (async databaseAccess => await databaseAccess.DatabaseSetup.Setup("Data Source=C:\\Users\\enbi8\\source\\repos\\MCServerBot\\MCWebApp\\Resources\\eventdata.db;Version=3;"))
+            .AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync())
+            .AddSingleton<IPermissionLogic, PermissionLogic>()
 
 
             // API
-            serviceCollection.AddSingleton<SocketPool>();
+            .AddSingleton<SocketPool>()
 
 
             // API Auth
-            serviceCollection.AddScoped<IAuthService, AuthService>();
-            serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            .AddScoped<IAuthService, AuthService>()
+            .AddAuthorizationCore(options =>
+            {
+                options.AddPolicy("DiscordBot", a =>
+                    a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, DataUserType.Discord.ToString()));
+            })
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -104,11 +120,7 @@ namespace MCWebAPI
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
-            serviceCollection.AddAuthorizationCore(options =>
-            {
-                options.AddPolicy("DiscordBot", a =>
-                    a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, DataUserType.Discord.ToString()));
-            });
+            
 
             #endregion
 
@@ -123,12 +135,10 @@ namespace MCWebAPI
 
             app.UseHttpsRedirection();
 
-            
-
-            app.MapControllers();
-
             app.UseAuthentication();
+            app.UseRouting();
             app.UseAuthorization();
+            app.MapControllers();
 
             app.UseCors(cors => cors
                 .AllowAnyMethod()
