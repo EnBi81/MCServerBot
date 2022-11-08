@@ -1,0 +1,8 @@
+{
+	"packageName": "MCClient",
+	"packageGuid": "ca2e18ff-b1c4-4912-824d-46435c0f7e44",
+	"targetFramework": "v5.0",
+	"useCollection": true,
+	"returnICollection": true,
+	"netCoreProjectFile": true
+}

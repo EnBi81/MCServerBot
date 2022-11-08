@@ -11,7 +11,7 @@ LogService.CreateLogService()
                 .AddLogger<MinecraftLogger>()
                 .AddLogger<WebApiLogger>();
 
-
+// todo add signalr instead of websockets
 try
 {
     MinecraftApi api = new();
