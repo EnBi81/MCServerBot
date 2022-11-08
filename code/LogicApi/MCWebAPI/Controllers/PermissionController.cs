@@ -15,6 +15,8 @@ namespace MCWebAPI.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class PermissionController : MCControllerBase
     {
         private readonly IPermissionLogic _permissionLogic;
