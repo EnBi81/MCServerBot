@@ -28,7 +28,17 @@ namespace MCWebAPI.Utils
         }
 
 
-        
+
+        /// <summary>
+        /// Creates a factory for the service if it does not exist. This factory will be used to create the service instance.
+        /// It registers the factory in the service collection.
+        /// </summary>
+        /// <typeparam name="TService">type of service</typeparam>
+        /// <typeparam name="TImplementation">type of implementation</typeparam>
+        /// <param name="serviceCollection">the service collection</param>
+        /// <param name="serviceLifetime"></param>
+        /// <param name="initAction"></param>
+        /// <exception cref="MCInternalException"></exception>
         private static void CreateFactoryIfNotExist<TService, TImplementation>(IServiceCollection serviceCollection, ServiceLifetime? serviceLifetime, Func<TImplementation, Task> initAction) where TService : class
         {
             var serviceType = typeof(TService);
@@ -41,14 +51,21 @@ namespace MCWebAPI.Utils
             if(service == null)
                 throw new MCInternalException("Couldnt find service " + serviceType.FullName);
 
-            var implementationType = service.ImplementationType ?? service.ServiceType;
-
             Func<IServiceProvider, TService> factory = prov => CreateInstance<TService, TImplementation>(prov, initAction);
 
             serviceCollection.Remove(service);
             serviceCollection.AddSingleton(serviceType, factory);
         }
-        
+
+        /// <summary>
+        /// Creates the instance of the service and runs the initAction.
+        /// </summary>
+        /// <typeparam name="TService">type of the service</typeparam>
+        /// <typeparam name="TImplementation">type of the implementation</typeparam>
+        /// <param name="provider"></param>
+        /// <param name="initAction"></param>
+        /// <returns></returns>
+        /// <exception cref="MCInternalException"></exception>
         private static TService CreateInstance<TService, TImplementation>(IServiceProvider provider, Func<TImplementation, Task> initAction)
         {
             var serviceType = typeof(TService);

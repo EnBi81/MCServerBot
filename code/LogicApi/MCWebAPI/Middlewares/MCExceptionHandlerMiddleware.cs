@@ -37,13 +37,13 @@ namespace MCWebAPI.Middlewares
             catch (MCInternalException e)
             {
                 context.Response.StatusCode = 500;
-                await context.Response.WriteAsync(e.ToString());
+                await context.Response.WriteAsync(e.Message);
                 _logger.LogError("-exception-internal", e);
             }
             catch (Exception e)
             {
                 context.Response.StatusCode = 500;
-                await context.Response.WriteAsync(e.ToString());
+                await context.Response.WriteAsync(e.Message);
                 _logger.LogError("-exception-unexpected", e);
             }
         }

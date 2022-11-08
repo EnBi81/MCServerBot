@@ -9,17 +9,13 @@ LogService.CreateLogService()
                 .AddLogger<NetworkLogger>()
                 .AddLogger<HamachiLogger>()
                 .AddLogger<MinecraftLogger>()
-                .AddLogger<ConfigLogger>()
                 .AddLogger<WebApiLogger>();
+
 
 try
 {
     MinecraftApi api = new();
-    api.Run(args, Config.Instance);
-}
-catch(ConfigException e)
-{
-    LogService.GetService<ConfigLogger>().LogError(e);
+    api.Run(args);
 }
 catch(Exception e)
 {

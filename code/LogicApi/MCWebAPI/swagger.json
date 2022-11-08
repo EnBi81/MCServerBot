@@ -478,17 +478,7 @@
           "400": {
             "description": "An exception has been occured during the process.",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExceptionDTO"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExceptionDTO"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExceptionDTO"
                 }
@@ -534,17 +524,7 @@
           "400": {
             "description": "An exception has been occured during the process.",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExceptionDTO"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExceptionDTO"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExceptionDTO"
                 }

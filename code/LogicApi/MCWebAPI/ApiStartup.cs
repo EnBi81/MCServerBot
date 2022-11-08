@@ -30,10 +30,18 @@ namespace MCWebAPI
         /// Runs the web api and blocks the thread.
         /// </summary>
         /// <param name="args">arguments</param>
-        /// <param name="config">config</param>
-        public void Run(string[] args, Config config)
+        public void Run(string[] args)
         {
+            var logger = LogService.GetService<WebApiLogger>();
+
+
+            logger.Log("start", "Starting web api in " + Environment.CurrentDirectory);
+
+
             var builder = WebApplication.CreateBuilder(args);
+            
+
+            logger.Log("start", "Adding services");
 
             #region Register Services
 
@@ -41,8 +49,8 @@ namespace MCWebAPI
 
             serviceCollection.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            serviceCollection.AddEndpointsApiExplorer()
-            .AddSwaggerGen(options =>
+            serviceCollection.AddEndpointsApiExplorer();
+            serviceCollection.AddSwaggerGen(options =>
             {
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -65,49 +73,49 @@ namespace MCWebAPI
                                     Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        Array.Empty<string>()
                     }
                 });
                 options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-            })
+            });
 
 
 
 
             // Configs
-            .AddSingleton(new MinecraftConfig
+            serviceCollection.AddSingleton(new MinecraftConfig
             {
-                JavaLocation = config.JavaLocation,
-                MaxSumOfDiskSpaceGB = config.MinecraftMaxDiskSpaceGB,
-                MinecraftServerHandlerPath = config.MinecraftServerHandlerPath,
-                MinecraftServerInitRamMB = config.MinecraftServerInitRamMB,
-                MinecraftServerMaxRamMB = config.MinecraftServerMaxRamMB,
-                MinecraftServersBaseFolder = config.MinecraftServersBaseFolder,
-            })
+                MaxSumOfDiskSpaceGB = int.Parse(builder.Configuration["MinecraftSettings:MaxDiskSpaceGB"]),
+                MinecraftServerInitRamMB = int.Parse(builder.Configuration["MinecraftSettings:ServerInitRamMB"]),
+                MinecraftServerMaxRamMB = int.Parse(builder.Configuration["MinecraftSettings:ServerMaxRamMB"]),
+                JavaLocation = builder.Configuration["Paths:JavaLocation"],
+                MinecraftServersBaseFolder = builder.Configuration["Paths:MinecraftServersBaseFolder"],
+                MinecraftServerHandlerPath = builder.Configuration["Paths:MinecraftServerHandler"],
+            });
 
             // Loggers
-            .AddSingleton(LogService.GetService<MinecraftLogger>())
-            .AddSingleton(LogService.GetService<WebApiLogger>())
+            serviceCollection.AddSingleton(LogService.GetService<MinecraftLogger>());
+            serviceCollection.AddSingleton(LogService.GetService<WebApiLogger>());
 
             //Model
-            .AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
-                (async databaseAccess => await databaseAccess.DatabaseSetup.Setup(builder.Configuration["ConnectionStrings:SQLite"]))
-            .AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync())
-            .AddSingleton<IPermissionLogic, PermissionLogic>()
+            serviceCollection.AddSingletonAndInit<IDatabaseAccess, DataStorageSQLiteImpl>
+                (async databaseAccess => await databaseAccess.DatabaseSetup.Setup(builder.Configuration["ConnectionStrings:SQLite"]));
+            serviceCollection.AddSingletonAndInit<IServerPark, ServerPark>(async serverPark => await serverPark.InitializeAsync());
+            serviceCollection.AddSingleton<IPermissionLogic, PermissionLogic>();
 
 
             // API
-            .AddSingleton<SocketPool>()
+            serviceCollection.AddSingleton<SocketPool>();
 
 
             // API Auth
-            .AddScoped<IAuthService, AuthService>()
-            .AddAuthorizationCore(options =>
+            serviceCollection.AddScoped<IAuthService, AuthService>();
+            serviceCollection.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("DiscordBot", a =>
                     a.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, DataUserType.Discord.ToString()));
-            })
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            });
+            serviceCollection.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -120,9 +128,11 @@ namespace MCWebAPI
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
-            
+
 
             #endregion
+
+            logger.Log("start", "Building application");
 
             var app = builder.Build();
 
@@ -149,6 +159,8 @@ namespace MCWebAPI
             app.UseMiddleware<MCApiLoggerMiddleware>();
             app.UseMiddleware<MCExceptionHandlerMiddleware>();
 
+            logger.Log("start", "Running application");
+            
             app.Run();
         }
     }

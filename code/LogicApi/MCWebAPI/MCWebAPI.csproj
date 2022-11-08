@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\DataTier\DataStorageSQLite\DataStorageSQLite.csproj" />
+    <ProjectReference Include="..\..\Logic\HamachiCli\HamachiCli.csproj" />
     <ProjectReference Include="..\APIModel\APIModel.csproj" />
   </ItemGroup>
 

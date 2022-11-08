@@ -9,7 +9,7 @@ namespace MCServerHandler
         static StreamWriter MinecraftInputStream; // minecraft server stream
 
         //MCServerHandler.exe server.jar "C:\Program Files\Java\jdk-17.0.2\bin\java.exe" "D:\Games\Minecraft Things\McServer" 1024 1024
-        static void Main(string[] args)
+        static void Main(string[] args) 
         {
             // check if we have all the five arguments
             if (args.Length != 5)
