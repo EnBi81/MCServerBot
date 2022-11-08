@@ -15,7 +15,7 @@ namespace MCWebAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    //[Authorize]
+    [Authorize]
     [Consumes("application/json")]
     [Produces("application/json")]
     public class ServerParkController : MCControllerBase
