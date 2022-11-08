@@ -29,6 +29,14 @@ WEB API features:
 <img src="docs/images/api-endpoints.png">
 
 
+## TODO:
+(Before starting the websites and discord bot)
+- Add versions to the minecraft servers (https://minecraft.fandom.com/wiki/Java_Edition_version_history)
+  - be able to select a version when creating a minecraft server
+  - be able to later change the selected version
+  - automatically download a version if it is not aéready downloaded
+- Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+
 
 ## Setup
 
@@ -62,14 +70,14 @@ rewrite the values to match your system. Then you can start the .StartServer.cmd
 
 # Technical information
 
-## - Project structure
+## Project structure
 
-### - - Data Tier
+### Data Tier
 
 - DataStorageSQLite: Implementation of the data dao interfaces used in the application logic
 - DataStorageTest: Unit Testing for the dao interfaces. Now it is set up for the sqlite tests.
 
-### - - Logic
+### Logic
 
 - Shared: Model interfaces, EventHandlers, Exceptions, DTOs which are used in several projects across the system.
 - Loggers: Collection of the loggers which are responsible for logging in the system
@@ -80,12 +88,12 @@ rewrite the values to match your system. Then you can start the .StartServer.cmd
   - ServerParkInputValidation: All the checking happens here. Checks if the server which needs to be started exists, or if it is possible to delete a server, and so on.
   - ServerParkLogic: all the methods contain the pure functionalities without any checking or validations, because they are done in the above layer.
 
-### - - LogicAPI
+### LogicAPI
 
 - APIModel: model interfaces and exceptions which are required for the api. Collection of DTOs, request and response types.
 - MCWebAPI: ASP.NET Core Web API
 
-### - - Presentation (WIP)
+### Presentation (WIP)
 
 - Discord bot
 - Webserver (blazor and razor)
