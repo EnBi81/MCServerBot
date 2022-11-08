@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DataTier\DataStorageSQLite\DataStorageSQLite.csproj" />
     <ProjectReference Include="..\APIModel\APIModel.csproj" />
-    <ProjectReference Include="..\DataStorageSQLite\DataStorageSQLite.csproj" />
   </ItemGroup>
 
   <ItemGroup>
