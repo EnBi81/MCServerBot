@@ -548,7 +548,7 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": "Gets all the minecraft servers from the system.",
+        "summary": "Gets all the minecraft servers from the system. (Auth)",
         "operationId": "GetAllServers",
         "responses": {
           "200": {
@@ -563,14 +563,25 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       },
       "post": {
         "tags": [
           "ServerPark"
         ],
-        "summary": "Creates a server.",
+        "summary": "Creates a server. (Auth)",
         "operationId": "CreateServer",
         "requestBody": {
           "description": "data which are required to create the server",
@@ -602,8 +613,19 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/ServerPark/running": {
@@ -611,7 +633,7 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": "Gets the currently running server",
+        "summary": "Gets the currently running server (Auth)",
         "operationId": "GetRunningServer",
         "responses": {
           "302": {
@@ -633,8 +655,19 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     }
   },
@@ -749,8 +782,7 @@
           },
           "port": {
             "type": "integer",
-            "format": "int32",
-            "readOnly": true
+            "format": "int32"
           },
           "players": {
             "type": "array",
