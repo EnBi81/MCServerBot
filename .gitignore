@@ -5,7 +5,7 @@
 
 Tools/gitignored/*
 
-*/Resources/*.json
+Resources/*.json
 */*.db
 
 .idea/
@@ -370,3 +370,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /MCWebApp/Resources/eventdata.db
+/code/LogicApi/MCWebAPI/Resources/config.json
