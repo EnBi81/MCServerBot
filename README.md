@@ -31,24 +31,33 @@ WEB API features:
 
 
 ## Setup
-To set up and run the program, download the whole project, 
-go to the MCWebAPI folder, create a directory called 'Resources', 
-inside it create a new config.json file, 
-copy the json template from below and fill it out with 
-your preferences/folder paths. Then you can start the .StartServer.cmd file.
+
+### Web API
+To set up the web api, download the whole project, 
+go to the MCWebAPI folder, open the applicationsettings.json file,
+rewrite the values to match your system. Then you can start the .StartServer.cmd file.
 
 ```json
-{
-  "HamachiLocation": "C:\\..\\x64",
-  "MinecraftServerHandlerPath": "C:\\..\\MCServerHandler.exe",
-  "MinecraftServersBaseFolder": "C:\\..\\MinecraftServers\\",
-  "MinecraftServerMaxRamMB": 8196,
-  "MinecraftServerInitRamMB": 8196,
-  "MinecraftMaxDiskSpaceGB": 5,
-  "JavaLocation": "C:\\..\\java.exe",
-  "WebApiPortHttps": 5001,
-  "WebApiPortHttp": 5000
-}
+  "Jwt": {
+    "Key": "put your key here",
+    "Issuer": "JWTAuthenticationServer",
+    "Audience": "JWTServiceBlazorWasmClient",
+    "Subject": "JWTServiceAccessToken"
+  },
+  "ConnectionStrings": {
+    "SQLite": "Data Source=C:\\..\\eventdata.db;Version=3;"
+  },
+  "Paths": {
+    "Hamachi": "C:\\..\\x64",
+    "JavaLocation": "C:\\..\\java.exe",
+    "MinecraftServersBaseFolder": "C:\\..\\MinecraftServers\\",
+    "MinecraftServerHandler": "C:\\..\\MCServerBot\\MCServerHandler\\bin\\Debug\\net5.0\\MCServerHandler.exe"
+  },
+  "MinecraftSettings": {
+    "ServerMaxRamMB": "8196",
+    "ServerInitRamMB": "8196",
+    "MaxDiskSpaceGB": "10"
+  }
 ```
 
 # Technical information
