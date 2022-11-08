@@ -12,7 +12,7 @@
         public int Status { get; set; }
         public IEnumerable<LogMessageDto> LogMessages { get; set; }
         public DateTime? OnlineFrom { get; set; }
-        public int Port { get; }
+        public int Port { get; set; }
         public IEnumerable<MinecraftPlayerDTO> Players { get; set; }
         public long StorageBytes { get; set; }
         

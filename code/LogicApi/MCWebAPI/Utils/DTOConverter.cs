@@ -14,6 +14,7 @@ namespace MCWebAPI.Utils
             StorageBytes = server.StorageBytes,
             LogMessages = from log in server.Logs.TakeLast(50) select log.ToDTO(),
             Players = from player in server.Players.Values select player.ToDTO(),
+            Port = server.Port,
         };
 
         public static LogMessageDto ToDTO(this ILogMessage logMessage) => new()
