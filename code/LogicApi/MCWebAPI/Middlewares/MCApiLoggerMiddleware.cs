@@ -1,4 +1,5 @@
 ﻿using Loggers.Loggers;
+using System.Security.Cryptography;
 
 namespace MCWebAPI.Middlewares
 {
@@ -23,11 +24,23 @@ namespace MCWebAPI.Middlewares
             string logRequest = $"{id}-request: {request.Method} {request.Path}{request.QueryString.Value}";
             _logger.Log("middleware", logRequest);
 
-            await _next(context);
+            Exception? thrownException = null;
+
+            try
+            {
+                await _next(context);
+            }
+            catch(Exception e)
+            {
+                thrownException = e;
+            }
 
             var response = context.Response;
-            string logResponse = $"{id}-response: {response.StatusCode}";
+            string logResponse = $"{id}-response: {response.StatusCode}{(thrownException is null ? "" : $", {thrownException.Message}")}";
             _logger.Log("middleware", logResponse);
+
+            if (thrownException is not null)
+                throw thrownException;
         }
     }
 }

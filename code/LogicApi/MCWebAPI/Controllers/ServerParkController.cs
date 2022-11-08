@@ -15,7 +15,7 @@ namespace MCWebAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    //[Authorize]
     [Consumes("application/json")]
     [Produces("application/json")]
     public class ServerParkController : MCControllerBase
@@ -57,7 +57,7 @@ namespace MCWebAPI.Controllers
             var user = await GetUserEventData();
 
             IMinecraftServer server = await serverPark.CreateServer(data?.NewName, user);
-            return CreatedAtRoute("minecraftserver/" + server.Id, server.ToDTO());
+            return Created("minecraftserver/" + server.Id, server.ToDTO());
         }
 
         /// <summary>

@@ -156,8 +156,8 @@ namespace MCWebAPI
                 .SetIsOriginAllowed(_ => true)
                 .AllowCredentials());
 
-            app.UseMiddleware<MCApiLoggerMiddleware>();
             app.UseMiddleware<MCExceptionHandlerMiddleware>();
+            app.UseMiddleware<MCApiLoggerMiddleware>();
 
             logger.Log("start", "Running application");
             

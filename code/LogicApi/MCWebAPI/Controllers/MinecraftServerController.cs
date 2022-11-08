@@ -56,7 +56,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="204">The server is deleted. Nothing more.</response>
         /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
-        [HttpDelete("DeleteServer")]
+        [HttpDelete(Name = "DeleteServer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteServer([FromRoute] long id)
@@ -74,7 +74,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="204">The server is deleted. Nothing more.</response>
         /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
-        [HttpPut("ModifyServer")]
+        [HttpPut(Name = "ModifyServer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)

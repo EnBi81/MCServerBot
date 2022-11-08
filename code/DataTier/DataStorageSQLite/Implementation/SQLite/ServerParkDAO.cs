@@ -67,7 +67,7 @@ namespace DataStorageSQLite.Implementations.SQLite
 
             object? res = await cmd.ExecuteScalarAsync();
 
-            return res is long num ? num : 0;
+            return long.TryParse(res?.ToString(), out long value) ? value : 0;
         }
 
         /// <inheritdoc/>
