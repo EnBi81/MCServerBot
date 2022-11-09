@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Shared.Exceptions;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Application.Minecraft.Versions
 {
@@ -33,7 +31,7 @@ namespace Application.Minecraft.Versions
          */
 
         private readonly List<MinecraftVersion> _versions = new ();
-        private readonly string _versionsDir;
+        
 
         public MinecraftVersionCollection(string versionsDir)
         {
@@ -45,29 +43,17 @@ namespace Application.Minecraft.Versions
 
 
         
-        public IMinecraftVersion? this[string version] => _versions.FirstOrDefault(v => v.Version == version);
+        public IMinecraftVersion? this[string version] => 
+            _versions.FirstOrDefault(v => v.Version == version);
         
         public List<IMinecraftVersion> GetAll() => new (_versions);
 
 
-        public async Task DownloadVersion(string version)
-        {
-            if (IsDownloaded(version))
-                return;
+        public async Task DownloadVersionAsync(string version) => 
+            await DownloadVersionThreadSafe(version);
 
-            var mcVersion = this[version];
-            if(mcVersion is null)
-                throw new MCExternalException($"Cannot download version {version} for reason: {version} is not a registered version");
-
-            using HttpClient client = new HttpClient();
-            string filename = GetAbsolutePath(version);
-
-            using var webStream = await client.GetStreamAsync(mcVersion.DownloadUrl);
-            using var fileStream = File.Create(filename);
-            await webStream.CopyToAsync(fileStream);
-        }
-
-        public bool IsDownloaded(string version) => File.Exists(GetAbsolutePath(version));
+        public bool IsDownloaded(string version) => 
+            File.Exists(GetAbsolutePath(version));
         
         
 

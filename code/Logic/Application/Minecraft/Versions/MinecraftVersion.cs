@@ -14,12 +14,23 @@ namespace Application.Minecraft.Versions
         public DateTime FullReleaseDate => DateTime.Parse(FullRelease);
         public string DownloadUrl { get; set; } = null!;
 
-        public bool IsDownloaded => throw new NotImplementedException();
+        public bool IsDownloaded => _isDownloaded(Version);
+        public string? AbsoluteJarPath => _getAbsolutePath(Version);
 
-        public string? AbsoluteJarPath => throw new NotImplementedException();
 
-        public MinecraftVersion() { }
+        private readonly MinecraftVersionCollection _versionCollection;
+        private readonly Func<string, string?> _getAbsolutePath;
+        private readonly Func<string, bool> _isDownloaded;
 
-        public void Download() => throw new NotImplementedException();
+        internal MinecraftVersion(MinecraftVersionCollection coll, Func<string, string?> getAbsolutePath, Func<string, bool> isDownloaded)
+        {
+            _versionCollection = coll;
+            _getAbsolutePath = getAbsolutePath;
+            _isDownloaded = isDownloaded;
+        }
+
+
+        public void Download() => _versionCollection.DownloadVersionAsync(Version).GetAwaiter().GetResult();
+        public async Task DownloadAsync() => await _versionCollection.DownloadVersionAsync(Version);
     }
 }
