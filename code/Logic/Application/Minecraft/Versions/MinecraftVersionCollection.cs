@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Loggers;
+using System.Collections;
 
 namespace Application.Minecraft.Versions
 {
@@ -31,11 +32,13 @@ namespace Application.Minecraft.Versions
          */
 
         private readonly List<MinecraftVersion> _versions = new ();
+        private readonly MinecraftLogger _logger;
         
 
-        public MinecraftVersionCollection(string versionsDir)
+        public MinecraftVersionCollection(string versionsDir, MinecraftLogger logger)
         {
             _versionsDir = versionsDir;
+            _logger = logger;
             LoadVersions();
         }
 

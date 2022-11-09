@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Shared.Exceptions;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace Application.Minecraft.Versions
 {
@@ -60,12 +61,26 @@ namespace Application.Minecraft.Versions
             if (versions.Versions is null)
                 throw new MCInternalException("Couldn't find versions in " + versionsFile);
 
+
+            var filteredVersions = versions.Versions
+                .Where(v => v.Name is not null)
+                .Where(v => v.Version is not null && Regex.IsMatch(v.Version, @"^\d+(\.\d+)*$"))
+                .Where(v => v.FullRelease is not null && DateTime.TryParse(v.FullRelease, out _));
+            //.Where(v => v.DownloadUrl is not null && Uri.IsWellFormedUriString(v.DownloadUrl, UriKind.Absolute));
+
+            var incorrectVersions = versions.Versions.Except(filteredVersions);
+            foreach (var incorrectVersion in incorrectVersions)
+            {
+                _logger.Error("version-manager", new MCInternalException("Incorrect version: " + incorrectVersion.ToString()));
+            }
+
+
             var convertedVersions = versions.Versions.Select(mvJson => new MinecraftVersion(this, GetAbsolutePath, IsDownloaded) 
             {
-                Name = mvJson.Name ?? throw new MCInternalException("MinecraftVersion.Name is null"),
-                Version = mvJson.Version ?? throw new MCInternalException("MinecraftVersion.Version is null"),
-                FullRelease = mvJson.FullRelease ?? throw new MCInternalException("MinecraftVersion.FullRelease is null"),
-                DownloadUrl = mvJson.DownloadUrl ?? throw new MCInternalException("MinecraftVersion.DownloadUrl is null")
+                Name = mvJson.Name!,
+                Version = mvJson.Version!,
+                FullRelease = mvJson.FullRelease!,
+                DownloadUrl = mvJson.DownloadUrl ?? ""
             });
         
             
@@ -89,6 +104,9 @@ namespace Application.Minecraft.Versions
             public string? Version { get; set; }
             public string? FullRelease { get; set; }
             public string? DownloadUrl { get; set; }
+
+
+            public override string ToString() => JsonConvert.SerializeObject(this);
         }
     }
 }
