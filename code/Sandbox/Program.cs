@@ -12,6 +12,12 @@ namespace Sandbox
         const string Server_Folder = "A:\\mc-server-test\\server1\\";
         static async Task Main(string[] args) // this is how to create a new server
         {
+            HttpClient client = new HttpClient();
+            string filename = "A:\\Games\\MinecraftServers\\server-new.jar";
+
+            using var webStream = await client.GetStreamAsync("https://piston-data.mojang.com/v1/objects/f69c284232d7c7580bd89a5a4931c3581eae1378/server.jar");
+            using var fileStream = File.Create(filename);
+            webStream.CopyTo(fileStream);
 
             //if(args.Contains("reset"))
             //{
@@ -25,7 +31,7 @@ namespace Sandbox
             //    {
             //        Console.WriteLine(e.Message);
             //    }
-                
+
             //    return;
             //}
 

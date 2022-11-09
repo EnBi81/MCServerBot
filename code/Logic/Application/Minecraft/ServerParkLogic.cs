@@ -33,6 +33,7 @@ namespace Application.Minecraft
         private readonly IDatabaseAccess _databaseAccess;
         private readonly MinecraftConfig _config;
         private readonly MinecraftLogger _logger;
+        private readonly MinecraftEnvironment _mcEnvironment;
 
 
         internal ServerParkLogic(IDatabaseAccess dataAccess, MinecraftConfig config, MinecraftLogger logger)
@@ -40,6 +41,7 @@ namespace Application.Minecraft
             _databaseAccess = dataAccess;
             _config = config;
             _logger = logger;
+            _mcEnvironment = new MinecraftEnvironment(config.MinecraftServersBaseFolder);
 
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
             DeletedServersFolder = _config.MinecraftServersBaseFolder + "Deleted Servers\\";
