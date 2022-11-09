@@ -34,17 +34,23 @@ namespace MCWebAPI
         /// <param name="args">arguments</param>
         public void Run(string[] args)
         {
-            var logger = LogService.GetService<WebApiLogger>();
-
-
-            logger.Log("start", "Starting web api in " + Environment.CurrentDirectory);
+            // setting resources folder in environment variables
+            Environment.SetEnvironmentVariable("RESOURCES_FOLDER", "Resources");
 
 
             var builder = WebApplication.CreateBuilder(args);
+            
+            
+            var logger = LogService.GetService<WebApiLogger>();
+            logger.Log("start", "Starting web api in " + Environment.CurrentDirectory);
 
+            
+            
             // adding appsettings.json (because I moved it to the Properties folder)
             builder.Configuration.AddJsonFile("Properties\\appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
+            
 
+            
             #region Register Services
 
             IServiceCollection serviceCollection = builder.Services;
@@ -59,43 +65,8 @@ namespace MCWebAPI
                 setup.AssumeDefaultVersionWhenUnspecified = true;
                 setup.ReportApiVersions = true;
             });
-
             
-            serviceCollection.AddSwaggerGen(options =>
-            {
-                options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-                options.IgnoreObsoleteActions();
-                options.IgnoreObsoleteProperties();
-                options.CustomSchemaIds(type => type.FullName);
-
-
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-
-                options.OperationFilter<SecurityRequirementsOperationFilter>(true, "Bearer");
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "Standard Authorization header using the Bearer scheme (JWT). Example: \"bearer {token}\"",
-                });
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                    {
-                        new OpenApiSecurityScheme {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
-                options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-            });
-
+            serviceCollection.AddSwaggerGen();
             serviceCollection.ConfigureOptions<ConfigureSwaggerOptions>();
 
             builder.Services.AddVersionedApiExplorer(setup =>
@@ -104,6 +75,7 @@ namespace MCWebAPI
                 setup.SubstituteApiVersionInUrl = true;
             });
 
+            
             // Configs
             serviceCollection.AddSingleton(new MinecraftConfig
             {
@@ -171,9 +143,6 @@ namespace MCWebAPI
                         options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
                             description.GroupName.ToUpperInvariant());
                     }
-
-                    //options.SwaggerEndpoint($"/swagger/v1/swagger.json", $"v1");
-                    //options.SwaggerEndpoint($"/swagger/v2/swagger.json", $"v2");
                 });
             }
 

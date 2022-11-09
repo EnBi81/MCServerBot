@@ -54,7 +54,7 @@
         }
       }
     },
-    "/Discord/token/{id}": {
+    "/api/v1/Discord/token/{id}": {
       "get": {
         "tags": [
           "Discord"
@@ -69,13 +69,6 @@
             "required": true,
             "schema": {
               "pattern": "\\d{18}",
-              "type": "string"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
               "type": "string"
             }
           }
@@ -117,22 +110,13 @@
         ]
       }
     },
-    "/Discord/user": {
+    "/api/v1/Discord/user": {
       "post": {
         "tags": [
           "Discord"
         ],
         "summary": "Register a discord user to the system. (Auth policies: DiscordBot)",
         "operationId": "RegisterUser",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "description": "Registered user data.",
           "content": {
@@ -178,15 +162,6 @@
         ],
         "summary": "Refreshes a user's data. (Auth policies: DiscordBot)",
         "operationId": "RefreshUser",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "description": "Data of the user.",
           "content": {
@@ -227,7 +202,7 @@
         ]
       }
     },
-    "/MinecraftServer/{id}": {
+    "/api/v1/MinecraftServer/{id}": {
       "get": {
         "tags": [
           "MinecraftServer"
@@ -243,13 +218,6 @@
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -303,13 +271,6 @@
               "type": "integer",
               "format": "int64"
             }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -355,13 +316,6 @@
               "type": "integer",
               "format": "int64"
             }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "requestBody": {
@@ -402,7 +356,7 @@
         ]
       }
     },
-    "/MinecraftServer/{id}/commands": {
+    "/api/v1/MinecraftServer/{id}/commands": {
       "post": {
         "tags": [
           "MinecraftServer"
@@ -418,13 +372,6 @@
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -466,7 +413,7 @@
         ]
       }
     },
-    "/MinecraftServer/{id}/toggle": {
+    "/api/v1/MinecraftServer/{id}/toggle": {
       "post": {
         "tags": [
           "MinecraftServer"
@@ -482,13 +429,6 @@
             "schema": {
               "type": "integer",
               "format": "int64"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -520,7 +460,7 @@
         ]
       }
     },
-    "/Permission/{id}/grant": {
+    "/api/v1/Permission/{id}/grant": {
       "post": {
         "tags": [
           "Permission"
@@ -536,13 +476,6 @@
               "pattern": "\\d{18}",
               "type": "string"
             }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -573,7 +506,7 @@
         ]
       }
     },
-    "/Permission/{id}/revoke": {
+    "/api/v1/Permission/{id}/revoke": {
       "post": {
         "tags": [
           "Permission"
@@ -589,13 +522,6 @@
               "pattern": "\\d{18}",
               "type": "string"
             }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -626,22 +552,13 @@
         ]
       }
     },
-    "/ServerPark": {
+    "/api/v1/ServerPark": {
       "get": {
         "tags": [
           "ServerPark"
         ],
         "summary": "Gets all the minecraft servers from the system. (Auth)",
         "operationId": "GetAllServers",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -675,15 +592,6 @@
         ],
         "summary": "Creates a server. (Auth)",
         "operationId": "CreateServer",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "description": "data which are required to create the server",
           "content": {
@@ -729,22 +637,13 @@
         ]
       }
     },
-    "/ServerPark/running": {
+    "/api/v1/ServerPark/running": {
       "get": {
         "tags": [
           "ServerPark"
         ],
         "summary": "Gets the currently running server (Auth)",
         "operationId": "GetRunningServer",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "302": {
             "description": "Redirects to the minecraft server api endpoint.",
@@ -778,18 +677,6 @@
             "Bearer": [ ]
           }
         ]
-      }
-    },
-    "/api/v1/Values/this": {
-      "get": {
-        "tags": [
-          "Values"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
       }
     }
   },

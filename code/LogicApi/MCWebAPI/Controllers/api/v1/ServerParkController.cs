@@ -1,24 +1,16 @@
-﻿using APIModel;
-using APIModel.DTOs;
+﻿using APIModel.DTOs;
 using APIModel.Responses;
-using MCWebAPI.Controllers.Utils;
 using MCWebAPI.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Exceptions;
 using Shared.Model;
 
-namespace MCWebAPI.Controllers
+namespace MCWebAPI.Controllers.api.v1
 {
     /// <summary>
     /// Controller for handling Server park related features.
     /// </summary>
-    [ApiController]
-    [Route("[controller]")]
-    [Authorize]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public class ServerParkController : MCControllerBase
+    public class ServerParkController : ApiV1Controller
     {
         private readonly IServerPark serverPark;
 

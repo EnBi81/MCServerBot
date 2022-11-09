@@ -2,22 +2,17 @@
 using APIModel.Responses;
 using Application.Permissions;
 using MCWebAPI.APIExceptions;
-using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MCWebAPI.Controllers
+namespace MCWebAPI.Controllers.api.v1
 {
 
     /// <summary>
     /// Controller for handling requests from the Discord Bot.
     /// </summary>
-    [Route("[controller]")]
-    [ApiController]
     [Authorize("DiscordBot")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public class DiscordController : MCControllerBase
+    public class DiscordController : ApiV1Controller
     {
         private readonly IPermissionLogic permissionLogic;
 

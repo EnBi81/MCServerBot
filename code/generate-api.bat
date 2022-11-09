@@ -1,6 +1,6 @@
 set rootFolder=C:\Users\enbi8\source\repos\MCServerBot
 set swaggerCodegenCli=%rootFolder%\Tools\gitignored\swagger-codegen-cli.jar
-set swaggerJson=%rootFolder%\code\LogicApi\MCWebAPI\swagger.json
+set swaggerJson=%rootFolder%\code\LogicApi\MCWebAPI\Resources\swagger.json
 
 
 set csApiDir=%rootFolder%\code\Presentation\ApiCs

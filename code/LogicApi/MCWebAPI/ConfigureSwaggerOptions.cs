@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace MCWebAPI
 {
@@ -22,6 +24,38 @@ namespace MCWebAPI
         /// <param name="options"></param>
         public void Configure(SwaggerGenOptions options)
         {
+            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+            options.IgnoreObsoleteActions();
+            options.IgnoreObsoleteProperties();
+            options.CustomSchemaIds(type => type.FullName);
+
+
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+            options.OperationFilter<SecurityRequirementsOperationFilter>(true, "Bearer");
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Standard Authorization header using the Bearer scheme (JWT). Example: \"bearer {token}\"",
+            });
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+
             // add swagger document for every API version discovered
             foreach (var description in _provider.ApiVersionDescriptions)
             {

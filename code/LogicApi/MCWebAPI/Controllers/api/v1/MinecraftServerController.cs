@@ -1,23 +1,20 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
-using MCWebAPI.Controllers.Utils;
 using MCWebAPI.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Model;
 
-namespace MCWebAPI.Controllers
+namespace MCWebAPI.Controllers.api.v1
 {
     /// <summary>
     /// Endpoint for managing the minecraft servers.
     /// </summary>
-    [ApiController]
-    [Authorize]
-    [Route("[controller]/{id:long}")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public class MinecraftServerController : MCControllerBase
+    public class MinecraftServerController : ApiV1Controller
     {
+        private const string RouteId = "{id:long}";
+
+
+
         private readonly IServerPark serverPark;
 
         /// <summary>
@@ -37,7 +34,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="200">Returns the requested server object.</response>
         /// <response code="400">The server with the specified id does not exist.</response>
-        [HttpGet(Name = "GetServer")]
+        [HttpGet(RouteId, Name = "GetServer")]
         [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult GetFullServer([FromRoute] long id)
@@ -55,7 +52,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="204">The server is deleted. Nothing more.</response>
         /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
-        [HttpDelete(Name = "DeleteServer")]
+        [HttpDelete(RouteId, Name = "DeleteServer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteServer([FromRoute] long id)
@@ -73,7 +70,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="204">The server is deleted. Nothing more.</response>
         /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
-        [HttpPut(Name = "ModifyServer")]
+        [HttpPut(RouteId, Name = "ModifyServer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
@@ -94,7 +91,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="204">The command is executed.</response>
         /// <response code="400">The server with the specified id does not exist or an exception happened during the command execution.</response>
-        [HttpPost("commands", Name = "WriteCommandToServer")]
+        [HttpPost(RouteId + "/commands", Name = "WriteCommandToServer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
@@ -114,7 +111,7 @@ namespace MCWebAPI.Controllers
         /// <returns></returns>
         /// <response code="204">The server is either started or deleted, depending on the state of it.</response>
         /// <response code="400">The server with the specified id does not exist or an exception happened during the toggle.</response>
-        [HttpPost("toggle", Name = "ToggleServer")]
+        [HttpPost(RouteId + "/toggle", Name = "ToggleServer")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ToggleServer([FromRoute] long id)

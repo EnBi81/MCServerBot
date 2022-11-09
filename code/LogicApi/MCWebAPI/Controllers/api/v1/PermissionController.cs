@@ -7,17 +7,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
 
-namespace MCWebAPI.Controllers
+namespace MCWebAPI.Controllers.api.v1
 {
     /// <summary>
     /// Controller for managing permissions.
     /// </summary>
-    [Route("[controller]")]
-    [ApiController]
-    [Authorize]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public class PermissionController : MCControllerBase
+    public class PermissionController : ApiV1Controller
     {
         private readonly IPermissionLogic _permissionLogic;
 
@@ -51,11 +46,11 @@ namespace MCWebAPI.Controllers
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GrantPermission([FromRoute] string id)
         {
-             var userId = ConvertStringToId(id);
-             
-             UserEventData userEventData = await GetUserEventData();
-             await _permissionLogic.GrantPermission(userId, userEventData);
-             return Ok();
+            var userId = ConvertStringToId(id);
+
+            UserEventData userEventData = await GetUserEventData();
+            await _permissionLogic.GrantPermission(userId, userEventData);
+            return Ok();
         }
 
         /// <summary>
@@ -71,7 +66,7 @@ namespace MCWebAPI.Controllers
         public async Task<IActionResult> RevokePermission([FromRoute] string id)
         {
             var userId = ConvertStringToId(id);
-            
+
             UserEventData userEventData = await GetUserEventData();
             await _permissionLogic.RevokePermission(userId, userEventData);
             return Ok();

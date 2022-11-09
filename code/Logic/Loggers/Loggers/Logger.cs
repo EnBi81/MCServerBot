@@ -46,8 +46,9 @@ namespace Loggers
         {
             if(Filename is null)
             {
-                Directory.CreateDirectory("logs");
-                Filename = $"logs/{DateTime.Now:yyyy-MM-dd-HH-mm-ss-FFFF}.txt";
+                string baseDir = (Environment.GetEnvironmentVariable("RESOURCES_FOLDER") + "/" ?? "") + "Logs";
+                Directory.CreateDirectory(baseDir);
+                Filename = $"{baseDir}/{DateTime.Now:yyyy-MM-dd-HH-mm-ss-FFFF}.txt";
             }
 
             Console.ForegroundColor = color;
