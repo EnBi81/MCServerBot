@@ -22,8 +22,7 @@ namespace MCWebAPI.Utils
             where TService : class
             where TImplementation : class, TService
         {
-            collection.AddSingleton<TService, TImplementation>();
-            CreateFactoryIfNotExist<TService, TImplementation>(collection, ServiceLifetime.Singleton, initAction);
+            CreateFactoryIfNotExist<TService, TImplementation>(collection, initAction);
             return collection;
         }
 
@@ -39,21 +38,12 @@ namespace MCWebAPI.Utils
         /// <param name="serviceLifetime"></param>
         /// <param name="initAction"></param>
         /// <exception cref="MCInternalException"></exception>
-        private static void CreateFactoryIfNotExist<TService, TImplementation>(IServiceCollection serviceCollection, ServiceLifetime? serviceLifetime, Func<TImplementation, Task> initAction) where TService : class
+        private static void CreateFactoryIfNotExist<TService, TImplementation>(IServiceCollection serviceCollection, Func<TImplementation, Task> initAction) where TService : class
         {
             var serviceType = typeof(TService);
 
-            // get the service descriptor from which we need the instance
-            var service = serviceCollection
-                          .FirstOrDefault(s => (s.ServiceType == serviceType) &&
-                            (serviceLifetime == null || s.Lifetime == serviceLifetime));
-
-            if(service == null)
-                throw new MCInternalException("Couldnt find service " + serviceType.FullName);
-
             Func<IServiceProvider, TService> factory = prov => CreateInstance<TService, TImplementation>(prov, initAction);
-
-            serviceCollection.Remove(service);
+            
             serviceCollection.AddSingleton(serviceType, factory);
         }
 
