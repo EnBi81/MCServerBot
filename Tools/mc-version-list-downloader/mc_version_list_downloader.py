@@ -1,9 +1,3 @@
-# Requirements
-#   BeautifulSoup (beautifulsoup4)
-#   requests
-
-import pip
-
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -58,13 +52,12 @@ filtered_tables = [table for table in all_tables if is_release_build_table(table
 
 for table in filtered_tables:
     update_title = get_update_title(table)
-    # print(update_title)
 
     rows = table.select('tr')
     rows.pop(0)
     filtered_rows = [row for row in rows if not is_row_invalid(row)]
 
-    # single rows after filtering cause name to be in the first column
+    # single rows cause name to be in the first cell of the row
     if len(filtered_rows) == 1:
         cells = filtered_rows[0].select('td')
         version = cells[1].get_text(strip=True)
