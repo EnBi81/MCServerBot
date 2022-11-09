@@ -9,6 +9,8 @@ using MCWebAPI.Middlewares;
 using MCWebAPI.Utils;
 using MCWebAPI.WebSocketHandler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Shared.DTOs;
@@ -50,8 +52,23 @@ namespace MCWebAPI
             serviceCollection.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             serviceCollection.AddEndpointsApiExplorer();
+            
+            serviceCollection.AddApiVersioning(setup =>
+            {
+                setup.DefaultApiVersion = new ApiVersion(1, 0);
+                setup.AssumeDefaultVersionWhenUnspecified = true;
+                setup.ReportApiVersions = true;
+            });
+
+            
             serviceCollection.AddSwaggerGen(options =>
             {
+                options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                options.IgnoreObsoleteActions();
+                options.IgnoreObsoleteProperties();
+                options.CustomSchemaIds(type => type.FullName);
+
+
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
@@ -79,8 +96,13 @@ namespace MCWebAPI
                 options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
             });
 
+            serviceCollection.ConfigureOptions<ConfigureSwaggerOptions>();
 
-
+            builder.Services.AddVersionedApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
+            });
 
             // Configs
             serviceCollection.AddSingleton(new MinecraftConfig
@@ -140,7 +162,19 @@ namespace MCWebAPI
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+                    foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
+                    {
+                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                            description.GroupName.ToUpperInvariant());
+                    }
+
+                    //options.SwaggerEndpoint($"/swagger/v1/swagger.json", $"v1");
+                    //options.SwaggerEndpoint($"/swagger/v2/swagger.json", $"v2");
+                });
             }
 
             app.UseHttpsRedirection();
