@@ -39,9 +39,9 @@ namespace MCWebAPI
 
 
             var builder = WebApplication.CreateBuilder(args);
-            
 
-            logger.Log("start", "Adding services");
+            // adding appsettings.json (because I moved it to the Properties folder)
+            builder.Configuration.AddJsonFile("Properties\\appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
 
             #region Register Services
 
