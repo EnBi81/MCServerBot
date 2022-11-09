@@ -57,18 +57,14 @@ for table in filtered_tables:
     rows.pop(0)
     filtered_rows = [row for row in rows if not is_row_invalid(row)]
 
-    # single rows cause name to be in the first cell of the row
-    if len(filtered_rows) == 1:
-        cells = filtered_rows[0].select('td')
-        version = cells[1].get_text(strip=True)
-        full_release_date = cells[-1].get_text(strip=True)
-        append_to_result(update_title, version, full_release_date, "")
-        continue
-
     for row in filtered_rows:
         cells = row.select('td')
-        version = cells[0].get_text(strip=True)
-        full_release_date = cells[-1].get_text(strip=True)
+        if len(cells) == 4:  # check if row has the title of the update
+            version = cells[1].get_text(strip=True)
+            full_release_date = cells[-1].get_text(strip=True)
+        else:
+            version = cells[0].get_text(strip=True)
+            full_release_date = cells[-1].get_text(strip=True)
         append_to_result(update_title, version, full_release_date, "")
 
 json.dump(result, open('mc_version_list.json', 'w'), indent=4)
