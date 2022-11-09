@@ -4,10 +4,6 @@ using System.Text.RegularExpressions;
 
 namespace Sandbox
 {
-    public class Hi
-    {
-
-    }
 
     public class SandBoxClass
     {
@@ -16,15 +12,6 @@ namespace Sandbox
         const string Server_Folder = "A:\\mc-server-test\\server1\\";
         static async Task Main(string[] args) // this is how to create a new server
         {
-
-            var type = typeof(Hi);
-
-            var constructor = type.GetConstructors()[0];
-
-            Console.WriteLine("public: " + constructor.IsPublic);
-            foreach (var c in constructor.GetParameters())
-                Console.WriteLine("parameter: " + c.Name);
-
 
             //if(args.Contains("reset"))
             //{

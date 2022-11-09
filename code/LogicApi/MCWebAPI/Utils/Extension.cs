@@ -22,30 +22,12 @@ namespace MCWebAPI.Utils
             where TService : class
             where TImplementation : class, TService
         {
-            CreateFactoryIfNotExist<TService, TImplementation>(collection, initAction);
-            return collection;
-        }
-
-
-
-        /// <summary>
-        /// Creates a factory for the service if it does not exist. This factory will be used to create the service instance.
-        /// It registers the factory in the service collection.
-        /// </summary>
-        /// <typeparam name="TService">type of service</typeparam>
-        /// <typeparam name="TImplementation">type of implementation</typeparam>
-        /// <param name="serviceCollection">the service collection</param>
-        /// <param name="serviceLifetime"></param>
-        /// <param name="initAction"></param>
-        /// <exception cref="MCInternalException"></exception>
-        private static void CreateFactoryIfNotExist<TService, TImplementation>(IServiceCollection serviceCollection, Func<TImplementation, Task> initAction) where TService : class
-        {
             var serviceType = typeof(TService);
-
             Func<IServiceProvider, TService> factory = prov => CreateInstance<TService, TImplementation>(prov, initAction);
             
-            serviceCollection.AddSingleton(serviceType, factory);
+            return collection.AddSingleton(serviceType, factory);
         }
+        
 
         /// <summary>
         /// Creates the instance of the service and runs the initAction.
