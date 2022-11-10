@@ -36,6 +36,7 @@ WEB API features:
   - be able to later change the selected version
   - automatically download a version if it is not aéready downloaded
 - Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+- Be able to change minecraft server properties
 
 
 ## Setup
