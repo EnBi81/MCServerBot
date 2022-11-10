@@ -42,31 +42,9 @@ WEB API features:
 
 ### Web API
 To set up the web api, download the whole project, 
-go to the MCWebAPI folder, open the applicationsettings.json file,
-rewrite the values to match your system. Then you can start the .StartServer.cmd file.
+go to the code/LogicAPI/MCWebAPI/Properties folder, copy the appsettings.json.example file and the launchSettings.json.example file,
+rename them to appsettings.json and launchSettings.json respectively, and fill in the values.
 
-```json
-  "Jwt": {
-    "Key": "put your key here",
-    "Issuer": "JWTAuthenticationServer",
-    "Audience": "JWTServiceBlazorWasmClient",
-    "Subject": "JWTServiceAccessToken"
-  },
-  "ConnectionStrings": {
-    "SQLite": "Data Source=C:\\..\\eventdata.db;Version=3;"
-  },
-  "Paths": {
-    "Hamachi": "C:\\..\\x64",
-    "JavaLocation": "C:\\..\\java.exe",
-    "MinecraftServersBaseFolder": "C:\\..\\MinecraftServers\\",
-    "MinecraftServerHandler": "C:\\..\\MCServerBot\\MCServerHandler\\bin\\Debug\\net5.0\\MCServerHandler.exe"
-  },
-  "MinecraftSettings": {
-    "ServerMaxRamMB": "8196",
-    "ServerInitRamMB": "8196",
-    "MaxDiskSpaceGB": "10"
-  }
-```
 
 # Technical information
 
