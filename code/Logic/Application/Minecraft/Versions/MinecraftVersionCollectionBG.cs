@@ -8,10 +8,12 @@ namespace Application.Minecraft.Versions
 {
     internal partial class MinecraftVersionCollection
     {
+        private const string _versionJsonFileName = "mc_version_list.json";
         private readonly Dictionary<string, MinecraftVersion> _downloadingVersions = new();
         private readonly string _versionsDir;
         private readonly int _maxDownloadSimultaneously = 5;
-        private const string _versionJsonFileName = "mc_version_list.json";
+        private readonly string _resourceVersionFolder = 
+            Path.Combine(Environment.GetEnvironmentVariable("RESOURCES_FOLDER") ?? throw new MCInternalException("RESOURCES_FOLDER not set!"), "python");
 
         private static List<T> GetSortedDescendingVersion<T>(List<T> list) where T : IMinecraftVersion
         {
@@ -84,15 +86,32 @@ namespace Application.Minecraft.Versions
         /// <returns></returns>
         private async Task DownloadVersionsFromNet()
         {
-            var p = Process.Start(new ProcessStartInfo
-            {
-                CreateNoWindow = true,
-                FileName = "cmd.exe",
-                WorkingDirectory = _versionsDir,
-                arg
-            });
+            _logger.Log(_loggerSource, "Downloading version list from Mojang...");
 
+            await ExecuteScript("dependency_downloader.py");
+            await ExecuteScript("mc_version_list_downloader.py");
             
+
+            async Task ExecuteScript(string filename)
+            {
+                var p = Process.Start(new ProcessStartInfo
+                {
+                    CreateNoWindow = true,
+                    FileName = "cmd.exe",
+                    WorkingDirectory = _resourceVersionFolder,
+                    RedirectStandardInput = true
+                });
+
+                if (p == null)
+                    throw new MCInternalException("Failed to start python script: " + filename);
+
+                await p.StandardInput.WriteLineAsync($"python {filename} & exit");
+                await p.WaitForExitAsync();
+            }
+
+
+
+
         }
 
 
@@ -102,9 +121,6 @@ namespace Application.Minecraft.Versions
         /// <exception cref="MCInternalException"></exception>
         private async Task LoadVersions()
         {
-            if (_versions.Any())
-                return;
-
             string versionsFile = GetVersionFilePath();
 
             var text = await File.ReadAllTextAsync(versionsFile);
@@ -121,21 +137,20 @@ namespace Application.Minecraft.Versions
                 .Where(v => v.Name is not null)
                 .Where(v => v.Version is not null && Regex.IsMatch(v.Version, @"^\d+(\.\d+)*$"))
                 .Where(v => DateTime.TryParse(v.FullRelease, out _))
-                .Where(v => Uri.IsWellFormedUriString(v.DownloadUrl, UriKind.Absolute));
+                //.Where(v => Uri.IsWellFormedUriString(v.DownloadUrl, UriKind.Absolute))
+                // select only the versions which are not already loaded to the collection
+                .Where(v => !_versions.Any(version => version.Version == v.Version))
+                // be sure all the versions are distinct
+                .DistinctBy(version => version.Version);
+            
 
-            var incorrectVersions = versions.Versions.Except(filteredVersions);
-            foreach (var incorrectVersion in incorrectVersions)
-            {
-                _logger.Error(_loggerSource, new MCInternalException("Incorrect version: " + incorrectVersion.ToString()));
-            }
 
-
-            var convertedVersions = versions.Versions.Select(mvJson => new MinecraftVersion(this) 
+            var convertedVersions = filteredVersions.Select(mvJson => new MinecraftVersion(this) 
             {
                 Name = mvJson.Name!,
                 Version = mvJson.Version!,
                 FullRelease = mvJson.FullRelease!,
-                DownloadUrl = mvJson.DownloadUrl ?? ""
+                DownloadUrl = mvJson.DownloadLink ?? ""
             });
         
             
@@ -144,7 +159,7 @@ namespace Application.Minecraft.Versions
 
         private string GetVersionFilePath()
         {
-            return Path.Combine(_versionsDir, _versionJsonFileName);
+            return Path.Combine(_resourceVersionFolder, _versionJsonFileName);
         }
 
         /// <summary>
@@ -193,7 +208,7 @@ namespace Application.Minecraft.Versions
             /// <summary>
             /// Download url.
             /// </summary>
-            public string? DownloadUrl { get; set; }
+            public string? DownloadLink { get; set; }
 
 
             public override string ToString() => JsonConvert.SerializeObject(this);

@@ -19,6 +19,7 @@ namespace Sandbox
                 WorkingDirectory = Environment.CurrentDirectory,
                 RedirectStandardInput = true
             });
+            
             p.StandardInput.WriteLine("python mc_version_list_downloader.py & exit");
             p?.WaitForExit();
 

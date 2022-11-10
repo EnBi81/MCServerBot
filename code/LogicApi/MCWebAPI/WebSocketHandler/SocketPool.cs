@@ -187,9 +187,12 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void ServerNameChanged(object? sender, ServerValueChangedEventArgs<string> e)
+        private async void ServerNameChanged(object? sender, ServerValueEventArgs<ServerChangeableDto> e)
         {
-            string newName = e.NewValue;
+            string newName = e.NewValue.NewName;
+
+            if (newName is null)
+                return;
 
             string message = MessageFormatter.ServerNameChanged(e.Server.Id, newName);
 

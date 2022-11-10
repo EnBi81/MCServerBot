@@ -1,4 +1,5 @@
 ﻿using APIModel.DTOs;
+using Shared.DTOs;
 using Shared.Model;
 
 namespace MCWebAPI.Utils
@@ -29,5 +30,23 @@ namespace MCWebAPI.Utils
             OnlineFrom = player.OnlineFrom,
             PastOnline = player.PastOnline,
         };
+
+        public static ServerChangeableDto ToModelDto(this ModifyServerDto dto)
+        {
+            return new ServerChangeableDto
+            {
+                NewName = dto.NewName,
+                Version = dto.Version
+            };
+        }
+
+        public static ServerChangeableDto ToModelDto(this ServerCreationDto dto)
+        {
+            return new ServerChangeableDto
+            {
+                NewName = dto.NewName,
+                Version = dto.Version
+            };
+        }
     }
 }

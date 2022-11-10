@@ -2,6 +2,7 @@
 using APIModel.Responses;
 using Application.Minecraft.Versions;
 using MCWebAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Exceptions;
 using Shared.Model;
@@ -49,7 +50,7 @@ namespace MCWebAPI.Controllers.api.v1
         {
             var user = await GetUserEventData();
 
-            IMinecraftServer server = await serverPark.CreateServer(data?.NewName, user);
+            IMinecraftServer server = await serverPark.CreateServer(data.ToModelDto(), user);
             return Created("minecraftserver/" + server.Id, server.ToDTO());
         }
 
@@ -76,6 +77,7 @@ namespace MCWebAPI.Controllers.api.v1
         /// </summary>
         /// <returns></returns>
         [HttpGet("versions")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<IMinecraftVersion>), StatusCodes.Status200OK)]
         public IActionResult GetAllVersions()
         {
@@ -84,14 +86,16 @@ namespace MCWebAPI.Controllers.api.v1
         }
 
         /// <summary>
-        /// Refreshes the minecraft versions
+        /// Checks the internet if there are any new versions available, if yes, then adds them to the collection.
         /// </summary>
         /// <returns></returns>
         [HttpPatch("versions")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshVersions()
         {
-            throw new NotImplementedException();
+            await serverPark.MinecraftVersionCollection.LoadAsync();
+            return Ok();
         }
     }
 }

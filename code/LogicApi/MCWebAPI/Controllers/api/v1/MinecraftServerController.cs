@@ -76,7 +76,7 @@ namespace MCWebAPI.Controllers.api.v1
         public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
         {
             var user = await GetUserEventData();
-            await serverPark.RenameServer(id, dto?.NewName, user);
+            await serverPark.ModifyServer(id, dto.ToModelDto(), user);
 
             return NoContent();
         }

@@ -68,7 +68,8 @@ namespace Application.Minecraft.Versions
 
         public async Task LoadAsync()
         {
-            
+            await DownloadVersionsFromNet();
+            await LoadVersions();
         }
 
 

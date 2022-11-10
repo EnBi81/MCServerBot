@@ -7,5 +7,7 @@ namespace APIModel.DTOs
         [MinLength(MinecraftServerDTO.NAME_MIN_LENGTH)]
         [MaxLength(MinecraftServerDTO.NAME_MAX_LENGTH)]
         public string? NewName { get; set; }
+
+        public string? Version { get; set; }
     }
 }

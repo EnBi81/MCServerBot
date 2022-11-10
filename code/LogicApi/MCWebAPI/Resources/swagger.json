@@ -678,6 +678,40 @@
           }
         ]
       }
+    },
+    "/api/v1/ServerPark/versions": {
+      "get": {
+        "tags": [
+          "ServerPark"
+        ],
+        "summary": "Gets all the available minecraft versions.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Application.Minecraft.Versions.IMinecraftVersion"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "ServerPark"
+        ],
+        "summary": "Refreshes the minecraft versions",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -791,6 +825,10 @@
             "minLength": 4,
             "type": "string",
             "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -805,6 +843,10 @@
             "maxLength": 35,
             "minLength": 4,
             "type": "string"
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -862,6 +904,41 @@
           "userToken": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Application.Minecraft.Versions.IMinecraftVersion": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "downloadUrl": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "isDownloaded": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "absoluteJarPath": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false

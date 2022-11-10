@@ -145,7 +145,7 @@ namespace Application.Minecraft
 
             SubscribeToProcessEvents();
 
-
+            _mcVersion = null!;
             _serverState = null!;
             SetServerState<OfflineState>();
 
@@ -156,6 +156,7 @@ namespace Application.Minecraft
             StatusChange = null!;
             StorageMeasured = null!;
             PerformanceMeasured = null!;
+            VersionChanged = null!;
         }
 
 
