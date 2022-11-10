@@ -8,6 +8,9 @@ Tools/gitignored/*
 Resources/*.json
 */*.db
 
+Properties/appsettings.json
+Properties/launchSettings.json
+
 .idea/
 */.idea/
 
