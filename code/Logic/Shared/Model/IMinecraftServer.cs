@@ -1,4 +1,5 @@
-﻿using Shared.DTOs;
+﻿using Application.Minecraft.Versions;
+using Shared.DTOs;
 using Shared.Exceptions;
 
 namespace Shared.Model
@@ -76,6 +77,11 @@ namespace Shared.Model
         /// Phisical storage space on the disk of the server in BYTES.
         /// </summary>
         public long StorageBytes { get; }
+
+        /// <summary>
+        /// Gets the minecraft version of the server.
+        /// </summary>
+        public IMinecraftVersion MCVersion { get; }
 
 
         /// <summary>

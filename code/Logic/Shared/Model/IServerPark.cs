@@ -26,6 +26,13 @@ namespace Shared.Model
         /// </summary>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers { get; }
 
+        /// <summary>
+        /// Version collection and manager
+        /// </summary>
+        public IMinecraftVersionCollection MinecraftVersionCollection { get; }
+
+        
+
 
         /// <summary>
         /// Gets a server by id.

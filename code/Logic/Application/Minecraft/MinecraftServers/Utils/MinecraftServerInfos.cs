@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Shared.Exceptions;
 using Shared.Model;
 
 namespace Application.Minecraft.MinecraftServers.Utils
@@ -20,6 +21,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// Name of the server.
         /// </summary>
         public string Name { get; set; } = null!;
+
+        /// <summary>
+        /// Minecraft version of the server.
+        /// </summary>
+        public string Version { get; set; } = null!;
 
 
         /// <summary>
@@ -69,9 +75,17 @@ namespace Application.Minecraft.MinecraftServers.Utils
             var obj = JsonConvert.DeserializeObject<MinecraftServerInfos>(json, settings);
             if (obj == null)
                 throw new Exception("Minecraft server info file is invalid");
+            
+            for (var property in obj.GetType().GetProperties())
+            {
+                if (property.GetValue(obj) is null)
+                    throw new MCInternalException($"Minecraft server {_filename} info file has invalid porperty: {property.Name}");
+            }
+            
 
             Id = obj.Id;
             Name = obj.Name;
+            Version = obj.Version;
         }
     }
 }

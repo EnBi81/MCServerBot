@@ -1,6 +1,7 @@
 ﻿using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
 using Application.Minecraft.Util;
+using Application.Minecraft.Versions;
 using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Model;
@@ -73,32 +74,38 @@ namespace Application.Minecraft.MinecraftServers
         /// <inheritdoc/>
         public Dictionary<string, IMinecraftPlayer> Players { get; } = new Dictionary<string, IMinecraftPlayer>();
 
-        /// <summary>
-        /// Performance reporter class, which measures the cpu and memory usage of the running minecraft server.
-        /// </summary>
+        /// <inheritdoc/>
+        public IMinecraftVersion MCVersion { get; private set; }
+
+
+
+
         internal ProcessPerformanceReporter? PerformanceReporter { get; private set; }
-
-        /// <summary>
-        /// Low level process handling of the minecraft server.
-        /// </summary>
         internal MinecraftServerProcess McServerProcess { get; }
-
         internal MinecraftServerInfos McServerInfos { get; }
 
 
-
-
-        public MinecraftServerLogic(string serverFolderName, MinecraftConfig config) : this(0, serverFolderName, config)
+        
+        public MinecraftServerLogic(string serverFolderName, MinecraftConfig config, IMinecraftVersionCollection vsCollection) : this(0, serverFolderName, config)
         {
             McServerInfos.Load();
+
+            var version = vsCollection[McServerInfos.Version];
+            if (version is null)
+                throw new MCInternalException($"Version {McServerInfos.Version} not found in version collection");
+
+
             Id = McServerInfos.Id;
             ServerName = McServerInfos.Name!;
+            MCVersion = version;
         }
 
 
-        public MinecraftServerLogic(long id, string serverName, string serverFolderName, MinecraftConfig config) : this(id, serverFolderName, config)
+        public MinecraftServerLogic(long id, string serverName, string serverFolderName, MinecraftConfig config, IMinecraftVersion version) : this(id, serverFolderName, config)
         {
             ServerName = serverName;
+            MCVersion = version;
+
         }
 
 

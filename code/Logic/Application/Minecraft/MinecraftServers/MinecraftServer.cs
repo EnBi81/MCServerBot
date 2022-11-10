@@ -1,4 +1,5 @@
 ﻿using Application.DAOs.Database;
+using Application.Minecraft.Versions;
 using Loggers;
 using Shared.DTOs;
 using Shared.Model;
@@ -15,18 +16,18 @@ namespace Application.Minecraft.MinecraftServers
         private readonly MinecraftServerLogic _minecraftServerLogic;
 
         public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
+            string serverFolderName, MinecraftConfig config, IMinecraftVersionCollection collection) : this(dataAccess, logger)
         {
-            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config));
+            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config, collection));
             _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
             Startup();
         }
 
 
         public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            long id, string serverName, string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
+            long id, string serverName, string serverFolderName, MinecraftConfig config, IMinecraftVersion version) : this(dataAccess, logger)
         {
-            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config));
+            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version));
             _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
             Startup();
         }
@@ -131,6 +132,9 @@ namespace Application.Minecraft.MinecraftServers
 
         /// <inheritdoc/>
         public long StorageBytes => _minecraftServerLogic.StorageBytes;
+
+        /// <inheritdoc/>
+        public IMinecraftVersion MCVersion => _minecraftServerLogic.MCVersion;
 
         /// <inheritdoc/>
         public event EventHandler<ServerStatus> StatusChange

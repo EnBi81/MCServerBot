@@ -75,14 +75,14 @@ namespace Application.Minecraft.Versions
         /// Loads the versions from the versions.json file.
         /// </summary>
         /// <exception cref="MCInternalException"></exception>
-        private void LoadVersions()
+        private async Task LoadVersions()
         {
             if (_versions.Any())
                 return;
 
             string versionsFile = Path.Combine(_versionsDir, "versions.json");
 
-            var text = File.ReadAllText(versionsFile);
+            var text = await File.ReadAllTextAsync(versionsFile);
             var versions = JsonConvert.DeserializeObject<VersionJson>(text);
 
             if (versions is null)

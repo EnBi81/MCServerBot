@@ -87,6 +87,16 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
+        public IMinecraftVersionCollection MinecraftVersionCollection
+        {
+            get
+            {
+                ThrowExceptionIfNotInitialized();
+                return _serverPark.MinecraftVersionCollection;
+            }
+        }
+
+        /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange
         {
             add

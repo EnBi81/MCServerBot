@@ -1,6 +1,7 @@
 ﻿using Application.DAOs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
+using Application.Minecraft.Versions;
 using Loggers;
 using Shared.DTOs;
 using Shared.EventHandlers;
@@ -27,6 +28,7 @@ namespace Application.Minecraft
         /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
         /// </summary>
         internal string EmptyServersFolder { get; }
+        
 
 
         private long _serverIdCounter;
@@ -42,7 +44,9 @@ namespace Application.Minecraft
             _config = config;
             _logger = logger;
             _mcEnvironment = new MinecraftEnvironment(config.MinecraftServersBaseFolder);
+            MinecraftVersionCollection = new MinecraftVersionCollection(_mcEnvironment.ServerJarDirectory, _logger);
 
+            
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
             DeletedServersFolder = _config.MinecraftServersBaseFolder + "Deleted Servers\\";
             EmptyServersFolder = _config.MinecraftServersBaseFolder + "Empty Server\\";
@@ -80,6 +84,8 @@ namespace Application.Minecraft
                 var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config);
                 RegisterMcServer(mcServer);
             }
+
+            await MinecraftVersionCollection.InitializeAsync();
         }
 
 
@@ -88,6 +94,8 @@ namespace Application.Minecraft
 
         /// <inheritdoc/>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers => new ReadOnlyDictionary<long, IMinecraftServer>(ServerCollection);
+
+        public IMinecraftVersionCollection MinecraftVersionCollection { get; }
 
 
 

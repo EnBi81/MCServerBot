@@ -32,6 +32,9 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers => _serverParkLogic.MCServers;
 
+        /// <inheritdoc/>
+        public IMinecraftVersionCollection MinecraftVersionCollection => _serverParkLogic.MinecraftVersionCollection;
+
 
 
         /// <inheritdoc/>

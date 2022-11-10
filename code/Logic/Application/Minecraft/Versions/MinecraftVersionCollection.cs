@@ -1,4 +1,6 @@
 ﻿using Loggers;
+using Shared.Exceptions;
+using Shared.Model;
 using System.Collections;
 
 namespace Application.Minecraft.Versions
@@ -6,7 +8,7 @@ namespace Application.Minecraft.Versions
     /// <summary>
     /// Minecraft Version manager.
     /// </summary>
-    internal partial class MinecraftVersionCollection : IEnumerable<IMinecraftVersion>
+    internal partial class MinecraftVersionCollection : IMinecraftVersionCollection
     {
         /*
          * Use cases: 
@@ -38,6 +40,8 @@ namespace Application.Minecraft.Versions
         private readonly MinecraftLogger _logger;
         private readonly string _loggerSource = "version-manager";
 
+        
+
 
         /// <summary>
         /// Initializes the version manager.
@@ -48,48 +52,45 @@ namespace Application.Minecraft.Versions
         {
             _versionsDir = versionsDir;
             _logger = logger;
-            LoadVersions();
+        }
+
+        /// <inheritdoc/>
+        public async Task InitializeAsync()
+        {
+            await LoadVersions();
             _logger.Log(_loggerSource, "Version manager initialized. Versions loaded: " + _versions.Count);
+
+            if (_versions.Count == 0)
+            {
+                throw new MCInternalException("Couldn't load any version.");
+            }
         }
 
 
-
-
-        /// <summary>
-        /// Gets the version instance by version.
-        /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public IMinecraftVersion? this[string version] => 
             _versions.FirstOrDefault(v => v.Version == version);
+
+        /// <inheritdoc/>
+        public IMinecraftVersion Latest => throw new NotImplementedException();
         
-        /// <summary>
-        /// Gets all the versions.
-        /// </summary>
-        /// <returns></returns>
+        
+        /// <inheritdoc/>
         public List<IMinecraftVersion> GetAll() => new (_versions);
 
 
-        /// <summary>
-        /// Downloads a version asynchronously.
-        /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public async Task DownloadVersionAsync(string version) => 
             await DownloadVersionThreadSafe(version);
 
-        /// <summary>
-        /// Checks if a version is downloaded locally.
-        /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public bool IsDownloaded(string version) => 
             File.Exists(GetAbsolutePath(version));
-        
-        
 
 
 
+
+        /// <inheritdoc/>
         public IEnumerator<IMinecraftVersion> GetEnumerator() => _versions.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _versions.GetEnumerator();
     }
