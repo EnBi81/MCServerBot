@@ -374,3 +374,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /MCWebApp/Resources/eventdata.db
 /code/LogicApi/MCWebAPI/Resources/config.json
+/code/LogicApi/MCWebAPI/Properties/appsettings.json
+/code/LogicApi/MCWebAPI/Properties/launchSettings.json
