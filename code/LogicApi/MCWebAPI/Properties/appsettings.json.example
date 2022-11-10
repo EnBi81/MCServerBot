@@ -27,32 +27,4 @@
     "MaxDiskSpaceGB": "10"
   }
 }
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "Jwt": {
-    "Key": "?<|;2t%9OqOZml^!<=TT61-r2b@Uqp",
-    "Issuer": "MCServerApi",
-    "Audience": "MCServerClients",
-    "Subject": "JWTServiceAccessToken"
-  },
-  "ConnectionStrings": {
-    "SQLite": "Data Source=Resources\\eventdata.db;Version=3;"
-  },
-  "Paths": {
-    "Hamachi": "C:\\Program Files (x86)\\LogMeIn Hamachi\\x64",
-    "JavaLocation": "C:\\Program Files\\Java\\jdk-17.0.2\\bin\\java.exe",
-    "MinecraftServersBaseFolder": "A:\\Games\\MinecraftServers\\",
-    "MinecraftServerHandler": "C:\\Users\\enbi8\\source\\repos\\MCServerBot\\code\\Logic\\MCServerHandler\\bin\\Debug\\net5.0\\MCServerHandler.exe"
-  },
-  "MinecraftSettings": {
-    "ServerMaxRamMB": "8196",
-    "ServerInitRamMB": "8196",
-    "MaxDiskSpaceGB": "10"
-  }
-}
+
