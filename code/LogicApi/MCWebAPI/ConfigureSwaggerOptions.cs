@@ -7,8 +7,7 @@ using System.Reflection;
 
 namespace MCWebAPI
 {
-    public class ConfigureSwaggerOptions
-    : IConfigureNamedOptions<SwaggerGenOptions>
+    public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
     {
         private readonly IApiVersionDescriptionProvider _provider;
 
@@ -80,7 +79,7 @@ namespace MCWebAPI
         /// </summary>
         /// <param name="description"></param>
         /// <returns>Information about the API</returns>
-        private OpenApiInfo CreateVersionInfo(
+        private static OpenApiInfo CreateVersionInfo(
                 ApiVersionDescription desc)
         {
             var info = new OpenApiInfo()

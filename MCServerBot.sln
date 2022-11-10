@@ -35,6 +35,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIModel", "code\LogicApi\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HamachiCli", "code\Logic\HamachiCli\HamachiCli.csproj", "{3FC3FF89-A47C-467A-BB71-FBE17BD5DE3A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{7A73EF55-EEF0-4AFA-A0B0-C3A7277CCA85}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mc-versions-generator", "Mc-versions-generator", "{25DBEDB1-1ED0-4600-B5B9-BFDDAB13B4C7}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\mc-version-list-downloader\dependency_downloader.py = Tools\mc-version-list-downloader\dependency_downloader.py
+		Tools\mc-version-list-downloader\mc_version_list_downloader.py = Tools\mc-version-list-downloader\mc_version_list_downloader.py
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-generator", "api-generator", "{998C7043-3BFA-4B65-A0BC-92CA1BC0CB90}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\api-generator\config-csharp.json = Tools\api-generator\config-csharp.json
+		Tools\api-generator\config-javascript.json = Tools\api-generator\config-javascript.json
+		Tools\api-generator\generate-api.bat = Tools\api-generator\generate-api.bat
+		Tools\api-generator\openapi.txt = Tools\api-generator\openapi.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +121,8 @@ Global
 		{46F9BF99-239E-41C5-9244-25BB0DDC4F67} = {57C70874-3C62-4322-93BE-D02D817BE738}
 		{45EB2B4F-7AB5-488B-8D2E-1953020FBC33} = {ABEB08F5-43D3-4D8E-9FD1-28362A396136}
 		{3FC3FF89-A47C-467A-BB71-FBE17BD5DE3A} = {E8A4F788-F80B-4570-A510-8FA88E505635}
+		{25DBEDB1-1ED0-4600-B5B9-BFDDAB13B4C7} = {7A73EF55-EEF0-4AFA-A0B0-C3A7277CCA85}
+		{998C7043-3BFA-4B65-A0BC-92CA1BC0CB90} = {7A73EF55-EEF0-4AFA-A0B0-C3A7277CCA85}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4285A17D-FC0E-44FE-869F-7AACEFFF0290}

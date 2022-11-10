@@ -1,5 +1,4 @@
 ﻿using Loggers.Loggers;
-using System.Security.Cryptography;
 
 namespace MCWebAPI.Middlewares
 {

@@ -19,7 +19,7 @@ namespace Application.Minecraft.Versions
             if (imcVersion is not MinecraftVersion mcVersion)
                 throw new MCExternalException($"Cannot download version {version} for reason: {version} is not a registered version");
             
-            AddVersionToDownloading(mcVersion);
+            AddVersionToDownloadingSync(mcVersion);
             
 
             using HttpClient client = new HttpClient();
@@ -29,11 +29,11 @@ namespace Application.Minecraft.Versions
             using var fileStream = File.Create(filename);
             await webStream.CopyToAsync(fileStream);
 
-            RemoveVersionFromDownloading(mcVersion);
+            RemoveVersionFromDownloadingSync(mcVersion);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void AddVersionToDownloading(MinecraftVersion version)
+        private void AddVersionToDownloadingSync(MinecraftVersion version)
         {
             if(_downloadingVersions.ContainsKey(version.Version))
                 _downloadingVersions.Add(version.Version, version);
@@ -42,7 +42,7 @@ namespace Application.Minecraft.Versions
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void RemoveVersionFromDownloading(MinecraftVersion version)
+        private void RemoveVersionFromDownloadingSync(MinecraftVersion version)
         {
             _downloadingVersions.Remove(version.Version);
         }
@@ -50,6 +50,9 @@ namespace Application.Minecraft.Versions
 
         private void LoadVersions()
         {
+            if (_versions.Any())
+                return;
+
             string versionsFile = Path.Combine(_versionsDir, "versions.json");
 
             var text = File.ReadAllText(versionsFile);
