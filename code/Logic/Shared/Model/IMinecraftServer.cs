@@ -81,7 +81,7 @@ namespace Shared.Model
         /// <summary>
         /// Gets the minecraft version of the server.
         /// </summary>
-        public IMinecraftVersion MCVersion { get; }
+        public IMinecraftVersion MCVersion { get; set; }
 
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="user">username of the user who initiates the start of the server.</param>
         /// <exception cref="MinecraftServerException">If the server is not Offline.</exception>
-        public void Start(UserEventData data = default);
+        public Task Start(UserEventData data = default);
 
         /// <summary>
         /// Writes a command to the minecraft serves based on the state of the server.
@@ -97,13 +97,13 @@ namespace Shared.Model
         /// <param name="command">command to send to the minecraft server.</param>
         /// <param name="data">user data of the user who sends the command.</param>
         /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-        public void WriteCommand(string? command, UserEventData data = default);
+        public Task WriteCommand(string? command, UserEventData data = default);
 
         /// <summary>
         /// Shuts down the minecraft server if it is online.
         /// </summary>
         /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-        public void Shutdown(UserEventData data = default);
+        public Task Shutdown(UserEventData data = default);
 
         /// <summary>
         /// Fired when the server has changed status.
@@ -133,5 +133,9 @@ namespace Shared.Model
         /// Fired when the server's storage has been measured. Unit is in bytes.
         /// </summary>
         public event EventHandler<long> StorageMeasured;
+        /// <summary>
+        /// Fired when the server's version has been changed.
+        /// </summary>
+        public event EventHandler<IMinecraftVersion> VersionChanged;
     }
 }

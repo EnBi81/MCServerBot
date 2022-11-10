@@ -41,13 +41,13 @@ namespace Application.Minecraft.States
                 _server.SetServerState<OnlineState>();
         }
 
-        public override void Start(string username) =>
+        public override Task Start(string username) =>
             throw new MinecraftServerException(_server.ServerName + " is already starting!");
 
-        public override void Stop(string username) =>
+        public override Task Stop(string username) =>
             throw new MinecraftServerException(_server.ServerName + " is starting. Please wait till the operation is complete.");
 
-        public override void WriteCommand(string? command, string username) =>
+        public override Task WriteCommand(string? command, string username) =>
             throw new MinecraftServerException(_server.ServerName + " is starting, please wait!");
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.Util;
+using Application.Minecraft.Versions;
 using Loggers;
 using System.Diagnostics;
 
@@ -10,7 +11,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
     internal class MinecraftServerProcess
     {
         private Process? _serverHandlerProcess;
-        private readonly string _serverFileName;
+        private readonly string _serverDirectory;
         private readonly string _javaLocation;
         private readonly string _serverHandlerPath;
         private readonly int _maxRam;
@@ -18,14 +19,13 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
 
         public MinecraftServerProcess(
-            string serverFileName,
+            string serverDirectory,
             string javaLocation,
             string serverHandlerPath,
             int maxRam,
             int initRam)
         {
-            // server.jar path
-            _serverFileName = serverFileName;
+            _serverDirectory = serverDirectory;
             _javaLocation = javaLocation;
             _serverHandlerPath = serverHandlerPath;
             _maxRam = maxRam;
@@ -36,20 +36,21 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// Writes the text to the process' standard input.
         /// </summary>
         /// <param name="text">Text to write to the standard input.</param>
-        public void WriteToStandardInput(string text)
+        public async Task WriteToStandardInputAsync(string text)
         {
-            _serverHandlerProcess?.StandardInput.WriteLine(text);
+            if (_serverHandlerProcess != null)
+                await _serverHandlerProcess.StandardInput.WriteLineAsync(text);
         }
 
         /// <summary>
         /// Start the minecraft server process, and subscribe to all the process events.
         /// </summary>
-        public void Start()
+        public async Task Start(IMinecraftVersion version)
         {
-            // get the server.jar fileinfo
-            FileInfo info = new(_serverFileName);
-            var workingDir = info.DirectoryName;
-            var simpleFileName = info.Name;
+            if (!version.IsDownloaded)
+                await version.DownloadAsync();
+            
+            var serverFilePath = version.AbsoluteJarPath;
 
             // processstartinfo of cmd in the server folder
             var processStartInfo = new ProcessStartInfo
@@ -60,7 +61,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 CreateNoWindow = false,
                 //Arguments = $"\"{serverHandlerPath}\" {simpleFileName} \"{_javaLocation}\" \"{workingDir}\" {maxRam} {initRam}",
                 FileName = "cmd.exe",
-                WorkingDirectory = workingDir
+                WorkingDirectory = _serverDirectory
             };
 
             // create cmd process
@@ -70,11 +71,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 EnableRaisingEvents = true,
             };
 
-            LogService.GetService<MinecraftLogger>().Log("server-process", $"Starting server {simpleFileName} with max-ram {_maxRam}.");
+            LogService.GetService<MinecraftLogger>().Log("server-process", $"Starting server in {_serverDirectory} with max-ram {_maxRam}.");
 
             // start cmd process and make it run the server handler
             _serverHandlerProcess.Start();
-            _serverHandlerProcess.StandardInput.WriteLine($"\"{_serverHandlerPath}\" {simpleFileName} \"{_javaLocation}\" \"{workingDir}\" {_maxRam} {_initRam} & exit");
+            _serverHandlerProcess.StandardInput.WriteLine($"\"{_serverHandlerPath}\" {serverFilePath} \"{_javaLocation}\" \"{_serverDirectory}\" {_maxRam} {_initRam} & exit");
             _serverHandlerProcess.BeginErrorReadLine();
             _serverHandlerProcess.BeginOutputReadLine();
 
@@ -121,7 +122,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
         public long GetStorage()
         {
-            var info = new FileInfo(_serverFileName);
+            var info = new FileInfo(_serverDirectory);
             long dirSize = FileHelper.DirSize(info.Directory);
 
             return dirSize;

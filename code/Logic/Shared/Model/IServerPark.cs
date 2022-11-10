@@ -72,11 +72,11 @@ namespace Shared.Model
         /// <summary>
         /// Creates a new server folder by copying the empty folder to the servers folder.
         /// </summary>
-        /// <param name="name">name of the new </param>
+        /// <param name="dto">Information to create the server</param>
         /// <exception cref="MinecraftServerArgumentException">If the name is null or white space, or the name of the server is not in <see cref="IMinecraftServer.NAME_MIN_LENGTH"/> and <see cref="IMinecraftServer.NAME_MAX_LENGTH"/></exception>
         /// <exception cref="ServerParkException">If the name already exists.</exception>
         /// <exception cref="ServerParkException">If the max storage has been reached.</exception>
-        public Task<IMinecraftServer> CreateServer(string? name, UserEventData user = default);
+        public Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user = default);
 
         /// <summary>
         /// Changes an already existing minecraft server's name if it is not running
@@ -87,7 +87,7 @@ namespace Shared.Model
         /// <exception cref="ServerParkException">If the id is not registered</exception>
         /// <exception cref="ServerParkException">If the server is running</exception>
         /// <exception cref="ServerParkException">If the name already exists</exception>
-        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user = default);
+        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user = default);
 
         /// <summary>
         /// Deletes a server by moving to the <see cref="DeletedServersFolder"/>.
@@ -129,9 +129,9 @@ namespace Shared.Model
         public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
 
         /// <summary>
-        /// Event fired when a server's name is changed.
+        /// Event fired when a server has been modified.
         /// </summary>
-        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged;
+        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified;
 
         /// <summary>
         /// Event fired when a server is added to the ServerPark.

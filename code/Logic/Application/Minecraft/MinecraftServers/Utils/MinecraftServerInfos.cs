@@ -55,6 +55,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
         {
             Id = server.Id;
             Name = server.ServerName;
+            Version = server.MCVersion.Version;
 
             string json = JsonConvert.SerializeObject(this);
             File.WriteAllText(_filename, json);
@@ -76,7 +77,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
             if (obj == null)
                 throw new Exception("Minecraft server info file is invalid");
             
-            for (var property in obj.GetType().GetProperties())
+            foreach (var property in obj.GetType().GetProperties())
             {
                 if (property.GetValue(obj) is null)
                     throw new MCInternalException($"Minecraft server {_filename} info file has invalid porperty: {property.Name}");

@@ -22,13 +22,13 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="username"></param>
         /// <exception cref="MinecraftServerException">If the server is not Offline.</exception>
-        public void Start(string username);
+        public Task Start(string username);
         /// <summary>
         /// Stops the server if the server is online.
         /// </summary>
         /// <param name="username"></param>
         /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-        public void Stop(string username);
+        public Task Stop(string username);
         /// <summary>
         /// Handles a log message, extracts data of it and calls events based on it.
         /// </summary>
@@ -40,6 +40,6 @@ namespace Application.Minecraft.States
         /// <param name="command"></param>
         /// <param name="username"></param>
         /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-        public void WriteCommand(string? command, string username);
+        public Task WriteCommand(string? command, string username);
     }
 }

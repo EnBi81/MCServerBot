@@ -66,15 +66,20 @@ namespace Application.Minecraft.Versions
             }
         }
 
+        public async Task LoadAsync()
+        {
+            
+        }
+
 
         /// <inheritdoc/>
-        public IMinecraftVersion? this[string version] => 
+        public IMinecraftVersion? this[string? version] => 
             _versions.FirstOrDefault(v => v.Version == version);
 
         /// <inheritdoc/>
-        public IMinecraftVersion Latest => throw new NotImplementedException();
-        
-        
+        public IMinecraftVersion Latest => GetSortedDescendingVersion(_versions).First();
+
+
         /// <inheritdoc/>
         public List<IMinecraftVersion> GetAll() => new (_versions);
 

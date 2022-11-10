@@ -1,5 +1,4 @@
-﻿using Application.Minecraft.MinecraftServers;
-using Shared.Exceptions;
+﻿using Shared.Exceptions;
 using Shared.Model;
 using System.Text.RegularExpressions;
 using static Shared.Model.ILogMessage;
@@ -81,16 +80,16 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="username"></param>
         /// <exception cref="Exception"></exception>
-        public override void Start(string username) =>
+        public override Task Start(string username) =>
             throw new MinecraftServerException(_server.ServerName + " is already running!");
 
         /// <summary>
         /// Stops the server by writing stop to the server process window.
         /// </summary>
         /// <param name="username"></param>
-        public override void Stop(string username)
+        public override async Task Stop(string username)
         {
-            WriteCommand("stop", username);
+            await WriteCommand("stop", username);
         }
 
         /// <summary>
@@ -98,12 +97,12 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="command"></param>
         /// <param name="username"></param>
-        public override void WriteCommand(string? command, string username)
+        public override async Task WriteCommand(string? command, string username)
         {
             if (string.IsNullOrWhiteSpace(command))
                 throw new MinecraftServerArgumentException(nameof(command) + " command must not be null or empty.");
 
-            _server.McServerProcess.WriteToStandardInput(command);
+            await _server.McServerProcess.WriteToStandardInputAsync(command);
             var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessageType.User_Message);
             _server.AddLog(logMess);
         }

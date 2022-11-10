@@ -15,8 +15,8 @@ namespace Application.Minecraft.States
         public abstract bool IsRunning { get; }
 
         public abstract void HandleLog(LogMessage logMessage);
-        public abstract void Start(string username);
-        public abstract void Stop(string username);
-        public abstract void WriteCommand(string? command, string username);
+        public abstract Task Start(string username);
+        public abstract Task Stop(string username);
+        public abstract Task WriteCommand(string? command, string username);
     }
 }

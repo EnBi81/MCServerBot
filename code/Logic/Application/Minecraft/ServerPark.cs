@@ -15,7 +15,7 @@ namespace Application.Minecraft
     public class ServerPark : IServerPark
     {
         private readonly IServerParkDataAccess _serverParkEventRegister;
-        private readonly ServerParkInputValidation _serverPark;
+        private readonly IServerPark _serverPark;
         private readonly MinecraftLogger _logger;
 
         private bool _initialized = false;
@@ -53,7 +53,6 @@ namespace Application.Minecraft
         {
             _serverPark.ServerAdded += (s, e) => _logger.Log(_logger.ServerPark, $"{e.NewValue.Id}:{e.NewValue.ServerName} created");
             _serverPark.ServerDeleted += (s, e) => _logger.Log(_logger.ServerPark, $"{e.NewValue.Id}:{e.NewValue.ServerName} deleted");
-            _serverPark.ServerNameChanged += (s, e) => _logger.Log(_logger.ServerPark, $"{e.Server.Id}:{e.OldValue} renamed to {e.NewValue}");
         }
 
         /// <summary>
@@ -181,17 +180,17 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged
+        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified
         {
             add
             {
                 ThrowExceptionIfNotInitialized();
-                _serverPark.ServerNameChanged += value;
+                _serverPark.ServerModified += value;
             }
             remove
             {
                 ThrowExceptionIfNotInitialized();
-                _serverPark.ServerNameChanged -= value;
+                _serverPark.ServerModified -= value;
             }
         }
         /// <inheritdoc/>
@@ -226,11 +225,11 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> CreateServer(string? serverName, UserEventData user)
+        public async Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
-            var res = await _serverPark.CreateServer(serverName, user);
+            var res = await _serverPark.CreateServer(dto, user);
             await _serverParkEventRegister.CreateServer(res.Id, res.ServerName, user);
 
             return res;
@@ -248,12 +247,13 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user)
+        public async Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
-            var server = await _serverPark.RenameServer(id, newName, user);
-            await _serverParkEventRegister.RenameServer(server.Id, newName, user);
+            var server = await _serverPark.ModifyServer(id, dto, user);
+            if(dto.NewName is not null)
+                await _serverParkEventRegister.RenameServer(server.Id, dto.NewName, user);
 
             return server;
         }

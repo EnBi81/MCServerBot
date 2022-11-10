@@ -15,7 +15,7 @@ namespace Shared.Model
         /// </summary>
         /// <param name="version"></param>
         /// <returns></returns>
-        public IMinecraftVersion? this[string version] { get; }
+        public IMinecraftVersion? this[string? version] { get; }
 
         /// <summary>
         /// Gets the latest minecraft version.
@@ -27,6 +27,12 @@ namespace Shared.Model
         /// </summary>
         /// <returns></returns>
         public Task InitializeAsync();
+
+        /// <summary>
+        /// Loads new versions from the web.
+        /// </summary>
+        /// <returns></returns>
+        public Task LoadAsync();
 
         /// <summary>
         /// Gets all the versions.

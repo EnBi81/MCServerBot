@@ -1,5 +1,6 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
+using Application.Minecraft.Versions;
 using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Exceptions;
@@ -67,6 +68,30 @@ namespace MCWebAPI.Controllers.api.v1
                 throw new MCExternalException("There is no currently running server.");
 
             return RedirectToRoute("minecraftserver/" + server.Id);
+        }
+
+
+        /// <summary>
+        /// Gets all the available minecraft versions.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("versions")]
+        [ProducesResponseType(typeof(IEnumerable<IMinecraftVersion>), StatusCodes.Status200OK)]
+        public IActionResult GetAllVersions()
+        {
+            var versions = serverPark.MinecraftVersionCollection.GetAll();
+            return Ok(versions);
+        }
+
+        /// <summary>
+        /// Refreshes the minecraft versions
+        /// </summary>
+        /// <returns></returns>
+        [HttpPatch("versions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RefreshVersions()
+        {
+            throw new NotImplementedException();
         }
     }
 }

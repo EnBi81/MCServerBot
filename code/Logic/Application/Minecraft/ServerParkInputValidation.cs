@@ -13,7 +13,7 @@ namespace Application.Minecraft
     /// </summary>
     internal class ServerParkInputValidation : IServerPark
     {
-        private readonly ServerParkLogic _serverParkLogic;
+        private readonly IServerPark _serverParkLogic;
         private readonly MinecraftConfig _config;
 
         public ServerParkInputValidation(IDatabaseAccess dataAccess, MinecraftConfig config, MinecraftLogger logger)
@@ -72,26 +72,39 @@ namespace Application.Minecraft
             _serverParkLogic.ToggleServer(id, user);
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> CreateServer(string? name, UserEventData user = default)
+        public Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user = default)
         {
+            var name = dto.NewName;
             CreateServerCheck(ref name);
 
-            return _serverParkLogic.CreateServer(name, user);
+            return _serverParkLogic.CreateServer(dto, user);
         }
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user = default)
+        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user = default)
         {
-            ValidateNameLength(ref newName!);
+            if (dto.NewName is null && dto.Version is null)
+                return Task.FromResult(GetServer(id));
 
             ThrowIfServerNotExists(id);
             ThrowIfServerRunning(id);
+            
+            var newName = dto.NewName;
+            if(newName is not null)
+            {
+                ValidateNameLength(ref newName!);
+                if (ServerNameExist(newName))
+                    throw new ServerParkException($"The name '{newName}' is already taken");
+            }
 
+            var newVersion = dto.Version;
+            if(newVersion is not null)
+            {
+                if (MinecraftVersionCollection[newVersion] is null)
+                    throw new ServerParkException($"The version '{newVersion}' does not exist");
+            }
 
-            if (ServerNameExist(newName))
-                throw new ServerParkException($"The name '{newName}' is already taken");
-
-            return _serverParkLogic.RenameServer(id, newName, user);
+            return _serverParkLogic.ModifyServer(id, dto, user);
         }
 
         /// <inheritdoc/>
@@ -153,7 +166,7 @@ namespace Application.Minecraft
         /// <exception cref="Exception">If the server cannot be created.</exception>
         private void CreateServerCheck(ref string? serverName)
         {
-            ValidateNameLength(ref serverName!);
+            ValidateNameLength(ref serverName);
 
             if (ServerNameExist(serverName))
                 throw new ServerParkException($"The name {serverName} is already taken");
@@ -217,10 +230,10 @@ namespace Application.Minecraft
             remove => _serverParkLogic.ActiveServerPerformanceMeasured -= value;
         }
 
-        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged
+        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified
         {
-            add => _serverParkLogic.ServerNameChanged += value;
-            remove => _serverParkLogic.ServerNameChanged -= value;
+            add => _serverParkLogic.ServerModified += value;
+            remove => _serverParkLogic.ServerModified -= value;
         }
 
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded

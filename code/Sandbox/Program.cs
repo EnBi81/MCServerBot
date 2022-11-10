@@ -12,10 +12,15 @@ namespace Sandbox
         const string Server_Folder = "A:\\mc-server-test\\server1\\";
         static async Task Main(string[] args) // this is how to create a new server
         {
-            List<string> list = new List<string> { "1.19.2", "1.19.1", "1.5.2", "1.2", "1.9.2" };
-
-            Console.WriteLine("First: " + list.First());
-            Console.WriteLine("Last: " + list.Last());
+            var p = Process.Start(new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                FileName = "cmd.exe",
+                WorkingDirectory = Environment.CurrentDirectory,
+                RedirectStandardInput = true
+            });
+            p.StandardInput.WriteLine("python mc_version_list_downloader.py & exit");
+            p?.WaitForExit();
 
             //if(args.Contains("reset"))
             //{

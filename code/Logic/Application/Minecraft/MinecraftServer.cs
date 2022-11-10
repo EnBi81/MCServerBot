@@ -4,7 +4,7 @@ using Loggers;
 using Shared.DTOs;
 using Shared.Model;
 
-namespace Application.Minecraft.MinecraftServers
+namespace Application.Minecraft
 {
     /// <summary>
     /// Proxy class for logging and handling database records.
@@ -98,6 +98,10 @@ namespace Application.Minecraft.MinecraftServers
                 => _logger.Log(mcServer + "-status", $"{Id}:{ServerName} new status: " + e.DisplayString());
             _minecraftServerLogic.StorageMeasured += (s, e)
                 => _logger.Log(mcServer + "-storage", $"{Id}:{ServerName} storage measured: {e / (1024 * 1024)} MB");
+            _minecraftServerLogic.NameChanged += (s, e)
+                => _logger.Log(mcServer, $"{Id}:{ServerName} name changed to {ServerName}");
+            _minecraftServerLogic.VersionChanged += (s, e)
+                => _logger.Log(mcServer + "-version", $"{Id}:{ServerName} version changed to {e.Version}");
         }
 
         /// <inheritdoc/>
@@ -134,7 +138,8 @@ namespace Application.Minecraft.MinecraftServers
         public long StorageBytes => _minecraftServerLogic.StorageBytes;
 
         /// <inheritdoc/>
-        public IMinecraftVersion MCVersion => _minecraftServerLogic.MCVersion;
+        public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
+
 
         /// <inheritdoc/>
         public event EventHandler<ServerStatus> StatusChange
@@ -178,20 +183,27 @@ namespace Application.Minecraft.MinecraftServers
             add => _minecraftServerLogic.StorageMeasured += value;
             remove => _minecraftServerLogic.StorageMeasured -= value;
         }
+        /// <inheritdoc/>
+        public event EventHandler<IMinecraftVersion> VersionChanged
+        {
+            add => _minecraftServerLogic.VersionChanged += value;
+            remove => _minecraftServerLogic.VersionChanged -= value;
+        }
 
         /// <inheritdoc/>
-        public void Shutdown(UserEventData data) =>
+        public Task Shutdown(UserEventData data) =>
             _minecraftServerLogic.Shutdown(data);
 
         /// <inheritdoc/>
-        public void Start(UserEventData data) =>
+        public Task Start(UserEventData data) =>
             _minecraftServerLogic.Start(data);
 
         /// <inheritdoc/>
-        public void WriteCommand(string? command, UserEventData data)
+        public Task WriteCommand(string? command, UserEventData data)
         {
-            _minecraftServerLogic.WriteCommand(command, data);
+            var task = _minecraftServerLogic.WriteCommand(command, data);
             _eventRegister.WriteCommand(Id, command!, data);
+            return task;
         }
 
     }

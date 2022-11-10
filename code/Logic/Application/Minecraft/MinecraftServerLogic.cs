@@ -1,4 +1,5 @@
-﻿using Application.Minecraft.MinecraftServers.Utils;
+﻿using Application.Minecraft.MinecraftServers;
+using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
@@ -7,7 +8,7 @@ using Shared.Exceptions;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
 
-namespace Application.Minecraft.MinecraftServers
+namespace Application.Minecraft
 {
     /// <summary>
     /// A representation of a single minecraft server.
@@ -75,7 +76,22 @@ namespace Application.Minecraft.MinecraftServers
         public Dictionary<string, IMinecraftPlayer> Players { get; } = new Dictionary<string, IMinecraftPlayer>();
 
         /// <inheritdoc/>
-        public IMinecraftVersion MCVersion { get; private set; }
+        public IMinecraftVersion MCVersion
+        {
+            get => _mcVersion;
+            set
+            {
+                int versionCompared = Version.Parse(_mcVersion.Version).CompareTo(Version.Parse(value.Version));
+                if (versionCompared < 0)
+                    throw new MinecraftServerException($"Cannot downgrade from {_mcVersion.Version} to {value.Version}");
+                else if (versionCompared == 0)
+                    throw new MinecraftServerException($"Server is already on version {value.Version}");
+
+                _mcVersion = value;
+                RaiseEvent(VersionChanged, value);
+            }
+        }
+        private IMinecraftVersion _mcVersion;
 
 
 
@@ -85,7 +101,7 @@ namespace Application.Minecraft.MinecraftServers
         internal MinecraftServerInfos McServerInfos { get; }
 
 
-        
+
         public MinecraftServerLogic(string serverFolderName, MinecraftConfig config, IMinecraftVersionCollection vsCollection) : this(0, serverFolderName, config)
         {
             McServerInfos.Load();
@@ -97,14 +113,14 @@ namespace Application.Minecraft.MinecraftServers
 
             Id = McServerInfos.Id;
             ServerName = McServerInfos.Name!;
-            MCVersion = version;
+            _mcVersion = version;
         }
 
 
         public MinecraftServerLogic(long id, string serverName, string serverFolderName, MinecraftConfig config, IMinecraftVersion version) : this(id, serverFolderName, config)
         {
             ServerName = serverName;
-            MCVersion = version;
+            _mcVersion = version;
 
         }
 
@@ -121,7 +137,7 @@ namespace Application.Minecraft.MinecraftServers
 
 
             McServerProcess = new MinecraftServerProcess(
-                serverFileName: serverFileName,
+                serverDirectory: serverFileName,
                 javaLocation: config.JavaLocation,
                 serverHandlerPath: config.MinecraftServerHandlerPath,
                 maxRam: config.MinecraftServerMaxRamMB,
@@ -172,16 +188,16 @@ namespace Application.Minecraft.MinecraftServers
         }
 
         /// <inheritdoc/>
-        public void Start(UserEventData data) =>
+        public Task Start(UserEventData data) =>
             _serverState.Start(data.Username);
 
 
         /// <inheritdoc/>
-        public void WriteCommand(string? command, UserEventData data) =>
+        public Task WriteCommand(string? command, UserEventData data) =>
             _serverState.WriteCommand(command, data.Username);
 
         /// <inheritdoc/>
-        public void Shutdown(UserEventData data) =>
+        public Task Shutdown(UserEventData data) =>
             _serverState.Stop(data.Username);
 
         /// <summary>
@@ -205,6 +221,8 @@ namespace Application.Minecraft.MinecraftServers
         public event EventHandler<(double CPU, long Memory)> PerformanceMeasured;
         /// <inheritdoc/>
         public event EventHandler<string> NameChanged;
+        /// <inheritdoc/>
+        public event EventHandler<IMinecraftVersion> VersionChanged;
         /// <inheritdoc/>
         public event EventHandler<long> StorageMeasured;
 

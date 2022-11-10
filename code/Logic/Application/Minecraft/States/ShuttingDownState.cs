@@ -42,13 +42,13 @@ namespace Application.Minecraft.States
             _server.AddLog(logMessage);
 
 
-        public override void Start(string username) =>
+        public override Task Start(string username) =>
             throw new MinecraftServerException($"Please wait till {_server.ServerName} has shut down!");
 
-        public override void Stop(string username) =>
+        public override Task Stop(string username) =>
             throw new MinecraftServerException($"{_server.ServerName} is shutting down!");
 
-        public override void WriteCommand(string? command, string username) =>
+        public override Task WriteCommand(string? command, string username) =>
             throw new MinecraftServerException(_server.ServerName + " is not online!");
     }
 }

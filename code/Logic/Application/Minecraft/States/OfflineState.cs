@@ -1,5 +1,4 @@
-﻿using Application.Minecraft.MinecraftServers;
-using Shared.Exceptions;
+﻿using Shared.Exceptions;
 using Shared.Model;
 using static Shared.Model.ILogMessage;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
@@ -48,12 +47,12 @@ namespace Application.Minecraft.States
         /// Starts the server.
         /// </summary>
         /// <param name="username">Username of the user initiated this action.</param>
-        public override void Start(string username)
+        public override async Task Start(string username)
         {
             _server.SetServerState<StartingState>();
             var logMessage = new LogMessage(username + ": " + "Starting Server " + _server.ServerName, LogMessageType.User_Message);
             _server.AddLog(logMessage);
-            _server.McServerProcess.Start();
+            await _server.McServerProcess.Start(_server.MCVersion);
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace Application.Minecraft.States
         /// </summary>
         /// <param name="username">username of the very intelligent user who tried to stop an offline server.</param>
         /// <exception cref="MinecraftServerException">Always is thrown because yeah, the serve is offline.</exception>
-        public override void Stop(string username) => // like who would want to stop a server when it's offline lol.
+        public override Task Stop(string username) => // like who would want to stop a server when it's offline lol.
             throw new MinecraftServerException(_server.ServerName + " is already offline!");
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace Application.Minecraft.States
         /// <param name="command">This parameter is ignored-</param>
         /// <param name="username">This parameter is also ignored</param>
         /// <exception cref="Exception">This is thrown always.</exception>
-        public override void WriteCommand(string? command, string username) =>
+        public override Task WriteCommand(string? command, string username) =>
             throw new MinecraftServerException(_server.ServerName + " is not online!");
     }
 }

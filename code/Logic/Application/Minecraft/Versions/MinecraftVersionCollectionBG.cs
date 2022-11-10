@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Shared.Exceptions;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -10,7 +11,14 @@ namespace Application.Minecraft.Versions
         private readonly Dictionary<string, MinecraftVersion> _downloadingVersions = new();
         private readonly string _versionsDir;
         private readonly int _maxDownloadSimultaneously = 5;
+        private const string _versionJsonFileName = "mc_version_list.json";
 
+        private static List<T> GetSortedDescendingVersion<T>(List<T> list) where T : IMinecraftVersion
+        {
+            list.Sort((a, b) => -Version.Parse(a.Version).CompareTo(Version.Parse(b.Version)));
+            return list;
+        }
+        
         /// <summary>
         /// Downloads the version manifest from Mojang and to the local file system.
         /// </summary>
@@ -70,6 +78,23 @@ namespace Application.Minecraft.Versions
             _downloadingVersions.Remove(version.Version);
         }
 
+        /// <summary>
+        /// Downloads the version informations from the web
+        /// </summary>
+        /// <returns></returns>
+        private async Task DownloadVersionsFromNet()
+        {
+            var p = Process.Start(new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                FileName = "cmd.exe",
+                WorkingDirectory = _versionsDir,
+                arg
+            });
+
+            
+        }
+
 
         /// <summary>
         /// Loads the versions from the versions.json file.
@@ -80,7 +105,7 @@ namespace Application.Minecraft.Versions
             if (_versions.Any())
                 return;
 
-            string versionsFile = Path.Combine(_versionsDir, "versions.json");
+            string versionsFile = GetVersionFilePath();
 
             var text = await File.ReadAllTextAsync(versionsFile);
             var versions = JsonConvert.DeserializeObject<VersionJson>(text);
@@ -115,6 +140,11 @@ namespace Application.Minecraft.Versions
         
             
             _versions.AddRange(convertedVersions);
+        }
+
+        private string GetVersionFilePath()
+        {
+            return Path.Combine(_versionsDir, _versionJsonFileName);
         }
 
         /// <summary>

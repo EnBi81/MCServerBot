@@ -61,7 +61,7 @@ namespace Application.Minecraft
 
             ServerAdded = null!;
             ServerDeleted = null!;
-            ServerNameChanged = null!;
+            ServerModified = null!;
         }
 
         /// <inheritdoc/>
@@ -81,7 +81,7 @@ namespace Application.Minecraft
                     throw new MCInternalException($"ERROR: cannot convert folder {folderName} to ulong. Please remove that folder from the Servers directory!");
                 }
 
-                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config);
+                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config, MinecraftVersionCollection);
                 RegisterMcServer(mcServer);
             }
 
@@ -155,8 +155,12 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> CreateServer(string? serverName, UserEventData user)
+        public Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user)
         {
+            var serverName = dto.NewName!;
+
+            var version = MinecraftVersionCollection[dto.Version] ?? MinecraftVersionCollection.Latest; 
+
             // synchronization increment
             long newServerId = Interlocked.Increment(ref _serverIdCounter);
 
@@ -164,7 +168,7 @@ namespace Application.Minecraft
             Directory.CreateDirectory(destDir);
             FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
-            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, newServerId, serverName!, destDir, _config);
+            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, newServerId, serverName, destDir, _config, version);
             RegisterMcServer(mcServer);
 
             return Task.FromResult((IMinecraftServer)mcServer);
@@ -172,15 +176,21 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> RenameServer(long id, string? newName, UserEventData user)
+        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
         {
-            string serverName = newName!;
+            var server = GetServer(id);
+            
+            if (dto.Version != null)
+            {
+                server.MCVersion = MinecraftVersionCollection[dto.Version]!;
+            }
+            
+            if (dto.NewName != null)
+            {
+                server.ServerName = dto.NewName;
+            }
 
-            var server = ServerCollection[id];
-            var oldName = server.ServerName;
-            server.ServerName = serverName;
-
-            InvokeServerNameChange(server, oldName, serverName);
+            InvokeServerModified(server, dto);
 
             return Task.FromResult(server);
         }
@@ -202,8 +212,6 @@ namespace Application.Minecraft
         /// <summary>
         /// Register a new minecraft server object to the program.
         /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="folderPath"></param>
         private void RegisterMcServer(IMinecraftServer server)
         {
             ServerCollection.Add(server.Id, server);
@@ -231,7 +239,7 @@ namespace Application.Minecraft
         public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
 
         /// <inheritdoc/>
-        public event EventHandler<ServerValueChangedEventArgs<string>> ServerNameChanged;
+        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified;
 
         /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
@@ -288,8 +296,8 @@ namespace Application.Minecraft
         // ServerPark events
         private void InvokeActiveServerChanged(IMinecraftServer activeServer) =>
             ActiveServerChange?.Invoke(this, new(activeServer));
-        private void InvokeServerNameChange(IMinecraftServer server, string oldName, string newName) =>
-            ServerNameChanged?.Invoke(this, new(oldName, newName, server));
+        private void InvokeServerModified(IMinecraftServer server, ServerChangeableDto dto) =>
+            ServerModified?.Invoke(this, new(dto, server));
         private void InvokeServerAdded(IMinecraftServer addedServer) =>
             ServerAdded?.Invoke(this, new(addedServer));
         private void InvokeServerDeleted(IMinecraftServer deletedServer) =>

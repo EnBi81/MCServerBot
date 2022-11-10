@@ -58,7 +58,7 @@ namespace MCWebAPI.WebSocketHandler
             
             _serverPark.ServerAdded += ServerAdded;
             _serverPark.ServerDeleted += ServerDeleted;
-            _serverPark.ServerNameChanged += ServerNameChanged;
+            _serverPark.ServerModified += ServerNameChanged;
 
             _permissionLogic.PermissionRevoked += PermissionRevoked;
 
