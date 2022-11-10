@@ -6,31 +6,41 @@ using System.Threading.Tasks;
 
 namespace Application.Minecraft.Versions
 {
+    /// <summary>
+    /// Internal class to store Minecraft version
+    /// </summary>
     internal class MinecraftVersion : IMinecraftVersion
     {
+        /// <inheritdoc/>
         public string Name { get; set; } = null!;
+        /// <inheritdoc/>
         public string Version { get; set; } = null!;
+        /// <summary>
+        /// Full release stored as a <see cref="string"/>
+        /// </summary>
         public string FullRelease { get; set; } = null!;
-        public DateTime FullReleaseDate => DateTime.Parse(FullRelease);
+        /// <inheritdoc/>
+        public DateTime ReleaseDate => DateTime.Parse(FullRelease);
+        /// <inheritdoc/>
         public string DownloadUrl { get; set; } = null!;
+        /// <inheritdoc/>
+        public bool IsDownloaded => AbsoluteJarPath is not null;
+        /// <inheritdoc/>
+        public string? AbsoluteJarPath => _versionCollection.IsDownloaded(Version) ? _versionCollection.GetAbsolutePath(Version) : null;
 
-        public bool IsDownloaded => _isDownloaded(Version);
-        public string? AbsoluteJarPath => _getAbsolutePath(Version);
-
+        
 
         private readonly MinecraftVersionCollection _versionCollection;
-        private readonly Func<string, string?> _getAbsolutePath;
-        private readonly Func<string, bool> _isDownloaded;
-
-        internal MinecraftVersion(MinecraftVersionCollection coll, Func<string, string?> getAbsolutePath, Func<string, bool> isDownloaded)
+        
+        internal MinecraftVersion(MinecraftVersionCollection coll)
         {
             _versionCollection = coll;
-            _getAbsolutePath = getAbsolutePath;
-            _isDownloaded = isDownloaded;
         }
 
 
-        public void Download() => _versionCollection.DownloadVersionAsync(Version).GetAwaiter().GetResult();
+        /// <inheritdoc/>
+        public void Download() => DownloadAsync().GetAwaiter().GetResult();
+        /// <inheritdoc/>
         public async Task DownloadAsync() => await _versionCollection.DownloadVersionAsync(Version);
     }
 }

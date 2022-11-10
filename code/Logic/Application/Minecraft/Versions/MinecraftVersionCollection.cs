@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace Application.Minecraft.Versions
 {
+    /// <summary>
+    /// Minecraft Version manager.
+    /// </summary>
     internal partial class MinecraftVersionCollection : IEnumerable<IMinecraftVersion>
     {
         /*
@@ -33,28 +36,53 @@ namespace Application.Minecraft.Versions
 
         private readonly List<MinecraftVersion> _versions = new ();
         private readonly MinecraftLogger _logger;
-        
+        private readonly string _loggerSource = "version-manager";
 
+
+        /// <summary>
+        /// Initializes the version manager.
+        /// </summary>
+        /// <param name="versionsDir"></param>
+        /// <param name="logger"></param>
         public MinecraftVersionCollection(string versionsDir, MinecraftLogger logger)
         {
             _versionsDir = versionsDir;
             _logger = logger;
             LoadVersions();
+            _logger.Log(_loggerSource, "Version manager initialized. Versions loaded: " + _versions.Count);
         }
 
-        
 
 
-        
+
+        /// <summary>
+        /// Gets the version instance by version.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
         public IMinecraftVersion? this[string version] => 
             _versions.FirstOrDefault(v => v.Version == version);
         
+        /// <summary>
+        /// Gets all the versions.
+        /// </summary>
+        /// <returns></returns>
         public List<IMinecraftVersion> GetAll() => new (_versions);
 
 
+        /// <summary>
+        /// Downloads a version asynchronously.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
         public async Task DownloadVersionAsync(string version) => 
             await DownloadVersionThreadSafe(version);
 
+        /// <summary>
+        /// Checks if a version is downloaded locally.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
         public bool IsDownloaded(string version) => 
             File.Exists(GetAbsolutePath(version));
         
