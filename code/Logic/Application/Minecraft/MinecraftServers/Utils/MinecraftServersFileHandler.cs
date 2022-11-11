@@ -48,11 +48,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
             // https://www.sportskeeda.com/minecraft-wiki/how-to-update-server-minecraft#:~:text=To%20update%20a%20server%20in%20Minecraft%2C%20create%20a%20new%20folder,executable%20into%20the%20old%20folder.
             string[] importantFiles = { "banned-ips.json", "banned-players.json", "ops.json", "server.properties", "usercache.json", "whitelist.json", "server.info" };
             string[] importantFolders = { "world" };
-            
-            foreach (var file in importantFiles.Select(f => new FileInfo(Path.Combine(backupDir.FullName, f))))
+
+            foreach (var file in importantFiles.Select(f => new FileInfo(Path.Combine(_serverPath, f))).Where(f => f.Exists))
                 file.MoveTo(Path.Combine(backupDir.FullName, file.Name));
 
-            foreach (var dir in importantFolders.Select(d => new DirectoryInfo(Path.Combine(backupDir.FullName, d))))
+            foreach (var dir in importantFolders.Select(d => new DirectoryInfo(Path.Combine(_serverPath, d))).Where(d => d.Exists))
                 dir.MoveTo(Path.Combine(backupDir.FullName, dir.Name));
         }
 
@@ -76,7 +76,8 @@ namespace Application.Minecraft.MinecraftServers.Utils
             foreach (var file in backupDir.GetFiles())
             {
                 string originalFilePath = Path.Combine(_serverPath, file.Name);
-                File.Delete(originalFilePath);
+                if(File.Exists(originalFilePath))
+                    File.Delete(originalFilePath);
                 file.MoveTo(originalFilePath);
             }
                 
@@ -84,7 +85,8 @@ namespace Application.Minecraft.MinecraftServers.Utils
             foreach (var dir in backupDir.GetDirectories())
             {
                 string originalDirPath = Path.Combine(_serverPath, dir.Name);
-                Directory.Delete(originalDirPath, true);
+                if(Directory.Exists(originalDirPath))
+                    Directory.Delete(originalDirPath, true);
                 dir.MoveTo(originalDirPath);
             }
         }

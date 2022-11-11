@@ -44,7 +44,7 @@ namespace Application.Minecraft
 
             
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
-            DeletedServersFolder = _config.MinecraftServersBaseFolder + "Deleted Servers\\";
+            DeletedServersFolder = _config.MinecraftServersBaseFolder + "DeletedServers\\";
 
 
             ActiveServerChange = null!;

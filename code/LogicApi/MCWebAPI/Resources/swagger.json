@@ -636,8 +636,8 @@
         "summary": "Gets the currently running server (Auth)",
         "operationId": "GetRunningServer",
         "responses": {
-          "302": {
-            "description": "Redirects to the minecraft server api endpoint.",
+          "200": {
+            "description": "Returns the currently running server.",
             "content": {
               "application/json": {
                 "schema": {
@@ -684,7 +684,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Application.Minecraft.Versions.IMinecraftVersion"
+                    "$ref": "#/components/schemas/APIModel.DTOs.MinecraftVersionDto"
                   }
                 }
               }
@@ -816,6 +816,31 @@
         },
         "additionalProperties": false
       },
+      "APIModel.DTOs.MinecraftVersionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downloadUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDownloaded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "APIModel.DTOs.ModifyServerDto": {
         "type": "object",
         "properties": {
@@ -903,41 +928,6 @@
           "userToken": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Application.Minecraft.Versions.IMinecraftVersion": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "version": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "releaseDate": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "downloadUrl": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "isDownloaded": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "absoluteJarPath": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
           }
         },
         "additionalProperties": false

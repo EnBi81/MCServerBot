@@ -1,6 +1,8 @@
 ﻿using APIModel.DTOs;
+using Application.Minecraft.Versions;
 using Shared.DTOs;
 using Shared.Model;
+using System.Security.Cryptography.Xml;
 
 namespace MCWebAPI.Utils
 {
@@ -48,6 +50,18 @@ namespace MCWebAPI.Utils
             {
                 NewName = dto.NewName,
                 Version = dto.Version
+            };
+        }
+
+        public static MinecraftVersionDto ToDto(this IMinecraftVersion version)
+        {
+            return new MinecraftVersionDto
+            {
+                Name = version.Name,
+                Version = version.Version,
+                IsDownloaded = version.IsDownloaded,
+                DownloadUrl = version.DownloadUrl,
+                ReleaseDate = version.ReleaseDate,
             };
         }
     }

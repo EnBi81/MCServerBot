@@ -87,7 +87,7 @@ namespace Application.Minecraft
         public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user = default)
         {
             if (dto.NewName is null && dto.Version is null)
-                return Task.FromResult(GetServer(id));
+                throw new MinecraftServerArgumentException("Invalid modify: no data to change");
 
             ThrowIfServerNotExists(id);
             ThrowIfServerRunning(id);

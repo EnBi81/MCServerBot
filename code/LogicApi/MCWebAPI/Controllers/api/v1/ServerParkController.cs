@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Exceptions;
 using Shared.Model;
+using System.Reflection;
 
 namespace MCWebAPI.Controllers.api.v1
 {
@@ -59,17 +60,18 @@ namespace MCWebAPI.Controllers.api.v1
         /// Gets the currently running server
         /// </summary>
         /// <returns>the currently running server</returns>
-        /// <response code="302">Redirects to the minecraft server api endpoint.</response>
+        /// <response code="200">Returns the currently running server.</response>
         /// <response code="400">If there is no running server currently.</response>
         [HttpGet("running", Name = "GetRunningServer")]
-        [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status302Found)]
+        [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult GetActiveServer()
         {
             if (serverPark.ActiveServer is not IMinecraftServer server || !server.IsRunning)
                 throw new MCExternalException("There is no currently running server.");
 
-            return RedirectToRoute("minecraftserver/" + server.Id);
+
+            return Ok(server.ToDTO());
         }
 
 
@@ -79,10 +81,10 @@ namespace MCWebAPI.Controllers.api.v1
         /// <returns></returns>
         [HttpGet("versions")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(IEnumerable<IMinecraftVersion>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<MinecraftVersionDto>), StatusCodes.Status200OK)]
         public IActionResult GetAllVersions()
         {
-            var versions = serverPark.MinecraftVersionCollection.GetAll();
+            var versions = serverPark.MinecraftVersionCollection.GetAll().Select(v => v.ToDto());
             return Ok(versions);
         }
 

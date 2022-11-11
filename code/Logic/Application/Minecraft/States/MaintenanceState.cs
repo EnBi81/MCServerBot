@@ -50,7 +50,7 @@ namespace Application.Minecraft.States
         /// <returns></returns>
         private bool IsServerNew()
         {
-            return !new DirectoryInfo(_server.ServerPath).GetFiles().Any();
+            return !new DirectoryInfo(_server.ServerPath).GetFiles().Any(f => f.Name != "server.info");
         }
 
         /// <summary>
@@ -78,10 +78,7 @@ namespace Application.Minecraft.States
         private async Task UpgradeServerToNewVersion()
         {
             AddSystemLog("Upgrading Server to new Version");
-
-            var process = await _server.McServerProcess.Start(_server.MCVersion);
-            await process.WaitForExitAsync();
-
+            
             AddSystemLog("Backing up important files...");
             _server.McServerFileHandler.BackUpImportantFiles();
             AddSystemLog("Important files backed up.");

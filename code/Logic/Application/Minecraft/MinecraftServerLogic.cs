@@ -80,7 +80,7 @@ namespace Application.Minecraft
             set
             {
                 int versionCompared = Version.Parse(_mcVersion.Version).CompareTo(Version.Parse(value.Version));
-                if (versionCompared < 0)
+                if (versionCompared > 0)
                     throw new MinecraftServerException($"Cannot downgrade from {_mcVersion.Version} to {value.Version}");
                 else if (versionCompared == 0)
                     throw new MinecraftServerException($"Server is already on version {value.Version}");
