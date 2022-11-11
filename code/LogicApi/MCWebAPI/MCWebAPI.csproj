@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Properties\appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\launchSettings.json" />
   </ItemGroup>
 
@@ -32,6 +36,10 @@
 
   <ItemGroup>
     <Folder Include="Resources\Logs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Properties\appsettings.json" />
   </ItemGroup>
 
 	<Target Name="Copy Python to Resource folder" AfterTargets="Build">
