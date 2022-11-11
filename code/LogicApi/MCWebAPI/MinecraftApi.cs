@@ -48,9 +48,9 @@ namespace MCWebAPI
             
             // adding appsettings.json (because I moved it to the Properties folder)
             builder.Configuration.AddJsonFile("Properties\\appsettings.json", optional: false, reloadOnChange: true).AddEnvironmentVariables();
-            
 
-            
+            //https://www.youtube.com/watch?v=SmItxjIUiLc dubdomain routing
+
             #region Register Services
 
             IServiceCollection serviceCollection = builder.Services;

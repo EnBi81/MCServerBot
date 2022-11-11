@@ -1,12 +1,9 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
-using Application.Minecraft.Versions;
 using MCWebAPI.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Exceptions;
 using Shared.Model;
-using System.Reflection;
 
 namespace MCWebAPI.Controllers.api.v1
 {
@@ -80,7 +77,6 @@ namespace MCWebAPI.Controllers.api.v1
         /// </summary>
         /// <returns></returns>
         [HttpGet("versions")]
-        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<MinecraftVersionDto>), StatusCodes.Status200OK)]
         public IActionResult GetAllVersions()
         {
@@ -93,7 +89,6 @@ namespace MCWebAPI.Controllers.api.v1
         /// </summary>
         /// <returns></returns>
         [HttpPatch("versions")]
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RefreshVersions()
         {
