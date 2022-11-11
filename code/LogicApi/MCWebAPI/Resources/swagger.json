@@ -675,7 +675,7 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": "Gets all the available minecraft versions.",
+        "summary": "Gets all the available minecraft versions. (Auth)",
         "responses": {
           "200": {
             "description": "Success",
@@ -689,19 +689,41 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       },
       "patch": {
         "tags": [
           "ServerPark"
         ],
-        "summary": "Checks the internet if there are any new versions available, if yes, then adds them to the collection.",
+        "summary": "Checks the internet if there are any new versions available, if yes, then adds them to the collection. (Auth)",
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     }
   },

@@ -11,6 +11,7 @@ using MCWebAPI.WebSocketHandler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Shared.DTOs;
@@ -19,7 +20,6 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-
 
 namespace MCWebAPI
 {
@@ -54,6 +54,7 @@ namespace MCWebAPI
             #region Register Services
 
             IServiceCollection serviceCollection = builder.Services;
+            
 
             serviceCollection.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -69,13 +70,13 @@ namespace MCWebAPI
             serviceCollection.AddSwaggerGen();
             serviceCollection.ConfigureOptions<ConfigureSwaggerOptions>();
 
-            builder.Services.AddVersionedApiExplorer(setup =>
+            serviceCollection.AddVersionedApiExplorer(setup =>
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
                 setup.AssumeDefaultVersionWhenUnspecified = false;
             });
-
+            
             
             // Configs
             serviceCollection.AddSingleton(new MinecraftConfig
@@ -160,8 +161,10 @@ namespace MCWebAPI
                 .SetIsOriginAllowed(_ => true)
                 .AllowCredentials());
 
-            app.UseMiddleware<MCApiLoggerMiddleware>();
-            app.UseMiddleware<MCExceptionHandlerMiddleware>();
+
+            app.UseMiddleware<ApiLoggerMiddleware>();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 
             logger.Log("start", "Running application");
             

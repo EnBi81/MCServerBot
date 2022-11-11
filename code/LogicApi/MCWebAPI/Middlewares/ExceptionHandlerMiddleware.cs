@@ -4,12 +4,12 @@ using Shared.Exceptions;
 
 namespace MCWebAPI.Middlewares
 {
-    internal class MCExceptionHandlerMiddleware
+    internal class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly WebApiLogger _logger;
 
-        public MCExceptionHandlerMiddleware(RequestDelegate next, WebApiLogger logger)
+        public ExceptionHandlerMiddleware(RequestDelegate next, WebApiLogger logger)
         {
             _next = next;
             _logger = logger;

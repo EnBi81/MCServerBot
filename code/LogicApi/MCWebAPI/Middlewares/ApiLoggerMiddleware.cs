@@ -5,7 +5,7 @@ namespace MCWebAPI.Middlewares
     /// <summary>
     /// Logs all the requests and responses.
     /// </summary>
-    public class MCApiLoggerMiddleware
+    public class ApiLoggerMiddleware
     {
         private static ulong requestId = 0;
 
@@ -17,7 +17,7 @@ namespace MCWebAPI.Middlewares
         /// </summary>
         /// <param name="next"></param>
         /// <param name="logger"></param>
-        public MCApiLoggerMiddleware(RequestDelegate next, WebApiLogger logger)
+        public ApiLoggerMiddleware(RequestDelegate next, WebApiLogger logger)
         {
             _next = next;
             _logger = logger;
