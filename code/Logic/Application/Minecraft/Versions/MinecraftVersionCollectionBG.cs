@@ -43,10 +43,13 @@ namespace Application.Minecraft.Versions
 
             using HttpClient client = new HttpClient();
             string filename = GetAbsolutePath(version);
+            string downloadFileName = filename + ".download";
 
             using var webStream = await client.GetStreamAsync(mcVersion.DownloadUrl);
-            using var fileStream = File.Create(filename);
+            using var fileStream = File.Create(downloadFileName);
             await webStream.CopyToAsync(fileStream);
+
+            File.Move(downloadFileName, filename);
 
             _logger.Log(_loggerSource, $"Downloaded version {version}. Time taken: {DateTime.Now - start}");
             RemoveVersionFromDownloadingSync(mcVersion);
@@ -108,10 +111,6 @@ namespace Application.Minecraft.Versions
                 await p.StandardInput.WriteLineAsync($"python {filename} & exit");
                 await p.WaitForExitAsync();
             }
-
-
-
-
         }
 
 
