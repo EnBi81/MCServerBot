@@ -45,6 +45,8 @@ WEB API features:
 ## TODO:
 (Before starting the websites and discord bot)
 - Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+- Be able to change minecraft server properties
+- subdomain which redirects to the minecraft server
 
 
 ## Setup
