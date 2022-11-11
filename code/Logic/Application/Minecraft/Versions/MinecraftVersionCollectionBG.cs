@@ -48,7 +48,8 @@ namespace Application.Minecraft.Versions
             using var webStream = await client.GetStreamAsync(mcVersion.DownloadUrl);
             using var fileStream = File.Create(downloadFileName);
             await webStream.CopyToAsync(fileStream);
-
+            fileStream.Close();
+            
             File.Move(downloadFileName, filename);
 
             _logger.Log(_loggerSource, $"Downloaded version {version}. Time taken: {DateTime.Now - start}");
@@ -63,7 +64,7 @@ namespace Application.Minecraft.Versions
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void AddVersionToDownloadingSync(MinecraftVersion version)
         {
-            if (_downloadingVersions.ContainsKey(version.Version))
+            if (!_downloadingVersions.ContainsKey(version.Version))
             {
                 if(_downloadingVersions.Count >= _maxDownloadSimultaneously)
                     throw new MCExternalException($"Cannot download more than {_maxDownloadSimultaneously} versions at once");
@@ -136,7 +137,7 @@ namespace Application.Minecraft.Versions
                 .Where(v => v.Name is not null)
                 .Where(v => v.Version is not null && Regex.IsMatch(v.Version, @"^\d+(\.\d+)*$"))
                 .Where(v => DateTime.TryParse(v.FullRelease, out _))
-                //.Where(v => Uri.IsWellFormedUriString(v.DownloadUrl, UriKind.Absolute))
+                .Where(v => Uri.IsWellFormedUriString(v.DownloadLink, UriKind.Absolute))
                 // select only the versions which are not already loaded to the collection
                 .Where(v => !_versions.Any(version => version.Version == v.Version))
                 // be sure all the versions are distinct

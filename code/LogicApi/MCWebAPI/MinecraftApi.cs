@@ -62,8 +62,8 @@ namespace MCWebAPI
             serviceCollection.AddApiVersioning(setup =>
             {
                 setup.DefaultApiVersion = new ApiVersion(1, 0);
-                setup.AssumeDefaultVersionWhenUnspecified = true;
-                setup.ReportApiVersions = true;
+                setup.AssumeDefaultVersionWhenUnspecified = false;
+                setup.ReportApiVersions = false;
             });
             
             serviceCollection.AddSwaggerGen();
@@ -73,6 +73,7 @@ namespace MCWebAPI
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
+                setup.AssumeDefaultVersionWhenUnspecified = false;
             });
 
             
@@ -159,8 +160,8 @@ namespace MCWebAPI
                 .SetIsOriginAllowed(_ => true)
                 .AllowCredentials());
 
-            app.UseMiddleware<MCExceptionHandlerMiddleware>();
             app.UseMiddleware<MCApiLoggerMiddleware>();
+            app.UseMiddleware<MCExceptionHandlerMiddleware>();
 
             logger.Log("start", "Running application");
             

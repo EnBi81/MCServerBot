@@ -9,7 +9,8 @@ namespace MCWebAPI.Controllers.api.v1
     /// <summary>
     /// Endpoint for managing the minecraft servers.
     /// </summary>
-    public class MinecraftServerController : ApiV1Controller
+    [ApiVersion(ApiVersionV1)]
+    public class MinecraftServerController : ApiController
     {
         private const string RouteId = "{id:long}";
 

@@ -17,8 +17,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// <returns>Information of the properties loaded into a MinecraftServerProperties instance.</returns>
         public static MinecraftServerProperties GetProperties(string file)
         {
-            string[] lines = File.ReadAllLines(file);
-            return new MinecraftServerProperties(lines);
+            return new MinecraftServerProperties(file);
         }
 
         /// <summary>
@@ -41,12 +40,35 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// <inheritdoc/>
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
 
+        private readonly string _file;
+
         /// <summary>
         /// Initializes the instance by splitting the lines to key value pairs and puts them into the Properties
         /// </summary>
         /// <param name="lines"></param>
-        public MinecraftServerProperties(IEnumerable<string> lines)
+        public MinecraftServerProperties(string file)
         {
+            _file = file;
+            
+            
+        }
+
+
+        private void LoadData()
+        {
+            if (Properties.Any())
+                return;
+            
+            string[] lines;
+            try
+            {
+                lines = File.ReadAllLines(_file);
+            }
+            catch (FileNotFoundException)
+            {
+                lines = Array.Empty<string>();
+            }
+            
             Regex regex = new("[^=]=[^=]");
             foreach (var line in lines)
             {
@@ -60,12 +82,22 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 Properties.Add(key, value);
             }
         }
+        
 
         /// <inheritdoc/>
-        public string this[string key]
+        public string? this[string key]
         {
-            get => Properties[key];
-            set => Properties[key] = value;
+            get 
+            {
+                LoadData();
+                Properties.TryGetValue(key, out string? value);
+                return value;
+            }
+            set
+            {
+                if(value is not null)
+                    Properties[key] = value;
+            }
         }
 
         /// <inheritdoc/>

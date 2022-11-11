@@ -2,30 +2,25 @@
 using APIModel.Responses;
 using MCWebAPI.Auth;
 using MCWebAPI.Controllers.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MCWebAPI.Controllers
+namespace MCWebAPI.Controllers.api.v1
 {
     /// <summary>
     /// Authentication controller.
     /// </summary>
-    [Route("[controller]")]
-    [ApiController]
-    [Consumes("application/json")]
-    [Produces("application/json")]
-    public class AuthController : MCControllerBase
+    [ApiVersion(ApiVersionV1)]
+    public class AuthController : ApiController
     {
-        private readonly IConfiguration _config;
         private readonly IAuthService _authService;
 
         /// <summary>
         /// Initializes the controller instance.
         /// </summary>
-        /// <param name="config">Configuration of the web api</param>
         /// <param name="authService">Auth Service</param>
-        public AuthController(IConfiguration config, IAuthService authService)
+        public AuthController(IAuthService authService)
         {
-            _config = config;
             _authService = authService;
         }
 
@@ -39,6 +34,7 @@ namespace MCWebAPI.Controllers
         /// <response code="200">Returns a <see cref="AuthenticatedResponse"/> object with the token included.</response>
         /// <response code="400">If the authentication fails.</response>
         [HttpPost("login")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(AuthenticatedResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginDto userLoginDto)

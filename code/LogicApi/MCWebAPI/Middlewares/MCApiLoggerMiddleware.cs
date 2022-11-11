@@ -2,6 +2,9 @@
 
 namespace MCWebAPI.Middlewares
 {
+    /// <summary>
+    /// Logs all the requests and responses.
+    /// </summary>
     public class MCApiLoggerMiddleware
     {
         private static ulong requestId = 0;
@@ -9,12 +12,22 @@ namespace MCWebAPI.Middlewares
         private readonly RequestDelegate _next;
         private readonly WebApiLogger _logger;
 
+        /// <summary>
+        /// Initializes the MCApiLoggerMiddleware.
+        /// </summary>
+        /// <param name="next"></param>
+        /// <param name="logger"></param>
         public MCApiLoggerMiddleware(RequestDelegate next, WebApiLogger logger)
         {
             _next = next;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Logs the request and response.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
             ulong id = Interlocked.Increment(ref requestId);
@@ -22,24 +35,12 @@ namespace MCWebAPI.Middlewares
             var request = context.Request;
             string logRequest = $"{id}-request: {request.Method} {request.Path}{request.QueryString.Value}";
             _logger.Log("middleware", logRequest);
-
-            Exception? thrownException = null;
-
-            try
-            {
-                await _next(context);
-            }
-            catch(Exception e)
-            {
-                thrownException = e;
-            }
+            
+            await _next(context);
 
             var response = context.Response;
-            string logResponse = $"{id}-response: {response.StatusCode}{(thrownException is null ? "" : $", {thrownException.Message}")}";
+            string logResponse = $"{id}-response: {response.StatusCode}";
             _logger.Log("middleware", logResponse);
-
-            if (thrownException is not null)
-                throw thrownException;
         }
     }
 }

@@ -111,7 +111,7 @@ namespace Application.Minecraft
         public string ServerName { get => _minecraftServerLogic.ServerName; set => _minecraftServerLogic.ServerName = value; }
 
         /// <inheritdoc/>
-        public ServerStatus Status => _minecraftServerLogic.Status;
+        public ServerStatus StatusCode => _minecraftServerLogic.StatusCode;
 
         /// <inheritdoc/>
         public bool IsRunning => _minecraftServerLogic.IsRunning;

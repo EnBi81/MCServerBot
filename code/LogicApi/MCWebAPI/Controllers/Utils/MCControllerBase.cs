@@ -8,25 +8,30 @@ using System.Security.Claims;
 
 namespace MCWebAPI.Controllers.Utils
 {
+    /// <summary>
+    /// Base controller for every controller.
+    /// </summary>
     public class MCControllerBase : ControllerBase
     {
+        /// <summary>
+        /// Gets the user id from the claims (assumes the user is logged in)
+        /// </summary>
         protected ulong ClaimUserId => ulong.Parse(User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Sid)).Value);
+        /// <summary>
+        /// Gets the username from the claims (assumes the user is logged in)
+        /// </summary>
         protected string ClaimUserName => User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Name)).Value;
+        /// <summary>
+        /// Gets the platform from the claims (assumes the user is logged in)
+        /// </summary>
         protected Platform ClaimPlatform => Enum.Parse<Platform>(User.Claims.First(claim => claim.Type.Equals("Platform")).Value);
 
+        
 
-        protected IActionResult GetBadRequest(string message)
-        {
-            var errorMessage = new ExceptionDTO()
-            {
-                Message = message
-            };
-
-            return BadRequest(errorMessage);
-        }
-
-
-
+        /// <summary>
+        /// Gets the user event data of the logged in user.
+        /// </summary>
+        /// <returns></returns>
         protected Task<UserEventData> GetUserEventData()
         {
             var userEventData = new UserEventData

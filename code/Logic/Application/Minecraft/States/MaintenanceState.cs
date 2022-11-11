@@ -10,7 +10,9 @@ namespace Application.Minecraft.States
     /// </summary>
     internal class MaintenanceState : ServerStateAbs
     {
-        
+        private bool _isRunning = false;
+
+
         public MaintenanceState(MinecraftServerLogic server) : base(server)
         {
         }
@@ -23,6 +25,7 @@ namespace Application.Minecraft.States
         /// <returns></returns>
         public override Task Start(string username)
         {
+            _isRunning = true;
             var logMessage = new LogMessage(username + ": " + "Starting Server Maintenance " + _server.ServerName, LogMessageType.System_Message);
             _server.AddLog(logMessage);
 
@@ -34,6 +37,7 @@ namespace Application.Minecraft.States
                     await UpgradeServerToNewVersion();
 
                 _server.SetServerState<OfflineState>();
+                _server.McServerInfos.Save(_server);
             });
             t.Start();
 
@@ -108,7 +112,7 @@ namespace Application.Minecraft.States
         /// <summary>
         /// Returns true.
         /// </summary>
-        public override bool IsRunning => true;
+        public override bool IsRunning => _isRunning;
         /// <summary>
         /// Adds the log message to the log collection.
         /// </summary>

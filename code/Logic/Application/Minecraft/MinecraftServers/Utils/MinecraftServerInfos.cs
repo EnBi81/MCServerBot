@@ -27,6 +27,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// </summary>
         public string Version { get; set; } = null!;
 
+        /// <summary>
+        /// If the minecraft server is in maintenance mode
+        /// </summary>
+        public bool IsMaintenance { get; set; }
+
 
         /// <summary>
         /// This constructor is for json deserialization. pls dont delete it, ty.
@@ -56,6 +61,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
             Id = server.Id;
             Name = server.ServerName;
             Version = server.MCVersion.Version;
+            IsMaintenance = server.StatusCode == ServerStatus.Maintenance;
 
             string json = JsonConvert.SerializeObject(this);
             File.WriteAllText(_filename, json);
@@ -87,6 +93,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
             Id = obj.Id;
             Name = obj.Name;
             Version = obj.Version;
+            IsMaintenance = obj.IsMaintenance;
         }
     }
 }

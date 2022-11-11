@@ -189,7 +189,7 @@ namespace MCWebAPI.WebSocketHandler
 
         private async void ServerNameChanged(object? sender, ServerValueEventArgs<ServerChangeableDto> e)
         {
-            string newName = e.NewValue.NewName;
+            string? newName = e.NewValue.NewName;
 
             if (newName is null)
                 return;
@@ -260,9 +260,9 @@ namespace MCWebAPI.WebSocketHandler
             new List<MCWebSocket>(Sockets);
 
         /// <summary>
-        /// Gets all the sockets which is registered by the specified code.
+        /// Gets all the sockets which is registered by the specified id.
         /// </summary>
-        /// <param name="code">the specified code.</param>
+        /// <param name="id">the specified id.</param>
         /// <returns>All the sockets which is registered by the specified code.</returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
         private IEnumerable<MCWebSocket> GetAllSockets(ulong id) =>

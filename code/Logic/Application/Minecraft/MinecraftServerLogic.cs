@@ -28,9 +28,6 @@ namespace Application.Minecraft
             get => _serverName;
             set
             {
-                if (value is null || value.Length < IMinecraftServer.NAME_MIN_LENGTH || value.Length > IMinecraftServer.NAME_MAX_LENGTH)
-                    throw new MinecraftServerArgumentException($"Name length must be between {IMinecraftServer.NAME_MIN_LENGTH} and {IMinecraftServer.NAME_MAX_LENGTH}");
-
                 _serverName = value;
                 RaiseEvent(NameChanged, value);
                 McServerInfos.Save(this);
@@ -40,7 +37,7 @@ namespace Application.Minecraft
         private IServerState _serverState;
 
         /// <inheritdoc/>
-        public ServerStatus Status => _serverState.Status;
+        public ServerStatus StatusCode => _serverState.Status;
 
         /// <inheritdoc/>
         public bool IsRunning => _serverState.IsRunning;
@@ -53,7 +50,7 @@ namespace Application.Minecraft
         public IMinecraftServerProperties Properties { get; }
 
         /// <inheritdoc/>
-        public int Port => int.Parse(Properties["server-port"]);
+        public int Port => int.Parse(Properties["server-port"] ?? "-1");
 
         /// <inheritdoc/>
         public string StorageSpace => FileHelper.StorageFormatter(StorageBytes);
@@ -92,6 +89,7 @@ namespace Application.Minecraft
                 
                 _mcVersion = value;
                 RaiseEvent(VersionChanged, value);
+                McServerInfos.Save(this);
             }
         }
         private IMinecraftVersion _mcVersion;
@@ -117,16 +115,21 @@ namespace Application.Minecraft
 
 
             Id = McServerInfos.Id;
-            ServerName = McServerInfos.Name!;
+            _serverName = McServerInfos.Name!;
             _mcVersion = version;
+            
+            if(McServerInfos.IsMaintenance)
+                SetServerState<MaintenanceState>();
         }
 
 
         public MinecraftServerLogic(long id, string serverName, string serverFolderName, MinecraftConfig config, IMinecraftVersion version) : this(id, serverFolderName, config)
         {
-            ServerName = serverName;
+            _serverName = serverName;
             _mcVersion = version;
             SetServerState<MaintenanceState>();
+
+            McServerInfos.Save(this);
         }
 
 

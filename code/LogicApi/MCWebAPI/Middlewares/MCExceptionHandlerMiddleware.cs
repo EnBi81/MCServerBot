@@ -33,6 +33,7 @@ namespace MCWebAPI.Middlewares
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = 400; 
                 await context.Response.WriteAsync(errorJson);
+                _logger.Log("-exception-client", e.Message);
             }
             catch (MCInternalException e)
             {

@@ -7,10 +7,18 @@ using System.Reflection;
 
 namespace MCWebAPI
 {
-    public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
+    /// <summary>
+    /// Configures the Swagger options.
+    /// </summary>
+    internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
     {
         private readonly IApiVersionDescriptionProvider _provider;
 
+
+        /// <summary>
+        /// Initializes the ConfigureSwaggerOptions.
+        /// </summary>
+        /// <param name="provider"></param>
         public ConfigureSwaggerOptions(
             IApiVersionDescriptionProvider provider)
         {
@@ -77,7 +85,7 @@ namespace MCWebAPI
         /// <summary>
         /// Create information about the version of the API
         /// </summary>
-        /// <param name="description"></param>
+        /// <param name="desc"></param>
         /// <returns>Information about the API</returns>
         private static OpenApiInfo CreateVersionInfo(
                 ApiVersionDescription desc)

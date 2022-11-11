@@ -7,8 +7,18 @@ using System.Text;
 
 namespace MCWebAPI.Controllers.Utils
 {
+    /// <summary>
+    /// Contains util methods for authentication.
+    /// </summary>
     public class AuthUtils
     {
+        /// <summary>
+        /// Generates a list of claims for the user.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="platform"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public static List<Claim> GenerateClaims(DataUser user, Platform platform, IConfiguration config)
         {
             var claims = new[]
@@ -25,6 +35,13 @@ namespace MCWebAPI.Controllers.Utils
             return claims.ToList();
         }
 
+        /// <summary>
+        /// Generates a JWT token for the user.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="platform"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public static string GenerateJwt(DataUser user, Platform platform, IConfiguration config)
         {
             List<Claim> claims = GenerateClaims(user, platform, config);

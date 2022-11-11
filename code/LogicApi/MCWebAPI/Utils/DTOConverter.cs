@@ -11,11 +11,13 @@ namespace MCWebAPI.Utils
             Id = server.Id,
             ServerName = server.ServerName,
             OnlineFrom = server.OnlineFrom,
-            Status = (int)server.Status,
+            StatusCode = (int)server.StatusCode,
+            StatusMessage = server.StatusMessage,
             StorageBytes = server.StorageBytes,
             LogMessages = from log in server.Logs.TakeLast(50) select log.ToDTO(),
             Players = from player in server.Players.Values select player.ToDTO(),
             Port = server.Port,
+            Version = server.MCVersion.Version,
         };
 
         public static LogMessageDto ToDTO(this ILogMessage logMessage) => new()

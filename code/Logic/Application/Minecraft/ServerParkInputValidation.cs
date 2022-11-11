@@ -77,6 +77,9 @@ namespace Application.Minecraft
             var name = dto.NewName;
             CreateServerCheck(ref name);
 
+            if (dto.Version is not null)
+                CheckVersionExist(dto.Version);
+
             return _serverParkLogic.CreateServer(dto, user);
         }
 
@@ -100,8 +103,7 @@ namespace Application.Minecraft
             var newVersion = dto.Version;
             if(newVersion is not null)
             {
-                if (MinecraftVersionCollection[newVersion] is null)
-                    throw new ServerParkException($"The version '{newVersion}' does not exist");
+                CheckVersionExist(newVersion);
             }
 
             return _serverParkLogic.ModifyServer(id, dto, user);
@@ -114,6 +116,12 @@ namespace Application.Minecraft
             ThrowIfServerRunning(id);
 
             return _serverParkLogic.DeleteServer(id, user);
+        }
+
+        private void CheckVersionExist(string? version)
+        {
+            if (MinecraftVersionCollection[version] is null)
+                throw new ServerParkException($"The version '{version}' does not exist");
         }
 
 

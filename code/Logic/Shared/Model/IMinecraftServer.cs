@@ -29,9 +29,11 @@ namespace Shared.Model
         public string ServerName { get; set; }
 
         /// <summary>
-        /// Gets the status of the server.
+        /// Gets the status code of the server.
         /// </summary>
-        public ServerStatus Status { get; }
+        public ServerStatus StatusCode { get; }
+
+        public string StatusMessage => StatusCode.DisplayString();
 
         /// <summary>
         /// Gets if the server process is running.

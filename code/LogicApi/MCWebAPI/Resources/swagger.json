@@ -5,21 +5,12 @@
     "version": "1.0"
   },
   "paths": {
-    "/Auth/login": {
+    "/api/v1/Auth/login": {
       "post": {
         "tags": [
           "Auth"
         ],
         "summary": "Generates a Bearer token and returns it.",
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -705,7 +696,7 @@
         "tags": [
           "ServerPark"
         ],
-        "summary": "Refreshes the minecraft versions",
+        "summary": "Checks the internet if there are any new versions available, if yes, then adds them to the collection.",
         "responses": {
           "200": {
             "description": "Success"
@@ -783,9 +774,13 @@
             "type": "string",
             "nullable": true
           },
-          "status": {
+          "statusCode": {
             "type": "integer",
             "format": "int32"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true
           },
           "logMessages": {
             "type": "array",
@@ -813,6 +808,10 @@
           "storageBytes": {
             "type": "integer",
             "format": "int64"
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

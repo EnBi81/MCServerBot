@@ -2,8 +2,6 @@
 using APIModel.Responses;
 using Application.Permissions;
 using MCWebAPI.APIExceptions;
-using MCWebAPI.Controllers.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
 
@@ -12,7 +10,8 @@ namespace MCWebAPI.Controllers.api.v1
     /// <summary>
     /// Controller for managing permissions.
     /// </summary>
-    public class PermissionController : ApiV1Controller
+    [ApiVersion(ApiVersionV1)]
+    public class PermissionController : ApiController
     {
         private readonly IPermissionLogic _permissionLogic;
 

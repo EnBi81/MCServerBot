@@ -12,7 +12,8 @@ namespace MCWebAPI.Controllers.api.v1
     /// Controller for handling requests from the Discord Bot.
     /// </summary>
     [Authorize("DiscordBot")]
-    public class DiscordController : ApiV1Controller
+    [ApiVersion(ApiVersionV1)]
+    public class DiscordController : ApiController
     {
         private readonly IPermissionLogic permissionLogic;
 
@@ -58,15 +59,8 @@ namespace MCWebAPI.Controllers.api.v1
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] UserDataDto registerDto)
         {
-            try
-            {
-                await permissionLogic.RegisterUser(registerDto.Id, registerDto.DiscordName, registerDto.ProfilePic);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            await permissionLogic.RegisterUser(registerDto.Id, registerDto.DiscordName, registerDto.ProfilePic);
+            return Ok();
         }
 
         /// <summary>
@@ -81,15 +75,8 @@ namespace MCWebAPI.Controllers.api.v1
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RefreshUser([FromBody] UserDataDto userDto)
         {
-            try
-            {
-                await permissionLogic.RefreshUser(userDto.Id, userDto.DiscordName, userDto.ProfilePic);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return GetBadRequest(e.Message);
-            }
+            await permissionLogic.RefreshUser(userDto.Id, userDto.DiscordName, userDto.ProfilePic);
+            return Ok();
         }
     }
 }

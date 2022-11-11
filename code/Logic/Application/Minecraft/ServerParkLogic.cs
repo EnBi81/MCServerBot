@@ -63,6 +63,7 @@ namespace Application.Minecraft
         public async Task InitializeAsync()
         {
             _serverIdCounter = await _databaseAccess.ServerParkDataAccess.GetMaxServerId();
+            await MinecraftVersionCollection.InitializeAsync();
 
             DirectoryInfo info = new(ServersFolder);
             var serverFolders = info.GetDirectories();
@@ -79,8 +80,6 @@ namespace Application.Minecraft
                 var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config, MinecraftVersionCollection);
                 RegisterMcServer(mcServer);
             }
-
-            await MinecraftVersionCollection.InitializeAsync();
         }
 
 

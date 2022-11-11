@@ -376,3 +376,4 @@ FodyWeavers.xsd
 /code/LogicApi/MCWebAPI/Resources/config.json
 /code/LogicApi/MCWebAPI/Properties/appsettings.json
 /code/LogicApi/MCWebAPI/Properties/launchSettings.json
+/code/LogicApi/MCWebAPI/Resources/eventdata.db

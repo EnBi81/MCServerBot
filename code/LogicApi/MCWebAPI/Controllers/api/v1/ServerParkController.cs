@@ -12,7 +12,8 @@ namespace MCWebAPI.Controllers.api.v1
     /// <summary>
     /// Controller for handling Server park related features.
     /// </summary>
-    public class ServerParkController : ApiV1Controller
+    [ApiVersion(ApiVersionV1)]
+    public class ServerParkController : ApiController
     {
         private readonly IServerPark serverPark;
 

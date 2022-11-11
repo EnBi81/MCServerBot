@@ -12,7 +12,7 @@
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string this[string key] { get; set; }
+        public string? this[string key] { get; set; }
 
         /// <summary>
         /// Gets the enumerator of the Properties property.
