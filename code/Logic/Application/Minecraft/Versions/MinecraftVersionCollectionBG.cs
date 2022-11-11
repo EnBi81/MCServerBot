@@ -110,6 +110,7 @@ namespace Application.Minecraft.Versions
                     throw new MCInternalException("Failed to start python script: " + filename);
 
                 await p.StandardInput.WriteLineAsync($"python {filename} & exit");
+                // TODO: maybe kiirni a logot
                 await p.WaitForExitAsync();
             }
         }
@@ -150,7 +151,7 @@ namespace Application.Minecraft.Versions
                 Name = mvJson.Name!,
                 Version = mvJson.Version!,
                 FullRelease = mvJson.FullRelease!,
-                DownloadUrl = mvJson.DownloadLink ?? ""
+                DownloadUrl = mvJson.DownloadLink!
             });
         
             
