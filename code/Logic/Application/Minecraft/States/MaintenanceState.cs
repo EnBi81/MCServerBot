@@ -82,10 +82,10 @@ namespace Application.Minecraft.States
             var process = await _server.McServerProcess.Start(_server.MCVersion);
             await process.WaitForExitAsync();
 
-            _server.McServerFileHandler.RemoveUnneccessaryFiles();
             AddSystemLog("Backing up important files...");
             _server.McServerFileHandler.BackUpImportantFiles();
             AddSystemLog("Important files backed up.");
+            _server.McServerFileHandler.RemoveAllFilesExceptBackupFolder();
 
             await CreateServerFiles();
 

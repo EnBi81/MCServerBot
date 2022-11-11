@@ -45,19 +45,25 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
             var info = new DirectoryInfo(_serverPath);
 
-            foreach (var file in info.GetFiles())
+            // https://www.sportskeeda.com/minecraft-wiki/how-to-update-server-minecraft#:~:text=To%20update%20a%20server%20in%20Minecraft%2C%20create%20a%20new%20folder,executable%20into%20the%20old%20folder.
+            string[] importantFiles = { "banned-ips.json", "banned-players.json", "ops.json", "server.properties", "usercache.json", "whitelist.json", "server.info" };
+            string[] importantFolders = { "world" };
+            
+            foreach (var file in importantFiles.Select(f => new FileInfo(Path.Combine(backupDir.FullName, f))))
                 file.MoveTo(Path.Combine(backupDir.FullName, file.Name));
 
-            foreach (var dir in info.GetDirectories().Where(dir => dir.FullName != backupDir.FullName))
+            foreach (var dir in importantFolders.Select(d => new DirectoryInfo(Path.Combine(backupDir.FullName, d))))
                 dir.MoveTo(Path.Combine(backupDir.FullName, dir.Name));
         }
 
-        public void RemoveUnneccessaryFiles()
+        
+        public void RemoveAllFilesExceptBackupFolder()
         {
-            string eula = Path.Combine(_serverPath, "eula.txt");
-            File.Delete(eula);
-            string logsDir = Path.Combine(_serverPath, "logs");
-            Directory.Delete(logsDir, true);
+            foreach (var file in Directory.GetFiles(_serverPath))
+                File.Delete(file);
+
+            foreach (var folder in Directory.GetDirectories(_serverPath).Where(dir => dir != _backupDir))
+                Directory.Delete(folder, true);
         }
         
         public void RetrieveBackedUpFiles()
