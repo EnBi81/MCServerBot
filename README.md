@@ -14,27 +14,36 @@ does not work, they might not even compile, but the Web API works perfectly, and
 ## Features:
 WEB API features:
 
-- Log in (only available through the discord bot)
-- Start a minecraft server from the available servers (only one active server at a time)
-- Stop the active minecraft server
-- Add a new server
-- Rename an existing server
-- Delete an existing server (by moving all it's files to the DeletedServer folder.
-- Get all the players who joined to the server and their online time
-- Get all the output of the minecraft server (including the commands of the players)
-- Write a command directly to the minecraft server process from the webpage
-- Grant permission for a discord user to use the system
-- Revoke permission for a discord user to not allow to use the system
+- Auth
+	- Currently the authentication flow is through the discord bot, which is not yet implemented. If you would like to still use the api, retrieve a test token by running the server and going to /api/v1/auth/login { "token": "test-acc", "platform": "discord"}
+
+
+- Minecraft server features
+	- Add a new server
+	- Modify server name and version
+	- Delete a server
+	- Start and stop a server (only one active server at a time)
+	- Get all the players who joined to the server and their online time
+	- Get all the output of the minecraft server (including the commands of the players)
+	- Write a command directly to the minecraft server process from the webapi
+
+- Permission system
+	- Grant permission for a discord user to use the system
+	- Revoke permission for a discord user to not allow to use the system
+
+- Now introducing Minecraft Versions
+	- Add a new server with a specified minecraft version
+	- If no version has been selected, then automatically the latest version will be used
+	- Upgrade a server to a newer version
+	- Downgrading a server to an older version is not allowed
+	- The available version's info is downloaded from [the wiki](https://minecraft.fandom.com/wiki/Java_Edition_version_history), and the server.jar is automatically downloaded if it is not found in the local storage.
+	- When creating a server or upgrading to a newer version, the server is set to a maintenance status. The maintenance is not started until a user manually starts the server. An other server can be started while there are servers in maintenance status.
 
 <img src="docs/images/api-endpoints.png">
 
 
 ## TODO:
 (Before starting the websites and discord bot)
-- Add versions to the minecraft servers (https://minecraft.fandom.com/wiki/Java_Edition_version_history)
-  - be able to select a version when creating a minecraft server
-  - be able to later change the selected version
-  - automatically download a version if it is not aéready downloaded
 - Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
 
 
