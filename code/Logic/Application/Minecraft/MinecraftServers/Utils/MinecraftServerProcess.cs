@@ -45,7 +45,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// <summary>
         /// Start the minecraft server process, and subscribe to all the process events.
         /// </summary>
-        public async Task Start(IMinecraftVersion version)
+        public async Task<Process> Start(IMinecraftVersion version)
         {
             if (!version.IsDownloaded)
                 await version.DownloadAsync();
@@ -112,6 +112,8 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 _serverHandlerProcess = null;
                 Exited?.Invoke(this, e);
             };
+
+            return _serverHandlerProcess;
         }
 
         public event EventHandler<string>? ErrorDataReceived;

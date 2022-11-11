@@ -52,7 +52,7 @@ namespace Application.Minecraft.States
             _server.SetServerState<StartingState>();
             var logMessage = new LogMessage(username + ": " + "Starting Server " + _server.ServerName, LogMessageType.User_Message);
             _server.AddLog(logMessage);
-            await _server.McServerProcess.Start(_server.MCVersion);
+            await _server.StartServerProcess();
         }
 
         /// <summary>

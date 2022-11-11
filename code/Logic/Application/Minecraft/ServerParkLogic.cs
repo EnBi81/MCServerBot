@@ -176,7 +176,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
+        public async Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
         {
             var server = GetServer(id);
             
@@ -192,7 +192,9 @@ namespace Application.Minecraft
 
             InvokeServerModified(server, dto);
 
-            return Task.FromResult(server);
+            await server.Start();
+
+            return server;
         }
 
         /// <inheritdoc/>

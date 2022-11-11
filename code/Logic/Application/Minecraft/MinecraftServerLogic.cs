@@ -6,6 +6,7 @@ using Application.Minecraft.Versions;
 using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Model;
+using System.Diagnostics;
 using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft
@@ -87,6 +88,8 @@ namespace Application.Minecraft
                 else if (versionCompared == 0)
                     throw new MinecraftServerException($"Server is already on version {value.Version}");
 
+                SetServerState<MaintenanceState>();
+                
                 _mcVersion = value;
                 RaiseEvent(VersionChanged, value);
             }
@@ -99,6 +102,8 @@ namespace Application.Minecraft
         internal ProcessPerformanceReporter? PerformanceReporter { get; private set; }
         internal MinecraftServerProcess McServerProcess { get; }
         internal MinecraftServerInfos McServerInfos { get; }
+        internal MinecraftServersFileHandler McServerFileHandler { get; }
+        internal string ServerPath { get; }
 
 
 
@@ -127,17 +132,18 @@ namespace Application.Minecraft
 
         private MinecraftServerLogic(long id, string serverFolderName, MinecraftConfig config)
         {
-            string serverFileName = serverFolderName + "\\server.jar";
             string serverPropertiesFileName = serverFolderName + "\\server.properties";
             string serverInfoFile = serverFolderName + "\\server.info";
 
+            ServerPath = serverFolderName;
             Id = id;
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
+            McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
 
 
             McServerProcess = new MinecraftServerProcess(
-                serverDirectory: serverFileName,
+                serverDirectory: serverFolderName,
                 javaLocation: config.JavaLocation,
                 serverHandlerPath: config.MinecraftServerHandlerPath,
                 maxRam: config.MinecraftServerMaxRamMB,
@@ -243,8 +249,13 @@ namespace Application.Minecraft
         /// </summary>
         /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
         /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
-        internal void SetServerState<T>() where T : IServerState
+        internal void SetServerState<T>(bool forceNewState = false) where T : IServerState
         {
+            if (!forceNewState && _serverState is IServerState stateTemp && stateTemp.Status == ServerStatus.Maintenance)
+                return;
+            if(typeof(T) == typeof(MaintenanceState) && _serverState.GetType() != typeof(OfflineState))
+                throw new MCExternalException("Cannot enter maintenance mode while the server is running");
+
             var type = typeof(T);
 
             // here we check that the type is neither abstract nor interface, and it has a constructor which takes a minecraft server.
@@ -305,6 +316,13 @@ namespace Application.Minecraft
             Logs.Add(logMessage);
             RaiseEvent(LogReceived, logMessage);
         }
+
+        /// <summary>
+        /// Starts the server process.
+        /// </summary>
+        /// <returns></returns>
+        internal Task<Process> StartServerProcess() =>
+            McServerProcess.Start(MCVersion);
 
 
 
