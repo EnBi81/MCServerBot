@@ -126,7 +126,7 @@ namespace Application.Minecraft
         {
             ServerName = serverName;
             _mcVersion = version;
-
+            SetServerState<MaintenanceState>();
         }
 
 

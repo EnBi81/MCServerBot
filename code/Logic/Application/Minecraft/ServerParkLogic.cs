@@ -24,10 +24,6 @@ namespace Application.Minecraft
         /// Path of the folder which contains the previously deleted servers
         /// </summary>
         internal string DeletedServersFolder { get; }
-        /// <summary>
-        /// Path of an empty server folder (this is copied into the <see cref="ServersFolder"/> when a new server is created)
-        /// </summary>
-        internal string EmptyServersFolder { get; }
         
 
 
@@ -49,7 +45,6 @@ namespace Application.Minecraft
             
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
             DeletedServersFolder = _config.MinecraftServersBaseFolder + "Deleted Servers\\";
-            EmptyServersFolder = _config.MinecraftServersBaseFolder + "Empty Server\\";
 
 
             ActiveServerChange = null!;
@@ -166,17 +161,16 @@ namespace Application.Minecraft
 
             string destDir = ServersFolder + newServerId;
             Directory.CreateDirectory(destDir);
-            FileHelper.CopyDirectory(EmptyServersFolder, destDir);
 
             var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, newServerId, serverName, destDir, _config, version);
             RegisterMcServer(mcServer);
-
+            
             return Task.FromResult((IMinecraftServer)mcServer);
         }
 
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
+        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
         {
             var server = GetServer(id);
             
@@ -192,9 +186,7 @@ namespace Application.Minecraft
 
             InvokeServerModified(server, dto);
 
-            await server.Start();
-
-            return server;
+            return Task.FromResult(server);
         }
 
         /// <inheritdoc/>
