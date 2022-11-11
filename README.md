@@ -86,3 +86,6 @@ rename them to appsettings.json and launchSettings.json respectively, and fill i
 - Discord bot
 - Webserver (blazor and razor)
 - Arduino (this is still in the idea phase, therefore this will be the last thing which will be implemented)
+
+Old website demo: 
+<img src="docs/images/website-old.png">
