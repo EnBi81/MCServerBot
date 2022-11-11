@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-namespace MCWebAPI
+namespace MCWebAPI.SetupUtils
 {
     /// <summary>
     /// Configures the Swagger options.

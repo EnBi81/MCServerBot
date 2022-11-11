@@ -2,7 +2,7 @@
 using Loggers.Loggers;
 using Shared.Exceptions;
 
-namespace MCWebAPI.Middlewares
+namespace MCWebAPI.SetupUtils
 {
     internal class ExceptionHandlerMiddleware
     {
@@ -31,7 +31,7 @@ namespace MCWebAPI.Middlewares
                 string errorJson = Newtonsoft.Json.JsonConvert.SerializeObject(errorMessage);
 
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = 400; 
+                context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(errorJson);
                 _logger.Log("-exception-client", e.Message);
             }

@@ -259,6 +259,10 @@ namespace Application.Minecraft
             if(typeof(T) == typeof(MaintenanceState) && _serverState.GetType() != typeof(OfflineState))
                 throw new MCExternalException("Cannot enter maintenance mode while the server is running");
 
+
+            if (typeof(T) == _serverState?.GetType())
+                return;
+
             var type = typeof(T);
 
             // here we check that the type is neither abstract nor interface, and it has a constructor which takes a minecraft server.

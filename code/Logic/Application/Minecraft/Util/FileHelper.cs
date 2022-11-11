@@ -1,4 +1,6 @@
-﻿namespace Application.Minecraft.Util
+﻿using System.IO.Compression;
+
+namespace Application.Minecraft.Util
 {
     internal class FileHelper
     {
@@ -47,6 +49,11 @@
                 string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
                 CopyDirectory(subDir.FullName, newDestinationDir);
             }
+        }
+
+        public static void ZipDirectory(string sourceDir, string destinationZip)
+        {
+            ZipFile.CreateFromDirectory(sourceDir, destinationZip);
         }
 
         /// <summary>
@@ -119,5 +126,7 @@
             long dirSize = FileHelper.DirSize(info);
             return (dirSize > maxBytes, dirSize);
         }
+
+        internal static void DeleteDirectory(string newDir) => Directory.Delete(newDir, true);
     }
 }

@@ -192,7 +192,13 @@ namespace Application.Minecraft
         public Task<IMinecraftServer> DeleteServer(long id, UserEventData user)
         {
             string newDir = $"{DeletedServersFolder}{id}-{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+            
             FileHelper.MoveDirectory(ServersFolder + id, newDir);
+            Task.Run(() =>
+            {
+                FileHelper.ZipDirectory(newDir, newDir + ".zip");
+                FileHelper.DeleteDirectory(newDir);
+            });
 
             ServerCollection.Remove(id, out IMinecraftServer? server);
 

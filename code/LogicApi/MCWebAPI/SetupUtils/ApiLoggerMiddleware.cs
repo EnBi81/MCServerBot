@@ -1,6 +1,6 @@
 ﻿using Loggers.Loggers;
 
-namespace MCWebAPI.Middlewares
+namespace MCWebAPI.SetupUtils
 {
     /// <summary>
     /// Logs all the requests and responses.
@@ -35,7 +35,7 @@ namespace MCWebAPI.Middlewares
             var request = context.Request;
             string logRequest = $"{id}-request: {request.Method} {request.Path}{request.QueryString.Value}";
             _logger.Log("middleware", logRequest);
-            
+
             await _next(context);
 
             var response = context.Response;
