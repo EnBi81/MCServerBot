@@ -2,21 +2,19 @@
 using Application.Minecraft;
 using Application.Permissions;
 using DataStorageSQLite.Implementation;
-using Loggers.Loggers;
 using Loggers;
-using Microsoft.Extensions.DependencyInjection;
-using Shared.Model;
-using MCWebAPI.Utils;
+using Loggers.Loggers;
 using MCWebAPI.Auth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using MCWebAPI.WebSocketHandler;
-using System.Security.Claims;
-using Shared.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Shared.DTOs;
+using Shared.Model;
+using System.Text;
+using System.Security.Claims;
 
-namespace MCWebAPI.SetupUtils
+namespace MCWebAPI.Utils.Setup
 {
     /// <summary>
     /// Organizes the services that are added to the IServiceCollection
@@ -50,6 +48,8 @@ namespace MCWebAPI.SetupUtils
                 setup.SubstituteApiVersionInUrl = true;
                 setup.AssumeDefaultVersionWhenUnspecified = false;
             });
+
+            collection.AddSignalR();
 
             return collection;
         }

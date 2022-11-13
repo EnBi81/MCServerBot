@@ -46,8 +46,7 @@ namespace Application.Minecraft
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
             DeletedServersFolder = _config.MinecraftServersBaseFolder + "DeletedServers\\";
 
-
-            ActiveServerChange = null!;
+            
             ActiveServerPlayerLeft = null!;
             ActiveServerPlayerJoined = null!;
             ActiveServerLogReceived = null!;
@@ -117,8 +116,6 @@ namespace Application.Minecraft
             UnSubscribeEventTrackers(ActiveServer);
             ActiveServer = server;
             SubscribeEventTrackers(ActiveServer);
-
-            InvokeActiveServerChanged(ActiveServer);
         }
 
 
@@ -216,9 +213,7 @@ namespace Application.Minecraft
             ServerCollection.Add(server.Id, server);
             InvokeServerAdded(server);
         }
-
-        /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
+        
 
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange;
@@ -291,8 +286,6 @@ namespace Application.Minecraft
 
 
         // ServerPark events
-        private void InvokeActiveServerChanged(IMinecraftServer activeServer) =>
-            ActiveServerChange?.Invoke(this, new(activeServer));
         private void InvokeServerModified(IMinecraftServer server, ServerChangeableDto dto) =>
             ServerModified?.Invoke(this, new(dto, server));
         private void InvokeServerAdded(IMinecraftServer addedServer) =>

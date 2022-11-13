@@ -97,11 +97,7 @@ namespace Shared.Model
         public Task<IMinecraftServer> DeleteServer(long id, UserEventData user = default);
 
 
-
-        /// <summary>
-        /// Event fired when the active server has changed.
-        /// </summary>
-        public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
+        
 
         /// <summary>
         /// Event fired when the active server's status has changed.

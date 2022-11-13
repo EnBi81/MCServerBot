@@ -1,25 +1,9 @@
-﻿using Application.DAOs;
-using Application.Minecraft;
-using Application.Permissions;
-using DataStorageSQLite.Implementation;
-using Loggers;
+﻿using Loggers;
 using Loggers.Loggers;
-using MCWebAPI.Auth;
-using MCWebAPI.SetupUtils;
-using MCWebAPI.Utils;
-using MCWebAPI.WebSocketHandler;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
+using MCWebAPI.Middlewares;
+using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Shared.DTOs;
 using Shared.Model;
-using Swashbuckle.AspNetCore.Filters;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
 
 namespace MCWebAPI
 {
@@ -98,8 +82,8 @@ namespace MCWebAPI
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthentication();
+            app.MapHubs();
             app.UseRouting();
             app.UseAuthorization();
             app.MapControllers();

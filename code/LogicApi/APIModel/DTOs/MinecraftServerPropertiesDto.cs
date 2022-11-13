@@ -96,7 +96,7 @@ namespace APIModel.DTOs
         [DisplayName("gamemode")]
         [Range(0, 3)]
         [DefaultValue(0)] // survival
-        public string? Gamemode { get; set; }
+        public int? Gamemode { get; set; }
 
         /// <summary>
         /// If set to true, server difficulty is ignored and set to hard and players are set to spectator mode if they die.

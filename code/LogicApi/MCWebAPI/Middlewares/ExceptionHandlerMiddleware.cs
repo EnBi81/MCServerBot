@@ -2,7 +2,7 @@
 using Loggers.Loggers;
 using Shared.Exceptions;
 
-namespace MCWebAPI.SetupUtils
+namespace MCWebAPI.Middlewares
 {
     internal class ExceptionHandlerMiddleware
     {

@@ -200,13 +200,7 @@ namespace Application.Minecraft
             if (!ServerExists(id))
                 throw new ServerParkException($"The server '{id}' does not exist.");
         }
-
-
-        public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange
-        {
-            add => _serverParkLogic.ActiveServerChange += value; 
-            remove => _serverParkLogic.ActiveServerChange -= value;
-        }
+        
 
         public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
         {

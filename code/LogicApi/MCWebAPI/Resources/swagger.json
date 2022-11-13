@@ -725,18 +725,6 @@
           }
         ]
       }
-    },
-    "/api/v1/ServerPark/props": {
-      "get": {
-        "tags": [
-          "ServerPark"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
     }
   },
   "components": {

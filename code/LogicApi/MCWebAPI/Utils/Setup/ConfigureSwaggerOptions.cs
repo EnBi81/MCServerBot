@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-namespace MCWebAPI.SetupUtils
+namespace MCWebAPI.Utils.Setup
 {
     /// <summary>
     /// Configures the Swagger options.
@@ -36,6 +36,7 @@ namespace MCWebAPI.SetupUtils
             options.IgnoreObsoleteProperties();
             options.CustomSchemaIds(type => type.FullName);
 
+            options.AddSignalRSwaggerGen();
 
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));

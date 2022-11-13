@@ -1,10 +1,30 @@
 ﻿
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Reflection;
 
 namespace Sandbox
 {
+    
     public class SandBoxClass
     {
+
+        static async Task Main(string[] args)
+        {
+            var connection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:7229/testroute/serverpark")
+                .WithAutomaticReconnect()
+                .Build();
+
+            connection.Closed += async (e) => Console.WriteLine("Connection closed " + e?.Message);
+            connection.On<string>("Receive", (message) => Console.WriteLine(message));
+            await connection.StartAsync();
+            Console.WriteLine("Connection started");
+
+            await connection.SendAsync("Receive", "CustomClient");
+            await Task.Delay(-1);
+        }
+
+
         static void Main1(string[] args) 
         {
             var types = typeof(SandBoxClass).Assembly.DefinedTypes

@@ -94,21 +94,7 @@ namespace Application.Minecraft
                 return _serverPark.MinecraftVersionCollection;
             }
         }
-
-        /// <inheritdoc/>
-        public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange
-        {
-            add
-            {
-                ThrowExceptionIfNotInitialized();
-                _serverPark.ActiveServerChange += value;
-            }
-            remove
-            {
-                ThrowExceptionIfNotInitialized();
-                _serverPark.ActiveServerChange -= value;
-            }
-        }
+        
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
         {
