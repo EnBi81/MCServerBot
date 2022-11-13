@@ -204,7 +204,7 @@ namespace Application.Minecraft
 
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange
         {
-            add => _serverParkLogic.ActiveServerChange += value;
+            add => _serverParkLogic.ActiveServerChange += value; 
             remove => _serverParkLogic.ActiveServerChange -= value;
         }
 

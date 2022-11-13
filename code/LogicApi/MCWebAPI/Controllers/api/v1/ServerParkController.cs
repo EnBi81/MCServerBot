@@ -1,6 +1,8 @@
 ﻿using APIModel.DTOs;
+using APIModel.DTOs.Tools;
 using APIModel.Responses;
 using MCWebAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Exceptions;
 using Shared.Model;
@@ -94,6 +96,13 @@ namespace MCWebAPI.Controllers.api.v1
         {
             await serverPark.MinecraftVersionCollection.LoadAsync();
             return Ok();
+        }
+
+        [HttpGet("props")]
+        [AllowAnonymous]
+        public IActionResult GetProps()
+        {
+            return Ok(new MinecraftServerPropertiesDto());
         }
     }
 }

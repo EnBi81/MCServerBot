@@ -217,8 +217,6 @@ namespace Application.Minecraft
             InvokeServerAdded(server);
         }
 
-
-
         /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ActiveServerChange;
 

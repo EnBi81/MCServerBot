@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Application.Minecraft.Versions
 {
+    // TODO: https://minecraft.fandom.com/wiki/Version_manifest.json
     internal partial class MinecraftVersionCollection
     {
         private const string _versionJsonFileName = "mc_version_list.json";
