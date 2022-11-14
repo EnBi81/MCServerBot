@@ -19,8 +19,7 @@ namespace Sandbox
             connection.On<string>("Receive", (message) => Console.WriteLine(message));
             await connection.StartAsync();
             Console.WriteLine("Connection started");
-
-            await connection.SendAsync("Receive", "CustomClient");
+            
             await Task.Delay(-1);
         }
 

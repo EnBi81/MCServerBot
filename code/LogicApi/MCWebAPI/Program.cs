@@ -41,6 +41,10 @@ try
                 Console.WriteLine("Error while stopping the application: " + e.Message);
             }
         }
+        else if(!string.IsNullOrWhiteSpace(text))
+        {
+            Console.WriteLine("To stop the program, please type 'stop'.");
+        }
     }
 }
 catch(Exception e)

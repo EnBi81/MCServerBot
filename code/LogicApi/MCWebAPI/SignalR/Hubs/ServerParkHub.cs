@@ -5,13 +5,13 @@ using SignalRSwaggerGen.Attributes;
 
 namespace MCWebAPI.SignalR.Hubs
 {
-    [SignalRHub("/testroute/serverpark")]
+    [SignalRHub("/hubs/serverpark")]
     public class ServerParkHub : Hub
     {
-        [SignalRMethod("Hello", SignalRSwaggerGen.Enums.Operation.Get)]
-        public void Hi(string text)
+        [SignalRMethod("Receive", SignalRSwaggerGen.Enums.Operation.Get)]
+        public void Hi()
         {
-            Clients.All.SendAsync("Receive", text);
+            Clients.All.SendAsync("Receive", "heyy");
         }
     }
 }

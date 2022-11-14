@@ -24,6 +24,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="7.0.0" />
     <PackageReference Include="SignalRSwaggerGen" Version="3.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.5" />
@@ -42,6 +44,7 @@
 
   <ItemGroup>
     <None Include="Properties\appsettings.json" />
+    <None Include="wwwroot\swagger-extension.js" />
   </ItemGroup>
 
 	<Target Name="Copy Python to Resource folder" AfterTargets="Build">
