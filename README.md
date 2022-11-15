@@ -26,6 +26,7 @@ WEB API features:
 	- Get all the players who joined to the server and their online time
 	- Get all the output of the minecraft server (including the commands of the players)
 	- Write a command directly to the minecraft server process from the webapi
+	- Change minecraft server properties file
 
 - Permission system
 	- Grant permission for a discord user to use the system
@@ -45,7 +46,6 @@ WEB API features:
 ## TODO:
 (Before starting the websites and discord bot)
 - Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-- Be able to change minecraft server properties
 - Minecraft command autocomplete
 
 
