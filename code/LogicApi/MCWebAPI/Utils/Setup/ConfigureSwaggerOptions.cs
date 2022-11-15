@@ -39,7 +39,7 @@ namespace MCWebAPI.Utils.Setup
             options.IgnoreObsoleteProperties();
             options.CustomSchemaIds(type => type.FullName);
 
-            //options.AddSignalRSwaggerGen();
+            options.AddSignalRSwaggerGen();
             
 
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
