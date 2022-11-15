@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
+﻿using SharedPublic.Attributes;
+using SharedPublic.Exceptions;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
-namespace APIModel.DTOs
+namespace SharedPublic.DTOs
 {
     public class MinecraftServerPropertiesDto
     {
@@ -25,6 +28,93 @@ namespace APIModel.DTOs
              view-distance: default 10, 3-32
              white-list: default false
          */
+        
+        
+        private void ValidateValue(PropertyInfo property, ref object value)
+        {
+            var propName = property.Name;
+            var propType = property.PropertyType;
+
+            // checks for bool
+            if (propType == typeof(bool?))
+            {
+                if (value is not bool b)
+                    throw new MCInternalException("Value must be a boolean for " + propName);
+
+                value = b ? "true" : "false";
+            }
+            // checks for int
+            else if (propType == typeof(int?))
+            {
+                if (value is not int number)
+                    throw new MCInternalException("Value must be an integer for " + propName);
+
+                var rangeAttr = property.GetCustomAttribute<RangeAttribute>();
+                if (rangeAttr == null || rangeAttr.Minimum is not int || rangeAttr.Maximum is not int)
+                    throw new MCInternalException("No RangeAttribute found on property " + propName);
+
+                if (number < (int)rangeAttr.Minimum || number > (int)rangeAttr.Maximum)
+                    throw new MCExternalException($"Unexpected value for {propName}: '{number}'. Value must be between " + rangeAttr.Minimum + " and " + rangeAttr.Maximum + ".");
+            }
+            // checks for string
+            else if (propType == typeof(string))
+            {
+                if (value is not string text)
+                    throw new MCInternalException("Value must be a string for " + property.Name);
+
+                var maxLengthAttr = property.GetCustomAttribute<MaxLengthAttribute>();
+                if (maxLengthAttr != null && text.Length > maxLengthAttr.Length)
+                    throw new MCExternalException($"Unexpected value for {propName}: '{text}'. Value must be at most {maxLengthAttr.Length} characters long.");
+
+                var validValuesAttr = property.GetCustomAttribute<ValidValuesAttribute>();
+                if (validValuesAttr != null && !validValuesAttr.ValidValues.Contains(text))
+                    throw new MCExternalException($"Unexpected value for {propName}: '{text}'. Value must be one of the following: " + string.Join(", ", validValuesAttr.ValidValues));
+            }
+            // unknown type
+            else
+            {
+                throw new MCInternalException($"Property type {property.PropertyType} is not supported for {property.Name}.");
+            }
+        }
+
+        protected Dictionary<string, string> ValidateAndRetrieveData(bool setAllDefaultValues)
+        {
+            var properties = GetType().GetProperties();
+
+            var values = new Dictionary<string, string>();
+
+            // get all properties
+            foreach (var prop in properties)
+            {
+                // get basic attributes
+                var displayAttr = prop.GetCustomAttribute<DisplayNameAttribute>();
+                var defaultAttr = prop.GetCustomAttribute<DefaultValueAttribute>();
+
+                if (displayAttr == null || displayAttr.DisplayName == null)
+                    continue;
+
+                string? key = displayAttr.DisplayName;
+                object? value = prop.GetValue(this);
+
+                if(setAllDefaultValues && defaultAttr != null)
+                    value ??= defaultAttr.Value;
+
+                if (value == null || key == null)
+                    continue;
+
+                ValidateValue(prop, ref value);
+
+                values.Add(key, value.ToString()!);
+            }
+
+
+            return values;
+        }
+
+
+        public virtual Dictionary<string, string> ValidateAndRetrieveData() 
+            => ValidateAndRetrieveData(false);
+
 
         /// <summary>
         /// <para>Allows users to use flight on the server while in Survival mode, if they have a mod that provides flight installed.</para>
@@ -55,9 +145,9 @@ namespace APIModel.DTOs
         /// </summary>
         /// <example>2</example>
         [DisplayName("difficulty")]
-        [Range(0, 3)]
-        [DefaultValue(2)] // normal
-        public int? Difficulty { get; set; }
+        [DefaultValue("normal")]
+        [ValidValues("peaceful", "easy", "normal", "hard")]
+        public string? Difficulty { get; set; }
 
         /// <summary>
         /// Enables command blocks
@@ -94,9 +184,9 @@ namespace APIModel.DTOs
         /// </summary>
         /// <example>0</example>
         [DisplayName("gamemode")]
-        [Range(0, 3)]
-        [DefaultValue(0)] // survival
-        public int? Gamemode { get; set; }
+        [DefaultValue("survival")]
+        [ValidValues("survival", "creative", "adventure", "spectator")]
+        public string? Gamemode { get; set; }
 
         /// <summary>
         /// If set to true, server difficulty is ignored and set to hard and players are set to spectator mode if they die.

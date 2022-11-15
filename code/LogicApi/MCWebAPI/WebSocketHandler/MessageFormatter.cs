@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Application.Minecraft.MinecraftServers;
-using Shared.Model;
-using static Shared.Model.ILogMessage;
+using SharedPublic.Model;
+using static SharedPublic.Model.ILogMessage;
 using MCWebAPI.Utils;
 
 namespace MCWebAPI.WebSocketHandler
@@ -39,7 +39,7 @@ namespace MCWebAPI.WebSocketHandler
             var added = new { 
                 datatype = "serverAdded", 
                 serverId = id, 
-                server = server.ToDTO()
+                server = server
             };
             return Serialize(added);
         }
@@ -60,7 +60,7 @@ namespace MCWebAPI.WebSocketHandler
             {
                 datatype = "log",
                 serverId = id,
-                logs = (from logMessage in messages select logMessage.ToDTO()).ToList()
+                logs = (from logMessage in messages select logMessage).ToList()
             };
 
             return Serialize(log);
@@ -72,7 +72,7 @@ namespace MCWebAPI.WebSocketHandler
             {
                 datatype = "playerJoin",
                 serverId = id,
-                player = player.ToDTO()
+                player = player
             };
             return Serialize(playerJoin);
         }
@@ -83,7 +83,7 @@ namespace MCWebAPI.WebSocketHandler
             {
                 datatype = "playerLeft",
                 serverId = id, 
-                player = player.ToDTO() 
+                player = player
             };
             return Serialize(playerLeft);
         }

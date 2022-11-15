@@ -1,6 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.States
 {

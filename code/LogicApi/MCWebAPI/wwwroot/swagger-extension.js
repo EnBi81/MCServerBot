@@ -13,9 +13,14 @@ let interval = setInterval(() => {
         return;
 
 
-    let hubs = getServerHubs();
-
-    startObserve(hubs);
+    try {
+        let hubs = getServerHubs();
+        startObserve(hubs);
+    }
+    catch (e) {
+        clearInterval(interval);
+    }
+    
     clearInterval(interval);
 
 }, 10);

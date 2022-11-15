@@ -1,10 +1,11 @@
-﻿using Application.DAOs;
+﻿using APIModel.DTOs;
+using Application.DAOs;
 using Application.Minecraft.Util;
 using Loggers;
-using Shared.DTOs;
-using Shared.EventHandlers;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.EventHandlers;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft
 {
@@ -13,27 +14,27 @@ namespace Application.Minecraft
     /// </summary>
     internal class ServerParkInputValidation : IServerPark
     {
-        private readonly IServerPark _serverParkLogic;
+        private readonly IServerPark _serverPark;
         private readonly MinecraftConfig _config;
 
         public ServerParkInputValidation(IDatabaseAccess dataAccess, MinecraftConfig config, MinecraftLogger logger)
         {
-            _serverParkLogic = new ServerParkLogic(dataAccess, config, logger);
+            _serverPark = new ServerParkLogic(dataAccess, config, logger);
             _config = config;
         }
 
 
         /// <inheritdoc/>
-        public Task InitializeAsync() => _serverParkLogic.InitializeAsync();
+        public Task InitializeAsync() => _serverPark.InitializeAsync();
 
         /// <inheritdoc/>
-        public IMinecraftServer? ActiveServer => _serverParkLogic.ActiveServer;
+        public IMinecraftServer? ActiveServer => _serverPark.ActiveServer;
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<long, IMinecraftServer> MCServers => _serverParkLogic.MCServers;
+        public IReadOnlyDictionary<long, IMinecraftServer> MCServers => _serverPark.MCServers;
 
         /// <inheritdoc/>
-        public IMinecraftVersionCollection MinecraftVersionCollection => _serverParkLogic.MinecraftVersionCollection;
+        public IMinecraftVersionCollection MinecraftVersionCollection => _serverPark.MinecraftVersionCollection;
 
 
 
@@ -41,7 +42,7 @@ namespace Application.Minecraft
         public IMinecraftServer GetServer(long id)
         {
             ThrowIfServerNotExists(id);
-            return _serverParkLogic.GetServer(id);
+            return _serverPark.GetServer(id);
         }
 
         /// <inheritdoc/>
@@ -55,7 +56,7 @@ namespace Application.Minecraft
                     throw new ServerParkException("Another Server is Running Already!");
             }
 
-            return _serverParkLogic.StartServer(id, user);
+            return _serverPark.StartServer(id, user);
         }
 
         /// <inheritdoc/>
@@ -64,15 +65,15 @@ namespace Application.Minecraft
             if (ActiveServer == null || !ActiveServer.IsRunning)
                 throw new ServerParkException("Server is not running!");
 
-            return _serverParkLogic.StopActiveServer(user);
+            return _serverPark.StopActiveServer(user);
         }
 
         /// <inheritdoc/>
         public Task ToggleServer(long id, UserEventData user = default) =>
-            _serverParkLogic.ToggleServer(id, user);
+            _serverPark.ToggleServer(id, user);
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user = default)
+        public Task<IMinecraftServer> CreateServer(ServerCreationDto dto, UserEventData user = default)
         {
             var name = dto.NewName;
             CreateServerCheck(ref name);
@@ -80,15 +81,15 @@ namespace Application.Minecraft
             if (dto.Version is not null)
                 CheckVersionExist(dto.Version);
 
-            return _serverParkLogic.CreateServer(dto, user);
+            return _serverPark.CreateServer(dto, user);
         }
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user = default)
+        public Task<IMinecraftServer> ModifyServer(long id, ModifyServerDto dto, UserEventData user = default)
         {
-            if (dto.NewName is null && dto.Version is null)
+            if (dto.GetType().GetProperties().All(prop => prop.GetValue(dto) == null))
                 throw new MinecraftServerArgumentException("Invalid modify: no data to change");
-
+            
             ThrowIfServerNotExists(id);
             ThrowIfServerRunning(id);
             
@@ -106,7 +107,14 @@ namespace Application.Minecraft
                 CheckVersionExist(newVersion);
             }
 
-            return _serverParkLogic.ModifyServer(id, dto, user);
+            var newProps = dto.Properties;
+            if (newProps is not null)
+            {
+                newProps.ValidateAndRetrieveData();
+            }
+
+
+            return _serverPark.ModifyServer(id, dto, user);
         }
 
         /// <inheritdoc/>
@@ -115,7 +123,7 @@ namespace Application.Minecraft
             ThrowIfServerNotExists(id);
             ThrowIfServerRunning(id);
 
-            return _serverParkLogic.DeleteServer(id, user);
+            return _serverPark.DeleteServer(id, user);
         }
 
         private void CheckVersionExist(string? version)
@@ -204,50 +212,50 @@ namespace Application.Minecraft
 
         public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
         {
-            add => _serverParkLogic.ActiveServerStatusChange += value;
-            remove => _serverParkLogic.ActiveServerStatusChange -= value;
+            add => _serverPark.ActiveServerStatusChange += value;
+            remove => _serverPark.ActiveServerStatusChange -= value;
         }
 
         public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived
         {
-            add => _serverParkLogic.ActiveServerLogReceived += value;
-            remove => _serverParkLogic.ActiveServerLogReceived -= value;
+            add => _serverPark.ActiveServerLogReceived += value;
+            remove => _serverPark.ActiveServerLogReceived -= value;
         }
 
         public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined
         {
-            add => _serverParkLogic.ActiveServerPlayerJoined += value;
-            remove => _serverParkLogic.ActiveServerPlayerJoined -= value;
+            add => _serverPark.ActiveServerPlayerJoined += value;
+            remove => _serverPark.ActiveServerPlayerJoined -= value;
         }
 
         public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft
         {
-            add => _serverParkLogic.ActiveServerPlayerLeft += value;
-            remove => _serverParkLogic.ActiveServerPlayerLeft -= value;
+            add => _serverPark.ActiveServerPlayerLeft += value;
+            remove => _serverPark.ActiveServerPlayerLeft -= value;
         }
 
         public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured
         {
-            add => _serverParkLogic.ActiveServerPerformanceMeasured += value;
-            remove => _serverParkLogic.ActiveServerPerformanceMeasured -= value;
+            add => _serverPark.ActiveServerPerformanceMeasured += value;
+            remove => _serverPark.ActiveServerPerformanceMeasured -= value;
         }
 
-        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified
+        public event EventHandler<ServerValueEventArgs<ModifyServerDto>> ServerModified
         {
-            add => _serverParkLogic.ServerModified += value;
-            remove => _serverParkLogic.ServerModified -= value;
+            add => _serverPark.ServerModified += value;
+            remove => _serverPark.ServerModified -= value;
         }
 
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded
         {
-            add => _serverParkLogic.ServerAdded += value;
-            remove => _serverParkLogic.ServerAdded -= value;
+            add => _serverPark.ServerAdded += value;
+            remove => _serverPark.ServerAdded -= value;
         }
 
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted
         {
-            add => _serverParkLogic.ServerDeleted += value;
-            remove => _serverParkLogic.ServerDeleted -= value;
+            add => _serverPark.ServerDeleted += value;
+            remove => _serverPark.ServerDeleted -= value;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace Shared.Model
+namespace SharedPublic.Model
 {
     /// <summary>
     /// Holds information of a minecraft player in

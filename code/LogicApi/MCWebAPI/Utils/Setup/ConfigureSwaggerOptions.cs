@@ -39,7 +39,7 @@ namespace MCWebAPI.Utils.Setup
             options.IgnoreObsoleteProperties();
             options.CustomSchemaIds(type => type.FullName);
 
-            options.AddSignalRSwaggerGen();
+            //options.AddSignalRSwaggerGen();
             
 
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -82,7 +82,7 @@ namespace MCWebAPI.Utils.Setup
         /// </summary>
         /// <param name="name"></param>
         /// <param name="options"></param>
-        public void Configure(string name, SwaggerGenOptions options)
+        public void Configure(string? name, SwaggerGenOptions options)
         {
             Configure(options);
         }

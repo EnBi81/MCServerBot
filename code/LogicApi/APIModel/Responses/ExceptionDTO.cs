@@ -8,6 +8,7 @@ namespace APIModel.Responses
 {
     public class ExceptionDTO
     {
-        public string? Message { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public bool IsInternalException { get; set; } = false;
     }
 }

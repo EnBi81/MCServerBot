@@ -1,6 +1,6 @@
 ﻿using Loggers;
 using Loggers.Loggers;
-using Shared.DTOs;
+using SharedPublic.DTOs;
 using System.Net.WebSockets;
 using System.Text;
 

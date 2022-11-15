@@ -1,4 +1,6 @@
-﻿namespace Shared.Model
+﻿using SharedPublic.DTOs;
+
+namespace SharedPublic.Model
 {
     public interface IMinecraftServerProperties
     {
@@ -12,12 +14,19 @@
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string? this[string key] { get; set; }
+        public string? this[string key] { get; }
 
         /// <summary>
         /// Gets the enumerator of the Properties property.
         /// </summary>
         /// <returns>the enumerator of the Properties property.</returns>
         public Dictionary<string, string>.Enumerator GetEnumerator();
+
+        /// <summary>
+        /// Update the minecraft server properties.
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public Task UpdateProperties(MinecraftServerPropertiesDto dto);
     }
 }

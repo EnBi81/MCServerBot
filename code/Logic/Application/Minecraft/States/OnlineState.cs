@@ -1,7 +1,7 @@
-﻿using Shared.Exceptions;
-using Shared.Model;
+﻿using SharedPublic.Exceptions;
+using SharedPublic.Model;
 using System.Text.RegularExpressions;
-using static Shared.Model.ILogMessage;
+using static SharedPublic.Model.ILogMessage;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States

@@ -1,8 +1,8 @@
 ﻿using Application.DAOs.Database;
 using Application.Minecraft.Versions;
 using Loggers;
-using Shared.DTOs;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Model;
 
 namespace Application.Minecraft
 {
@@ -25,9 +25,10 @@ namespace Application.Minecraft
 
 
         public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            long id, string serverName, string serverFolderName, MinecraftConfig config, IMinecraftVersion version) : this(dataAccess, logger)
+            long id, string serverName, string serverFolderName, MinecraftConfig config, 
+            IMinecraftVersion version, MinecraftServerCreationPropertiesDto? creationProperties) : this(dataAccess, logger)
         {
-            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version));
+            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version, creationProperties));
             _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
             Startup();
         }
@@ -117,7 +118,7 @@ namespace Application.Minecraft
         public bool IsRunning => _minecraftServerLogic.IsRunning;
 
         /// <inheritdoc/>
-        public List<ILogMessage> Logs => _minecraftServerLogic.Logs;
+        public ICollection<ILogMessage> Logs => _minecraftServerLogic.Logs;
 
         /// <inheritdoc/>
         public DateTime? OnlineFrom => _minecraftServerLogic.OnlineFrom;

@@ -3,7 +3,8 @@ using Loggers.Loggers;
 using MCWebAPI.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Shared.Model;
+using SharedPublic.Model;
+using System.Reflection;
 
 namespace MCWebAPI
 {
@@ -85,22 +86,23 @@ namespace MCWebAPI
                     options.EnableTryItOutByDefault();
                     options.OAuthScopes("bearer");
 
-                    options.InjectStylesheet("/swagger-hubs.css");
-                    options.InjectJavascript("https://code.jquery.com/jquery-3.6.1.min.js");
-                    options.InjectJavascript("https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js");
-                    options.InjectJavascript("/swagger-extension.js");
+                    //options.InjectStylesheet("/swagger-hubs.css");
+                    //options.InjectJavascript("https://code.jquery.com/jquery-3.6.1.min.js");
+                    //options.InjectJavascript("https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js");
+                    //options.InjectJavascript("/swagger-extension.js");
                 });
             }
 
             app.UseHttpsRedirection();
+            app.UseMiddleware<ApiLoggerMiddleware>();
             app.UseAuthentication();
-            app.MapHubs();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseStaticFiles();
+            //app.MapHubs();
             app.MapControllers();
-
-            app.UseEndpoints(endpoint => endpoint.MapGet("swaggergethubs", () => { return new List<string> { "ServerParkHub" }; }));
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+            //app.UseEndpoints(endpoint => endpoint.MapGet("swaggergethubs", () => { return new List<string> { "ServerParkHub" }; }));
 
             app.UseCors(cors => cors
                 .AllowAnyMethod()
@@ -109,15 +111,16 @@ namespace MCWebAPI
                 .AllowCredentials());
 
 
-            app.UseMiddleware<ApiLoggerMiddleware>();
-            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 
             _logger.Log("start", "Running application");
 
             await app.StartAsync();
 
-            app.Services.GetRequiredService<IServerPark>();
+
+            // check if swagger is running this program, if yes, then dont initialize the IServerPark
+            if(!Assembly.GetEntryAssembly()?.Location?.EndsWith("swagger.dll") ?? true)
+                app.Services.GetRequiredService<IServerPark>();
         }
     }
 }

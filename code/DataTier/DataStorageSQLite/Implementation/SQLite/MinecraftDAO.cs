@@ -1,7 +1,7 @@
 ﻿using Application.DAOs.Database;
 using DataStorageSQLite.Implementations.SQLite.SQLiteEngine;
-using Shared.DTOs;
-using Shared.DTOs.Enums;
+using SharedPublic.DTOs;
+using SharedPublic.DTOs.Enums;
 
 namespace DataStorageSQLite.Implementations.SQLite
 {

@@ -1,10 +1,10 @@
 ﻿using Loggers;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
-using Shared.Model;
-using Shared.EventHandlers;
+using SharedPublic.Model;
+using SharedPublic.EventHandlers;
 using Application.Permissions;
-using Shared.DTOs;
+using SharedPublic.DTOs;
 using Loggers.Loggers;
 
 namespace MCWebAPI.WebSocketHandler
@@ -187,7 +187,7 @@ namespace MCWebAPI.WebSocketHandler
             await BroadcastMessage(message);
         }
 
-        private async void ServerNameChanged(object? sender, ServerValueEventArgs<ServerChangeableDto> e)
+        private async void ServerNameChanged(object? sender, ServerValueEventArgs<ModifyServerDto> e)
         {
             string? newName = e.NewValue.NewName;
 

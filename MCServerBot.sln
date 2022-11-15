@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MCWebAPI", "code\LogicApi\MCWebAPI\MCWebAPI.csproj", "{E15F4B95-E824-4362-989B-5194CEC4C161}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "code\Logic\Shared\Shared.csproj", "{D12253FE-90CD-4D9F-85C3-102EBDE5F520}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedPublic", "code\Logic\Shared\SharedPublic.csproj", "{D12253FE-90CD-4D9F-85C3-102EBDE5F520}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LogicAPI", "LogicAPI", "{ABEB08F5-43D3-4D8E-9FD1-28362A396136}"
 EndProject

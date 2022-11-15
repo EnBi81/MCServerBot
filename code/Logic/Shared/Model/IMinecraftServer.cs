@@ -1,8 +1,8 @@
 ﻿using Application.Minecraft.Versions;
-using Shared.DTOs;
-using Shared.Exceptions;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
 
-namespace Shared.Model
+namespace SharedPublic.Model
 {
     /// <summary>
     /// Interface representing a single Minecraft Server.
@@ -41,9 +41,9 @@ namespace Shared.Model
         public bool IsRunning { get; }
 
         /// <summary>
-        /// All of the log messages the server or the users wrote.
+        /// Gets the last 50 log messages from the server.
         /// </summary>
-        public List<ILogMessage> Logs { get; }
+        public ICollection<ILogMessage> Logs { get; }
 
         /// <summary>
         /// The time of the server when it became online, or null if the server is offline

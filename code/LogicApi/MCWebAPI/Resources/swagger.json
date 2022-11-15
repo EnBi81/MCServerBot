@@ -218,7 +218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIModel.DTOs.MinecraftServerDTO"
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                 }
               }
             }
@@ -314,7 +314,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/APIModel.DTOs.ModifyServerDto"
+                "$ref": "#/components/schemas/SharedPublic.DTOs.ModifyServerDto"
               }
             }
           }
@@ -558,7 +558,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/APIModel.DTOs.MinecraftServerDTO"
+                    "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                   }
                 }
               }
@@ -599,7 +599,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIModel.DTOs.MinecraftServerDTO"
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                 }
               }
             }
@@ -641,7 +641,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIModel.DTOs.MinecraftServerDTO"
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                 }
               }
             }
@@ -684,7 +684,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/APIModel.DTOs.MinecraftVersionDto"
+                    "$ref": "#/components/schemas/Application.Minecraft.Versions.IMinecraftVersion"
                   }
                 }
               }
@@ -739,20 +739,6 @@
         },
         "additionalProperties": false
       },
-      "APIModel.DTOs.LogMessageDto": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "messageType": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
       "APIModel.DTOs.LoginDto": {
         "type": "object",
         "properties": {
@@ -761,118 +747,6 @@
             "nullable": true
           },
           "platform": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "APIModel.DTOs.MinecraftPlayerDTO": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
-          "onlineFrom": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "pastOnline": {
-            "$ref": "#/components/schemas/System.TimeSpan"
-          }
-        },
-        "additionalProperties": false
-      },
-      "APIModel.DTOs.MinecraftServerDTO": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "serverName": {
-            "type": "string",
-            "nullable": true
-          },
-          "statusCode": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "statusMessage": {
-            "type": "string",
-            "nullable": true
-          },
-          "logMessages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/APIModel.DTOs.LogMessageDto"
-            },
-            "nullable": true
-          },
-          "onlineFrom": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "port": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "players": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/APIModel.DTOs.MinecraftPlayerDTO"
-            },
-            "nullable": true
-          },
-          "storageBytes": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "version": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "APIModel.DTOs.MinecraftVersionDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "version": {
-            "type": "string",
-            "nullable": true
-          },
-          "releaseDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downloadUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "isDownloaded": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "APIModel.DTOs.ModifyServerDto": {
-        "type": "object",
-        "properties": {
-          "newName": {
-            "maxLength": 35,
-            "minLength": 4,
-            "type": "string",
-            "nullable": true
-          },
-          "version": {
             "type": "string",
             "nullable": true
           }
@@ -888,11 +762,16 @@
           "newName": {
             "maxLength": 35,
             "minLength": 4,
-            "type": "string"
+            "type": "string",
+            "default": "My new server"
           },
           "version": {
             "type": "string",
+            "default": "1.19.2",
             "nullable": true
+          },
+          "properties": {
+            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerCreationPropertiesDto"
           }
         },
         "additionalProperties": false
@@ -940,6 +819,9 @@
           "message": {
             "type": "string",
             "nullable": true
+          },
+          "isInternalException": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -953,6 +835,397 @@
           }
         },
         "additionalProperties": false
+      },
+      "Application.Minecraft.Versions.IMinecraftVersion": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "downloadUrl": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "isDownloaded": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "absoluteJarPath": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.DTOs.MinecraftServerCreationPropertiesDto": {
+        "type": "object",
+        "properties": {
+          "allowFlight": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "difficulty": {
+            "type": "string",
+            "default": "normal",
+            "nullable": true
+          },
+          "enableCommandBlock": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "enforceSecureProfile": {
+            "type": "boolean",
+            "default": false,
+            "nullable": true
+          },
+          "gamemode": {
+            "type": "string",
+            "default": "survival",
+            "nullable": true
+          },
+          "hardcore": {
+            "type": "boolean",
+            "default": false,
+            "nullable": true
+          },
+          "maxWorldSize": {
+            "maximum": 29999984,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "default": 29999984,
+            "nullable": true
+          },
+          "motd": {
+            "maxLength": 59,
+            "type": "string",
+            "default": "A Minecraft Server",
+            "nullable": true
+          },
+          "pvp": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "simulationDistance": {
+            "maximum": 32,
+            "minimum": 3,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "nullable": true
+          },
+          "spawnMonsters": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "spawnProtection": {
+            "maximum": 30000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "nullable": true
+          },
+          "viewDistance": {
+            "maximum": 32,
+            "minimum": 3,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "nullable": true
+          },
+          "whiteList": {
+            "type": "boolean",
+            "default": false,
+            "nullable": true
+          },
+          "levelSeed": {
+            "maxLength": 100,
+            "type": "string",
+            "default": "",
+            "nullable": true
+          },
+          "levelType": {
+            "type": "string",
+            "default": "minecraft:normal",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.DTOs.MinecraftServerPropertiesDto": {
+        "type": "object",
+        "properties": {
+          "allowFlight": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "difficulty": {
+            "type": "string",
+            "default": "normal",
+            "nullable": true
+          },
+          "enableCommandBlock": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "enforceSecureProfile": {
+            "type": "boolean",
+            "default": false,
+            "nullable": true
+          },
+          "gamemode": {
+            "type": "string",
+            "default": "survival",
+            "nullable": true
+          },
+          "hardcore": {
+            "type": "boolean",
+            "default": false,
+            "nullable": true
+          },
+          "maxWorldSize": {
+            "maximum": 29999984,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "default": 29999984,
+            "nullable": true
+          },
+          "motd": {
+            "maxLength": 59,
+            "type": "string",
+            "default": "A Minecraft Server",
+            "nullable": true
+          },
+          "pvp": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "simulationDistance": {
+            "maximum": 32,
+            "minimum": 3,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "nullable": true
+          },
+          "spawnMonsters": {
+            "type": "boolean",
+            "default": true,
+            "nullable": true
+          },
+          "spawnProtection": {
+            "maximum": 30000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "nullable": true
+          },
+          "viewDistance": {
+            "maximum": 32,
+            "minimum": 3,
+            "type": "integer",
+            "format": "int32",
+            "default": 10,
+            "nullable": true
+          },
+          "whiteList": {
+            "type": "boolean",
+            "default": false,
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.DTOs.ModifyServerDto": {
+        "type": "object",
+        "properties": {
+          "newName": {
+            "maxLength": 35,
+            "minLength": 4,
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "properties": {
+            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerPropertiesDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.ILogMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "messageType": {
+            "$ref": "#/components/schemas/SharedPublic.Model.LogMessageType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.IMinecraftPlayer": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "pastOnline": {
+            "$ref": "#/components/schemas/System.TimeSpan"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.IMinecraftServer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "serverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "$ref": "#/components/schemas/SharedPublic.Model.ServerStatus"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "isRunning": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "logs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharedPublic.Model.ILogMessage"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "properties": {
+            "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServerProperties"
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "onlinePlayers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "players": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "storageSpace": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "storageBytes": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "mcVersion": {
+            "$ref": "#/components/schemas/Application.Minecraft.Versions.IMinecraftVersion"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.IMinecraftServerProperties": {
+        "type": "object",
+        "properties": {
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.LogMessageType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SharedPublic.Model.ServerStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "System.TimeSpan": {
         "type": "object",

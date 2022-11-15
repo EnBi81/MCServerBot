@@ -2,7 +2,8 @@
 using APIModel.Responses;
 using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Model;
 
 namespace MCWebAPI.Controllers.api.v1
 {
@@ -36,13 +37,12 @@ namespace MCWebAPI.Controllers.api.v1
         /// <response code="200">Returns the requested server object.</response>
         /// <response code="400">The server with the specified id does not exist.</response>
         [HttpGet(RouteId, Name = "GetServer")]
-        [ProducesResponseType(typeof(MinecraftServerDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IMinecraftServer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public IActionResult GetFullServer([FromRoute] long id)
         {
             var server = serverPark.GetServer(id);
-            var dto = server.ToDTO();
-            return Ok(dto);
+            return Ok(server);
         }
 
 
@@ -77,7 +77,7 @@ namespace MCWebAPI.Controllers.api.v1
         public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
         {
             var user = await GetUserEventData();
-            await serverPark.ModifyServer(id, dto.ToModelDto(), user);
+            await serverPark.ModifyServer(id, dto, user);
 
             return NoContent();
         }

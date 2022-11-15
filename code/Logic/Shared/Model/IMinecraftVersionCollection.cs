@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Model
+namespace SharedPublic.Model
 {
     public interface IMinecraftVersionCollection : IEnumerable<IMinecraftVersion>
     {

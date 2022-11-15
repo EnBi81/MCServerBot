@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {
@@ -32,6 +33,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// </summary>
         public bool IsMaintenance { get; set; }
 
+        /// <summary>
+        /// Properties to apply when the server is created
+        /// </summary>
+        public MinecraftServerCreationPropertiesDto CreationProperties { get; set; }
+
 
         /// <summary>
         /// This constructor is for json deserialization. pls dont delete it, ty.
@@ -56,12 +62,13 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// Saves information of a server into the server info file.
         /// </summary>
         /// <param name="server">server to save.</param>
-        public void Save(IMinecraftServer server)
+        public void Save(MinecraftServerLogic server)
         {
             Id = server.Id;
             Name = server.ServerName;
             Version = server.MCVersion.Version;
             IsMaintenance = server.StatusCode == ServerStatus.Maintenance;
+            CreationProperties = server.CreationProperties;
 
             string json = JsonConvert.SerializeObject(this);
             File.WriteAllText(_filename, json);
@@ -94,6 +101,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
             Name = obj.Name;
             Version = obj.Version;
             IsMaintenance = obj.IsMaintenance;
+            CreationProperties = obj.CreationProperties;
         }
     }
 }

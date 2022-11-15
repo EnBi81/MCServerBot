@@ -1,7 +1,7 @@
 ﻿using Application.Minecraft.MinecraftServers;
-using Shared.Exceptions;
-using Shared.Model;
-using static Shared.Model.ILogMessage;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
+using static SharedPublic.Model.ILogMessage;
 
 namespace Application.Minecraft.States
 {
@@ -63,6 +63,8 @@ namespace Application.Minecraft.States
 
             var process = await _server.StartServerProcess();
             await process.WaitForExitAsync();
+
+            await _server.Properties.UpdateProperties(_server.CreationProperties);
 
             AddSystemLog("Accepting Eula...");
             await _server.McServerFileHandler.AcceptEula();

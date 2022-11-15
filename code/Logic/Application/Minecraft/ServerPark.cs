@@ -1,10 +1,11 @@
-﻿using Application.DAOs;
+﻿using APIModel.DTOs;
+using Application.DAOs;
 using Application.DAOs.Database;
 using Loggers;
-using Shared.DTOs;
-using Shared.EventHandlers;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.EventHandlers;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft
 {
@@ -166,7 +167,7 @@ namespace Application.Minecraft
             }
         }
         /// <inheritdoc/>
-        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified
+        public event EventHandler<ServerValueEventArgs<ModifyServerDto>> ServerModified
         {
             add
             {
@@ -211,7 +212,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user)
+        public async Task<IMinecraftServer> CreateServer(ServerCreationDto dto, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 
@@ -233,7 +234,7 @@ namespace Application.Minecraft
         }
 
         /// <inheritdoc/>
-        public async Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
+        public async Task<IMinecraftServer> ModifyServer(long id, ModifyServerDto dto, UserEventData user)
         {
             ThrowExceptionIfNotInitialized();
 

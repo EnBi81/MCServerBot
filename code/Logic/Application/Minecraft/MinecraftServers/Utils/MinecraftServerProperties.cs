@@ -1,7 +1,10 @@
-﻿using Shared.Model;
+﻿using SharedPublic.DTOs;
+using SharedPublic.Model;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {
@@ -25,13 +28,15 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// </summary>
         /// <param name="file">path to save the file</param>
         /// <param name="props">instance to save</param>
-        public static void SaveProperties(string file, MinecraftServerProperties props)
+        public static async Task SaveProperties(string file, MinecraftServerProperties props)
         {
             StringBuilder sb = new();
-            foreach (var (key, value) in props)
+            foreach (var (key, value) in props.Properties)
                 sb.AppendLine(key + "=" + value.ToString());
 
-            File.WriteAllText(file, sb.ToString());
+            Console.WriteLine("Properties: " + (await File.ReadAllTextAsync(file)));
+
+            await File.WriteAllTextAsync(file, sb.ToString());
         }
 
 
@@ -69,7 +74,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 lines = Array.Empty<string>();
             }
             
-            Regex regex = new("[^=]=[^=]");
+            Regex regex = new("[^=]+=[^=]*");
             foreach (var line in lines)
             {
                 if (!regex.IsMatch(line))
@@ -93,15 +98,23 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 Properties.TryGetValue(key, out string? value);
                 return value;
             }
-            set
-            {
-                if(value is not null)
-                    Properties[key] = value;
-            }
         }
 
         /// <inheritdoc/>
         public Dictionary<string, string>.Enumerator GetEnumerator()
             => Properties.GetEnumerator();
+
+        public async Task UpdateProperties(MinecraftServerPropertiesDto dto)
+        {
+            LoadData();
+
+            foreach (var (key, value) in dto.ValidateAndRetrieveData())
+            {
+                if (Properties.ContainsKey(key))
+                    Properties[key] = value;
+            }
+
+            await SaveProperties(_file, this);
+        }
     }
 }

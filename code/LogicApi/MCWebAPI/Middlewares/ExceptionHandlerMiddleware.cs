@@ -1,6 +1,6 @@
 ﻿using APIModel.Responses;
 using Loggers.Loggers;
-using Shared.Exceptions;
+using SharedPublic.Exceptions;
 
 namespace MCWebAPI.Middlewares
 {
@@ -17,36 +17,46 @@ namespace MCWebAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
+            
             try
             {
                 await _next(context);
             }
             catch (MCExternalException e)
             {
-                var errorMessage = new ExceptionDTO()
-                {
-                    Message = e.Message
-                };
-
-                string errorJson = Newtonsoft.Json.JsonConvert.SerializeObject(errorMessage);
-
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync(errorJson);
+                WriteContext(context, 400, e.Message, false);
                 _logger.Log("-exception-client", e.Message);
             }
             catch (MCInternalException e)
             {
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsync(e.Message);
+                WriteContext(context, 500, e.Message, true);
                 _logger.LogError("-exception-internal", e);
             }
             catch (Exception e)
             {
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsync(e.Message);
+                WriteContext(context, 500, e.Message, true);
                 _logger.LogError("-exception-unexpected", e);
             }
+        }
+        
+        private static void WriteContext(HttpContext context, int statuscode, string message, bool isInternal)
+        {
+            string jsonMessage = GetJsonException(message, isInternal);
+            
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = statuscode;
+            context.Response.WriteAsync(jsonMessage);
+        }
+        
+        private static string GetJsonException(string message, bool isInternalException)
+        {
+            var errorMessage = new ExceptionDTO()
+            {
+                Message = message,
+                IsInternalException = isInternalException
+            };
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(errorMessage);
         }
     }
 }

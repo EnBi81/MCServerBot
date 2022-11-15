@@ -1,12 +1,13 @@
-﻿using Application.DAOs;
+﻿using APIModel.DTOs;
+using Application.DAOs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
 using Loggers;
-using Shared.DTOs;
-using Shared.EventHandlers;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.EventHandlers;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 using System.Collections.ObjectModel;
 
 namespace Application.Minecraft
@@ -146,7 +147,7 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> CreateServer(ServerChangeableDto dto, UserEventData user)
+        public Task<IMinecraftServer> CreateServer(ServerCreationDto dto, UserEventData user)
         {
             var serverName = dto.NewName!;
 
@@ -158,7 +159,10 @@ namespace Application.Minecraft
             string destDir = ServersFolder + newServerId;
             Directory.CreateDirectory(destDir);
 
-            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, newServerId, serverName, destDir, _config, version);
+            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, 
+                _logger, newServerId, serverName,
+                destDir, _config, version, dto.Properties);
+            
             RegisterMcServer(mcServer);
             
             return Task.FromResult((IMinecraftServer)mcServer);
@@ -166,19 +170,18 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public Task<IMinecraftServer> ModifyServer(long id, ServerChangeableDto dto, UserEventData user)
+        public Task<IMinecraftServer> ModifyServer(long id, ModifyServerDto dto, UserEventData user)
         {
             var server = GetServer(id);
             
             if (dto.Version != null)
-            {
                 server.MCVersion = MinecraftVersionCollection[dto.Version]!;
-            }
             
             if (dto.NewName != null)
-            {
                 server.ServerName = dto.NewName;
-            }
+
+            if(dto.Properties != null)
+                server.Properties.UpdateProperties(dto.Properties);
 
             InvokeServerModified(server, dto);
 
@@ -231,7 +234,7 @@ namespace Application.Minecraft
         public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
 
         /// <inheritdoc/>
-        public event EventHandler<ServerValueEventArgs<ServerChangeableDto>> ServerModified;
+        public event EventHandler<ServerValueEventArgs<ModifyServerDto>> ServerModified;
 
         /// <inheritdoc/>
         public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerAdded;
@@ -286,7 +289,7 @@ namespace Application.Minecraft
 
 
         // ServerPark events
-        private void InvokeServerModified(IMinecraftServer server, ServerChangeableDto dto) =>
+        private void InvokeServerModified(IMinecraftServer server, ModifyServerDto dto) =>
             ServerModified?.Invoke(this, new(dto, server));
         private void InvokeServerAdded(IMinecraftServer addedServer) =>
             ServerAdded?.Invoke(this, new(addedServer));

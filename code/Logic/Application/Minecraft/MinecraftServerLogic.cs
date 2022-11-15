@@ -3,11 +3,11 @@ using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
-using Shared.DTOs;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 using System.Diagnostics;
-using static Shared.Model.ILogMessage;
+using static SharedPublic.Model.ILogMessage;
 
 namespace Application.Minecraft
 {
@@ -67,8 +67,9 @@ namespace Application.Minecraft
         }
         private long _storageBytes;
 
+        private readonly Queue<ILogMessage> _logs = new Queue<ILogMessage>();
         /// <inheritdoc/>
-        public List<ILogMessage> Logs { get; } = new List<ILogMessage>();
+        public ICollection<ILogMessage> Logs => _logs.ToList();
 
         /// <inheritdoc/>
         public Dictionary<string, IMinecraftPlayer> Players { get; } = new Dictionary<string, IMinecraftPlayer>();
@@ -102,6 +103,7 @@ namespace Application.Minecraft
         internal MinecraftServerInfos McServerInfos { get; }
         internal MinecraftServersFileHandler McServerFileHandler { get; }
         internal string ServerPath { get; }
+        internal MinecraftServerCreationPropertiesDto CreationProperties { get; }
 
 
 
@@ -117,16 +119,22 @@ namespace Application.Minecraft
             Id = McServerInfos.Id;
             _serverName = McServerInfos.Name!;
             _mcVersion = version;
-            
-            if(McServerInfos.IsMaintenance)
+            CreationProperties = McServerInfos.CreationProperties;
+
+            if (McServerInfos.IsMaintenance)
                 SetServerState<MaintenanceState>();
+
+            
         }
 
 
-        public MinecraftServerLogic(long id, string serverName, string serverFolderName, MinecraftConfig config, IMinecraftVersion version) : this(id, serverFolderName, config)
+        public MinecraftServerLogic(long id, string serverName, 
+            string serverFolderName, MinecraftConfig config, IMinecraftVersion version, 
+            MinecraftServerCreationPropertiesDto? creationProperties) : this(id, serverFolderName, config)
         {
             _serverName = serverName;
             _mcVersion = version;
+            CreationProperties = creationProperties ?? new MinecraftServerCreationPropertiesDto();
             SetServerState<MaintenanceState>();
 
             McServerInfos.Save(this);
@@ -320,7 +328,10 @@ namespace Application.Minecraft
         /// <param name="logMessage"></param>
         internal void AddLog(LogMessage logMessage)
         {
-            Logs.Add(logMessage);
+            if(_logs.Count >= 50)
+                _ = _logs.Dequeue();
+            _logs.Enqueue(logMessage);
+            
             RaiseEvent(LogReceived, logMessage);
         }
 

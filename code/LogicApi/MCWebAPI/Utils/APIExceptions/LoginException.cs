@@ -1,4 +1,4 @@
-﻿using Shared.Exceptions;
+﻿using SharedPublic.Exceptions;
 
 namespace MCWebAPI.APIExceptions
 {

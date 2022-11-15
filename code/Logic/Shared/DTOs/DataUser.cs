@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
+﻿using SharedPublic.DTOs;
+using System.Text.Json;
 
-namespace Shared.DTOs
+namespace SharedPublic.DTOs
 {
     public class DataUser
     {

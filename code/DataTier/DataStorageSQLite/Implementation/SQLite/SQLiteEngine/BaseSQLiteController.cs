@@ -1,5 +1,5 @@
-﻿using Shared.DTOs;
-using Shared.DTOs.Enums;
+﻿using SharedPublic.DTOs;
+using SharedPublic.DTOs.Enums;
 using System.Data.SQLite;
 
 namespace DataStorageSQLite.Implementations.SQLite.SQLiteEngine

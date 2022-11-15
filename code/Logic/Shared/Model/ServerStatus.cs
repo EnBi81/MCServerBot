@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Model
+namespace SharedPublic.Model
 {
     /// <summary>
     /// Represents the status of a server
