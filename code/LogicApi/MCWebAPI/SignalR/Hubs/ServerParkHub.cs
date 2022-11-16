@@ -8,6 +8,11 @@ namespace MCWebAPI.SignalR.Hubs
     [SignalRHub("/hubs/serverpark")]
     public class ServerParkHub : Hub
     {
+
+        [SignalRListener("Receive")]
+        public ServerParkHub() { }
+
+
         [SignalRMethod("Receive", SignalRSwaggerGen.Enums.Operation.Get)]
         public void Hi(string text)
         {

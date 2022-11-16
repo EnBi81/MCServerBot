@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -32,7 +33,8 @@ namespace SignalRSwaggerGen
 
 		public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
 		{
-			var hubs = GetHubs();
+            // gets all the hubs with SignalRHubAttribute but not with SignalRHiddenAttribute
+            var hubs = GetHubs();
 			foreach (var hub in hubs)
 			{
 				var xmlComments = GetXmlComments(hub);
@@ -43,17 +45,54 @@ namespace SignalRSwaggerGen
 		private void ProcessHub(OpenApiDocument swaggerDoc, DocumentFilterContext context, Type hub, XmlComments xmlComments)
 		{
 			var hubAttribute = hub.GetCustomAttribute<SignalRHubAttribute>();
+            // checks if the document names?? are good?
 			if (!HubShouldBeDisplayedOnDocument(context, hubAttribute)) return;
 			var hubXml = GetHubXml(hub, xmlComments);
-			var hubPath = GetHubPath(hub, hubAttribute);
+            // Generates the hub path from the hub attribute path + hub name 
+            var hubPath = GetHubPath(hub, hubAttribute);
 			var tag = GetTag(hub, hubAttribute, hubXml);
-			var methods = GetHubMethods(hub, hubAttribute);
+            // gets all the hub methods with SignalRMethodAttribute but not with SignalRHiddenAttribute
+            var methods = GetHubMethods(hub, hubAttribute);
 			foreach (var method in methods)
 			{
 				var methodXml = GetMethodXml(method, xmlComments);
 				ProcessMethod(swaggerDoc, context, hub, hubAttribute, hubPath, tag, method, methodXml);
 			}
-		}
+
+            var listeners = GetHubListeners(hub, hubAttribute);
+            foreach (var listener in listeners)
+            {
+				var methodPath = Path.Combine(hubPath, listener.Name).Replace("\\", "/");
+				var currentMethod = GetType().GetMethod(nameof(ProcessHub), BindingFlags.NonPublic | BindingFlags.Instance);
+                AddOpenApiPath(swaggerDoc, context, hub, hubAttribute, tag, methodPath, Operation.Get, listener.Summary, listener.Description,
+					new List<ParameterInfo>(), currentMethod.ReturnParameter, currentMethod, null);
+            }
+        }
+
+		private IEnumerable<SignalRListenerAttribute> GetHubListeners(Type hub, SignalRHubAttribute hubAttribute)
+		{
+            List<SignalRListenerAttribute> listeners = new List<SignalRListenerAttribute>();
+			var listenerType = typeof(SignalRListenerAttribute);
+
+			LoopMembers(hub.GetProperties());
+			LoopMembers(hub.GetConstructors());
+			LoopMembers(new MemberInfo[] { hub.GetType() });
+
+			void LoopMembers(IEnumerable<MemberInfo> members)
+			{
+				foreach (var member in members)
+				{
+					var listenerAttributes = member.GetCustomAttributes(listenerType);
+					if (listenerAttributes == null || !listenerAttributes.Any())
+						return;
+
+					listeners.AddRange(listenerAttributes.Cast<SignalRListenerAttribute>());
+				}
+			}
+
+			var equalityComparer = new ListenerEqualityComparer();
+			return listeners.Distinct(equalityComparer);
+        }
 
 		private void ProcessMethod(
 			OpenApiDocument swaggerDoc,
@@ -66,7 +105,9 @@ namespace SignalRSwaggerGen
 			MemberElement methodXml)
 		{
 			var methodAttribute = method.GetCustomAttribute<SignalRMethodAttribute>();
+            // gets a methods' path
 			var methodPath = GetMethodPath(hubPath, method, hubAttribute, methodAttribute);
+            // gets the parameters from a method (i guess, haven't checked it)
 			var methodParams = GetMethodParams(method, hubAttribute, methodAttribute);
 			var methodReturnParam = method.ReturnParameter;
 			var operation = GetOperation(methodAttribute);
@@ -237,6 +278,12 @@ namespace SignalRSwaggerGen
 				|| documentNames.Contains(context.DocumentName);
 		}
 
+        /// <summary>
+		/// Generates the hub path from the hub attribute path + hub name 
+		/// </summary>
+		/// <param name="hub"></param>
+		/// <param name="hubAttribute"></param>
+		/// <returns></returns>
 		private string GetHubPath(Type hub, SignalRHubAttribute hubAttribute)
 		{
 			var hubName = GetHubName(hub);
@@ -246,6 +293,11 @@ namespace SignalRSwaggerGen
 			return _options.HubPathFunc(hubName);
 		}
 
+        /// <summary>
+		/// Gets the type's name, if it is an interface then removes the 'I' prefix.
+		/// </summary>
+		/// <param name="hub"></param>
+		/// <returns></returns>
 		private static string GetHubName(Type hub)
 		{
 			var hubName = hub.IsInterface && hub.Name[0] == 'I'

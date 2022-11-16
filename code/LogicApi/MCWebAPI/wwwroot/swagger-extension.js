@@ -34,10 +34,14 @@ function checkNewlyAddedSection(sectionParent, hubs) {
         if (!hubs.includes(title))
             continue;
 
-        let opblock = section.querySelector('div.opblock');
-        opblock.setAttribute("data-opblock-hub", "")
-        let methodSpan = opblock.querySelector('span.opblock-summary-method');
-        methodSpan.textContent = "HUB";
+        let opblocks = section.querySelectorAll('div.opblock');
+
+        for (const opblock of opblocks) {
+            opblock.setAttribute("data-opblock-hub", "")
+            let methodSpan = opblock.querySelector('span.opblock-summary-method');
+            methodSpan.textContent = "HUB";
+        }
+        
 
         // set up mutatorchecker on the opblock to get the button
         //let executeButton = opblock.querySelector('.btn.execute.opblock-control__btn');

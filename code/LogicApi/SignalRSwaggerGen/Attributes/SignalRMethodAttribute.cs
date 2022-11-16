@@ -31,7 +31,7 @@ namespace SignalRSwaggerGen.Attributes
 		/// - <paramref name="autoDiscover"/> value not allowed for this attribute</exception>
 		public SignalRMethodAttribute(
 			string name = Constants.MethodNamePlaceholder,
-			Operation operation = Operation.Inherit,
+			Operation operation = Operation.Post,
 			AutoDiscover autoDiscover = AutoDiscover.Inherit,
 			string summary = null,
 			string description = null)
@@ -39,7 +39,7 @@ namespace SignalRSwaggerGen.Attributes
 			if (name.IsNullOrEmpty()) throw new ArgumentException("Name is null or empty", nameof(name));
 			if (!_validAutoDiscoverValues.Contains(autoDiscover)) throw new ArgumentException($"Value {autoDiscover} not allowed for this attribute", nameof(autoDiscover));
 			Name = name;
-			Operation = operation;
+			Operation = Operation.Post;
 			AutoDiscover = autoDiscover;
 			Summary = summary;
 			Description = description;
