@@ -8,7 +8,7 @@ function getServerHubs() {
 }
 
 
-let interval = setInterval(() => {
+const interval = setInterval(() => {
     if (document.querySelector('div.swagger-ui') == null)
         return;
 
@@ -18,7 +18,6 @@ let interval = setInterval(() => {
         startObserve(hubs);
     }
     catch (e) {
-        clearInterval(interval);
     }
     
     clearInterval(interval);

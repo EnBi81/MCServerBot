@@ -4,6 +4,7 @@ using MCWebAPI.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using SharedPublic.Model;
+using SignalRUtils;
 using System.Reflection;
 
 namespace MCWebAPI

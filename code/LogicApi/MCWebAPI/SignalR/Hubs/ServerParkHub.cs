@@ -9,9 +9,14 @@ namespace MCWebAPI.SignalR.Hubs
     public class ServerParkHub : Hub
     {
         [SignalRMethod("Receive", SignalRSwaggerGen.Enums.Operation.Get)]
-        public void Hi()
+        public void Hi(string text)
         {
             Clients.All.SendAsync("Receive", "heyy");
+        }
+        [SignalRMethod("Hello", SignalRSwaggerGen.Enums.Operation.Get)]
+        public void Hello(string text)
+        {
+            Console.WriteLine(text);
         }
     }
 }

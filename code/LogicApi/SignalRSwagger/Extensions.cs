@@ -1,17 +1,19 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http.Connections;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using SignalRSwaggerGen.Attributes;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace MCWebAPI.Utils.Setup
+namespace SignalRUtils
 {
-    /// <summary>
-    /// Extension methods for the WebApplication
-    /// </summary>
-    public static class WebAppExtensions
+    public static class Extensions
     {
         /// <summary>
         /// Maps all the hubs to the specified route if a RouteAttribute is applied to the hub.
@@ -19,7 +21,7 @@ namespace MCWebAPI.Utils.Setup
         /// <param name="app"></param>
         public static void MapHubs(this IEndpointRouteBuilder app)
         {
-            var hubs = Assembly.GetExecutingAssembly().DefinedTypes.Where(type => type.BaseType == typeof(Hub)).ToList();
+            var hubs = (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).DefinedTypes.Where(type => type.BaseType == typeof(Hub)).ToList();
 
             if (!hubs.Any())
                 return;
@@ -30,7 +32,7 @@ namespace MCWebAPI.Utils.Setup
                         .Where(m => m.Name == nameof(HubEndpointRouteBuilderExtensions.MapHub))
                         .Where(m => m.GetParameters().Length == 2)
                         .First();
-            
+
 
             foreach (var hubType in hubs)
             {
@@ -46,6 +48,14 @@ namespace MCWebAPI.Utils.Setup
                     generic.Invoke(app, new object[] { app, path });
                 }
             }
+        }
+
+        public static void AddSignalRMethods(this SwaggerUIOptions options)
+        {
+            options.InjectStylesheet("/swagger-hubs.css");
+            options.InjectJavascript("https://code.jquery.com/jquery-3.6.1.min.js");
+            options.InjectJavascript("https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js");
+            options.InjectJavascript("/swagger-extension.js");
         }
     }
 }

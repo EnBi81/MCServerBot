@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <SignAssembly>false</SignAssembly>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Authors>Dorin Mocan</Authors>
+    <Company>Essencebit</Company>
+    <Description>This package can be used to generate Swagger documentation for SignalR hubs.</Description>
+    <PackageTags>swagger openapi open api swashbuckle swaggergen documentation signalr hub websocket wss rest api web socket http doc generation extension handler handle intercept plugin auto standard net core microsoft web socket schema ui gen extension</PackageTags>
+    <PackageProjectUrl>https://github.com/Dorin-Mocan/SignalRSwaggerGen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Dorin-Mocan/SignalRSwaggerGen</RepositoryUrl>
+    <Version>3.2.1</Version>
+    <PackageReleaseNotes>Fixed default hub path template</PackageReleaseNotes>
+    <AssemblyVersion>3.2.1.0</AssemblyVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <FileVersion>3.2.1.0</FileVersion>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageIcon>Logo.png</PackageIcon>
+    <PackageIconUrl />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Projects\SignalRSwaggerGen\SignalRSwaggerGen\SignalRSwaggerGen\SignalRSwaggerGen.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="LICENSE.md" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.0" />
+  </ItemGroup>
+
+</Project>

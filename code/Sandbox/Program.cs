@@ -10,35 +10,11 @@ namespace Sandbox
     
     public class SandBoxClass
     {
-        
-        // salt: /VAuVwKNBLbB3XKjMA8J1g==
-        // hash: J2bgKuoPeRGc8uhuAsV9gi4W2q454UzPuLufBkTtevM=
-        static void Main(string[] args)
-        {
-            Console.Write("Enter a password: ");
-            string? password = Console.ReadLine();
 
-            // Generate a 128-bit salt using a sequence of
-            // cryptographically strong random bytes.
-            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); // divide by 8 to convert bits to bytes
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
-
-            // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password!,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
-
-            Console.WriteLine($"Hashed: {hashed}");
-
-        }
-
-        static async Task Main2(string[] args)
+        static async Task Main(string[] args)
         {
             var connection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:7229/testroute/serverpark")
+                .WithUrl("https://localhost:7229/hubs/serverpark")
                 .WithAutomaticReconnect()
                 .Build();
 
@@ -46,7 +22,13 @@ namespace Sandbox
             connection.On<string>("Receive", (message) => Console.WriteLine(message));
             await connection.StartAsync();
             Console.WriteLine("Connection started");
-            
+
+
+            while (true)
+            {
+                var text = Console.ReadLine();
+                await connection.InvokeAsync("Hi", text);
+            }
             await Task.Delay(-1);
         }
 

@@ -24,11 +24,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="7.0.0" />
-    <PackageReference Include="SignalRSwaggerGen" Version="3.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
     <PackageReference Include="System.Security.Claims" Version="4.3.0" />
   </ItemGroup>
 
@@ -36,6 +33,7 @@
     <ProjectReference Include="..\..\DataTier\DataStorageSQLite\DataStorageSQLite.csproj" />
     <ProjectReference Include="..\..\Logic\HamachiCli\HamachiCli.csproj" />
     <ProjectReference Include="..\APIModel\APIModel.csproj" />
+    <ProjectReference Include="..\SignalRSwagger\SignalRUtils.csproj" />
   </ItemGroup>
 
   <ItemGroup>
