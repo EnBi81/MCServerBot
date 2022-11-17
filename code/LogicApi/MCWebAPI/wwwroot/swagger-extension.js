@@ -4,7 +4,7 @@ function log(text) {
 }
 
 
-
+// get hubs
 function getServerHubs() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", "/swaggergethubs", false); // false for synchronous request
@@ -13,7 +13,9 @@ function getServerHubs() {
     return JSON.parse(response);
 }
 
+const hubs = getServerHubs();
 
+// main
 const interval = setInterval(() => {
     if (document.querySelector('div.swagger-ui') == null)
         return;
@@ -21,8 +23,7 @@ const interval = setInterval(() => {
     log("swagger gui element found!");
 
     try {
-        let hubs = getServerHubs();
-        startObserve(hubs);
+        startObserve();
     }
     catch (e) {
     }
@@ -31,7 +32,8 @@ const interval = setInterval(() => {
 
 }, 10);
 
-function startObserve(hubs) {
+// general observer for checking if new sections are added or removed
+function startObserve() {
     // Select the node that will be observed for mutations
     const targetNode = document.querySelector('div.swagger-ui');
 
@@ -45,7 +47,7 @@ function startObserve(hubs) {
         for (const mutation of mutationList) {
 
             for (const mutationNode of mutation.addedNodes) {
-                checkNewlyAddedSection(mutationNode, hubs);
+                checkNewlyAddedSection(mutationNode);
             }
             for (const removedNode of mutation.removedNodes) {
                 checkRemovedSection(removedNode)
@@ -62,9 +64,25 @@ function startObserve(hubs) {
     observer.observe(targetNode, config);
 }
 
-const sectionObjects = {}
+// store the objects related to hubs (title, opblocks, mutationObserver)
+const sectionObjects = {};
 
-function checkNewlyAddedSection(sectionParent, hubs) {
+// check if a section is removed
+function checkRemovedSection(sectionParent) {
+    let sections = sectionParent.querySelectorAll('.opblock-tag-section');
+    for (const section of sections) {
+        let title = section.querySelector('h3 > a > span').textContent;
+        if (sectionObjects[title] != null) {
+            log("disconnecting observer for " + title)
+
+            let obj = sectionObjects[title];
+            obj.mutationObserver.disconnect();
+        }
+    }
+}
+
+// do work with newly added section
+function checkNewlyAddedSection(sectionParent) {
     let sections = sectionParent.querySelectorAll('.opblock-tag-section');
 
     log("sections added: ")
@@ -84,6 +102,10 @@ function checkNewlyAddedSection(sectionParent, hubs) {
             opblock.setAttribute("data-opblock-hub", "")
             let methodSpan = opblock.querySelector('span.opblock-summary-method');
             let methodType = methodSpan.textContent;
+
+            let pathSpan = opblock.querySelector('.opblock-summary-path');
+            let path = pathSpan.getAttribute('data-path');
+
 
             if (methodType == "POST") {
                 log("Send endpoint:")
@@ -107,7 +129,14 @@ function checkNewlyAddedSection(sectionParent, hubs) {
                 for (const mutation of mutationList) {
 
                     for (const mutationNode of mutation.addedNodes) {
-
+                        if (mutationNode.tagName.toLowerCase() === "noscript") { 
+                            log("closed " + path)
+                            hubPathRetracted(title, path);
+                        }
+                        else { 
+                            log("opened " + path)
+                            hubPathExtended(title, path);
+                        }
                     }
                 }
             };
@@ -126,26 +155,22 @@ function checkNewlyAddedSection(sectionParent, hubs) {
 
             sectionObjects[title] = sectionObj;
         }
-        
-
-        // set up mutatorchecker on the opblock to get the button
-        //let executeButton = opblock.querySelector('.btn.execute.opblock-control__btn');
-        //executeButton.click()
     }
 }
 
-function checkRemovedSection(sectionParent) {
-    let sections = sectionParent.querySelectorAll('.opblock-tag-section');
-    for (const section of sections) {
-        let title = section.querySelector('h3 > a > span').textContent;
-        if (sectionObjects[title] != null) {
-            log("disconnecting observer for " + title)
+const hubPathConnections = {};
 
-            let obj = sectionObjects[title];
-            obj.mutationObserver.disconnect();
-        }
-    }
+function hubPathExtended(title, path) {
+    // TODO: add event listeners
+
+    // remove all listeners:
+        //  box.replaceWith(box.cloneNode(true));
 }
+
+function hubPathRetracted(title, path) {
+    // TODO: the endpoint is closed, so close the hub connection
+}
+
 
 /*
  * This should be when retracted
