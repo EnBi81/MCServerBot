@@ -3,6 +3,7 @@ using Loggers.Loggers;
 using MCWebAPI.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.FileProviders;
 using SharedPublic.Model;
 using SignalRUtils;
 using System.Reflection;
@@ -26,14 +27,20 @@ namespace MCWebAPI
         
         private static void GetAppBuilder(string[] args, out WebApplicationBuilder builder, out WebApiLogger logger)
         {
-            // setting resources folder in environment variables
+            // setting resources folder in environment variables (important for loggers, and also minecraft)
             Environment.SetEnvironmentVariable("RESOURCES_FOLDER", "Resources");
+
+            logger = LogService.GetService<WebApiLogger>();
+
+            logger.Log("info", "Calling: " + Assembly.GetCallingAssembly()?.Location);
+            logger.Log("info", "Executing: " + Assembly.GetExecutingAssembly()?.Location);
+            logger.Log("info", "Entry: " + Assembly.GetEntryAssembly()?.Location);
 
             // create the builder
             builder = WebApplication.CreateBuilder(args);
             
             // get the logger
-            logger = LogService.GetService<WebApiLogger>();
+            
             logger.Log("start", "Starting web api in " + Environment.CurrentDirectory);
 
             
@@ -90,17 +97,21 @@ namespace MCWebAPI
                     options.InjectStylesheet("/swagger-hubs.css");
                     options.InjectJavascript("https://code.jquery.com/jquery-3.6.1.min.js");
                     options.InjectJavascript("https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js");
-                    options.InjectJavascript("/swagger-extension.js");
+                    //options.InjectJavascript("/swagger-extension.js");
+
+                    options.InjectJavascript("/CustomMutationObserver.js");
+                    options.InjectJavascript("/SignalRBodyExecuteWrapper.js");
+                    options.InjectJavascript("/SignalRResponseWrapper.js");
+                    options.InjectJavascript("/SignalRPathListenerSwagger.js");
                 });
             }
 
             app.UseHttpsRedirection();
             app.UseMiddleware<ApiLoggerMiddleware>();
-            app.UseAuthentication();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
-            app.MapHubs();
             app.MapControllers();
             app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseEndpoints(endpoint => endpoint.MapGet("swaggergethubs", () => { return new List<string> { "ServerParkHub" }; }));
@@ -111,6 +122,7 @@ namespace MCWebAPI
                 .SetIsOriginAllowed(_ => true)
                 .AllowCredentials());
 
+            app.MapHubs();
 
 
 

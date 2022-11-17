@@ -3,6 +3,35 @@ function log(text) {
     console.log(text);
 }
 
+function startMutatorObserver(targetNode, addedListener, removedListener) {
+    // Options for the observer (which mutations to observe)
+    const config = { childList: true };
+
+    // Callback function to execute when mutations are observed
+    const callback = (mutationList, observer) => {
+        for (const mutation of mutationList) {
+
+            for (const mutationNode of mutation.addedNodes) {
+                addedListener(mutationNode);
+            }
+            for (const removedNode of mutation.removedNodes) {
+                removedListener(removedNode)
+            }
+        }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+
+    log("start observing elements for node")
+    log(targetNode)
+
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+
+
+    return observer
+}
 
 // get hubs
 function getServerHubs() {
@@ -15,53 +44,54 @@ function getServerHubs() {
 
 const hubs = getServerHubs();
 
-// main
-const interval = setInterval(() => {
-    if (document.querySelector('div.swagger-ui') == null)
-        return;
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/hubs/serverpark")
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
 
-    log("swagger gui element found!");
-
+async function start() {
     try {
-        startObserve();
+        await connection.start();
+        console.log("SignalR Connected.");
+    } catch (err) {
+        console.log(err);
+        setTimeout(start, 5000);
     }
-    catch (e) {
-    }
-    
-    clearInterval(interval);
+};
 
-}, 10);
+connection.on("Receive", (message) => {
+    console.log("Message: " + message)
+});
+
+// Start the connection.
+start();
+
+// main
+//const interval = setInterval(() => {
+//    if (document.querySelector('div.swagger-ui') == null)
+//        return;
+
+//    log("swagger gui element found!");
+
+//    try {
+//        startObserve();
+//    }
+//    catch (e) {
+//    }
+    
+//    clearInterval(interval);
+
+//}, 10);
 
 // general observer for checking if new sections are added or removed
 function startObserve() {
     // Select the node that will be observed for mutations
     const targetNode = document.querySelector('div.swagger-ui');
 
-    
-
-    // Options for the observer (which mutations to observe)
-    const config = { childList: true };
-
-    // Callback function to execute when mutations are observed
-    const callback = (mutationList, observer) => {
-        for (const mutation of mutationList) {
-
-            for (const mutationNode of mutation.addedNodes) {
-                checkNewlyAddedSection(mutationNode);
-            }
-            for (const removedNode of mutation.removedNodes) {
-                checkRemovedSection(removedNode)
-            }
-        }
-    };
-
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-
-    log("start observing elements")
-
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
+    startMutatorObserver(
+        targetNode,
+        (mutationNode) => checkNewlyAddedSection(mutationNode),
+        (mutationNode) => checkNewlyAddedSection(mutationNode));
 }
 
 // store the objects related to hubs (title, opblocks, mutationObserver)
@@ -99,13 +129,14 @@ function checkNewlyAddedSection(sectionParent) {
         log(opblocks)
 
         for (const opblock of opblocks) {
-            opblock.setAttribute("data-opblock-hub", "")
+            opblock.setAttribute("data-opblock-hub", "");
             let methodSpan = opblock.querySelector('span.opblock-summary-method');
             let methodType = methodSpan.textContent;
 
             let pathSpan = opblock.querySelector('.opblock-summary-path');
             let path = pathSpan.getAttribute('data-path');
 
+            let isListener = methodType == "GET";
 
             if (methodType == "POST") {
                 log("Send endpoint:")
@@ -121,31 +152,25 @@ function checkNewlyAddedSection(sectionParent) {
                 methodSpan.textContent = "LISTEN"
                 opblock.setAttribute("data-opblock-hub", "listen")
             }
+            else return;
 
-
-            const config = { childList: true };
-
-            const callback = (mutationList, observer) => {
-                for (const mutation of mutationList) {
-
-                    for (const mutationNode of mutation.addedNodes) {
-                        if (mutationNode.tagName.toLowerCase() === "noscript") { 
-                            log("closed " + path)
-                            hubPathRetracted(title, path);
-                        }
-                        else { 
-                            log("opened " + path)
-                            hubPathExtended(title, path);
-                        }
+            let observer = startMutatorObserver(
+                opblock,
+                (mutationNode) => {
+                    if (mutationNode.tagName.toLowerCase() === "noscript") {
+                        log("closed " + path)
+                        hubPathRetracted(title, path);
                     }
-                }
-            };
+                    else {
+                        log("opblock: ");
+                        log(opblock.outerHTML);
+                        hubPathExtended(title, path, opblock, isListener);
+                    }
+                },
+                () => { }
+            )
 
-            const observer = new MutationObserver(callback);
-
-            observer.observe(opblock, config);
-
-            log("creating observer for " + title)
+           
 
             let sectionObj = {
                 "title": title,
@@ -160,18 +185,99 @@ function checkNewlyAddedSection(sectionParent) {
 
 const hubPathConnections = {};
 
-function hubPathExtended(title, path) {
-    // TODO: add event listeners
-
-    // remove all listeners:
-        //  box.replaceWith(box.cloneNode(true));
+function closeHubConnection(path) {
+    log("closing hub connection for " + path)
+    if (hubPathConnections[path] != null) {
+        hubPathConnections[path].close();
+        delete hubPathConnections[path];
+    }
 }
 
 function hubPathRetracted(title, path) {
     // TODO: the endpoint is closed, so close the hub connection
+    closeHubConnection(path)
+}
+
+let opblockG;
+
+function hubPathExtended(title, path, opblock, isListener) {
+    // TODO: add event listeners
+
+    // remove all listeners:
+    //  box.replaceWith(box.cloneNode(true));
+    
+
+    let buttonWrapper = opblock.querySelector('.execute-wrapper');
+    if (buttonWrapper == null)
+        buttonWrapper = opblock.querySelector('.btn-group')
+
+    let potentialButton = buttonWrapper.querySelector('.execute');
+
+    if (potentialButton != null)
+        addExecuteButtonListeners(opblock, buttonWrapper, potentialButton, isListener);
+
+    startMutatorObserver(buttonWrapper,
+        (mutationNode) => {
+            if (mutationNode.classList.contains('execute')) {
+                addExecuteButtonListeners(opblock, buttonWrapper, mutationNode, isListener)
+            }
+            else {
+
+            }
+        },
+        (mutationNode) => {
+            if (mutationNode.classList.contains('execute')) {
+                buttonWrapper.innerHTML = '';
+                closeHubConnection(path)
+            }
+        });
+    
+}
+
+function addExecuteButtonListeners(opblock, buttonWrapper, button, isListener) {
+
+    if (button.classList.contains("cloned"))
+        return;
+
+    let cloneButton = button.cloneNode(true);
+    cloneButton.classList.add("cloned") // the normal button will be hidden
+    buttonWrapper.appendChild(cloneButton);
+
+
+    if (isListener)
+        setupListener(cloneButton, opblock);
+    else setupSender(cloneButton, opblock);
+}
+
+function setupListener(button, opblock) {
+    button.onclick = () => {
+        let buttonWrapper = opblock.querySelector(".execute-wrapper")
+
+        if (buttonWrapper == null) {
+            return;
+        }
+
+        let clearButton = document.createElement("button");
+        clearButton.setAttribute("class", "btn btn-clear opblock-control__btn");
+        clearButton.textContent = "Clear";
+
+        buttonWrapper.appendChild(clearButton);
+        buttonWrapper.classList.add("btn-group");
+        buttonWrapper.classList.remove("execute-wrapper")
+
+        let responseBlock = opblock.querySelector('.responses-wrapper');
+        responseBlock.innerHTML = listenerHTML;
+
+        let 
+    }
+}
+
+function setupSender(button, responseWrapper) {
+
 }
 
 
+const listenerHTML = `<div class="opblock-section-header"> <h4>Responses</h4></div><div class="responses-inner"> <div> <div> <div> <div class="request-url"> <h4>Request URL</h4> <pre class="microlight"> https://localhost:7229/hubs/serverpark/Receive </pre> </div></div><h4>Server response</h4> <table class="responses-table live-responses-table"> <thead> <tr class="responses-header"> <td class="col_header response-col_status"> Code </td><td class="col_header response-col_description"> Details </td></tr></thead> <tbody> <tr class="response"> <td class="response-col_status"> 404 <div class="response-undocumented"> <i>Undocumented</i> </div></td><td class="response-col_description"> <div> <h5>Getting continous response... to stop, press 'Clear'</h5> <pre class="microlight"></pre> </div></td></tr></tbody> </table> </div></div></div>`;
 /*
  * This should be when retracted
  * 
@@ -222,46 +328,46 @@ function hubPathRetracted(title, path) {
        <div>
         <div class="request-url">
          <h4>Request URL</h4>
-         <pre class="microlight">
-          https://localhost:7229/hubs/serverpark/Receive
-         </pre>
-        </div>
-       </div>
-      <h4>Server response</h4>
-      <table class="responses-table live-responses-table">
-       <thead>
-        <tr class="responses-header">
-         <td class="col_header response-col_status">
-          Code
-         </td>
-         <td class="col_header response-col_description">
-          Details
-         </td>
-        </tr>
-       </thead>
-       <tbody>
-        <tr class="response">
-         <td class="response-col_status">
-          404
-          <div class="response-undocumented">
-           <i>Undocumented</i>
-          </div>
-        </td>
-        <td class="response-col_description">
-         <div>
-          <h5>Getting continous response... to stop, press 'Clear'</h5>
           <pre class="microlight">
-           <span class="headerline">heelo</span>
+           https://localhost:7229/hubs/serverpark/Receive
           </pre>
          </div>
-        </td>
-       </tr>
-      </tbody>
-     </table>
+        </div>
+       <h4>Server response</h4>
+       <table class="responses-table live-responses-table">
+        <thead>
+         <tr class="responses-header">
+          <td class="col_header response-col_status">
+           Code
+          </td>
+          <td class="col_header response-col_description">
+           Details
+          </td>
+         </tr>
+        </thead>
+        <tbody>
+         <tr class="response">
+          <td class="response-col_status">
+           404
+           <div class="response-undocumented">
+            <i>Undocumented</i>
+           </div>
+          </td>
+          <td class="response-col_description">
+           <div>
+            <h5>Getting continous response... to stop, press 'Clear'</h5>
+            <pre class="microlight">
+             <span class="headerline">heelo</span>
+            </pre>
+           </div>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
     </div>
    </div>
   </div>
- </div>
- </div>
  </div> 
  */

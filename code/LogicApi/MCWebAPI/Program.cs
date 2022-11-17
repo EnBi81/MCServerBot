@@ -1,18 +1,15 @@
 using Loggers;
 using Loggers.Loggers;
 using MCWebAPI;
-using System.Reflection;
 
-Console.WriteLine("Calling: " + Assembly.GetCallingAssembly()?.Location);
-Console.WriteLine("Executing: " + Assembly.GetExecutingAssembly()?.Location);
-Console.WriteLine("Entry: " + Assembly.GetEntryAssembly()?.Location);
+
+
 
 LogService.CreateLogService()
                 .AddLogger<NetworkLogger>()
                 .AddLogger<HamachiLogger>()
                 .AddLogger<MinecraftLogger>()
                 .AddLogger<WebApiLogger>();
-
 
 try
 {
