@@ -33,7 +33,8 @@ namespace MCWebAPI.Middlewares
             ulong id = Interlocked.Increment(ref requestId);
 
             var request = context.Request;
-            string logRequest = $"{id}-request: {request.Method} {request.Path}{request.QueryString.Value}";
+            bool isWebsocketRequest = request.HttpContext.WebSockets.IsWebSocketRequest;
+            string logRequest = $"{id}-request: {request.Method} {request.Path}{request.QueryString.Value} {(isWebsocketRequest ? "(Websockets)" : "")}";
             _logger.Log("middleware", logRequest);
 
             await _next(context);
