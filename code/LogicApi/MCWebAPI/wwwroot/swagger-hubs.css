@@ -1,12 +1,23 @@
-﻿.opblock[data-opblock-hub] {
-    border-color: #80007e !important;
-    background: rgba(254,97,248,.1) !important;
+﻿.opblock[data-opblock-hub='send'] {
+    --strong-color: #80007e;
+    --background-color: rgba(254,97,248,.1);
+}
+
+.opblock[data-opblock-hub='listen'] {
+    --strong-color: #ffd600;
+    --transparent-color: rgba(255,240,0,.1);
+}
+
+
+.opblock[data-opblock-hub] {
+    border-color: var(--strong-color) !important;
+    background: var(--transparent-color) !important;
 }
 
 .opblock[data-opblock-hub] .opblock-summary-method {
-    background: #80007e !important;
+    background: var(--strong-color) !important;
 }
 
 .opblock[data-opblock-hub] span::after {
-    background: #80007e !important;
+    background: var(--strong-color) !important;
 }
