@@ -22,6 +22,7 @@
         this.executeWrapper = new SignalRBodyExecuteWrapper(this.opblockBodyElement);
         this.executeWrapper.cleared = () => this.cleared();
         this.executeWrapper.executed = () => this.execute();
+        this.executeWrapper.closed = () => this.stopExecute();
 
         this.responseWrapper = new SignalRResponseWrapper(this.opblockBodyElement);
     }
@@ -71,11 +72,11 @@
     }
 
     stopExecute() {
-        this.signalrConnection.stop();
+        if (this.signalrConnection != null)
+            this.signalrConnection.stop();
     }
 
     cleared() {
-        this.stopExecute();
         this.responseWrapper.resetToDefault();
     }
 }

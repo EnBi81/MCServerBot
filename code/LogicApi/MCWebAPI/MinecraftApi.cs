@@ -93,16 +93,8 @@ namespace MCWebAPI
                     options.DisplayOperationId();
                     options.EnableTryItOutByDefault();
                     options.OAuthScopes("bearer");
-
-                    options.InjectStylesheet("/swagger-hubs.css");
-                    options.InjectJavascript("https://code.jquery.com/jquery-3.6.1.min.js");
-                    options.InjectJavascript("https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js");
-                    //options.InjectJavascript("/swagger-extension.js");
-
-                    options.InjectJavascript("/CustomMutationObserver.js");
-                    options.InjectJavascript("/SignalRBodyExecuteWrapper.js");
-                    options.InjectJavascript("/SignalRResponseWrapper.js");
-                    options.InjectJavascript("/SignalRPathListenerSwagger.js");
+                    
+                    options.InjectJavascript("/swagger-extension.js");
                 });
             }
 

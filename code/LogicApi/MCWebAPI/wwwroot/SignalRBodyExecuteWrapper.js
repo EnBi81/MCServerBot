@@ -36,6 +36,7 @@
     }
     
     close() {
+        this.closed();
         this.mutationListener.close();
         this.removeClearButton();
         this.removeCloneButton();
@@ -55,6 +56,8 @@
             return;
         if (!buttonElement.classList.contains(this.#executeButtonClass))
             return;
+
+        this.cleared();
 
         this.removeCloneButton();
         this.removeClearButton();
@@ -98,6 +101,7 @@
         clearButton.setAttribute("class", "btn btn-clear opblock-control__btn");
         clearButton.textContent = "Clear";
         clearButton.onclick = () => {
+            this.cleared();
             this.removeClearButton(true);
         }
 
@@ -117,7 +121,7 @@
         this.executeWrapper.classList.remove(this.#btnGroupClass);
         this.executeWrapper.classList.add(this.#executeWrapperClass)
 
-        this.cleared();
+        this.closed();
     }
 
     isExpanded() {
@@ -126,6 +130,7 @@
     }
 
 
+    closed() { }
     cleared() { }
     executed() { }
 }

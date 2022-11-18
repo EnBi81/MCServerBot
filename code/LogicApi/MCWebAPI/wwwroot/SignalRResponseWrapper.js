@@ -7,10 +7,32 @@
     responsesInnerElement;
     responseTextContainer;
 
+    mutationListener;
+
     constructor(opblockBody) {
-        this.responsesElement = opblockBody.querySelector(`.${this.#responsesClass}`);
+        let responsesElement = opblockBody.querySelector(`.${this.#responsesClass}`);
+
+        if (responsesElement != null) {
+            this.#setup(responsesElement);
+            return;
+        }
+
+        this.mutationListener = new CustomMutationObserver(opblockBody,
+            (node) => {
+                if (node.classList.contains(this.#responsesClass))
+                    this.#setup(node);
+            });
+        this.mutationListener.start();
+
+    }
+
+    #setup(node) {
+        this.responsesElement = node;
         this.responsesInnerElement = this.responsesElement.querySelector('.responses-inner');
         this.responsesElement.querySelector('.responses-table').remove();
+
+        if (this.mutationListener != null)
+            this.mutationListener.close();
     }
 
     resetToDefault() {
