@@ -10,7 +10,7 @@ namespace SignalRSwaggerGen.Attributes
     /// <summary>
 	/// Use this attribute to enable Swagger documentation for a listener
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Constructor, AllowMultiple = true, Inherited = false)]
     public class SignalRListenerAttribute : Attribute
     {
         public string Name { get; }

@@ -59,7 +59,3 @@
         }
     }
 }
-
-
-const targetNode = document.querySelector('div.swagger-ui');
-let sections = sectionParent.querySelectorAll('.opblock-tag-section');
