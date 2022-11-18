@@ -6,10 +6,16 @@
     addedListener;
     removedListener;
 
+    subtree = false;
+
     constructor(targetNode, addedListener, removedListener) {
         this.targetNode = targetNode;
         this.addedListener = addedListener;
         this.removedListener = removedListener;
+    }
+
+    withSubtree() {
+        this.subtree = true;
     }
 
     start() {
@@ -36,7 +42,7 @@
         this.mutationListener = new MutationObserver(callback);
 
 
-        this.mutationListener.observe(this.targetNode, { childList: true });
+        this.mutationListener.observe(this.targetNode, { childList: true, subtree: this.subtree });
     }
 
 

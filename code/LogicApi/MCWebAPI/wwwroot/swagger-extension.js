@@ -20,7 +20,9 @@ const scriptTagsToLoad = [
     "/CustomMutationObserver.js",
     "/SignalRBodyExecuteWrapper.js",
     "/SignalRResponseWrapper.js",
+    "/SignalRParameterSwagger.js",
     "/SignalRPathListenerSwagger.js",
+    "/SignalRPathSenderSwagger.js",
     "/SignalRPathSwagger.js",
     "/SignalRHubSwagger.js",
     "/SignalRSwaggerSetup.js"

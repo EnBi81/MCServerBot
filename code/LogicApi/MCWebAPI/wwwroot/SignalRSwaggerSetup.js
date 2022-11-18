@@ -1,4 +1,21 @@
-﻿class SignalRSwaggerSetup {
+﻿(function () {
+    let setup = null;
+
+    let swaggerUIId = document.querySelector('#swagger-ui');
+    let observer = new CustomMutationObserver(swaggerUIId, (node) => {
+        if (node.classList.contains('wrapper')) {
+            if (setup == null)
+                setup = new SignalRSwaggerSetup();
+            observer.close();
+        }
+    });
+    observer.withSubtree();
+    observer.start();
+})()
+
+
+
+class SignalRSwaggerSetup {
 
     swaggerUINode;
 
@@ -9,6 +26,7 @@
     mutationObserver;
     
     constructor() {
+
         this.swaggerUINode = document.querySelector('div.swagger-ui');
 
         let sections = this.swaggerUINode.querySelectorAll('.opblock-tag-section');
@@ -59,3 +77,4 @@
         }
     }
 }
+

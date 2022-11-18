@@ -9,7 +9,10 @@
 
     mutationListener;
 
-    constructor(opblockBody) {
+    config
+
+    constructor(opblockBody, config) {
+        this.config = config;
         let responsesElement = opblockBody.querySelector(`.${this.#responsesClass}`);
 
         if (responsesElement != null) {
@@ -42,7 +45,7 @@
     resetToExecute(hubPath, hubMethod, isFail) {
         this.responsesInnerElement.innerHTML = this.#baseResponseDiv;
         let urlElement = this.responsesInnerElement.querySelector('.request-url .microlight');
-        urlElement.textContent = `Hub: '${location.origin}${hubPath}'  |  Listening on: '${hubMethod}'`;
+        urlElement.textContent = `Hub: '${location.origin}${hubPath}'  |  ${this.config.methodDecoration}: '${hubMethod}'`; // Listening on
 
         let responseRow = this.responsesInnerElement.querySelector('.response');
         let responseStatusCode = responseRow.querySelector('.response-col_status');
@@ -55,9 +58,9 @@
             this.responseTextContainer.innerHTML = '';
         }
         else {
-            responseStatusCode.textContent = 'Listening...';
-            description.textContent = '	Getting continous response... to stop, press \'Clear\'';
-            this.responseTextContainer.innerHTML = '<span class="headerline">Listening...</span>';
+            responseStatusCode.textContent = this.config.responseStatusCode;//'Listening...';
+            description.textContent = this.config.description; //'	Getting continous response... to stop, press \'Clear\'';
+            this.responseTextContainer.innerHTML = `<span class="headerline">${this.config.headerLine}</span>`;//Listening...
         }
     }
 
@@ -65,11 +68,9 @@
         if (this.responseTextContainer == null)
             return;
 
-        console.log(array);
-
         let span = document.createElement('span');
         span.classList.add('headerline');
-        let text = array.join(', ');
+        let text = array.join(' | ');
         span.textContent = text;
 
         this.responseTextContainer.appendChild(span);

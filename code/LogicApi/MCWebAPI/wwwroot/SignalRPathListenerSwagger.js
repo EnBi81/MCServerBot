@@ -24,7 +24,12 @@
         this.executeWrapper.executed = () => this.execute();
         this.executeWrapper.closed = () => this.stopExecute();
 
-        this.responseWrapper = new SignalRResponseWrapper(this.opblockBodyElement);
+        this.responseWrapper = new SignalRResponseWrapper(this.opblockBodyElement, {
+            methodDecoration: 'Listening on',
+            responseStatusCode: 'Listening...',
+            description: 'Getting continous response... to stop, press \'Clear\'',
+            headerLine: 'Listening...'
+        });
     }
 
     close() {

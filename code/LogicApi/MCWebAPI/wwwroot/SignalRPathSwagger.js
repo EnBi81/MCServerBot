@@ -4,6 +4,8 @@
     isListener;
 
     pathListener;
+    pathSender;
+
     mutationListener;
 
     
@@ -30,6 +32,8 @@
             this.isListener = false;
             opblock.setAttribute("data-opblock-hub", "send");
             summaryMethodElement.textContent = 'SEND';
+
+            this.#createSenderIfAvailable();
         }
         
         this.mutationListener = new CustomMutationObserver(
@@ -40,6 +44,8 @@
 
                 if (this.isListener)
                     this.#createListenerIfAvailable();
+                else
+                    this.#createSenderIfAvailable();
             },
             (node) => {
                 if (node.tagName.toLowerCase() === 'noscript')
@@ -48,6 +54,7 @@
 
                 if (this.isListener)
                     this.pathListener.close();
+                else this.pathSender.close();
             }
         );
 
@@ -62,11 +69,20 @@
         }
     }
 
+    #createSenderIfAvailable() {
+        let opblockBody = this.opblock.querySelector('.opblock-body');
+        if (opblockBody != null) {
+            this.pathSender = new SignalRPathSenderSwagger(opblockBody, this.getPath());
+        }
+    }
+
     close() {
         this.mutationListener.close();
         
         if (this.pathListener != null)
             this.pathListener.close();
+        if (this.pathSender != null)
+            this.pathSender.close();
     }
 
     getPath() {
