@@ -17,15 +17,7 @@
 const scriptTagsToLoad = [
     "https://code.jquery.com/jquery-3.6.1.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js",
-    "/CustomMutationObserver.js",
-    "/SignalRBodyExecuteWrapper.js",
-    "/SignalRResponseWrapper.js",
-    "/SignalRParameterSwagger.js",
-    "/SignalRPathListenerSwagger.js",
-    "/SignalRPathSenderSwagger.js",
-    "/SignalRPathSwagger.js",
-    "/SignalRHubSwagger.js",
-    "/SignalRSwaggerSetup.js"
+    "/SignalRSwaggerExtension.js",
 ]
 
 const cssToLoad = ["/swagger-hubs.css"]

@@ -85,23 +85,7 @@
 
         return null;
     }
-
-    #toFloat32(text) {
-
-    }
-
-    #toFloat64(text) {
-
-    }
-
-    #toInt64(text) {
-
-    }
-
-    #toInt32(text) {
-
-    }
-
+    
     getValue() {
         return this.#getCorrectValue(this.parameterType, this.valueTd);
     }
