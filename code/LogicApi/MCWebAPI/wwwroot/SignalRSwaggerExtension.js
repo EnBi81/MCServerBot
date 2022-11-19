@@ -726,8 +726,6 @@ class SignalRResponseWrapper {
     }
 }
 
-
-
 class SignalRSwaggerSetup {
 
     swaggerUINode;
