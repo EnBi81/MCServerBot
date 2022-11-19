@@ -45,9 +45,14 @@ WEB API features:
 
 ## TODO:
 (Before starting the websites and discord bot)
-- Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-- Minecraft command autocomplete
-- choose server icon
+1. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+2. choose server icon
+3. backup (auto + manual)
+4. c# client + discord
+5. js client + old page
+6. new blazor pages
+7. Minecraft command autocomplete
+
 
 
 ## Setup
