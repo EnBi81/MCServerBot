@@ -33,7 +33,7 @@
     <ProjectReference Include="..\..\DataTier\DataStorageSQLite\DataStorageSQLite.csproj" />
     <ProjectReference Include="..\..\Logic\HamachiCli\HamachiCli.csproj" />
     <ProjectReference Include="..\APIModel\APIModel.csproj" />
-    <ProjectReference Include="..\SignalRSwagger\SignalRUtils.csproj" />
+    <ProjectReference Include="..\SignalRSwaggerGen\SignalRSwaggerGen.csproj" />
   </ItemGroup>
 
   <ItemGroup>

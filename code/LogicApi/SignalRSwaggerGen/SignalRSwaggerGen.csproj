@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <Authors>Dorin Mocan</Authors>

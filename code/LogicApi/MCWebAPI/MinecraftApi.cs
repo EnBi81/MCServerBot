@@ -4,7 +4,7 @@ using MCWebAPI.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using SharedPublic.Model;
-using SignalRUtils;
+using SignalRSwaggerGen;
 using System.Reflection;
 
 namespace MCWebAPI
@@ -57,7 +57,7 @@ namespace MCWebAPI
                 $"https://*:{builder.Configuration["ApiSettings:HttpsPort"]}", 
                 $"http://*:{builder.Configuration["ApiSettings:HttpPort"]}");
 
-            logger.Log("start", "Listening on ports: https://*:" + builder.Configuration["ApiSettings:HttpsPort"]);
+            logger.Log("start", "Listening on: https://*:" + builder.Configuration["ApiSettings:HttpsPort"]);
 
             logger.Log("start", "Building application");
         }
