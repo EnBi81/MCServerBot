@@ -4,9 +4,10 @@
     let swaggerUIId = document.querySelector('#swagger-ui');
     let observer = new CustomMutationObserver(swaggerUIId, (node) => {
         if (node.classList.contains('wrapper')) {
-            if (setup == null)
+            if (setup == null) {
                 setup = new SignalRSwaggerSetup();
-            observer.close();
+                observer.close();
+            }
         }
     });
     observer.withSubtree();
