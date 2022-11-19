@@ -18,8 +18,7 @@
 class SignalRSwaggerSetup {
 
     swaggerUINode;
-
-    hubNames = ["ServerParkHub"];
+    
 
     swaggerHubs = []
 
@@ -69,7 +68,7 @@ class SignalRSwaggerSetup {
             let hub = new SignalRHubSwagger(section);
             let name = hub.getName();
 
-            if (!this.hubNames.includes(name))
+            if (!name.endsWith('Hub'))
                 continue;
 
             this.swaggerHubs.push(hub);

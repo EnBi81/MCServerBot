@@ -53,6 +53,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-generator", "api-genera
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRSwaggerGen", "code\LogicApi\SignalRSwaggerGen\SignalRSwaggerGen.csproj", "{9B2C7A5D-CCE1-4012-8E29-B875BA035F37}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "signalr-swagger", "signalr-swagger", "{A95C6FEB-2F80-43D2-96D2-6A1E412E8448}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\signalRSwagger\CustomMutationObserver.js = Tools\signalRSwagger\CustomMutationObserver.js
+		Tools\signalRSwagger\SignalRBodyExecuteWrapper.js = Tools\signalRSwagger\SignalRBodyExecuteWrapper.js
+		Tools\signalRSwagger\SignalRHubSwagger.js = Tools\signalRSwagger\SignalRHubSwagger.js
+		Tools\signalRSwagger\SignalRParameterSwagger.js = Tools\signalRSwagger\SignalRParameterSwagger.js
+		Tools\signalRSwagger\SignalRPathListenerSwagger.js = Tools\signalRSwagger\SignalRPathListenerSwagger.js
+		Tools\signalRSwagger\SignalRPathSenderSwagger.js = Tools\signalRSwagger\SignalRPathSenderSwagger.js
+		Tools\signalRSwagger\SignalRPathSwagger.js = Tools\signalRSwagger\SignalRPathSwagger.js
+		Tools\signalRSwagger\SignalRResponseWrapper.js = Tools\signalRSwagger\SignalRResponseWrapper.js
+		Tools\signalRSwagger\SignalRSwaggerSetup.js = Tools\signalRSwagger\SignalRSwaggerSetup.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +143,7 @@ Global
 		{25DBEDB1-1ED0-4600-B5B9-BFDDAB13B4C7} = {7A73EF55-EEF0-4AFA-A0B0-C3A7277CCA85}
 		{998C7043-3BFA-4B65-A0BC-92CA1BC0CB90} = {7A73EF55-EEF0-4AFA-A0B0-C3A7277CCA85}
 		{9B2C7A5D-CCE1-4012-8E29-B875BA035F37} = {ABEB08F5-43D3-4D8E-9FD1-28362A396136}
+		{A95C6FEB-2F80-43D2-96D2-6A1E412E8448} = {7A73EF55-EEF0-4AFA-A0B0-C3A7277CCA85}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4285A17D-FC0E-44FE-869F-7AACEFFF0290}

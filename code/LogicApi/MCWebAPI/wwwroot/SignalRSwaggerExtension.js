@@ -726,28 +726,12 @@ class SignalRResponseWrapper {
     }
 }
 
-(function () {
-    let setup = null;
-
-    let swaggerUIId = document.querySelector('#swagger-ui');
-    let observer = new CustomMutationObserver(swaggerUIId, (node) => {
-        if (node.classList.contains('wrapper')) {
-            if (setup == null)
-                setup = new SignalRSwaggerSetup();
-            observer.close();
-        }
-    });
-    observer.withSubtree();
-    observer.start();
-})()
-
 
 
 class SignalRSwaggerSetup {
 
     swaggerUINode;
 
-    hubNames = ["ServerParkHub"];
 
     swaggerHubs = []
 
@@ -797,7 +781,7 @@ class SignalRSwaggerSetup {
             let hub = new SignalRHubSwagger(section);
             let name = hub.getName();
 
-            if (!this.hubNames.includes(name))
+            if (!name.endsWith('Hub'))
                 continue;
 
             this.swaggerHubs.push(hub);
@@ -805,4 +789,19 @@ class SignalRSwaggerSetup {
         }
     }
 }
+
+(function () {
+    let setup = null;
+
+    let swaggerUIId = document.querySelector('#swagger-ui');
+    let observer = new CustomMutationObserver(swaggerUIId, (node) => {
+        if (node.classList.contains('wrapper')) {
+            if (setup == null)
+                setup = new SignalRSwaggerSetup();
+            observer.close();
+        }
+    });
+    observer.withSubtree();
+    observer.start();
+})()
 
