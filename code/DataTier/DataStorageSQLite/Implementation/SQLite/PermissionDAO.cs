@@ -1,8 +1,8 @@
 ﻿using Application.DAOs.Database;
 using DataStorageSQLite.Implementations.SQLite.SQLiteEngine;
 using Newtonsoft.Json.Linq;
-using SharedPublic.DTOs;
-using SharedPublic.DTOs.Enums;
+using Shared.DTOs;
+using Shared.DTOs.Enums;
 
 namespace DataStorageSQLite.Implementation.SQLite
 {

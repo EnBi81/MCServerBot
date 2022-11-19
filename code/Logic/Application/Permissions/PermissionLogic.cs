@@ -1,7 +1,7 @@
 ﻿using Application.DAOs;
 using Application.DAOs.Database;
-using SharedPublic.DTOs;
-using SharedPublic.Exceptions;
+using Shared.DTOs;
+using Shared.Exceptions;
 using System.Security.Cryptography;
 using System.Text;
 

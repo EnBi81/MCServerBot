@@ -1,9 +1,9 @@
 ﻿using APIModel.DTOs;
-using SharedPublic.DTOs;
-using SharedPublic.EventHandlers;
-using SharedPublic.Exceptions;
+using Shared.DTOs;
+using Shared.EventHandlers;
+using Shared.Exceptions;
 
-namespace SharedPublic.Model
+namespace Shared.Model
 {
     /// <summary>
     /// A cozy place to manage the minecraft servers

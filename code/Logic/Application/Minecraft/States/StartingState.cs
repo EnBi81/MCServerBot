@@ -1,6 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
-using SharedPublic.Exceptions;
-using SharedPublic.Model;
+using Shared.Exceptions;
+using Shared.Model;
 using System.Text.RegularExpressions;
 
 namespace Application.Minecraft.States

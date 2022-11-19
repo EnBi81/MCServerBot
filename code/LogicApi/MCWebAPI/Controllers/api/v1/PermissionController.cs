@@ -3,7 +3,7 @@ using APIModel.Responses;
 using Application.Permissions;
 using MCWebAPI.APIExceptions;
 using Microsoft.AspNetCore.Mvc;
-using SharedPublic.DTOs;
+using Shared.DTOs;
 
 namespace MCWebAPI.Controllers.api.v1
 {

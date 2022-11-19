@@ -1,7 +1,7 @@
 ﻿
-using SharedPublic.DTOs.Enums;
+using Shared.DTOs.Enums;
 
-namespace SharedPublic.DTOs
+namespace Shared.DTOs
 {
     public struct UserEventData
     {

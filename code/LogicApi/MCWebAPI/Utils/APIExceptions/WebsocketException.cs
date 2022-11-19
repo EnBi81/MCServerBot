@@ -1,4 +1,4 @@
-﻿using SharedPublic.Exceptions;
+﻿using Shared.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

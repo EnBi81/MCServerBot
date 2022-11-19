@@ -1,7 +1,7 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
 using Microsoft.AspNetCore.Identity;
-using SharedPublic.DTOs;
+using Shared.DTOs;
 
 namespace MCWebAPI.Auth
 {

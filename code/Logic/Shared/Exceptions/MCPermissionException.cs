@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedPublic.Exceptions 
+namespace Shared.Exceptions 
 { 
     
     public class MCPermissionException : MCExternalException

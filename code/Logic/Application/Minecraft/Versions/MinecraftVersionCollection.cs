@@ -1,6 +1,6 @@
 ﻿using Loggers;
-using SharedPublic.Exceptions;
-using SharedPublic.Model;
+using Shared.Exceptions;
+using Shared.Model;
 using System.Collections;
 
 namespace Application.Minecraft.Versions

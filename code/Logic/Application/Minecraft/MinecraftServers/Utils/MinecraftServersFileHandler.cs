@@ -1,4 +1,4 @@
-﻿using SharedPublic.Exceptions;
+﻿using Shared.Exceptions;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {

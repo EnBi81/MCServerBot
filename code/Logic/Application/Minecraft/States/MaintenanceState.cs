@@ -1,7 +1,7 @@
 ﻿using Application.Minecraft.MinecraftServers;
-using SharedPublic.Exceptions;
-using SharedPublic.Model;
-using static SharedPublic.Model.ILogMessage;
+using Shared.Exceptions;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.States
 {

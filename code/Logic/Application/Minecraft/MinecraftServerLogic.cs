@@ -3,11 +3,11 @@ using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
-using SharedPublic.DTOs;
-using SharedPublic.Exceptions;
-using SharedPublic.Model;
+using Shared.DTOs;
+using Shared.Exceptions;
+using Shared.Model;
 using System.Diagnostics;
-using static SharedPublic.Model.ILogMessage;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft
 {

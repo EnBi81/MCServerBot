@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedPublic.Attributes
+namespace Shared.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class ValidValuesAttribute : Attribute

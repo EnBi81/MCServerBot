@@ -1,5 +1,5 @@
 ﻿using Loggers;
-using SharedPublic.Model;
+using Shared.Model;
 
 namespace Application.Minecraft.MinecraftServers
 {

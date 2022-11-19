@@ -1,6 +1,6 @@
-﻿using SharedPublic.Exceptions;
-using SharedPublic.Model;
-using static SharedPublic.Model.ILogMessage;
+﻿using Shared.Exceptions;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States

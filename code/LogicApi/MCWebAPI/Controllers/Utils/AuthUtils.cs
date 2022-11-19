@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using SharedPublic.DTOs;
-using SharedPublic.DTOs.Enums;
+using Shared.DTOs;
+using Shared.DTOs.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

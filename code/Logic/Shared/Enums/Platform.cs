@@ -1,4 +1,4 @@
-﻿namespace SharedPublic.DTOs.Enums
+﻿namespace Shared.DTOs.Enums
 {
     public enum Platform
     {

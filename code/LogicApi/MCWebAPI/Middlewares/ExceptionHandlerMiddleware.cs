@@ -1,6 +1,6 @@
 ﻿using APIModel.Responses;
 using Loggers.Loggers;
-using SharedPublic.Exceptions;
+using Shared.Exceptions;
 
 namespace MCWebAPI.Middlewares
 {

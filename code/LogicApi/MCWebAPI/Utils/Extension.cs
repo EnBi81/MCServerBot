@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SharedPublic.Exceptions;
+using Shared.Exceptions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MCWebAPI.Utils

@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.SignalR.Client;
-using SharedPublic.DTOs;
+using Shared.DTOs;
 using System.Reflection;
 using System.Security.Cryptography;
 

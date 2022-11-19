@@ -1,8 +1,8 @@
-﻿using SharedPublic.Model;
+﻿using Shared.Model;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace SharedPublic.DTOs
+namespace Shared.DTOs
 {
     public class ModifyServerDto
     {

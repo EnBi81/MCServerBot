@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using SharedPublic.Attributes;
+using Shared.Attributes;
 
-namespace SharedPublic.DTOs
+namespace Shared.DTOs
 {
     public class MinecraftServerCreationPropertiesDto : MinecraftServerPropertiesDto
     {

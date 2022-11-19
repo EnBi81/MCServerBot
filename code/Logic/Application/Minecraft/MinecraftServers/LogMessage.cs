@@ -1,5 +1,5 @@
-﻿using SharedPublic.Model;
-using static SharedPublic.Model.ILogMessage;
+﻿using Shared.Model;
+using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.MinecraftServers
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedPublic.DTOs.Enums
+namespace Shared.DTOs.Enums
 {
     public enum PlayerEventType
     {

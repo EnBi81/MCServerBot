@@ -1,4 +1,4 @@
-﻿namespace SharedPublic.Model
+﻿namespace Shared.Model
 {
     /// <summary>
     /// Represents a single log message, its type and the message itself.

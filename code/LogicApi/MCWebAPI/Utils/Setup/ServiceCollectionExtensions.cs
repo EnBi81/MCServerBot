@@ -9,8 +9,8 @@ using MCWebAPI.WebSocketHandler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SharedPublic.DTOs;
-using SharedPublic.Model;
+using Shared.DTOs;
+using Shared.Model;
 using System.Text;
 using System.Security.Claims;
 

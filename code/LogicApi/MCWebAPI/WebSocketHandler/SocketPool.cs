@@ -1,10 +1,10 @@
 ﻿using Loggers;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
-using SharedPublic.Model;
-using SharedPublic.EventHandlers;
+using Shared.Model;
+using Shared.EventHandlers;
 using Application.Permissions;
-using SharedPublic.DTOs;
+using Shared.DTOs;
 using Loggers.Loggers;
 
 namespace MCWebAPI.WebSocketHandler

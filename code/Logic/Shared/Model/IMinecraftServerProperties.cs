@@ -1,6 +1,6 @@
-﻿using SharedPublic.DTOs;
+﻿using Shared.DTOs;
 
-namespace SharedPublic.Model
+namespace Shared.Model
 {
     public interface IMinecraftServerProperties
     {

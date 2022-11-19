@@ -2,10 +2,10 @@
 using Application.DAOs;
 using Application.Minecraft.Util;
 using Loggers;
-using SharedPublic.DTOs;
-using SharedPublic.EventHandlers;
-using SharedPublic.Exceptions;
-using SharedPublic.Model;
+using Shared.DTOs;
+using Shared.EventHandlers;
+using Shared.Exceptions;
+using Shared.Model;
 
 namespace Application.Minecraft
 {

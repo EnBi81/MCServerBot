@@ -1,6 +1,6 @@
-﻿using SharedPublic.Model;
+﻿using Shared.Model;
 
-namespace SharedPublic.EventHandlers
+namespace Shared.EventHandlers
 {
     public class ServerValueChangedEventArgs<T> : ServerValueEventArgs<T>
     {

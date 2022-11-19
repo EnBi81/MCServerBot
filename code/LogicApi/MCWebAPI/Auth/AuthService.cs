@@ -5,8 +5,8 @@ using Application.DAOs.Database;
 using Application.Permissions;
 using MCWebAPI.APIExceptions;
 using MCWebAPI.Controllers.Utils;
-using SharedPublic.DTOs;
-using SharedPublic.DTOs.Enums;
+using Shared.DTOs;
+using Shared.DTOs.Enums;
 
 namespace MCWebAPI.Auth
 {

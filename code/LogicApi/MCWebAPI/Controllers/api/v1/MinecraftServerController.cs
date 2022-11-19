@@ -2,8 +2,8 @@
 using APIModel.Responses;
 using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
-using SharedPublic.DTOs;
-using SharedPublic.Model;
+using Shared.DTOs;
+using Shared.Model;
 
 namespace MCWebAPI.Controllers.api.v1
 {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Application.Minecraft.MinecraftServers;
-using SharedPublic.Model;
-using static SharedPublic.Model.ILogMessage;
+using Shared.Model;
+using static Shared.Model.ILogMessage;
 using MCWebAPI.Utils;
 
 namespace MCWebAPI.WebSocketHandler

@@ -1,8 +1,8 @@
 ﻿using Application.DAOs.Database;
 using Application.Minecraft.Versions;
 using Loggers;
-using SharedPublic.DTOs;
-using SharedPublic.Model;
+using Shared.DTOs;
+using Shared.Model;
 
 namespace Application.Minecraft
 {

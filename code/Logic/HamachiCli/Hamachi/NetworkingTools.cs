@@ -1,6 +1,6 @@
 ﻿using Loggers;
 using Loggers.Loggers;
-using SharedPublic.Exceptions;
+using Shared.Exceptions;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;

@@ -4,8 +4,8 @@ using Application.Minecraft.Versions;
 using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SharedPublic.Exceptions;
-using SharedPublic.Model;
+using Shared.Exceptions;
+using Shared.Model;
 
 namespace MCWebAPI.Controllers.api.v1
 {

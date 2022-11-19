@@ -1,4 +1,4 @@
-﻿using SharedPublic.DTOs;
+﻿using Shared.DTOs;
 
 namespace Application.DAOs.Database
 {

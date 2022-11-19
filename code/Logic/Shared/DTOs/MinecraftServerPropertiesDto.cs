@@ -1,10 +1,10 @@
-﻿using SharedPublic.Attributes;
-using SharedPublic.Exceptions;
+﻿using Shared.Attributes;
+using Shared.Exceptions;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace SharedPublic.DTOs
+namespace Shared.DTOs
 {
     public class MinecraftServerPropertiesDto
     {
