@@ -3,7 +3,6 @@ using Loggers.Loggers;
 using MCWebAPI.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.FileProviders;
 using SharedPublic.Model;
 using SignalRUtils;
 using System.Reflection;
@@ -52,7 +51,14 @@ namespace MCWebAPI
                 .AddModelElements(builder.Configuration)
                 .AddAPIElements(builder.Configuration);
 
+            builder.Logging.ClearProviders();
             
+            builder.WebHost.UseUrls(
+                $"https://*:{builder.Configuration["ApiSettings:HttpsPort"]}", 
+                $"http://*:{builder.Configuration["ApiSettings:HttpPort"]}");
+
+            logger.Log("start", "Listening on ports: https://*:" + builder.Configuration["ApiSettings:HttpsPort"]);
+
             logger.Log("start", "Building application");
         }
 
@@ -106,7 +112,7 @@ namespace MCWebAPI
             app.UseAuthorization();
             app.MapControllers();
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-            app.UseEndpoints(endpoint => endpoint.MapGet("swaggergethubs", () => { return new List<string> { "ServerParkHub" }; }));
+            
 
             app.UseCors(cors => cors
                 .AllowAnyMethod()
@@ -128,4 +134,5 @@ namespace MCWebAPI
                 app.Services.GetRequiredService<IServerPark>();
         }
     }
+    
 }

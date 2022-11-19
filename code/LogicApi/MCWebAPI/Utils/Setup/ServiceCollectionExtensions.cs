@@ -31,6 +31,7 @@ namespace MCWebAPI.Utils.Setup
             collection.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             collection.AddEndpointsApiExplorer();
+            
 
             collection.AddApiVersioning(setup =>
             {

@@ -6,6 +6,10 @@
     }
   },
   "AllowedHosts": "*",
+  "ApiSettings": {
+    "HttpsPort": "7229",
+    "HttpPort": "5229"
+  },
   "Jwt": {
     "Key": "Put your jwt key here",
     "Issuer": "MCServerApi",
