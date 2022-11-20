@@ -34,7 +34,12 @@ namespace Shared.Model
         /// <summary>
         /// Server is in Maintenance mode, it is not online, but it is not offline either.
         /// </summary>
-        Maintenance
+        Maintenance,
+
+        /// <summary>
+        /// Server is backing up, it is offline but no action is allowed.
+        /// </summary>
+        BackUp
     }
 
     /// <summary>
@@ -56,6 +61,7 @@ namespace Shared.Model
                 ServerStatus.Online => "Online",
                 ServerStatus.ShuttingDown => "Shutting Down",
                 ServerStatus.Maintenance => "Maintenance",
+                ServerStatus.BackUp => "Backup",
                 _ => "NOT IMPLEMENTED SERVER STATUS"
             };
         }

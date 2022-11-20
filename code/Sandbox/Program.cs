@@ -7,29 +7,21 @@ using System.Security.Cryptography;
 
 namespace Sandbox
 {
-    
+    interface A { }
+    class B : A { }
+    class C : A { }
+    class D : A { }
+
     public class SandBoxClass
     {
-
+        
         static async Task Main(string[] args)
         {
-            var connection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:7229/hubs/serverpark")
-                .WithAutomaticReconnect()
-                .Build();
+            A a = new C();
 
-            connection.Closed += async (e) => Console.WriteLine("Connection closed " + e?.Message);
-            connection.On<string>("Receive", (message) => Console.WriteLine(message));
-            await connection.StartAsync();
-            Console.WriteLine("Connection started");
+            bool exp = a is not C and not D;
 
-
-            while (true)
-            {
-                var text = Console.ReadLine();
-                await connection.InvokeAsync("Hi", text);
-            }
-            await Task.Delay(-1);
+            Console.WriteLine(exp);
         }
 
 

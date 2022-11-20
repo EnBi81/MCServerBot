@@ -1,6 +1,6 @@
-﻿using Shared.Exceptions;
+﻿using Application.Minecraft.States.Abstract;
+using Shared.Exceptions;
 using Shared.Model;
-using static Shared.Model.ILogMessage;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States
@@ -11,12 +11,12 @@ namespace Application.Minecraft.States
     /// </summary>
     internal class OfflineState : ServerStateAbs
     {
-
+        
         /// <summary>
         /// Initializes the Offline state, and does the offline state routine.
         /// </summary>
         /// <param name="server"></param>
-        public OfflineState(MinecraftServerLogic server) : base(server)
+        public OfflineState(MinecraftServerLogic server, string[] args) : base(server, args)
         {
             _server.StorageBytes = server.McServerProcess.GetStorage();
             _server.OnlineFrom = null;
@@ -34,35 +34,18 @@ namespace Application.Minecraft.States
         /// Returns false.
         /// </summary>
         public override bool IsRunning => false;
-
-
+        
+        public override bool IsAllowedNextState(IServerState state)
+        {
+            return state is StartingState or BackupState or MaintenanceState;
+        }
 
         /// <summary>
         /// Ignores all log messages, as there shouldn't be any logs during the server being offline.
         /// </summary>
         /// <param name="logMessage">this will be ignored anyways.</param>
         public override void HandleLog(LogMessage logMessage) { } // do nothing, no logs while server is offline
-
-        /// <summary>
-        /// Starts the server.
-        /// </summary>
-        /// <param name="username">Username of the user initiated this action.</param>
-        public override async Task Start(string username)
-        {
-            _server.SetServerState<StartingState>();
-            var logMessage = new LogMessage(username + ": " + "Starting Server " + _server.ServerName, LogMessageType.User_Message);
-            _server.AddLog(logMessage);
-            await _server.StartServerProcess();
-        }
-
-        /// <summary>
-        /// Throws exception as the server is offline. 
-        /// </summary>
-        /// <param name="username">username of the very intelligent user who tried to stop an offline server.</param>
-        /// <exception cref="MinecraftServerException">Always is thrown because yeah, the serve is offline.</exception>
-        public override Task Stop(string username) => // like who would want to stop a server when it's offline lol.
-            throw new MinecraftServerException(_server.ServerName + " is already offline!");
-
+        
         /// <summary>
         /// Throws exception as the server is offline.
         /// </summary>
@@ -71,5 +54,15 @@ namespace Application.Minecraft.States
         /// <exception cref="Exception">This is thrown always.</exception>
         public override Task WriteCommand(string? command, string username) =>
             throw new MinecraftServerException(_server.ServerName + " is not online!");
+        
+        public override Task Apply()
+        {
+            _server.StorageBytes = _server.McServerProcess.GetStorage();
+            _server.OnlineFrom = null;
+
+            _server.PerformanceReporter?.Stop();
+
+            return Task.CompletedTask;
+        }
     }
 }

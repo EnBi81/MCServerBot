@@ -2,7 +2,7 @@
 using Shared.Exceptions;
 using Shared.Model;
 
-namespace Application.Minecraft.States
+namespace Application.Minecraft.States.Abstract
 {
     /// <summary>
     /// Blueprint of a Minecraft Server State.
@@ -18,17 +18,10 @@ namespace Application.Minecraft.States
         /// </summary>
         public bool IsRunning { get; }
         /// <summary>
-        /// Starts the server process if the server is offline.
+        /// Applies the state to the server.
         /// </summary>
-        /// <param name="username"></param>
-        /// <exception cref="MinecraftServerException">If the server is not Offline.</exception>
-        public Task Start(string username);
-        /// <summary>
-        /// Stops the server if the server is online.
-        /// </summary>
-        /// <param name="username"></param>
-        /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-        public Task Stop(string username);
+        /// <param name="minecraftServer"></param>
+        public Task Apply();
         /// <summary>
         /// Handles a log message, extracts data of it and calls events based on it.
         /// </summary>
@@ -41,5 +34,12 @@ namespace Application.Minecraft.States
         /// <param name="username"></param>
         /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
         public Task WriteCommand(string? command, string username);
+        /// <summary>
+        /// Returns true if the next state is allowed to set; else false. If the state is set by user, it throws an exception.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        /// <exception cref="MinecraftServerException">If the state is illegal and should not be ignored.</exception>
+        public bool IsAllowedNextState(IServerState state);
     }
 }

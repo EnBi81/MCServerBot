@@ -1,13 +1,13 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
+using Application.Minecraft.States.Abstract;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
 using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Model;
 using System.Diagnostics;
-using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft
 {
@@ -67,7 +67,7 @@ namespace Application.Minecraft
         }
         private long _storageBytes;
 
-        private readonly Queue<ILogMessage> _logs = new Queue<ILogMessage>();
+        private readonly Queue<ILogMessage> _logs = new ();
         /// <inheritdoc/>
         public ICollection<ILogMessage> Logs => _logs.ToList();
 
@@ -151,6 +151,7 @@ namespace Application.Minecraft
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
             McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
+            CreationProperties = null!;
 
 
             McServerProcess = new MinecraftServerProcess(
@@ -192,7 +193,7 @@ namespace Application.Minecraft
                 var logMess = new LogMessage(e, LogMessageType.System_Message);
                 HandleLog(logMess);
             };
-            McServerProcess.Exited += (s, e) => SetServerState<OfflineState>();
+            McServerProcess.Exited += async (s, e) => await SetServerStateAsync<BackupState>();
             McServerProcess.ProcessIdReceived += (s, processId) =>
             {
                 PerformanceReporter = new ProcessPerformanceReporter(processId);
@@ -207,7 +208,7 @@ namespace Application.Minecraft
 
         /// <inheritdoc/>
         public Task Start(UserEventData data) =>
-            _serverState.Start(data.Username);
+            SetServerStateAsync<StartingState>(data.Username);
 
 
         /// <inheritdoc/>
@@ -216,7 +217,7 @@ namespace Application.Minecraft
 
         /// <inheritdoc/>
         public Task Shutdown(UserEventData data) =>
-            _serverState.Stop(data.Username);
+            SetServerStateAsync<ShuttingDownState>(data.Username);
 
         /// <summary>
         /// Handles the received log message according to the state of the server.
@@ -260,36 +261,43 @@ namespace Application.Minecraft
         /// </summary>
         /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
         /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
-        internal void SetServerState<T>(bool forceNewState = false) where T : IServerState
+        internal void SetServerState<T>(params string[] args) where T : IServerState =>
+             SetServerStateAsync<T>(args).Wait();
+
+        /// <summary>
+        /// Change the state of the server. Please don't put abstract or interface classes, thank you.
+        /// </summary>
+        /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
+        /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
+        internal async Task SetServerStateAsync<T>(params string[] args) where T : IServerState
         {
-            if (!forceNewState && _serverState is IServerState stateTemp && stateTemp.Status == ServerStatus.Maintenance)
-                return;
-            if(typeof(T) == typeof(MaintenanceState) && _serverState.GetType() != typeof(OfflineState))
-                throw new MCExternalException("Cannot enter maintenance mode while the server is running");
-
-
-            if (typeof(T) == _serverState?.GetType())
-                return;
-
             var type = typeof(T);
-
+            
             // here we check that the type is neither abstract nor interface, and it has a constructor which takes a minecraft server.
             if (type.IsAbstract ||
                type.IsInterface ||
-               type.GetConstructor(new Type[] { typeof(MinecraftServerLogic) }) == null) //last line: check if T contains a public constructor which takes a MinecraftServer object
+               type.GetConstructor(new Type[] { typeof(MinecraftServerLogic), typeof(string[]) }) == null) 
+               //last line: check if T contains a public constructor which takes a MinecraftServer object and string array
             {
                 throw new MCInternalException("Invalid State " + type.FullName);
             }
 
 
-            var parameters = new object[] { this };
+            var parameters = new object[] { this, args };
 
             object? nullableState = Activator.CreateInstance(type, parameters);
             if (nullableState is not IServerState state)
                 throw new MCInternalException($"Error creating {type.FullName}");
 
+            
+            if (_serverState is IServerState stateTemp)
+                if (!stateTemp.IsAllowedNextState(state))
+                    return;
+
             _serverState = state;
+            
             RaiseEvent(StatusChange, _serverState.Status);
+            await state.Apply();
         }
 
         /// <summary>

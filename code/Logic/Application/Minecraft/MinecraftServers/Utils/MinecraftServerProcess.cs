@@ -33,6 +33,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
         }
 
         /// <summary>
+        /// Gets if the server process is running.
+        /// </summary>
+        public bool IsRunning => _serverHandlerProcess?.HasExited != true;
+
+        /// <summary>
         /// Writes the text to the process' standard input.
         /// </summary>
         /// <param name="text">Text to write to the standard input.</param>

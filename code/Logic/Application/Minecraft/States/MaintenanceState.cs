@@ -1,7 +1,7 @@
 ﻿using Application.Minecraft.MinecraftServers;
+using Application.Minecraft.States.Abstract;
 using Shared.Exceptions;
 using Shared.Model;
-using static Shared.Model.ILogMessage;
 
 namespace Application.Minecraft.States
 {
@@ -13,37 +13,9 @@ namespace Application.Minecraft.States
         private bool _isRunning = false;
 
 
-        public MaintenanceState(MinecraftServerLogic server) : base(server)
-        {
-        }
+        public MaintenanceState(MinecraftServerLogic server, string[] args) : base(server, args) { }
 
         
-        /// <summary>
-        /// Starts the maintenance routine
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        public override Task Start(string username)
-        {
-            _isRunning = true;
-            var logMessage = new LogMessage(username + ": " + "Starting Server Maintenance " + _server.ServerName, LogMessageType.System_Message);
-            _server.AddLog(logMessage);
-
-            Thread t = new Thread(async () =>
-            {
-                if (IsServerNew())
-                    await CreateServerFiles();
-                else
-                    await UpgradeServerToNewVersion();
-
-                _server.SetServerState<OfflineState>();
-                _server.McServerInfos.Save(_server);
-            });
-            t.Start();
-
-            return Task.CompletedTask;
-        }
-
         /// <summary>
         /// Returns if the server is new or not
         /// </summary>
@@ -70,7 +42,7 @@ namespace Application.Minecraft.States
             await _server.McServerFileHandler.AcceptEula();
             AddSystemLog("Eula Accepted.");
 
-            _server.SetServerState<OfflineState>(true);
+            
         }
 
         /// <summary>
@@ -102,8 +74,31 @@ namespace Application.Minecraft.States
             var logMessage = new LogMessage(text, LogMessageType.System_Message);
             HandleLog(logMessage);
         }
-
         
+
+        public override bool IsAllowedNextState(IServerState state)
+        {
+            if (state is OfflineState)
+                return true;
+
+            throw new MinecraftServerException(_server.ServerName + " is in Maintenance. Please wait!");
+        }
+
+        public override async Task Apply() 
+        {
+            _isRunning = true;
+            var logMessage = new LogMessage("Starting Server Maintenance " + _server.ServerName, LogMessageType.System_Message);
+            _server.AddLog(logMessage);
+            
+            if (IsServerNew())
+                await CreateServerFiles();
+            else
+                await UpgradeServerToNewVersion();
+
+            await _server.SetServerStateAsync<OfflineState>();
+            _server.McServerInfos.Save(_server);
+        }
+
         /// <summary>
         /// Returns <see cref="ServerState.Maintenance"/>
         /// </summary>
@@ -118,13 +113,6 @@ namespace Application.Minecraft.States
         /// <param name="logMessage"></param>
         public override void HandleLog(LogMessage logMessage) => _server.AddLog(logMessage);
         /// <summary>
-        /// Cannot stop anything now.
-        /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        /// <exception cref="MinecraftServerException"></exception>
-        public override Task Stop(string username) => throw new MinecraftServerException("Please wait till the maintenance finishes!");
-        /// <summary>
         /// Cannot write command during maintenance,
         /// </summary>
         /// <param name="command"></param>
@@ -132,5 +120,6 @@ namespace Application.Minecraft.States
         /// <returns></returns>
         /// <exception cref="MinecraftServerException"></exception>
         public override Task WriteCommand(string? command, string username) => throw new MinecraftServerException("You cannot add commands during maintenance!");
+        
     }
 }

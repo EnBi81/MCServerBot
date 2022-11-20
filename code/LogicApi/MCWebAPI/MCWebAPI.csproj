@@ -38,11 +38,11 @@
 
   <ItemGroup>
     <Folder Include="Resources\Logs\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Properties\appsettings.json" />
-    <None Include="wwwroot\swagger-extension.js" />
   </ItemGroup>
 
 	<Target Name="Copy Python to Resource folder" AfterTargets="Build">

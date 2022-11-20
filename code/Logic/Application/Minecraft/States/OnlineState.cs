@@ -1,7 +1,7 @@
-﻿using Shared.Exceptions;
+﻿using Application.Minecraft.States.Abstract;
+using Shared.Exceptions;
 using Shared.Model;
 using System.Text.RegularExpressions;
-using static Shared.Model.ILogMessage;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States
@@ -17,7 +17,7 @@ namespace Application.Minecraft.States
         /// Initializes the Online state, and does the online state routine.
         /// </summary>
         /// <param name="server"></param>
-        public OnlineState(MinecraftServerLogic server) : base(server)
+        public OnlineState(MinecraftServerLogic server, string[] args) : base(server, args)
         {
             _server.OnlineFrom = DateTime.Now;
         }
@@ -32,6 +32,20 @@ namespace Application.Minecraft.States
         /// Returns true.
         /// </summary>
         public override bool IsRunning => true;
+        
+
+        public override bool IsAllowedNextState(IServerState state)
+        {
+            if (state is ShuttingDownState)
+                return true;
+
+            if (state is MaintenanceState)
+                throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Maintenance, please stop the server!");
+            if (state is BackupState)
+                throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Backing up, please stop the server!");
+
+            return false;
+        }
 
         /// <summary>
         /// Handles the log message.
@@ -76,23 +90,6 @@ namespace Application.Minecraft.States
         }
 
         /// <summary>
-        /// Throws exception as the server cant be started; it is already online.
-        /// </summary>
-        /// <param name="username"></param>
-        /// <exception cref="Exception"></exception>
-        public override Task Start(string username) =>
-            throw new MinecraftServerException(_server.ServerName + " is already running!");
-
-        /// <summary>
-        /// Stops the server by writing stop to the server process window.
-        /// </summary>
-        /// <param name="username"></param>
-        public override async Task Stop(string username)
-        {
-            await WriteCommand("stop", username);
-        }
-
-        /// <summary>
         /// Writes command to the server process.
         /// </summary>
         /// <param name="command"></param>
@@ -106,5 +103,7 @@ namespace Application.Minecraft.States
             var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessageType.User_Message);
             _server.AddLog(logMess);
         }
+
+        public override Task Apply() { return Task.CompletedTask; }
     }
 }

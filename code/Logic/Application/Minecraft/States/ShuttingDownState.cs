@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.MinecraftServers;
+using Application.Minecraft.States.Abstract;
 using Shared.Exceptions;
 using Shared.Model;
 
@@ -15,7 +16,7 @@ namespace Application.Minecraft.States
         /// Initializes the Shutting Down state, and does the routine
         /// </summary>
         /// <param name="server"></param>
-        public ShuttingDownState(MinecraftServerLogic server) : base(server)
+        public ShuttingDownState(MinecraftServerLogic server, string[] args) : base(server, args)
         {
             foreach (var player in ((IMinecraftServer)server).OnlinePlayers)
             {
@@ -32,7 +33,24 @@ namespace Application.Minecraft.States
         /// </summary>
         public override bool IsRunning => true;
 
+        public override bool IsAllowedNextState(IServerState state)
+        {
+            if (state is BackupState or ShuttingDownState)
+                return true;
 
+            if (state is MaintenanceState)
+                throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Maintenance, please stop the server!");
+
+            return false;
+        }
+
+        public override async Task Apply()
+        {
+            if (_server.McServerProcess.IsRunning)
+                await _server.McServerProcess.WriteToStandardInputAsync("stop");
+            else
+                await _server.SetServerStateAsync<BackupState>();
+        }
 
         /// <summary>
         /// Adds the log message to the log message list.
@@ -40,15 +58,10 @@ namespace Application.Minecraft.States
         /// <param name="logMessage"></param>
         public override void HandleLog(LogMessage logMessage) =>
             _server.AddLog(logMessage);
-
-
-        public override Task Start(string username) =>
-            throw new MinecraftServerException($"Please wait till {_server.ServerName} has shut down!");
-
-        public override Task Stop(string username) =>
-            throw new MinecraftServerException($"{_server.ServerName} is shutting down!");
+        
 
         public override Task WriteCommand(string? command, string username) =>
             throw new MinecraftServerException(_server.ServerName + " is not online!");
+        
     }
 }
