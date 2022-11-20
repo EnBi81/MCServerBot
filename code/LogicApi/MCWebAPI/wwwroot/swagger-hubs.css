@@ -26,5 +26,3 @@
 .opblock[data-opblock-hub] .execute:not(.cloned){
     display: none;
 }
-
-/* data-opblock-hub="listen" */

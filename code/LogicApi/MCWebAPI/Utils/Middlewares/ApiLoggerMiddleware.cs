@@ -1,6 +1,6 @@
 ﻿using Loggers.Loggers;
 
-namespace MCWebAPI.Middlewares
+namespace MCWebAPI.Utils.Middlewares
 {
     /// <summary>
     /// Logs all the requests and responses.

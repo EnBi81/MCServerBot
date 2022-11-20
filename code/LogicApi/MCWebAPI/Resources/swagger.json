@@ -218,7 +218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
+                  "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
                 }
               }
             }
@@ -314,7 +314,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SharedPublic.DTOs.ModifyServerDto"
+                "$ref": "#/components/schemas/Shared.DTOs.ModifyServerDto"
               }
             }
           }
@@ -558,7 +558,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
+                    "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
                   }
                 }
               }
@@ -599,7 +599,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
+                  "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
                 }
               }
             }
@@ -641,7 +641,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
+                  "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
                 }
               }
             }
@@ -771,7 +771,7 @@
             "nullable": true
           },
           "properties": {
-            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerCreationPropertiesDto"
+            "$ref": "#/components/schemas/Shared.DTOs.MinecraftServerCreationPropertiesDto"
           }
         },
         "additionalProperties": false
@@ -871,7 +871,7 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.DTOs.MinecraftServerCreationPropertiesDto": {
+      "Shared.DTOs.MinecraftServerCreationPropertiesDto": {
         "type": "object",
         "properties": {
           "allowFlight": {
@@ -971,7 +971,7 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.DTOs.MinecraftServerPropertiesDto": {
+      "Shared.DTOs.MinecraftServerPropertiesDto": {
         "type": "object",
         "properties": {
           "allowFlight": {
@@ -1060,7 +1060,7 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.DTOs.ModifyServerDto": {
+      "Shared.DTOs.ModifyServerDto": {
         "type": "object",
         "properties": {
           "newName": {
@@ -1076,12 +1076,12 @@
             "nullable": true
           },
           "properties": {
-            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerPropertiesDto"
+            "$ref": "#/components/schemas/Shared.DTOs.MinecraftServerPropertiesDto"
           }
         },
         "additionalProperties": false
       },
-      "SharedPublic.Model.ILogMessage": {
+      "Shared.Model.ILogMessage": {
         "type": "object",
         "properties": {
           "message": {
@@ -1090,12 +1090,12 @@
             "readOnly": true
           },
           "messageType": {
-            "$ref": "#/components/schemas/SharedPublic.Model.LogMessageType"
+            "$ref": "#/components/schemas/Shared.Model.LogMessageType"
           }
         },
         "additionalProperties": false
       },
-      "SharedPublic.Model.IMinecraftPlayer": {
+      "Shared.Model.IMinecraftPlayer": {
         "type": "object",
         "properties": {
           "username": {
@@ -1115,7 +1115,7 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.Model.IMinecraftServer": {
+      "Shared.Model.IMinecraftServer": {
         "type": "object",
         "properties": {
           "id": {
@@ -1128,7 +1128,7 @@
             "nullable": true
           },
           "statusCode": {
-            "$ref": "#/components/schemas/SharedPublic.Model.ServerStatus"
+            "$ref": "#/components/schemas/Shared.Model.ServerStatus"
           },
           "statusMessage": {
             "type": "string",
@@ -1142,7 +1142,7 @@
           "logs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SharedPublic.Model.ILogMessage"
+              "$ref": "#/components/schemas/Shared.Model.ILogMessage"
             },
             "nullable": true,
             "readOnly": true
@@ -1154,7 +1154,7 @@
             "readOnly": true
           },
           "properties": {
-            "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServerProperties"
+            "$ref": "#/components/schemas/Shared.Model.IMinecraftServerProperties"
           },
           "port": {
             "type": "integer",
@@ -1164,7 +1164,7 @@
           "onlinePlayers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
+              "$ref": "#/components/schemas/Shared.Model.IMinecraftPlayer"
             },
             "nullable": true,
             "readOnly": true
@@ -1172,7 +1172,7 @@
           "players": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
+              "$ref": "#/components/schemas/Shared.Model.IMinecraftPlayer"
             },
             "nullable": true,
             "readOnly": true
@@ -1193,7 +1193,7 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.Model.IMinecraftServerProperties": {
+      "Shared.Model.IMinecraftServerProperties": {
         "type": "object",
         "properties": {
           "properties": {
@@ -1207,7 +1207,7 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.Model.LogMessageType": {
+      "Shared.Model.LogMessageType": {
         "enum": [
           0,
           1,
@@ -1216,7 +1216,7 @@
         "type": "integer",
         "format": "int32"
       },
-      "SharedPublic.Model.ServerStatus": {
+      "Shared.Model.ServerStatus": {
         "enum": [
           0,
           1,

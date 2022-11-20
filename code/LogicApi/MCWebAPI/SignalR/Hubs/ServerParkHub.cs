@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using SignalRSwaggerGen.Attributes;
 
 namespace MCWebAPI.SignalR.Hubs
@@ -6,27 +7,25 @@ namespace MCWebAPI.SignalR.Hubs
     [SignalRHub("/hubs/serverpark")]
     public class ServerParkHub : Hub
     {
+        public const string PlayerLeft = "PlayerLeft";
+        public const string PlayerJoined = "PlayerJoined";
+        public const string LogReceived = "LogReceived";
+        public const string PerformanceMeasured = "PerformanceMeasured";
+        public const string StatusChange = "StatusChange";
+        public const string ServerAdded = "ServerAdded";
+        public const string ServerDeleted = "ServerDeleted";
+        public const string ServerModified = "ServerModified";
+        
 
-
-        [SignalRListener("Receive")]
+        [SignalRListener(PlayerLeft)]
+        [SignalRListener(PlayerJoined)]
+        [SignalRListener(LogReceived)]
+        [SignalRListener(PerformanceMeasured)]
+        [SignalRListener(StatusChange)]
+        [SignalRListener(ServerAdded)]
+        [SignalRListener(ServerDeleted)]
+        [SignalRListener(ServerModified)]
         public ServerParkHub() { }
-
-
-        [SignalRMethod("Hi", SignalRSwaggerGen.Enums.Operation.Get)]
-        public void Hi(string text, double other, float num, int num2, long n)
-        {
-            Clients.All.SendAsync("Receive", text, other, num, num2, n);
-        }
-        [SignalRMethod("Hello", SignalRSwaggerGen.Enums.Operation.Get)]
-        public void Hello(string text, int[] arr)
-        {
-            Clients.All.SendAsync("Receive", text, arr);
-        }
-    }
-
-    public class Person
-    {
-        public string Name { get; set; }
-        public int Age { get; set; }
+        
     }
 }

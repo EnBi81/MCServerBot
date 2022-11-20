@@ -2,7 +2,7 @@
 using Loggers.Loggers;
 using Shared.Exceptions;
 
-namespace MCWebAPI.Middlewares
+namespace MCWebAPI.Utils.Middlewares
 {
     internal class ExceptionHandlerMiddleware
     {
@@ -17,7 +17,7 @@ namespace MCWebAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            
+
             try
             {
                 await _next(context);
@@ -38,16 +38,16 @@ namespace MCWebAPI.Middlewares
                 _logger.LogError("-exception-unexpected", e);
             }
         }
-        
+
         private static void WriteContext(HttpContext context, int statuscode, string message, bool isInternal)
         {
             string jsonMessage = GetJsonException(message, isInternal);
-            
+
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statuscode;
             context.Response.WriteAsync(jsonMessage);
         }
-        
+
         private static string GetJsonException(string message, bool isInternalException)
         {
             var errorMessage = new ExceptionDTO()

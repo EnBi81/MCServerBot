@@ -1,6 +1,6 @@
 ﻿using Loggers;
 using Loggers.Loggers;
-using MCWebAPI.Middlewares;
+using MCWebAPI.Utils.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Shared.Model;
@@ -53,6 +53,7 @@ namespace MCWebAPI
 
             builder.Logging.ClearProviders();
             
+
             builder.WebHost.UseUrls(
                 $"https://*:{builder.Configuration["ApiSettings:HttpsPort"]}", 
                 $"http://*:{builder.Configuration["ApiSettings:HttpPort"]}");
@@ -99,8 +100,8 @@ namespace MCWebAPI
                     options.DisplayOperationId();
                     options.EnableTryItOutByDefault();
                     options.OAuthScopes("bearer");
-                    
-                    options.InjectJavascript("/swagger-extension.js");
+
+                    options.AddSignalRFunctionality();
                 });
             }
 
