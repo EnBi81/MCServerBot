@@ -81,6 +81,9 @@ namespace Application.Minecraft.States
             if (state is OfflineState)
                 return true;
 
+            if (state is BackupAutoState)
+                return false;
+
             throw new MinecraftServerException(_server.ServerName + " is in Maintenance. Please wait!");
         }
 

@@ -193,7 +193,7 @@ namespace Application.Minecraft
                 var logMess = new LogMessage(e, LogMessageType.System_Message);
                 HandleLog(logMess);
             };
-            McServerProcess.Exited += async (s, e) => await SetServerStateAsync<BackupState>();
+            McServerProcess.Exited += async (s, e) => await SetServerStateAsync<BackupAutoState>();
             McServerProcess.ProcessIdReceived += (s, processId) =>
             {
                 PerformanceReporter = new ProcessPerformanceReporter(processId);

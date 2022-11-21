@@ -35,7 +35,7 @@ namespace Application.Minecraft.States
 
         public override bool IsAllowedNextState(IServerState state)
         {
-            if (state is BackupState or ShuttingDownState)
+            if (state is BackupAutoState)
                 return true;
 
             if (state is MaintenanceState)
@@ -49,7 +49,7 @@ namespace Application.Minecraft.States
             if (_server.McServerProcess.IsRunning)
                 await _server.McServerProcess.WriteToStandardInputAsync("stop");
             else
-                await _server.SetServerStateAsync<BackupState>();
+                await _server.SetServerStateAsync<BackupAutoState>();
         }
 
         /// <summary>

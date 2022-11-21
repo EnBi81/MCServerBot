@@ -51,12 +51,12 @@ namespace Application.Minecraft.States
 
         public override bool IsAllowedNextState(IServerState state)
         {
-            if (state is OnlineState)
+            if (state is OnlineState or BackupAutoState)
                 return true;
 
             if(state is MaintenanceState)
                 throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Maintenance, please stop the server!");
-            if(state is BackupState)
+            if(state is BackupManualState)
                 throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Backing up, please stop the server!");
 
             return false;
