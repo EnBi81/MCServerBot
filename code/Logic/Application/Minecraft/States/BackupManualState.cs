@@ -10,9 +10,11 @@ namespace Application.Minecraft.States
 
         public override Task Apply()
         {
-            string backupName = args[0];
-            
+            if (args[0] is not string backupName)
+                throw new MCInternalException("Invalid backup arguments");
+
             // TODO: backup
+            // https://stackoverflow.com/questions/35415936/how-to-zip-a-directorys-contents-except-one-subdirectory
             return Task.CompletedTask;
         }
 

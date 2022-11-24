@@ -16,14 +16,20 @@ namespace Application.Minecraft.States
         /// Initializes the Offline state, and does the offline state routine.
         /// </summary>
         /// <param name="server"></param>
-        public OfflineState(MinecraftServerLogic server, string[] args) : base(server, args)
+        public OfflineState(MinecraftServerLogic server, object[] args) : base(server, args)
         {
-            _server.StorageBytes = server.McServerProcess.GetStorage();
+            
+        }
+
+        public override Task Apply()
+        {
+            _server.StorageBytes = _server.McServerProcess.GetStorage();
             _server.OnlineFrom = null;
 
             _server.PerformanceReporter?.Stop();
-        }
 
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Returns <see cref="ServerStatus.Offline"/>
@@ -54,15 +60,5 @@ namespace Application.Minecraft.States
         /// <exception cref="Exception">This is thrown always.</exception>
         public override Task WriteCommand(string? command, string username) =>
             throw new MinecraftServerException(_server.ServerName + " is not online!");
-        
-        public override Task Apply()
-        {
-            _server.StorageBytes = _server.McServerProcess.GetStorage();
-            _server.OnlineFrom = null;
-
-            _server.PerformanceReporter?.Stop();
-
-            return Task.CompletedTask;
-        }
     }
 }

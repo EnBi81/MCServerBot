@@ -10,12 +10,14 @@ namespace Application.Minecraft.States
     /// </summary>
     internal class BackupAutoState : ServerStateAbs
     {
-        public BackupAutoState(MinecraftServerLogic server, string[] args) : base(server, args) { }
+        public BackupAutoState(MinecraftServerLogic server, object[] args) : base(server, args) { }
 
-        public override Task Apply()
+        public override async Task Apply()
         {
-            // TODO: backup
-            return Task.CompletedTask;
+            Console.WriteLine("Backup");
+            
+            Console.WriteLine("Backup done");
+            await _server.SetServerStateAsync<OfflineState>();
         }
 
 

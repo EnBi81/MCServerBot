@@ -862,11 +862,6 @@
           "isDownloaded": {
             "type": "boolean",
             "readOnly": true
-          },
-          "absoluteJarPath": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -1222,7 +1217,8 @@
           1,
           2,
           3,
-          4
+          4,
+          5
         ],
         "type": "integer",
         "format": "int32"

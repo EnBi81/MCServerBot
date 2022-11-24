@@ -6,9 +6,9 @@ namespace Application.Minecraft.States.Abstract
     internal abstract class ServerStateAbs : IServerState
     {
         protected readonly MinecraftServerLogic _server;
-        protected readonly string[] args;
+        protected readonly object[] args;
         
-        public ServerStateAbs(MinecraftServerLogic server, string[] args)
+        public ServerStateAbs(MinecraftServerLogic server, object[] args)
         {
             _server = server;
             this.args = args;

@@ -103,7 +103,6 @@ namespace Application.Minecraft
         internal MinecraftServerInfos McServerInfos { get; }
         internal MinecraftServersFileHandler McServerFileHandler { get; }
         internal string ServerPath { get; }
-        internal MinecraftServerCreationPropertiesDto CreationProperties { get; }
 
 
 
@@ -119,12 +118,8 @@ namespace Application.Minecraft
             Id = McServerInfos.Id;
             _serverName = McServerInfos.Name!;
             _mcVersion = version;
-            CreationProperties = McServerInfos.CreationProperties;
 
-            if (McServerInfos.IsMaintenance)
-                SetServerState<MaintenanceState>();
-
-            
+            SetServerState<OfflineState>();
         }
 
 
@@ -134,10 +129,11 @@ namespace Application.Minecraft
         {
             _serverName = serverName;
             _mcVersion = version;
-            CreationProperties = creationProperties ?? new MinecraftServerCreationPropertiesDto();
-            SetServerState<MaintenanceState>();
 
             McServerInfos.Save(this);
+            
+            Thread t = new Thread(() => SetServerState<MaintenanceState>(creationProperties));
+            t.Start();
         }
 
 
@@ -151,7 +147,6 @@ namespace Application.Minecraft
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
             McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
-            CreationProperties = null!;
 
 
             McServerProcess = new MinecraftServerProcess(
@@ -261,7 +256,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
         /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
-        internal void SetServerState<T>(params string[] args) where T : IServerState =>
+        internal void SetServerState<T>(params object?[] args) where T : IServerState =>
              SetServerStateAsync<T>(args).Wait();
 
         /// <summary>
@@ -269,7 +264,7 @@ namespace Application.Minecraft
         /// </summary>
         /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
         /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
-        internal async Task SetServerStateAsync<T>(params string[] args) where T : IServerState
+        internal async Task SetServerStateAsync<T>(params object?[] args) where T : IServerState
         {
             var type = typeof(T);
             

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Application.Minecraft.Versions
@@ -34,6 +35,7 @@ namespace Application.Minecraft.Versions
         /// <summary>
         /// Gets the absolute path of the server.jar if the version is downloaded locally. Else null.
         /// </summary>
+        [JsonIgnore]
         string? AbsoluteJarPath { get; }
         
         /// <summary>

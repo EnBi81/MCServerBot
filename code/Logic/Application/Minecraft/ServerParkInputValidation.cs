@@ -80,6 +80,9 @@ namespace Application.Minecraft
 
             if (dto.Version is not null)
                 CheckVersionExist(dto.Version);
+            
+            dto.Properties ??= new MinecraftServerCreationPropertiesDto();
+            dto.Properties.ValidateAndRetrieveData();
 
             return _serverPark.CreateServer(dto, user);
         }
@@ -194,8 +197,10 @@ namespace Application.Minecraft
 
         private void ThrowIfServerRunning(long id)
         {
-            if (ActiveServer != null && ActiveServer.Id == id && ActiveServer.IsRunning)
-                throw new ServerParkException($"To delete {ActiveServer.ServerName} server, first make sure it is stopped.");
+            var server = GetServer(id);
+
+            if (server.IsRunning)
+                throw new ServerParkException($"To delete {server.ServerName} server, first make sure it is stopped.");
         }
 
         /// <summary>

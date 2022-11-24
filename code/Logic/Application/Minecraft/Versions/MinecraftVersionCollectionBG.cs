@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Shared.Exceptions;
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -10,7 +11,7 @@ namespace Application.Minecraft.Versions
     internal partial class MinecraftVersionCollection
     {
         private const string _versionJsonFileName = "mc_version_list.json";
-        private readonly Dictionary<string, MinecraftVersion> _downloadingVersions = new();
+        private readonly Dictionary<string, Task> _downloadingVersions = new();
         private readonly string _versionsDir;
         private readonly int _maxDownloadSimultaneously = 5;
         private readonly string _resourceVersionFolder = 
@@ -36,8 +37,32 @@ namespace Application.Minecraft.Versions
             var imcVersion = this[version];
             if (imcVersion is not MinecraftVersion mcVersion)
                 throw new MCExternalException($"Cannot download version {version} for reason: {version} is not a registered version");
-            
-            AddVersionToDownloadingSync(mcVersion);
+
+            while (true)
+            {
+                try
+                {
+                    // try to download the version
+                    Task downloadTask = AddVersionToDownloadingSync(mcVersion, () => DownloadVersionFromNet(mcVersion));
+                    await downloadTask;
+                    RemoveVersionFromDownloadingSync(mcVersion);
+                    break;
+                }
+                catch (MCExternalException e)
+                {
+                    // if there are too many downloadings, then get the first task and wait for it to finish
+                    // so we can start to download our current version.
+
+                    _logger.Log(_loggerSource, e.Message + " Waiting to finish downloading.");
+                    await _downloadingVersions.Values.First();
+                }
+            }
+        }
+
+        private async Task DownloadVersionFromNet(MinecraftVersion mcVersion)
+        {
+            string version = mcVersion.Version;
+
             DateTime start = DateTime.Now;
             _logger.Log(_loggerSource, $"Downloading version {version}...");
 
@@ -50,11 +75,10 @@ namespace Application.Minecraft.Versions
             using var fileStream = File.Create(downloadFileName);
             await webStream.CopyToAsync(fileStream);
             fileStream.Close();
-            
+
             File.Move(downloadFileName, filename);
 
             _logger.Log(_loggerSource, $"Downloaded version {version}. Time taken: {DateTime.Now - start}");
-            RemoveVersionFromDownloadingSync(mcVersion);
         }
 
         /// <summary>
@@ -63,16 +87,19 @@ namespace Application.Minecraft.Versions
         /// <param name="version"></param>
         /// <exception cref="MCExternalException"></exception>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        private void AddVersionToDownloadingSync(MinecraftVersion version)
+        private Task AddVersionToDownloadingSync(MinecraftVersion version, Func<Task> downloadTask)
         {
             if (!_downloadingVersions.ContainsKey(version.Version))
             {
                 if(_downloadingVersions.Count >= _maxDownloadSimultaneously)
-                    throw new MCExternalException($"Cannot download more than {_maxDownloadSimultaneously} versions at once");
-                _downloadingVersions.Add(version.Version, version);
+                    throw new MCExternalException($"Cannot download more than {_maxDownloadSimultaneously} versions at once.");
+
+                Task download = downloadTask();
+                _downloadingVersions.Add(version.Version, download);
+                return download;
             }
             else
-                throw new MCExternalException($"Cannot add version {version.Version} to downloading versions because it is already downloading");
+                return _downloadingVersions[version.Version];
         }
 
         /// <summary>
@@ -89,7 +116,7 @@ namespace Application.Minecraft.Versions
         /// Downloads the version informations from the web
         /// </summary>
         /// <returns></returns>
-        private async Task DownloadVersionsFromNet()
+        private async Task CheckVersionsPython()
         {
             _logger.Log(_loggerSource, "Downloading version list from Mojang...");
 
@@ -140,6 +167,7 @@ namespace Application.Minecraft.Versions
                 .Where(v => v.Version is not null && Regex.IsMatch(v.Version, @"^\d+(\.\d+)*$"))
                 .Where(v => DateTime.TryParse(v.FullRelease, out _))
                 .Where(v => Uri.IsWellFormedUriString(v.DownloadLink, UriKind.Absolute))
+                .Where(v => v.DownloadLink!.StartsWith("https"))
                 // select only the versions which are not already loaded to the collection
                 .Where(v => !_versions.Any(version => version.Version == v.Version))
                 // be sure all the versions are distinct

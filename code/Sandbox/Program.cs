@@ -2,117 +2,81 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.SignalR.Client;
 using Shared.DTOs;
+using System.IO.Compression;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Sandbox
 {
-    interface A { }
-    class B : A { }
-    class C : A { }
-    class D : A { }
 
     public class SandBoxClass
     {
-        
+
         static async Task Main(string[] args)
         {
-            A a = new C();
+            string fromDir = @"ToCompress";
+            string destination = @"tocompress.zip";
 
-            bool exp = a is not C and not D;
-
-            Console.WriteLine(exp);
+            CreateFromDirectory(fromDir, destination, CompressionLevel.SmallestSize, false, text => text.Contains("hello"));
         }
 
 
-        static void Main1(string[] args) 
+        public static void CreateFromDirectory(
+        string sourceDirectoryName
+    , string destinationArchiveFileName
+    , CompressionLevel compressionLevel
+    , bool includeBaseDirectory
+    , Predicate<string> filter // Add this parameter
+    )
         {
-            var types = typeof(SandBoxClass).Assembly.DefinedTypes
-                .Where(t => t.GetCustomAttribute<CommandAttribute>() is not null);
-
-            List<string> commands = new();
-
-            foreach (var type in types)
+            if (string.IsNullOrEmpty(sourceDirectoryName))
             {
-                commands.Add(type.GetCustomAttribute<CommandAttribute>().Name);
-                Console.WriteLine(type.FullName);
+                throw new ArgumentNullException("sourceDirectoryName");
             }
-
-            Console.WriteLine("Enter a command");
-            string input = "";
-
-            int longestWritten = 0;
-            int consolePos = Console.CursorTop;
-            
-            while (true)
+            if (string.IsNullOrEmpty(destinationArchiveFileName))
             {
-                Console.CursorTop = consolePos;
-                Console.CursorLeft = 0;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write(input);
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                int posX = Console.CursorLeft;
-                var commandTips = commands.Where(c => c.StartsWith(input, StringComparison.OrdinalIgnoreCase));
-                Console.Write(commandTips.FirstOrDefault()?.Substring(Console.CursorLeft));
-
-                if (longestWritten > Console.CursorLeft)
+                throw new ArgumentNullException("destinationArchiveFileName");
+            }
+            var filesToAdd = Directory.GetFiles(sourceDirectoryName, "*", SearchOption.AllDirectories);
+            var entryNames = GetEntryNames(filesToAdd, sourceDirectoryName, includeBaseDirectory);
+            using (var zipFileStream = new FileStream(destinationArchiveFileName, FileMode.Create))
+            {
+                using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
                 {
-                    var longestWrittenTemp = Console.CursorLeft;
-                    while (longestWritten > Console.CursorLeft)
-                        Console.Write(" ");
-
-                    longestWritten = longestWrittenTemp;
+                    for (int i = 0; i < filesToAdd.Length; i++)
+                    {
+                        // Add the following condition to do filtering:
+                        if (!filter(filesToAdd[i]))
+                        {
+                            continue;
+                        }
+                        archive.CreateEntryFromFile(filesToAdd[i], entryNames[i], compressionLevel);
+                    }
                 }
-                else longestWritten = Console.CursorLeft;
-                
+            }
+        }
 
-                Console.CursorLeft = posX;
+        private static string[] GetEntryNames(string[] names, string sourceFolder, bool includeBaseName)
+        {
+            if (names == null || names.Length == 0)
+                return new string[0];
 
-                var key = Console.ReadKey();
+            if (includeBaseName)
+                sourceFolder = Path.GetDirectoryName(sourceFolder)!;
 
-                if (key.Key != ConsoleKey.Backspace)
-                    input += key.KeyChar;
-                else if (input.Length > 0)
-                    input = input[..^1];
+            int length = string.IsNullOrEmpty(sourceFolder) ? 0 : sourceFolder.Length;
+            if (length > 0 && sourceFolder != null && sourceFolder[length - 1] != Path.DirectorySeparatorChar && sourceFolder[length - 1] != Path.AltDirectorySeparatorChar)
+                length++;
+
+            var result = new string[names.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                result[i] = names[i][length..];
             }
 
-            
+            return result;
         }
-    }
-    
-
-
-
-    [Command("scoreboard")]
-    [ArgumentList("<message:string>")]
-    public class MeCommand
-    {
-        
-    }
-
-    [Command("seed")]
-    public class SeedCommand
-    {
-        
-    }
-
-    [Command("meandalonso")]
-    public class SeedaCommand
-    {
-
-    }
-    
-
-    public class CommandAttribute : Attribute
-    {
-        public string Name { get; }
-
-        public CommandAttribute(string command) => Name = command;        
-    }
-
-    public class ArgumentListAttribute : Attribute
-    {
-        public ArgumentListAttribute(string argumentList) { }
     }
 }
 

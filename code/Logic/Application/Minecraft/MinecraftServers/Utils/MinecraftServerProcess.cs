@@ -129,8 +129,8 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
         public long GetStorage()
         {
-            var info = new FileInfo(_serverDirectory);
-            long dirSize = FileHelper.DirSize(info.Directory);
+            var info = new DirectoryInfo(_serverDirectory);
+            long dirSize = FileHelper.DirSize(info);
 
             return dirSize;
         }

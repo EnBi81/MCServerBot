@@ -17,7 +17,7 @@ namespace Application.Minecraft.States
         /// Initializes the Online state, and does the online state routine.
         /// </summary>
         /// <param name="server"></param>
-        public OnlineState(MinecraftServerLogic server, string[] args) : base(server, args)
+        public OnlineState(MinecraftServerLogic server, object[] args) : base(server, args)
         {
             _server.OnlineFrom = DateTime.Now;
         }

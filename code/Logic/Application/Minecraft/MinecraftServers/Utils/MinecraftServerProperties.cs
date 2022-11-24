@@ -34,8 +34,6 @@ namespace Application.Minecraft.MinecraftServers.Utils
             foreach (var (key, value) in props.Properties)
                 sb.AppendLine(key + "=" + value.ToString());
 
-            Console.WriteLine("Properties: " + (await File.ReadAllTextAsync(file)));
-
             await File.WriteAllTextAsync(file, sb.ToString());
         }
 

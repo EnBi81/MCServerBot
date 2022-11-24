@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
+using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Model;
 
@@ -10,10 +11,8 @@ namespace Application.Minecraft.States
     /// </summary>
     internal class MaintenanceState : ServerStateAbs
     {
-        private bool _isRunning = false;
 
-
-        public MaintenanceState(MinecraftServerLogic server, string[] args) : base(server, args) { }
+        public MaintenanceState(MinecraftServerLogic server, object[] args) : base(server, args) { }
 
         
         /// <summary>
@@ -34,15 +33,34 @@ namespace Application.Minecraft.States
             AddSystemLog("Creating Server Files...");
 
             var process = await _server.StartServerProcess();
-            await process.WaitForExitAsync();
 
-            await _server.Properties.UpdateProperties(_server.CreationProperties);
 
-            AddSystemLog("Accepting Eula...");
-            await _server.McServerFileHandler.AcceptEula();
-            AddSystemLog("Eula Accepted.");
+            // https://nodecraft.com/support/games/minecraft/minecraft-eula#:~:text=Starting%20with%20Minecraft%20version%201.7,.com%2Fdocuments%2Fminecraft_eula.
+            // below 1.8, there is no eula, and the server will start automatically
+            if (new Version(_server.MCVersion.Version) < new Version("1.8"))
+            {
+                async void ShutdownServerWhenReady(object? sender, ILogMessage e) {
+                    if(e.Message.Contains("Done"))
+                        await _server.McServerProcess.WriteToStandardInputAsync("stop");
+                }
+                
+                _server.LogReceived += ShutdownServerWhenReady;
+                await process.WaitForExitAsync();
+                _server.LogReceived -= ShutdownServerWhenReady;
+            }
+            // from 1.8, the server will shut down after creating the files, and we need to accept the eula
+            else
+            {
+                await process.WaitForExitAsync();
+                AddSystemLog("Accepting Eula...");
+                await _server.McServerFileHandler.AcceptEula();
+                AddSystemLog("Eula Accepted.");
+            }
 
-            
+            if (args[0] is not MinecraftServerCreationPropertiesDto dto)
+                throw new MCInternalException("Invalid arguments for maintenance state");
+
+            await _server.Properties.UpdateProperties(dto);
         }
 
         /// <summary>
@@ -89,7 +107,6 @@ namespace Application.Minecraft.States
 
         public override async Task Apply() 
         {
-            _isRunning = true;
             var logMessage = new LogMessage("Starting Server Maintenance " + _server.ServerName, LogMessageType.System_Message);
             _server.AddLog(logMessage);
             
@@ -109,7 +126,7 @@ namespace Application.Minecraft.States
         /// <summary>
         /// Returns true.
         /// </summary>
-        public override bool IsRunning => _isRunning;
+        public override bool IsRunning => true;
         /// <summary>
         /// Adds the log message to the log collection.
         /// </summary>

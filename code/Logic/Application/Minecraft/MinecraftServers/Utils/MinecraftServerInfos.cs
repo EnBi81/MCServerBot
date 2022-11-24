@@ -27,17 +27,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// Minecraft version of the server.
         /// </summary>
         public string Version { get; set; } = null!;
-
-        /// <summary>
-        /// If the minecraft server is in maintenance mode
-        /// </summary>
-        public bool IsMaintenance { get; set; }
-
-        /// <summary>
-        /// Properties to apply when the server is created
-        /// </summary>
-        public MinecraftServerCreationPropertiesDto CreationProperties { get; set; }
-
+        
 
         /// <summary>
         /// This constructor is for json deserialization. pls dont delete it, ty.
@@ -67,8 +57,6 @@ namespace Application.Minecraft.MinecraftServers.Utils
             Id = server.Id;
             Name = server.ServerName;
             Version = server.MCVersion.Version;
-            IsMaintenance = server.StatusCode == ServerStatus.Maintenance;
-            CreationProperties = server.CreationProperties;
 
             string json = JsonConvert.SerializeObject(this);
             File.WriteAllText(_filename, json);
@@ -100,8 +88,6 @@ namespace Application.Minecraft.MinecraftServers.Utils
             Id = obj.Id;
             Name = obj.Name;
             Version = obj.Version;
-            IsMaintenance = obj.IsMaintenance;
-            CreationProperties = obj.CreationProperties;
         }
     }
 }
