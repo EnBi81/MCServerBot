@@ -55,11 +55,13 @@ WEB API features:
 2. Get nbt information of a minecraft player through rcon (info should be available from controller)
 3. choose server icon
     - only from the given ones
-4. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-5. c# client + discord
-6. js client + old page
-7. new blazor pages
-8. Minecraft command autocomplete
+4. When deleting a server, put the backups and the server to the recycle bin instead of the deleted folder
+5. Write out Api uptime
+6. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+7. c# client + discord
+8. js client + old page
+9. new blazor pages
+10. Minecraft command autocomplete
 
 
 
