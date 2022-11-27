@@ -52,6 +52,7 @@ WEB API features:
     - restore for all kinds of backup
     - backup when server is shut down, and was running over x minutes
     - choose backup folder
+    - create attribute ManualState and AutoState and apply them to the current states
 2. Get nbt information of a minecraft player through rcon (info should be available from controller)
 3. choose server icon
     - only from the given ones
