@@ -2,6 +2,7 @@
 using APIModel.Responses;
 using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Shared.DTOs;
 using Shared.Model;
 
@@ -121,5 +122,31 @@ namespace MCWebAPI.Controllers.api.v1
             await serverPark.ToggleServer(id, user);
             return NoContent();
         }
+
+
+        [HttpPost(RouteId + "/backups", Name = "BackupServer")]
+        public async Task<IActionResult> BackupServer([FromRoute] long id)
+        {
+            return Ok();
+        }
+
+        [HttpGet(RouteId + "/backups", Name = "GetBackups")]
+        public async Task<IActionResult> GetBackups([FromRoute] long id)
+        {
+            return Ok();
+        }
+
+        [HttpDelete(RouteId + "/backups/{backupId:long}", Name = "DeleteBackup")]
+        public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] long backupId)
+        {
+            return Ok();
+        }
+
+        [HttpPatch(RouteId + "/backups/{backupId:long}", Name = "RestoreBackup")]
+        public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] long backupId)
+        {
+            return Ok();
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Application.Minecraft.Util;
+﻿using Application.Minecraft.Configs;
+using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
 using Loggers;
 using System.Diagnostics;
@@ -14,22 +15,19 @@ namespace Application.Minecraft.MinecraftServers.Utils
         private readonly string _serverDirectory;
         private readonly string _javaLocation;
         private readonly string _serverHandlerPath;
-        private readonly int _maxRam;
-        private readonly int _initRam;
+        private readonly MinecraftServerConfig _serverConfig; 
 
 
         public MinecraftServerProcess(
             string serverDirectory,
             string javaLocation,
             string serverHandlerPath,
-            int maxRam,
-            int initRam)
+            MinecraftServerConfig config)
         {
             _serverDirectory = serverDirectory;
             _javaLocation = javaLocation;
             _serverHandlerPath = serverHandlerPath;
-            _maxRam = maxRam;
-            _initRam = initRam;
+            _serverConfig = config;
         }
 
         /// <summary>
@@ -76,11 +74,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 EnableRaisingEvents = true,
             };
 
-            LogService.GetService<MinecraftLogger>().Log("server-process", $"Starting server in {_serverDirectory} with max-ram {_maxRam}.");
+            LogService.GetService<MinecraftLogger>().Log("server-process", $"Starting server in {_serverDirectory} with max-ram {_serverConfig.ServerMaxRamMB}.");
 
             // start cmd process and make it run the server handler
             _serverHandlerProcess.Start();
-            _serverHandlerProcess.StandardInput.WriteLine($"\"{_serverHandlerPath}\" {serverFilePath} \"{_javaLocation}\" \"{_serverDirectory}\" {_maxRam} {_initRam} & exit");
+            _serverHandlerProcess.StandardInput.WriteLine($"\"{_serverHandlerPath}\" {serverFilePath} \"{_javaLocation}\" \"{_serverDirectory}\" {_serverConfig.ServerMaxRamMB} {_serverConfig.ServerInitRamMB} & exit");
             _serverHandlerProcess.BeginErrorReadLine();
             _serverHandlerProcess.BeginOutputReadLine();
 

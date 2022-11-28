@@ -67,18 +67,18 @@ namespace MCWebAPI.Utils.Setup
             // Configs
             collection.AddSingleton(new MinecraftConfig
             {
-                MaxSumOfDiskSpaceGB = int.Parse(configuration["MinecraftSettings:ServerPark:MaxDiskSpaceGB"]),
-                JavaLocation = configuration["Paths:JavaLocation"],
-                MinecraftServersBaseFolder = configuration["Paths:MinecraftServersBaseFolder"],
-                MinecraftServerHandlerPath = configuration["Paths:MinecraftServerHandler"],
-                BackupFolder = configuration["Paths:BackupFolder"],
+                MaxSumOfDiskSpaceGB = int.Parse(configuration["MinecraftSettings:ServerPark:MaxDiskSpaceGB"]!),
+                JavaLocation = configuration["Paths:JavaLocation"]!,
+                MinecraftServersBaseFolder = configuration["Paths:MinecraftServersBaseFolder"]!,
+                MinecraftServerHandlerPath = configuration["Paths:MinecraftServerHandler"]!,
+                BackupFolder = configuration["Paths:BackupFolder"]!,
                 ServerConfig = new MinecraftServerConfig
                 {
-                    ServerInitRamMB = int.Parse(configuration["MinecraftSettings:ServerProcess:ServerInitRamMB"]),
-                    ServerMaxRamMB = int.Parse(configuration["MinecraftSettings:ServerProcess:ServerMaxRamMB"]),
-                    AutoBackupAfterUptimeMinute = int.Parse(configuration["MinecraftSettings:Backup:AutoBackupAfterUptimeMinute"]),
-                    MaxAutoBackup = int.Parse(configuration["MinecraftSettings:Backup:MaxAutoBackup"]),
-                    MaxManualBackup = int.Parse(configuration["MinecraftSettings:Backup:MaxManualBackup"]),
+                    ServerInitRamMB = int.Parse(configuration["MinecraftSettings:ServerProcess:ServerInitRamMB"]!),
+                    ServerMaxRamMB = int.Parse(configuration["MinecraftSettings:ServerProcess:ServerMaxRamMB"]!),
+                    AutoBackupAfterUptimeMinute = int.Parse(configuration["MinecraftSettings:Backup:AutoBackupAfterUptimeMinute"]!),
+                    MaxAutoBackup = int.Parse(configuration["MinecraftSettings:Backup:MaxAutoBackup"]!),
+                    MaxManualBackup = int.Parse(configuration["MinecraftSettings:Backup:MaxManualBackup"]!),
                 }
             });
 

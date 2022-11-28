@@ -103,6 +103,7 @@ namespace Application.Minecraft
         internal MinecraftServerProcess McServerProcess { get; }
         internal MinecraftServerInfos McServerInfos { get; }
         internal MinecraftServersFileHandler McServerFileHandler { get; }
+        internal MinecraftServerConfig ServerConfig { get; }
         internal string ServerPath { get; }
 
 
@@ -149,13 +150,15 @@ namespace Application.Minecraft
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
             McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
 
+            ServerConfig = config.ServerConfig;
 
             McServerProcess = new MinecraftServerProcess(
                 serverDirectory: serverFolderName,
                 javaLocation: config.JavaLocation,
                 serverHandlerPath: config.MinecraftServerHandlerPath,
-                maxRam: config.MinecraftServerMaxRamMB,
-                initRam: config.MinecraftServerInitRamMB);
+                config: ServerConfig);
+
+            
 
             SubscribeToProcessEvents();
 
