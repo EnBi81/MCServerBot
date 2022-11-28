@@ -1,6 +1,7 @@
 ﻿using APIModel.DTOs;
 using Application.DAOs;
 using Application.DAOs.Database;
+using Application.Minecraft.Configs;
 using Loggers;
 using Shared.DTOs;
 using Shared.EventHandlers;

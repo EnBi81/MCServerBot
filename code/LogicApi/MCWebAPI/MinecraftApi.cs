@@ -38,8 +38,6 @@ namespace MCWebAPI
             // create the builder
             builder = WebApplication.CreateBuilder(args);
             
-            // get the logger
-            
             logger.Log("start", "Starting web api in " + Environment.CurrentDirectory);
 
             
@@ -51,6 +49,7 @@ namespace MCWebAPI
                 .AddModelElements(builder.Configuration)
                 .AddAPIElements(builder.Configuration);
 
+            // to not write out the startup text in the console
             builder.Logging.ClearProviders();
             
 
@@ -58,8 +57,8 @@ namespace MCWebAPI
                 $"https://*:{builder.Configuration["ApiSettings:HttpsPort"]}", 
                 $"http://*:{builder.Configuration["ApiSettings:HttpPort"]}");
 
+            
             logger.Log("start", "Listening on: https://*:" + builder.Configuration["ApiSettings:HttpsPort"]);
-
             logger.Log("start", "Building application");
         }
 

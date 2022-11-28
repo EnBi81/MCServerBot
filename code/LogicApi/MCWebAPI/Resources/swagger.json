@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": ".NET Core (.NET 6) Web API",
+    "title": "Prismarine RESTful Web API",
     "version": "1.0"
   },
   "paths": {
@@ -1245,6 +1245,16 @@
             "format": "int32",
             "readOnly": true
           },
+          "microseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "nanoseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
           "minutes": {
             "type": "integer",
             "format": "int32",
@@ -1266,6 +1276,16 @@
             "readOnly": true
           },
           "totalMilliseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMicroseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalNanoseconds": {
             "type": "number",
             "format": "double",
             "readOnly": true

@@ -1,7 +1,6 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
 using MCWebAPI.Auth;
-using MCWebAPI.Controllers.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +8,11 @@ namespace MCWebAPI.Controllers.api.v1
 {
     /// <summary>
     /// Authentication controller.
-    /// </summary>
+    /// </summary> 
     [ApiVersion(ApiVersionV1)]
     public class AuthController : ApiController
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthService _authService; 
 
         /// <summary>
         /// Initializes the controller instance.

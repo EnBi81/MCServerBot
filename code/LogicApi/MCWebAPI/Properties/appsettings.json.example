@@ -23,12 +23,22 @@
     "Hamachi": "C:\\..\\LogMeIn Hamachi\\x64",
     "JavaLocation": "C:\\..\\jdk-17.0.2\\bin\\java.exe",
     "MinecraftServersBaseFolder": "C:\\..\\MinecraftServers\\",
-    "MinecraftServerHandler": "C:\\..\\MCServerHandler\\bin\\Debug\\net5.0\\MCServerHandler.exe"
+    "MinecraftServerHandler": "C:\\..\\MCServerHandler\\bin\\Debug\\net7.0\\MCServerHandler.exe",
+    "BackupFolder": "C:\\..\\Backups\\"
   },
   "MinecraftSettings": {
-    "ServerMaxRamMB": "8196",
-    "ServerInitRamMB": "8196",
-    "MaxDiskSpaceGB": "10"
+    "ServerPark": {
+      "MaxDiskSpaceGB": "10"
+    },
+    "ServerProcess": {
+      "ServerMaxRamMB": "8196",
+      "ServerInitRamMB": "8196"
+    },
+    "Backup": {
+      "MaxAutoBackup": "3",
+      "MaxManualBackup": "3",
+      "AutoBackupAfterUptimeMinute": "10"
+    }
   }
 }
 

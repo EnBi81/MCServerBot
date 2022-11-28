@@ -1,5 +1,6 @@
 ﻿using APIModel.DTOs;
 using Application.DAOs;
+using Application.Minecraft.Configs;
 using Application.Minecraft.Util;
 using Loggers;
 using Shared.DTOs;

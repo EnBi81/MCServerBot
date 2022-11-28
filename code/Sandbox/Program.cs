@@ -1,58 +1,69 @@
-﻿
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.SignalR.Client;
-using Shared.DTOs;
-using System.IO.Compression;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.IO.Compression;
 
 namespace Sandbox
 {
 
+    public class Person
+    {
+
+        public string Name = "";
+        public int Age { get; set; }
+    }
+    
     public class SandBoxClass
     {
 
-        static async Task Main(string[] args)
-        {
-            string fromDir = @"ToCompress";
-            string destination = @"tocompress.zip";
 
-            CreateFromDirectory(fromDir, destination, CompressionLevel.SmallestSize, false, text => text.Contains("hello"));
+        static void Main(string[] args)
+        {
+            Person p = new Person { Name = "Greg", Age = 20 };
+
+            Console.WriteLine(p.Name);
+
+            ref string name = ref p.Name;
+            name = "Hello";
+
+            Console.WriteLine(p.Name);
+        }
+           
+
+
+        static async Task Main1(string[] args)
+        {
+            string fromDir = @"C:\Users\enbi8\source\repos\MCServerBot\code\Sandbox\bin\Debug\net7.0\1";
+            string destination = @"1.zip";
+
+            await CreateFromDirectory(fromDir, destination, CompressionLevel.SmallestSize, false, text => !text.StartsWith("eula.txt") && !text.StartsWith("logs"));
         }
 
 
-        public static void CreateFromDirectory(
-        string sourceDirectoryName
-    , string destinationArchiveFileName
-    , CompressionLevel compressionLevel
-    , bool includeBaseDirectory
-    , Predicate<string> filter // Add this parameter
+        public static async Task CreateFromDirectory(
+            string sourceDirectoryName
+    ,       string destinationArchiveFileName
+    ,       CompressionLevel compressionLevel
+    ,       bool includeBaseDirectory
+    ,       Predicate<string> filterEntryNames
     )
         {
             if (string.IsNullOrEmpty(sourceDirectoryName))
             {
-                throw new ArgumentNullException("sourceDirectoryName");
+                throw new ArgumentNullException(nameof(sourceDirectoryName));
             }
             if (string.IsNullOrEmpty(destinationArchiveFileName))
             {
-                throw new ArgumentNullException("destinationArchiveFileName");
+                throw new ArgumentNullException(nameof(destinationArchiveFileName));
             }
+            
             var filesToAdd = Directory.GetFiles(sourceDirectoryName, "*", SearchOption.AllDirectories);
             var entryNames = GetEntryNames(filesToAdd, sourceDirectoryName, includeBaseDirectory);
-            using (var zipFileStream = new FileStream(destinationArchiveFileName, FileMode.Create))
+            await using var zipFileStream = new FileStream(destinationArchiveFileName, FileMode.Create);
+            using var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create);
+
+            foreach (var (entryName, fileName) in entryNames.Zip(filesToAdd))
             {
-                using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
+                if (filterEntryNames(entryName))
                 {
-                    for (int i = 0; i < filesToAdd.Length; i++)
-                    {
-                        // Add the following condition to do filtering:
-                        if (!filter(filesToAdd[i]))
-                        {
-                            continue;
-                        }
-                        archive.CreateEntryFromFile(filesToAdd[i], entryNames[i], compressionLevel);
-                    }
+                    archive.CreateEntryFromFile(fileName, entryName, compressionLevel);
                 }
             }
         }

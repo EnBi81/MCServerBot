@@ -95,7 +95,7 @@ namespace MCWebAPI.Utils.Setup
         {
             var info = new OpenApiInfo()
             {
-                Title = ".NET Core (.NET 6) Web API",
+                Title = "Prismarine RESTful Web API",
                 Version = desc.ApiVersion.ToString()
             };
 

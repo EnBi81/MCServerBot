@@ -13,6 +13,7 @@ using Shared.DTOs;
 using Shared.Model;
 using System.Text;
 using System.Security.Claims;
+using Application.Minecraft.Configs;
 
 namespace MCWebAPI.Utils.Setup
 {
@@ -66,12 +67,19 @@ namespace MCWebAPI.Utils.Setup
             // Configs
             collection.AddSingleton(new MinecraftConfig
             {
-                MaxSumOfDiskSpaceGB = int.Parse(configuration["MinecraftSettings:MaxDiskSpaceGB"]),
-                MinecraftServerInitRamMB = int.Parse(configuration["MinecraftSettings:ServerInitRamMB"]),
-                MinecraftServerMaxRamMB = int.Parse(configuration["MinecraftSettings:ServerMaxRamMB"]),
+                MaxSumOfDiskSpaceGB = int.Parse(configuration["MinecraftSettings:ServerPark:MaxDiskSpaceGB"]),
                 JavaLocation = configuration["Paths:JavaLocation"],
                 MinecraftServersBaseFolder = configuration["Paths:MinecraftServersBaseFolder"],
                 MinecraftServerHandlerPath = configuration["Paths:MinecraftServerHandler"],
+                BackupFolder = configuration["Paths:BackupFolder"],
+                ServerConfig = new MinecraftServerConfig
+                {
+                    ServerInitRamMB = int.Parse(configuration["MinecraftSettings:ServerProcess:ServerInitRamMB"]),
+                    ServerMaxRamMB = int.Parse(configuration["MinecraftSettings:ServerProcess:ServerMaxRamMB"]),
+                    AutoBackupAfterUptimeMinute = int.Parse(configuration["MinecraftSettings:Backup:AutoBackupAfterUptimeMinute"]),
+                    MaxAutoBackup = int.Parse(configuration["MinecraftSettings:Backup:MaxAutoBackup"]),
+                    MaxManualBackup = int.Parse(configuration["MinecraftSettings:Backup:MaxManualBackup"]),
+                }
             });
 
             // Loggers
