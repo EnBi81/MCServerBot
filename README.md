@@ -45,19 +45,24 @@ WEB API features:
 
 ## TODO:
 (Before starting the websites and discord bot)
-1. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-2. choose server icon
-    - only from the given ones
-3. backup (auto + manual)
+
+1. backup (auto + manual)
     - parameter for how many auto saves / server
     - manual backup with given name (no unique name)
     - restore for all kinds of backup
     - backup when server is shut down, and was running over x minutes
     - choose backup folder
-4. c# client + discord
-5. js client + old page
-6. new blazor pages
-7. Minecraft command autocomplete
+    - create attribute ManualState and AutoState and apply them to the current states
+2. Get nbt information of a minecraft player through rcon (info should be available from controller)
+3. choose server icon
+    - only from the given ones
+4. When deleting a server, put the backups and the server to the recycle bin instead of the deleted folder
+5. Write out Api uptime
+6. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+7. c# client + discord
+8. js client + old page
+9. new blazor pages
+10. Minecraft command autocomplete
 
 
 
