@@ -25,10 +25,11 @@ namespace Application.Minecraft.States
 
         public override Task Apply()
         {
+            var serverUptime = DateTime.Now - (_server.OnlineFrom ?? DateTime.MaxValue);
+            _server.AddLog(new LogMessage("Server online for: " + serverUptime, LogMessageType.System_Message));
+
             _server.StorageBytes = _server.McServerProcess.GetStorage();
             _server.OnlineFrom = null;
-
-            _server.PerformanceReporter?.Stop();
 
             return Task.CompletedTask;
         }

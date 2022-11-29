@@ -10,14 +10,14 @@ namespace Application.Minecraft.States
     {
         public BackupManualState(MinecraftServerLogic server, string[] args) : base(server, args) { }
 
-        public override Task Apply()
+        public override async Task Apply()
         {
             if (args[0] is not string backupName)
                 throw new MCInternalException("Invalid backup arguments");
 
-            // TODO: backup
-            // https://stackoverflow.com/questions/35415936/how-to-zip-a-directorys-contents-except-one-subdirectory
-            return Task.CompletedTask;
+
+            await _server.McServerFileHandler.Backup(_server.Id, backupName, false);
+            await _server.SetServerStateAsync<OfflineState>();
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.Backup;
+using Application.Minecraft.Configs;
 using Application.Minecraft.Util;
 using Shared.Exceptions;
 
@@ -11,10 +12,13 @@ namespace Application.Minecraft.MinecraftServers.Utils
         // to a newer version
         private readonly string _backupTempDir;
 
-        public MinecraftServersFileHandler(string serversPath)
+        private readonly MinecraftServerConfig _serverConfig;
+
+        public MinecraftServersFileHandler(string serversPath, MinecraftServerConfig serverConfig)
         {
             _serverPath = serversPath;
             _backupTempDir = Path.Combine(_serverPath, "backup");
+            _serverConfig = serverConfig;
         }
 
 
@@ -98,11 +102,24 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
         public async Task Backup(long serverId, string name, bool isAutomatic)
         {
+            var backupManager = BackupManager.Instance;
+
+            // deleting oldest backup if limit is reached
+            var backups = await backupManager.GetBackupsByServer(serverId);
+            backups = backups.Where(b => b.IsAutomatic == isAutomatic);
+            var limit = isAutomatic ? _serverConfig.MaxAutoBackup : _serverConfig.MaxManualBackup;
+
+            if (backups.Count() >= limit)
+            {
+                var oldestBackup = backups.OrderBy(b => b.CreationTime).First();
+                await backupManager.DeleteBackup(oldestBackup);
+            }
+
+            // creating new backup
             string fromDir = _serverPath;
             string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, isAutomatic);
 
-            Predicate<string> filter = s => true;
-
+            Predicate<string> filter = s => !s.StartsWith("eula.txt") && !s.StartsWith("logs") && !s.StartsWith("server.info");
             await FileHelper.CreateZipFromDirectory(fromDir, backupPath, System.IO.Compression.CompressionLevel.SmallestSize, false, filter);
         }
     }

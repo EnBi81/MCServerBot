@@ -16,9 +16,23 @@ namespace Application.Minecraft.States
 
         public override async Task Apply()
         {
-            Console.WriteLine("Backup");
+            _server.PerformanceReporter?.Stop();
+
+            var uptimeMinutes = DateTime.Now - (_server.OnlineFrom ?? DateTime.MaxValue);
             
-            Console.WriteLine("Backup done");
+
+            if(uptimeMinutes.TotalMinutes >= _server.ServerConfig.AutoBackupAfterUptimeMinute)
+            {
+                _server.AddLog(new LogMessage("Auto backup server", LogMessageType.System_Message));
+
+                string backupName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss_f");
+                await _server.McServerFileHandler.Backup(_server.Id, backupName, false);
+
+                _server.AddLog(new LogMessage("Auto backing up server", LogMessageType.System_Message));
+            }
+            else
+                _server.AddLog(new LogMessage("Skipping auto backup", LogMessageType.System_Message));
+
             await _server.SetServerStateAsync<OfflineState>();
         }
 

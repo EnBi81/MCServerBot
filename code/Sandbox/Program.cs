@@ -8,9 +8,9 @@ namespace Sandbox
 
         static void Main(string[] args)
         {
-            FileInfo info = new FileInfo("Sandbox.exe");
-            string backupName = info.Name[2..^info.Extension.Length];
-            Console.WriteLine(backupName);
+            var test = DateTime.Now - DateTime.MaxValue;
+
+            Console.WriteLine(test.TotalMinutes);
         }
            
 
