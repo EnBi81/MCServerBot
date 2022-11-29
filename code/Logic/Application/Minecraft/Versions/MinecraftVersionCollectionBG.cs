@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Shared.Exceptions;
+using SharedPublic.Exceptions;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;

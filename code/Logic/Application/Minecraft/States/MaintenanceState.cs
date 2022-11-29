@@ -1,9 +1,9 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
-using Shared.DTOs;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.States
 {

@@ -6,10 +6,10 @@ using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
 using Loggers;
-using Shared.DTOs;
-using Shared.EventHandlers;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.EventHandlers;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 using System.Collections.ObjectModel;
 
 namespace Application.Minecraft

@@ -1,6 +1,6 @@
 ﻿using Application.DAOs.Database;
-using Shared.DTOs;
-using Shared.DTOs.Enums;
+using SharedPublic.DTOs;
+using SharedPublic.DTOs.Enums;
 
 namespace DataStorageTest.Tests
 {

@@ -2,8 +2,8 @@
 using APIModel.Responses;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Mvc;
-using Shared.DTOs;
-using Shared.DTOs.Enums;
+using SharedPublic.DTOs;
+using SharedPublic.DTOs.Enums;
 using System.Security.Claims;
 
 namespace MCWebAPI.Controllers.Utils

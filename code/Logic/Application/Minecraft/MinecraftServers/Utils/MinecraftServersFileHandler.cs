@@ -1,7 +1,7 @@
 ﻿using Application.Minecraft.Backup;
 using Application.Minecraft.Configs;
 using Application.Minecraft.Util;
-using Shared.Exceptions;
+using SharedPublic.Exceptions;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {

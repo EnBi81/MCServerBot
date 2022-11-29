@@ -1,7 +1,7 @@
 ﻿using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
 
 namespace Application.Minecraft.States

@@ -1,8 +1,8 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 namespace Application.Minecraft.States
 {
     [ManualState]

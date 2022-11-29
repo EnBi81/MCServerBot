@@ -1,5 +1,5 @@
 ﻿using Application.Minecraft.MinecraftServers;
-using Shared.Model;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.States.Abstract
 {

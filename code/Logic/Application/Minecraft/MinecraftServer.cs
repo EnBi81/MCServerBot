@@ -2,8 +2,8 @@
 using Application.Minecraft.Configs;
 using Application.Minecraft.Versions;
 using Loggers;
-using Shared.DTOs;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Model;
 
 namespace Application.Minecraft
 {

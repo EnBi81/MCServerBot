@@ -1,9 +1,10 @@
 ﻿using APIModel.DTOs;
-using Shared.DTOs;
-using Shared.EventHandlers;
-using Shared.Exceptions;
+using SharedPublic.DTOs;
+using SharedPublic.EventHandlers;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
-namespace Shared.Model
+namespace SharedPublic.Model
 {
     /// <summary>
     /// A cozy place to manage the minecraft servers
@@ -31,6 +32,7 @@ namespace Shared.Model
         /// Version collection and manager
         /// </summary>
         public IMinecraftVersionCollection MinecraftVersionCollection { get; }
+        public IBackupManager BackupManager { get; }
 
         
 

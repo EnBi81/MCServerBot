@@ -3,7 +3,7 @@ using Loggers.Loggers;
 using MCWebAPI.Utils.Middlewares;
 using MCWebAPI.Utils.Setup;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Shared.Model;
+using SharedPublic.Model;
 using SignalRSwaggerGen;
 using System.Reflection;
 

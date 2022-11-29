@@ -1,4 +1,4 @@
-﻿namespace Shared.DTOs
+﻿namespace SharedPublic.DTOs
 {
     public enum DataUserType
     {

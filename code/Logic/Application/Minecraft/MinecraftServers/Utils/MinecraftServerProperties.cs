@@ -1,5 +1,5 @@
-﻿using Shared.DTOs;
-using Shared.Model;
+﻿using SharedPublic.DTOs;
+using SharedPublic.Model;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;

@@ -7,9 +7,9 @@ using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
-using Shared.DTOs;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 using System.Diagnostics;
 using System.Reflection;
 

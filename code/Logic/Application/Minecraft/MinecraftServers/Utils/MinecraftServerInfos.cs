@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using Shared.DTOs;
-using Shared.Exceptions;
-using Shared.Model;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {

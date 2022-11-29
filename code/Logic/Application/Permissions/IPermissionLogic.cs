@@ -1,4 +1,4 @@
-﻿using Shared.DTOs;
+﻿using SharedPublic.DTOs;
 
 namespace Application.Permissions
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Exceptions
+namespace SharedPublic.Exceptions
 {
     public class MCException : Exception
     {

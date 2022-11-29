@@ -1,8 +1,8 @@
 ﻿using Application.Minecraft.Versions;
-using Shared.DTOs;
-using Shared.Exceptions;
+using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
 
-namespace Shared.Model
+namespace SharedPublic.Model
 {
     /// <summary>
     /// Interface representing a single Minecraft Server.
