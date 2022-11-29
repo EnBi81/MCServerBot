@@ -1,8 +1,6 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
-using MCWebAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Shared.DTOs;
 using Shared.Model;
 
@@ -12,7 +10,7 @@ namespace MCWebAPI.Controllers.api.v1
     /// Endpoint for managing the minecraft servers.
     /// </summary>
     [ApiVersion(ApiVersionV1)]
-    public class MinecraftServerController : ApiController
+    public partial class MinecraftServerController : ApiController
     {
         private const string RouteId = "{id:long}";
 
@@ -121,31 +119,6 @@ namespace MCWebAPI.Controllers.api.v1
             var user = await GetUserEventData();
             await serverPark.ToggleServer(id, user);
             return NoContent();
-        }
-
-
-        [HttpPost(RouteId + "/backups", Name = "BackupServer")]
-        public async Task<IActionResult> BackupServer([FromRoute] long id)
-        {
-            return Ok();
-        }
-
-        [HttpGet(RouteId + "/backups", Name = "GetBackups")]
-        public async Task<IActionResult> GetBackups([FromRoute] long id)
-        {
-            return Ok();
-        }
-
-        [HttpDelete(RouteId + "/backups/{backupId:long}", Name = "DeleteBackup")]
-        public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] long backupId)
-        {
-            return Ok();
-        }
-
-        [HttpPatch(RouteId + "/backups/{backupId:long}", Name = "RestoreBackup")]
-        public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] long backupId)
-        {
-            return Ok();
         }
 
     }

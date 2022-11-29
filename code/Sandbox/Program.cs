@@ -2,28 +2,15 @@
 
 namespace Sandbox
 {
-
-    public class Person
-    {
-
-        public string Name = "";
-        public int Age { get; set; }
-    }
-    
     public class SandBoxClass
     {
 
 
         static void Main(string[] args)
         {
-            Person p = new Person { Name = "Greg", Age = 20 };
-
-            Console.WriteLine(p.Name);
-
-            ref string name = ref p.Name;
-            name = "Hello";
-
-            Console.WriteLine(p.Name);
+            FileInfo info = new FileInfo("Sandbox.exe");
+            string backupName = info.Name[2..^info.Extension.Length];
+            Console.WriteLine(backupName);
         }
            
 

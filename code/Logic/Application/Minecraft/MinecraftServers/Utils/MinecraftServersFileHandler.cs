@@ -5,12 +5,16 @@ namespace Application.Minecraft.MinecraftServers.Utils
     internal class MinecraftServersFileHandler
     {
         private readonly string _serverPath;
-        private readonly string _backupDir;
+        // this backup dir is only used to temporarily backup the server files while the server is upgrading
+        // to a newer version
+        private readonly string _backupTempDir;
+
+        private readonly string _backupFolder;
 
         public MinecraftServersFileHandler(string serversPath)
         {
             _serverPath = serversPath;
-            _backupDir = Path.Combine(_serverPath, "backup");
+            _backupTempDir = Path.Combine(_serverPath, "backup");
         }
 
 
@@ -38,10 +42,10 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
         public void BackUpImportantFiles()
         {
-            if(Directory.Exists(_backupDir))
-                Directory.Delete(_backupDir, true);
+            if(Directory.Exists(_backupTempDir))
+                Directory.Delete(_backupTempDir, true);
 
-            var backupDir = Directory.CreateDirectory(_backupDir);
+            var backupDir = Directory.CreateDirectory(_backupTempDir);
 
             var info = new DirectoryInfo(_serverPath);
 
@@ -62,13 +66,13 @@ namespace Application.Minecraft.MinecraftServers.Utils
             foreach (var file in Directory.GetFiles(_serverPath))
                 File.Delete(file);
 
-            foreach (var folder in Directory.GetDirectories(_serverPath).Where(dir => dir != _backupDir))
+            foreach (var folder in Directory.GetDirectories(_serverPath).Where(dir => dir != _backupTempDir))
                 Directory.Delete(folder, true);
         }
         
         public void RetrieveBackedUpFiles()
         {
-            var backupDir = new DirectoryInfo(_backupDir);
+            var backupDir = new DirectoryInfo(_backupTempDir);
 
             if (!backupDir.Exists)
                 throw new MCInternalException("Could not find backup directory!");
