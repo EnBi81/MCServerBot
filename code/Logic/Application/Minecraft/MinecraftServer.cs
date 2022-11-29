@@ -17,9 +17,9 @@ namespace Application.Minecraft
         private readonly MinecraftServerLogic _minecraftServerLogic;
 
         public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            string serverFolderName, MinecraftConfig config, IMinecraftVersionCollection collection) : this(dataAccess, logger)
+            string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
         {
-            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config, collection));
+            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config));
             _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
             Startup();
         }

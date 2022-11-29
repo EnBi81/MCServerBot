@@ -36,12 +36,27 @@ namespace Application.Minecraft.Versions
          *   6. Get absolute path of a version jar file if downloaded
          */
 
+        private static MinecraftVersionCollection? _instance;
+        public static MinecraftVersionCollection Instance => _instance ?? throw new InvalidOperationException("MinecraftVersionCollection is not initialized.");
+
+
+        public static void Initialize(string versionsDir, MinecraftLogger logger)
+        {
+            if (_instance is not null)
+                return;
+
+            _instance = new MinecraftVersionCollection(versionsDir, logger);
+        }
+
+
+
+
+
+
         private readonly List<MinecraftVersion> _versions = new ();
         private readonly MinecraftLogger _logger;
         private readonly string _loggerSource = "version-manager";
-
         
-
 
         /// <summary>
         /// Initializes the version manager.

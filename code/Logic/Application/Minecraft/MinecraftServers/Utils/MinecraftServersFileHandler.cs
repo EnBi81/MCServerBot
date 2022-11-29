@@ -1,4 +1,6 @@
-﻿using Shared.Exceptions;
+﻿using Application.Minecraft.Backup;
+using Application.Minecraft.Util;
+using Shared.Exceptions;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {
@@ -8,8 +10,6 @@ namespace Application.Minecraft.MinecraftServers.Utils
         // this backup dir is only used to temporarily backup the server files while the server is upgrading
         // to a newer version
         private readonly string _backupTempDir;
-
-        private readonly string _backupFolder;
 
         public MinecraftServersFileHandler(string serversPath)
         {
@@ -93,6 +93,17 @@ namespace Application.Minecraft.MinecraftServers.Utils
                     Directory.Delete(originalDirPath, true);
                 dir.MoveTo(originalDirPath);
             }
+        }
+
+
+        public async Task Backup(long serverId, string name, bool isAutomatic)
+        {
+            string fromDir = _serverPath;
+            string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, isAutomatic);
+
+            Predicate<string> filter = s => true;
+
+            await FileHelper.CreateZipFromDirectory(fromDir, backupPath, System.IO.Compression.CompressionLevel.SmallestSize, false, filter);
         }
     }
 }

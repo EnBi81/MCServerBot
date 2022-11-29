@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
+using Application.Minecraft.States.Attributes;
 using Shared.Exceptions;
 using Shared.Model;
 
@@ -9,6 +10,7 @@ namespace Application.Minecraft.States
     /// Represents the Shutting Down state.
     /// The server is shutting down, meaning it does not listen to any other commands. Sets all players offline.
     /// </summary>
+    [ManualState]
     internal class ShuttingDownState : ServerStateAbs
     {
 
@@ -35,13 +37,7 @@ namespace Application.Minecraft.States
 
         public override bool IsAllowedNextState(IServerState state)
         {
-            if (state is BackupAutoState)
-                return true;
-
-            if (state is MaintenanceState)
-                throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Maintenance, please stop the server!");
-
-            return false;
+            return state is BackupAutoState;
         }
 
         public override async Task Apply()

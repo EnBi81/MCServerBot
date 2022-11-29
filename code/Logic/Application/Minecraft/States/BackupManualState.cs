@@ -1,9 +1,11 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
+using Application.Minecraft.States.Attributes;
 using Shared.Exceptions;
 using Shared.Model;
 namespace Application.Minecraft.States
 {
+    [ManualState]
     internal class BackupManualState : ServerStateAbs
     {
         public BackupManualState(MinecraftServerLogic server, string[] args) : base(server, args) { }
@@ -26,10 +28,7 @@ namespace Application.Minecraft.States
 
         public override bool IsAllowedNextState(IServerState state)
         {
-            if (state is not OfflineState)
-                throw new MinecraftServerException(_server.ServerName + " is backing up. Please wait!");
-
-            return true;
+            return state is OfflineState;
         }
 
         public override void HandleLog(LogMessage logMessage) { }

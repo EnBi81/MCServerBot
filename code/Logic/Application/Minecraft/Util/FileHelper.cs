@@ -123,10 +123,71 @@ namespace Application.Minecraft.Util
         public static (bool Overflow, long Measured) CheckStorageOverflow(string dir, long maxBytes)
         {
             DirectoryInfo info = new(dir);
-            long dirSize = FileHelper.DirSize(info);
+            long dirSize = DirSize(info);
             return (dirSize > maxBytes, dirSize);
         }
 
         internal static void DeleteDirectory(string newDir) => Directory.Delete(newDir, true);
+
+
+        /// <summary>
+        /// Creates a zip file from the given directory, including a filter by entry.
+        /// </summary>
+        /// <param name="sourceDirectoryName"></param>
+        /// <param name="destinationArchiveFileName"></param>
+        /// <param name="compressionLevel"></param>
+        /// <param name="includeBaseDirectory"></param>
+        /// <param name="filterEntryNames"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task CreateZipFromDirectory(
+            string sourceDirectoryName, 
+            string destinationArchiveFileName, 
+            CompressionLevel compressionLevel, 
+            bool includeBaseDirectory, 
+            Predicate<string> filterEntryNames)
+        {
+            if (string.IsNullOrEmpty(sourceDirectoryName))
+            {
+                throw new ArgumentNullException(nameof(sourceDirectoryName));
+            }
+            if (string.IsNullOrEmpty(destinationArchiveFileName))
+            {
+                throw new ArgumentNullException(nameof(destinationArchiveFileName));
+            }
+
+            var filesToAdd = Directory.GetFiles(sourceDirectoryName, "*", SearchOption.AllDirectories);
+            var entryNames = GetEntryNames(filesToAdd, sourceDirectoryName, includeBaseDirectory);
+            await using var zipFileStream = new FileStream(destinationArchiveFileName, FileMode.Create);
+            using var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create);
+
+            foreach (var (entryName, fileName) in entryNames.Zip(filesToAdd))
+            {
+                if (filterEntryNames(entryName))
+                {
+                    archive.CreateEntryFromFile(fileName, entryName, compressionLevel);
+                }
+            }
+        }
+        private static string[] GetEntryNames(string[] names, string sourceFolder, bool includeBaseName)
+        {
+            if (names == null || names.Length == 0)
+                return Array.Empty<string>();
+
+            if (includeBaseName)
+                sourceFolder = Path.GetDirectoryName(sourceFolder)!;
+
+            int length = string.IsNullOrEmpty(sourceFolder) ? 0 : sourceFolder.Length;
+            if (length > 0 && sourceFolder != null && sourceFolder[length - 1] != Path.DirectorySeparatorChar && sourceFolder[length - 1] != Path.AltDirectorySeparatorChar)
+                length++;
+
+            var result = new string[names.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                result[i] = names[i][length..];
+            }
+
+            return result;
+        }
     }
 }

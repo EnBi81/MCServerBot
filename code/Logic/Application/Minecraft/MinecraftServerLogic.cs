@@ -1,14 +1,17 @@
-﻿using Application.Minecraft.Configs;
+﻿using Application.Minecraft.Backup;
+using Application.Minecraft.Configs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
 using Application.Minecraft.States.Abstract;
+using Application.Minecraft.States.Attributes;
 using Application.Minecraft.Util;
 using Application.Minecraft.Versions;
 using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Model;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Application.Minecraft
 {
@@ -108,10 +111,10 @@ namespace Application.Minecraft
 
 
 
-        public MinecraftServerLogic(string serverFolderName, MinecraftConfig config, IMinecraftVersionCollection vsCollection) : this(0, serverFolderName, config)
+        public MinecraftServerLogic(string serverFolderName, MinecraftConfig config) : this(0, serverFolderName, config)
         {
             McServerInfos.Load();
-
+            IMinecraftVersionCollection vsCollection = MinecraftVersionCollection.Instance;
             var version = vsCollection[McServerInfos.Version];
             if (version is null)
                 throw new MCInternalException($"Version {McServerInfos.Version} not found in version collection");
@@ -268,30 +271,40 @@ namespace Application.Minecraft
         /// </summary>
         /// <typeparam name="T">New state, which implements the IServerState interface</typeparam>
         /// <exception cref="Exception">If the T is abstract or is an interface, or if it does not contain a public constructor which accepts a single MinecraftServer argument.</exception>
-        internal async Task SetServerStateAsync<T>(params object?[] args) where T : IServerState
+        internal async Task SetServerStateAsync<T>(params object[] args) where T : IServerState
         {
-            var type = typeof(T);
+            var newStateType = typeof(T);
             
             // here we check that the type is neither abstract nor interface, and it has a constructor which takes a minecraft server.
-            if (type.IsAbstract ||
-               type.IsInterface ||
-               type.GetConstructor(new Type[] { typeof(MinecraftServerLogic), typeof(string[]) }) == null) 
-               //last line: check if T contains a public constructor which takes a MinecraftServer object and string array
+            if (newStateType.IsAbstract ||
+               newStateType.IsInterface ||
+               newStateType.GetConstructor(new Type[] { typeof(MinecraftServerLogic), typeof(object[]) }) == null) 
+               //last line: check if T contains a public constructor which takes a MinecraftServer object and object array
             {
-                throw new MCInternalException("Invalid State " + type.FullName);
+                throw new MCInternalException("Invalid State " + newStateType.FullName);
             }
 
 
             var parameters = new object[] { this, args };
 
-            object? nullableState = Activator.CreateInstance(type, parameters);
+            object? nullableState = Activator.CreateInstance(newStateType, parameters);
             if (nullableState is not IServerState state)
-                throw new MCInternalException($"Error creating {type.FullName}");
+                throw new MCInternalException($"Error creating {newStateType.FullName}");
 
             
             if (_serverState is IServerState stateTemp)
+            {
                 if (!stateTemp.IsAllowedNextState(state))
-                    return;
+                {
+                    if (newStateType.GetCustomAttribute<ManualStateAttribute>() is not null)
+                        throw new Exception($"{ServerName} is not allowed to change state from {_serverState.GetType().Name} to {newStateType.Name}.");
+                    else if (newStateType.GetCustomAttribute<AutoStateAttribute>() is not null)
+                        return;
+                    else
+                        throw new MCInternalException("Not implemented state type " + newStateType.FullName);
+                }
+            }
+                
 
             _serverState = state;
             

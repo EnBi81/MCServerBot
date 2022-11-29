@@ -1,5 +1,6 @@
 ﻿using APIModel.DTOs;
 using Application.DAOs;
+using Application.Minecraft.Backup;
 using Application.Minecraft.Configs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
@@ -42,9 +43,11 @@ namespace Application.Minecraft
             _config = config;
             _logger = logger;
             _mcEnvironment = new MinecraftEnvironment(config.MinecraftServersBaseFolder);
-            MinecraftVersionCollection = new MinecraftVersionCollection(_mcEnvironment.ServerJarDirectory, _logger);
 
-            
+            Versions.MinecraftVersionCollection.Initialize(_mcEnvironment.ServerJarDirectory, _logger);
+            BackupManager.Initialize(config.BackupFolder);
+
+
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
             DeletedServersFolder = _config.MinecraftServersBaseFolder + "DeletedServers\\";
 
@@ -78,7 +81,7 @@ namespace Application.Minecraft
                     throw new MCInternalException($"ERROR: cannot convert folder {folderName} to ulong. Please remove that folder from the Servers directory!");
                 }
 
-                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config, MinecraftVersionCollection);
+                var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config);
                 RegisterMcServer(mcServer);
             }
         }
@@ -90,8 +93,8 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers => new ReadOnlyDictionary<long, IMinecraftServer>(ServerCollection);
 
-        public IMinecraftVersionCollection MinecraftVersionCollection { get; }
-
+        public IMinecraftVersionCollection MinecraftVersionCollection => Versions.MinecraftVersionCollection.Instance;
+        
 
 
 

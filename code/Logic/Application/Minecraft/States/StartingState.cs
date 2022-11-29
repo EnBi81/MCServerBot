@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
+using Application.Minecraft.States.Attributes;
 using Shared.Exceptions;
 using Shared.Model;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ namespace Application.Minecraft.States
     /// <summary>
     /// Represents the Starting state of the minecraft server.
     /// </summary>
+    [ManualState]
     internal class StartingState : ServerStateAbs
     {
         /// <summary>
@@ -51,15 +53,7 @@ namespace Application.Minecraft.States
 
         public override bool IsAllowedNextState(IServerState state)
         {
-            if (state is OnlineState or BackupAutoState)
-                return true;
-
-            if(state is MaintenanceState)
-                throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Maintenance, please stop the server!");
-            if(state is BackupManualState)
-                throw new MinecraftServerException(_server.ServerName + " is Starting up. To start Backing up, please stop the server!");
-
-            return false;
+            return state is OnlineState or BackupAutoState;
         }
         
 

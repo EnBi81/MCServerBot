@@ -1,16 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace SharedPublic.Model
 {
     public interface IBackupManager
     {
+        /// <summary>
+        /// Gets all the backups for a server
+        /// </summary>
+        /// <param name="serverId"></param>
+        /// <returns></returns>
         public Task<IEnumerable<IBackup>> GetBackupsByServer(long serverId);
-        public Task<string> GetBackupPath(IBackup backup);
+        /// <summary>
+        /// Deletes a backup
+        /// </summary>
+        /// <param name="backup">backup to delete</param>
+        /// <returns></returns>
         public Task DeleteBackup(IBackup backup);
-        public Task<FileStream> CreateBackup(long serverId, string name, bool isAutomatic);
+        /// <summary>
+        /// Creates and returns the backup filestream to which the backup should be saved
+        /// </summary>
+        /// <param name="serverId">id of the server to back up</param>
+        /// <param name="name">name of the backup</param>
+        /// <param name="isAutomatic">if the backup is automatic</param>
+        /// <returns></returns>
+        public Task<string> CreateBackupPath(long serverId, string name, bool isAutomatic);
     }
 }

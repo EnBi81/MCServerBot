@@ -1,10 +1,5 @@
-﻿using Application.Minecraft.Configs;
+﻿using Microsoft.VisualBasic.FileIO;
 using SharedPublic.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Minecraft.Backup
 {
@@ -14,13 +9,28 @@ namespace Application.Minecraft.Backup
         //   - each server has its own folder with name of the server id
         //   - backups saved by (m|a)-name.zip, where 'm' means manual backup and 'a' means automatic backup,
         //     and 'name' is the name of the backup
-        
+
+
+        private static BackupManager? _instance;
+        public static BackupManager Instance => _instance ?? throw new InvalidOperationException("BackupManager is not initialized.");
+
+        public static void Initialize(string backupFolder)
+        {
+            if (_instance is not null)
+                return;
+
+            _instance = new BackupManager(backupFolder);
+        }
+
+
+
+
 
         private readonly string _backupFolder;
 
         public BackupManager(string backupFolder)
         {
-            this._backupFolder = backupFolder;
+            _backupFolder = backupFolder;
         }
 
         private DirectoryInfo GetServerBackupFolder(long serverId)
@@ -29,6 +39,7 @@ namespace Application.Minecraft.Backup
             return new DirectoryInfo(path);
         }
 
+        /// <inheritdoc/>
         public Task<IEnumerable<IBackup>> GetBackupsByServer(long serverId)
         {
             var serverBackupFolder = GetServerBackupFolder(serverId);
@@ -58,34 +69,30 @@ namespace Application.Minecraft.Backup
 
             return Task.FromResult(list.AsEnumerable());
         }
-        
-        public async Task<FileStream> CreateBackup(long serverId, string name, bool isAutomatic, MinecraftServerConfig serverConfig)
+
+        /// <inheritdoc/>
+        public Task<string> CreateBackupPath(long serverId, string name, bool isAutomatic)
         {
             var invalidChars = Path.GetInvalidFileNameChars();
             var sanitizedName = string.Join("_", name.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
-
-            var existingBackups = (await GetBackupsByServer(serverId)).Where(backup => backup.IsAutomatic == isAutomatic);
-            int backupLimit = isAutomatic ? serverConfig.MaxAutoBackup : serverConfig.MaxManualBackup;
-            
-            // delete oldest backup if limit is reached
-            if(existingBackups.Count() >= backupLimit)
-            {
-                var oldestBackup = existingBackups.OrderBy(b => b.CreationTime).FirstOrDefault();
-
-                if (oldestBackup is not null)
-                    await DeleteBackup(oldestBackup);
-            }
 
             var backupFolder = GetServerBackupFolder(serverId);
             Directory.CreateDirectory(backupFolder.FullName);
 
             string backupFileName = $"{(isAutomatic ? "a" : "m")}-{sanitizedName}.zip";
-            
-            FileStream fs = new FileStream(backupFileName, FileMode.Create);
-            return fs;
+
+            return Task.FromResult(Path.Combine(backupFolder.FullName, backupFileName));
         }
 
-        public Task DeleteBackup(IBackup backup) => throw new NotImplementedException();
-        public Task<string> GetBackupPath(IBackup backup) => throw new NotImplementedException();
+        /// <inheritdoc/>
+        public Task DeleteBackup(IBackup backup)
+        {
+            string backupFileName = $"{(backup.IsAutomatic ? "a" : "m")}-{backup.Name}.zip";
+            string backupFileFullPath = Path.Combine(_backupFolder, backupFileName);
+
+            FileSystem.DeleteFile(backupFileFullPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
+using Application.Minecraft.States.Attributes;
 using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Model;
@@ -9,6 +10,7 @@ namespace Application.Minecraft.States
     /// <summary>
     /// This state is when the server files are created, or the server is being upgraded to a newer version.
     /// </summary>
+    [ManualState]
     internal class MaintenanceState : ServerStateAbs
     {
 
@@ -96,13 +98,7 @@ namespace Application.Minecraft.States
 
         public override bool IsAllowedNextState(IServerState state)
         {
-            if (state is OfflineState)
-                return true;
-
-            if (state is BackupAutoState)
-                return false;
-
-            throw new MinecraftServerException(_server.ServerName + " is in Maintenance. Please wait!");
+            return state is OfflineState;
         }
 
         public override async Task Apply() 

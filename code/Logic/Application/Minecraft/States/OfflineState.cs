@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.States.Abstract;
+using Application.Minecraft.States.Attributes;
 using Shared.Exceptions;
 using Shared.Model;
 using LogMessage = Application.Minecraft.MinecraftServers.LogMessage;
@@ -9,6 +10,7 @@ namespace Application.Minecraft.States
     /// Represents the offline state of the minecraft server. 
     /// In this state, the process is not running, so this state usually ignores/throws exception on most of the actions.
     /// </summary>
+    [AutoState]
     internal class OfflineState : ServerStateAbs
     {
         
