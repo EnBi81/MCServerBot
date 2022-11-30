@@ -63,10 +63,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "signalr-swagger", "signalr-
 		Tools\signalRSwagger\SignalRPathSenderSwagger.js = Tools\signalRSwagger\SignalRPathSenderSwagger.js
 		Tools\signalRSwagger\SignalRPathSwagger.js = Tools\signalRSwagger\SignalRPathSwagger.js
 		Tools\signalRSwagger\SignalRResponseWrapper.js = Tools\signalRSwagger\SignalRResponseWrapper.js
-		code\LogicApi\MCWebAPI\wwwroot\SignalRSwaggerExtension.js = code\LogicApi\MCWebAPI\wwwroot\SignalRSwaggerExtension.js
 		Tools\signalRSwagger\SignalRSwaggerSetup.js = Tools\signalRSwagger\SignalRSwaggerSetup.js
-		code\LogicApi\MCWebAPI\wwwroot\swagger-extension.js = code\LogicApi\MCWebAPI\wwwroot\swagger-extension.js
-		code\LogicApi\MCWebAPI\wwwroot\swagger-hubs.css = code\LogicApi\MCWebAPI\wwwroot\swagger-hubs.css
 	EndProjectSection
 EndProject
 Global
