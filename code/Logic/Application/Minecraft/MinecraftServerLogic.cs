@@ -151,7 +151,7 @@ namespace Application.Minecraft
             Id = id;
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
-            McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
+            McServerFileHandler = new MinecraftServersFileHandler(ServerPath, config.ServerConfig);
 
             ServerConfig = config.ServerConfig;
 
@@ -220,6 +220,10 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public Task Shutdown(UserEventData data) =>
             SetServerStateAsync<ShuttingDownState>(data.Username);
+
+        public Task Backup(BackupDto dto, UserEventData data) =>
+            SetServerStateAsync<BackupManualState>(dto.BackupName);
+
 
         /// <summary>
         /// Handles the received log message according to the state of the server.
@@ -297,7 +301,7 @@ namespace Application.Minecraft
                 if (!stateTemp.IsAllowedNextState(state))
                 {
                     if (newStateType.GetCustomAttribute<ManualStateAttribute>() is not null)
-                        throw new Exception($"{ServerName} is not allowed to change state from {_serverState.GetType().Name} to {newStateType.Name}.");
+                        throw new MinecraftServerException($"{ServerName} is not allowed to change state from {_serverState.GetType().Name} to {newStateType.Name}.");
                     else if (newStateType.GetCustomAttribute<AutoStateAttribute>() is not null)
                         return;
                     else

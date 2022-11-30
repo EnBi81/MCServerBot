@@ -108,6 +108,14 @@ namespace SharedPublic.Model
         public Task Shutdown(UserEventData data = default);
 
         /// <summary>
+        /// Backs up the server and saves it with the given name.
+        /// </summary>
+        /// <param name="name">name of the backup</param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Task Backup(BackupDto backup, UserEventData data = default);
+
+        /// <summary>
         /// Fired when the server has changed status.
         /// </summary>
         public event EventHandler<ServerStatus> StatusChange;

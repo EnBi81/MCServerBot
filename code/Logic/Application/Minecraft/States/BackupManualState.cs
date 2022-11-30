@@ -8,7 +8,7 @@ namespace Application.Minecraft.States
     [ManualState]
     internal class BackupManualState : ServerStateAbs
     {
-        public BackupManualState(MinecraftServerLogic server, string[] args) : base(server, args) { }
+        public BackupManualState(MinecraftServerLogic server, object[] args) : base(server, args) { }
 
         public override async Task Apply()
         {

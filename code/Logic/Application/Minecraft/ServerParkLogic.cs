@@ -45,7 +45,7 @@ namespace Application.Minecraft
             _mcEnvironment = new MinecraftEnvironment(config.MinecraftServersBaseFolder);
 
             Versions.MinecraftVersionCollection.Initialize(_mcEnvironment.ServerJarDirectory, _logger);
-            BackupManager.Initialize(config.BackupFolder);
+            Backup.BackupManager.Initialize(config.BackupFolder);
 
 
             ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
@@ -93,15 +93,18 @@ namespace Application.Minecraft
         /// <inheritdoc/>
         public IReadOnlyDictionary<long, IMinecraftServer> MCServers => new ReadOnlyDictionary<long, IMinecraftServer>(ServerCollection);
 
+        /// <inheritdoc/>
         public IMinecraftVersionCollection MinecraftVersionCollection => Versions.MinecraftVersionCollection.Instance;
-        
 
+        /// <inheritdoc/>
+        public IBackupManager BackupManager => Backup.BackupManager.Instance;
 
 
         /// <summary>
         /// List of all minecraft server instances
         /// </summary>
         internal Dictionary<long, IMinecraftServer> ServerCollection { get; } = new();
+        
 
 
         /// <inheritdoc/>

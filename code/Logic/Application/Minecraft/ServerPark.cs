@@ -96,7 +96,17 @@ namespace Application.Minecraft
                 return _serverPark.MinecraftVersionCollection;
             }
         }
-        
+
+        /// <inheritdoc/>
+        public IBackupManager BackupManager
+        {
+            get
+            {
+                ThrowExceptionIfNotInitialized();
+                return _serverPark.BackupManager;
+            }
+        }
+
         /// <inheritdoc/>
         public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
         {

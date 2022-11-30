@@ -26,7 +26,7 @@ namespace Application.Minecraft
 
 
         public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            long id, string serverName, string serverFolderName, MinecraftConfig config, 
+            long id, string serverName, string serverFolderName, MinecraftConfig config,
             IMinecraftVersion version, MinecraftServerCreationPropertiesDto? creationProperties) : this(dataAccess, logger)
         {
             _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version, creationProperties));
@@ -208,5 +208,9 @@ namespace Application.Minecraft
             return task;
         }
 
+        public Task Backup(BackupDto dto, UserEventData data = default)
+        {
+            return _minecraftServerLogic.Backup(dto, data);
+        }
     }
 }

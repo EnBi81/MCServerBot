@@ -10,7 +10,7 @@ namespace MCWebAPI.Controllers.api.v1
     /// Endpoint for managing the minecraft servers.
     /// </summary>
     [ApiVersion(ApiVersionV1)]
-    public partial class MinecraftServerController : ApiController
+    public class MinecraftServerController : ApiController
     {
         private const string RouteId = "{id:long}";
 
@@ -121,5 +121,69 @@ namespace MCWebAPI.Controllers.api.v1
             return NoContent();
         }
 
+
+        /// <summary>
+        /// Backs up the server.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost(RouteId + "/backups", Name = "BackupServer")]
+        public async Task<IActionResult> BackupServer([FromRoute] long id, [FromBody] BackupDto dto)
+        {
+            var server = serverPark.GetServer(id);
+            var user = await GetUserEventData();
+
+            await server.Backup(dto, user);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Gets all the backups of a server.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet(RouteId + "/backups", Name = "GetBackups")]
+        [ProducesResponseType(typeof(IEnumerable<IBackup>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetBackups([FromRoute] long id)
+        {
+            IEnumerable<IBackup> backups = await serverPark.BackupManager.GetBackupsByServer(id);
+
+            return Ok(backups);
+        }
+
+        /// <summary>
+        /// Deletes a backup of a server.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="backupName"></param>
+        /// <returns></returns>
+        [HttpDelete(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "DeleteBackup")]
+        public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] string backupName)
+        {
+            // this throws exception if server does not exist
+            serverPark.GetServer(id);
+
+            var backup = (await serverPark.BackupManager.GetBackupsByServer(id)).FirstOrDefault(b => b.Name == backupName);
+
+            if (backup == null)
+                return BadRequest("Backup does not exist.");
+
+            await serverPark.BackupManager.DeleteBackup(backup);
+            return Ok(backup);
+        }
+
+        /// <summary>
+        /// Restores a backup of a server.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="backupName"></param>
+        /// <returns></returns>
+        [HttpPatch(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "RestoreBackup")]
+        public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] string backupName)
+        {
+            return StatusCode(501, "Not implemented");
+        }
     }
 }

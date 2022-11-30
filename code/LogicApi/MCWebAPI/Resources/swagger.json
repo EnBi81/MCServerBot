@@ -218,7 +218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                 }
               }
             }
@@ -314,7 +314,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Shared.DTOs.ModifyServerDto"
+                "$ref": "#/components/schemas/SharedPublic.DTOs.ModifyServerDto"
               }
             }
           }
@@ -456,12 +456,13 @@
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
+        "summary": "Backs up the server. (Auth)",
         "operationId": "BackupServer",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -469,6 +470,16 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharedPublic.DTOs.BackupDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -490,12 +501,13 @@
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
+        "summary": "Gets all the backups of a server. (Auth)",
         "operationId": "GetBackups",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -505,7 +517,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharedPublic.Model.IBackup"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -521,17 +543,18 @@
         ]
       }
     },
-    "/api/v1/MinecraftServer/{id}/backups/{backupId}": {
+    "/api/v1/MinecraftServer/{id}/backups/{backupName}": {
       "delete": {
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
+        "summary": "Deletes a backup of a server. (Auth)",
         "operationId": "DeleteBackup",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -539,12 +562,13 @@
             }
           },
           {
-            "name": "backupId",
+            "name": "backupName",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "pattern": "^[\\w\\W]",
+              "type": "string"
             }
           }
         ],
@@ -569,12 +593,13 @@
         "tags": [
           "MinecraftServer"
         ],
-        "summary": " (Auth)",
+        "summary": "Restores a backup of a server. (Auth)",
         "operationId": "RestoreBackup",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -582,12 +607,13 @@
             }
           },
           {
-            "name": "backupId",
+            "name": "backupName",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "pattern": "^[\\w\\W]",
+              "type": "string"
             }
           }
         ],
@@ -716,7 +742,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
+                    "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                   }
                 }
               }
@@ -757,7 +783,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                 }
               }
             }
@@ -799,7 +825,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Shared.Model.IMinecraftServer"
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServer"
                 }
               }
             }
@@ -929,7 +955,7 @@
             "nullable": true
           },
           "properties": {
-            "$ref": "#/components/schemas/Shared.DTOs.MinecraftServerCreationPropertiesDto"
+            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerCreationPropertiesDto"
           }
         },
         "additionalProperties": false
@@ -1024,7 +1050,17 @@
         },
         "additionalProperties": false
       },
-      "Shared.DTOs.MinecraftServerCreationPropertiesDto": {
+      "SharedPublic.DTOs.BackupDto": {
+        "type": "object",
+        "properties": {
+          "backupName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.DTOs.MinecraftServerCreationPropertiesDto": {
         "type": "object",
         "properties": {
           "allowFlight": {
@@ -1124,7 +1160,7 @@
         },
         "additionalProperties": false
       },
-      "Shared.DTOs.MinecraftServerPropertiesDto": {
+      "SharedPublic.DTOs.MinecraftServerPropertiesDto": {
         "type": "object",
         "properties": {
           "allowFlight": {
@@ -1213,7 +1249,7 @@
         },
         "additionalProperties": false
       },
-      "Shared.DTOs.ModifyServerDto": {
+      "SharedPublic.DTOs.ModifyServerDto": {
         "type": "object",
         "properties": {
           "newName": {
@@ -1229,12 +1265,42 @@
             "nullable": true
           },
           "properties": {
-            "$ref": "#/components/schemas/Shared.DTOs.MinecraftServerPropertiesDto"
+            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerPropertiesDto"
           }
         },
         "additionalProperties": false
       },
-      "Shared.Model.ILogMessage": {
+      "SharedPublic.Model.IBackup": {
+        "type": "object",
+        "properties": {
+          "serverId": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "isAutomatic": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "creationTime": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.ILogMessage": {
         "type": "object",
         "properties": {
           "message": {
@@ -1243,12 +1309,12 @@
             "readOnly": true
           },
           "messageType": {
-            "$ref": "#/components/schemas/Shared.Model.LogMessageType"
+            "$ref": "#/components/schemas/SharedPublic.Model.LogMessageType"
           }
         },
         "additionalProperties": false
       },
-      "Shared.Model.IMinecraftPlayer": {
+      "SharedPublic.Model.IMinecraftPlayer": {
         "type": "object",
         "properties": {
           "username": {
@@ -1268,7 +1334,7 @@
         },
         "additionalProperties": false
       },
-      "Shared.Model.IMinecraftServer": {
+      "SharedPublic.Model.IMinecraftServer": {
         "type": "object",
         "properties": {
           "id": {
@@ -1281,7 +1347,7 @@
             "nullable": true
           },
           "statusCode": {
-            "$ref": "#/components/schemas/Shared.Model.ServerStatus"
+            "$ref": "#/components/schemas/SharedPublic.Model.ServerStatus"
           },
           "statusMessage": {
             "type": "string",
@@ -1295,7 +1361,7 @@
           "logs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Shared.Model.ILogMessage"
+              "$ref": "#/components/schemas/SharedPublic.Model.ILogMessage"
             },
             "nullable": true,
             "readOnly": true
@@ -1307,7 +1373,7 @@
             "readOnly": true
           },
           "properties": {
-            "$ref": "#/components/schemas/Shared.Model.IMinecraftServerProperties"
+            "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServerProperties"
           },
           "port": {
             "type": "integer",
@@ -1317,7 +1383,7 @@
           "onlinePlayers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Shared.Model.IMinecraftPlayer"
+              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
             },
             "nullable": true,
             "readOnly": true
@@ -1325,7 +1391,7 @@
           "players": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/Shared.Model.IMinecraftPlayer"
+              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
             },
             "nullable": true,
             "readOnly": true
@@ -1346,7 +1412,7 @@
         },
         "additionalProperties": false
       },
-      "Shared.Model.IMinecraftServerProperties": {
+      "SharedPublic.Model.IMinecraftServerProperties": {
         "type": "object",
         "properties": {
           "properties": {
@@ -1360,7 +1426,7 @@
         },
         "additionalProperties": false
       },
-      "Shared.Model.LogMessageType": {
+      "SharedPublic.Model.LogMessageType": {
         "enum": [
           0,
           1,
@@ -1369,7 +1435,7 @@
         "type": "integer",
         "format": "int32"
       },
-      "Shared.Model.ServerStatus": {
+      "SharedPublic.Model.ServerStatus": {
         "enum": [
           0,
           1,

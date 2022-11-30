@@ -1,8 +1,5 @@
 ﻿using SharedPublic.DTOs;
 using SharedPublic.Model;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -31,19 +28,52 @@ namespace Application.Minecraft.MinecraftServers.Utils
         public static async Task SaveProperties(string file, MinecraftServerProperties props)
         {
             StringBuilder sb = new();
-            foreach (var (key, value) in props.Properties)
+            foreach (var (key, value) in props._properties)
                 sb.AppendLine(key + "=" + value.ToString());
 
             await File.WriteAllTextAsync(file, sb.ToString());
         }
 
 
+        private readonly static string[] _visibleProperties = new string[]
+        {
+            "allow-flight",
+            "difficulty",
+            "enable-command-block",
+            "enforce-secure-profile",
+            "gamemode",
+            "hardcore",
+            "level-seed",
+            "level-type",
+            "max-world-size",
+            "motd",
+            "pvp",
+            "simulation-distance",
+            "spawn-monsters",
+            "spawn-protection",
+            "view-distance",
+            "white-list"
+        };
 
 
         /// <inheritdoc/>
-        public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Properties 
+        {
+            get
+            {
+                LoadData();
+
+                return _properties
+                .Where(pair => _visibleProperties.Contains(pair.Key))
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            }
+        }
 
         private readonly string _file;
+
+
+        private readonly Dictionary<string, string> _properties = new();
+
 
         /// <summary>
         /// Initializes the instance by splitting the lines to key value pairs and puts them into the Properties
@@ -52,14 +82,12 @@ namespace Application.Minecraft.MinecraftServers.Utils
         public MinecraftServerProperties(string file)
         {
             _file = file;
-            
-            
         }
 
 
         private void LoadData()
         {
-            if (Properties.Any())
+            if (_properties.Any())
                 return;
             
             string[] lines;
@@ -82,7 +110,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 string key = parts[0];
                 string value = parts[1];
 
-                Properties.Add(key, value);
+                _properties.Add(key, value);
             }
         }
         
@@ -93,7 +121,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
             get 
             {
                 LoadData();
-                Properties.TryGetValue(key, out string? value);
+                _properties.TryGetValue(key, out string? value);
                 return value;
             }
         }
@@ -108,8 +136,8 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
             foreach (var (key, value) in dto.ValidateAndRetrieveData())
             {
-                if (Properties.ContainsKey(key))
-                    Properties[key] = value;
+                if (_properties.ContainsKey(key))
+                    _properties[key] = value;
             }
 
             await SaveProperties(_file, this);

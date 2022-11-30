@@ -46,7 +46,7 @@ namespace Application.Minecraft.Backup
             if (!serverBackupFolder.Exists)
                 return Task.FromResult(Enumerable.Empty<IBackup>());
 
-            var files = serverBackupFolder.GetFiles("_-_*.zip");
+            var files = serverBackupFolder.GetFiles("?-?*.zip");
 
             var list = new List<IBackup>();
             
@@ -87,7 +87,7 @@ namespace Application.Minecraft.Backup
         /// <inheritdoc/>
         public Task DeleteBackup(IBackup backup)
         {
-            string backupFileName = $"{(backup.IsAutomatic ? "a" : "m")}-{backup.Name}.zip";
+            string backupFileName = $"1\\{(backup.IsAutomatic ? "a" : "m")}-{backup.Name}.zip";
             string backupFileFullPath = Path.Combine(_backupFolder, backupFileName);
 
             FileSystem.DeleteFile(backupFileFullPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);

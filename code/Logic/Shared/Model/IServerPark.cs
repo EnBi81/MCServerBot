@@ -2,7 +2,6 @@
 using SharedPublic.DTOs;
 using SharedPublic.EventHandlers;
 using SharedPublic.Exceptions;
-using SharedPublic.Model;
 
 namespace SharedPublic.Model
 {
@@ -32,6 +31,10 @@ namespace SharedPublic.Model
         /// Version collection and manager
         /// </summary>
         public IMinecraftVersionCollection MinecraftVersionCollection { get; }
+
+        /// <summary>
+        /// Backup manager
+        /// </summary>
         public IBackupManager BackupManager { get; }
 
         

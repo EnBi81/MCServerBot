@@ -36,6 +36,9 @@ namespace Application.Minecraft
 
         /// <inheritdoc/>
         public IMinecraftVersionCollection MinecraftVersionCollection => _serverPark.MinecraftVersionCollection;
+        
+        /// <inheritdoc/>
+        public IBackupManager BackupManager => _serverPark.BackupManager;
 
 
 
