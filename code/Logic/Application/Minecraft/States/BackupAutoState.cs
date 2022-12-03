@@ -26,7 +26,7 @@ namespace Application.Minecraft.States
                 _server.AddLog(new LogMessage("Auto backup server", LogMessageType.System_Message));
 
                 string backupName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss_f");
-                await _server.McServerFileHandler.Backup(_server.Id, backupName, true);
+                await _server.McServerFileHandler.Backup(_server.Id, backupName, SharedPublic.Enums.BackupType.Automatic);
 
                 _server.AddLog(new LogMessage("Auto backing up server", LogMessageType.System_Message));
             }

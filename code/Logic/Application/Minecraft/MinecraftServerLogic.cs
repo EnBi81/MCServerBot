@@ -221,8 +221,13 @@ namespace Application.Minecraft
         public Task Shutdown(UserEventData data) =>
             SetServerStateAsync<ShuttingDownState>(data.Username);
 
+        /// <inheritdoc/>
         public Task Backup(BackupDto dto, UserEventData data) =>
-            SetServerStateAsync<BackupManualState>(dto.BackupName);
+            SetServerStateAsync<BackupManualState>(dto.BackupName!);
+
+        /// <inheritdoc/>
+        public Task Restore(IBackup backup, UserEventData data = default) =>
+            SetServerStateAsync<RestoreState>(backup);
 
 
         /// <summary>
@@ -308,12 +313,22 @@ namespace Application.Minecraft
                         throw new MCInternalException("Not implemented state type " + newStateType.FullName);
                 }
             }
-                
 
+            var oldState = _serverState;
             _serverState = state;
             
             RaiseEvent(StatusChange, _serverState.Status);
-            await state.Apply();
+            
+            
+            try
+            {
+                await _serverState.Apply();
+            }
+            catch 
+            {
+                _serverState = oldState;
+            }
+
         }
 
         /// <summary>

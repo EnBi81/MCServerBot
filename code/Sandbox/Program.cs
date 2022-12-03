@@ -4,18 +4,7 @@ namespace Sandbox
 {
     public class SandBoxClass
     {
-
-
-        static void Main(string[] args)
-        {
-            var test = DateTime.Now - DateTime.MaxValue;
-
-            Console.WriteLine(test.TotalMinutes);
-        }
-           
-
-
-        static async Task Main1(string[] args)
+        static async Task Main(string[] args)
         {
             string fromDir = @"C:\Users\enbi8\source\repos\MCServerBot\code\Sandbox\bin\Debug\net7.0\1";
             string destination = @"1.zip";
@@ -23,6 +12,32 @@ namespace Sandbox
             await CreateFromDirectory(fromDir, destination, CompressionLevel.SmallestSize, false, text => !text.StartsWith("eula.txt") && !text.StartsWith("logs"));
         }
 
+        public static async Task ExtractToDirectory(string zipFile, string destinationDirectoryName)
+        {
+            await using FileStream fs = new FileStream(zipFile, FileMode.Open);
+            using var archive = new ZipArchive(fs, ZipArchiveMode.Read, false);
+            
+            DirectoryInfo di = Directory.CreateDirectory(destinationDirectoryName);
+            string destinationDirectoryFullPath = di.FullName;
+
+            foreach (ZipArchiveEntry zipEntry in archive.Entries)
+            {
+                string completeFileName = Path.GetFullPath(Path.Combine(destinationDirectoryFullPath, zipEntry.FullName));
+
+                if (!completeFileName.StartsWith(destinationDirectoryFullPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new IOException("Trying to extract file outside of destination directory. See this link for more info: https://snyk.io/research/zip-slip-vulnerability");
+                }
+
+                if (zipEntry.Name == "")
+                {// Assuming Empty for Directory
+                    Directory.CreateDirectory(Path.GetDirectoryName(completeFileName)!);
+                    continue;
+                }
+                
+                await Task.Run(() => zipEntry.ExtractToFile(completeFileName, true));
+            }
+        }
 
         public static async Task CreateFromDirectory(
             string sourceDirectoryName

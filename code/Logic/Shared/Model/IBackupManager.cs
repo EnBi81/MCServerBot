@@ -1,4 +1,6 @@
 ﻿
+using SharedPublic.Enums;
+
 namespace SharedPublic.Model
 {
     public interface IBackupManager
@@ -22,6 +24,6 @@ namespace SharedPublic.Model
         /// <param name="name">name of the backup</param>
         /// <param name="isAutomatic">if the backup is automatic</param>
         /// <returns></returns>
-        public Task<string> CreateBackupPath(long serverId, string name, bool isAutomatic);
+        public Task<string> CreateBackupPath(long serverId, string name, BackupType type);
     }
 }

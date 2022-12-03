@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using SharedPublic.Enums;
 using SharedPublic.Model;
 
 namespace Application.Minecraft.Backup
@@ -53,12 +54,12 @@ namespace Application.Minecraft.Backup
             foreach(var file in files)
             {
                 string backupName = file.Name[2..^file.Extension.Length];
-                bool isAutomatic = file.Name[0] == 'a';
+                BackupType backupType = file.Name[0] == 'a' ? BackupType.Automatic : BackupType.Manual;
 
                 Backup backup = new Backup
                 {
                     Name = backupName,
-                    IsAutomatic = isAutomatic,
+                    Type = backupType,
                     CreationTime = file.CreationTime,
                     ServerId = serverId,
                     Size = file.Length
@@ -71,7 +72,7 @@ namespace Application.Minecraft.Backup
         }
 
         /// <inheritdoc/>
-        public Task<string> CreateBackupPath(long serverId, string name, bool isAutomatic)
+        public Task<string> CreateBackupPath(long serverId, string name, BackupType type)
         {
             var invalidChars = Path.GetInvalidFileNameChars();
             var sanitizedName = string.Join("_", name.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
@@ -79,20 +80,17 @@ namespace Application.Minecraft.Backup
             var backupFolder = GetServerBackupFolder(serverId);
             Directory.CreateDirectory(backupFolder.FullName);
 
-            string backupFileName = $"{(isAutomatic ? "a" : "m")}-{sanitizedName}.zip";
+            string backupFileName = $"{(type == BackupType.Automatic ? "a" : "m")}-{sanitizedName}.zip";
 
             return Task.FromResult(Path.Combine(backupFolder.FullName, backupFileName));
         }
 
         /// <inheritdoc/>
-        public Task DeleteBackup(IBackup backup)
+        public async Task DeleteBackup(IBackup backup)
         {
-            string backupFileName = $"1\\{(backup.IsAutomatic ? "a" : "m")}-{backup.Name}.zip";
-            string backupFileFullPath = Path.Combine(_backupFolder, backupFileName);
+            string backupFileFullPath = await CreateBackupPath(backup.ServerId, backup.Name, backup.Type);
 
             FileSystem.DeleteFile(backupFileFullPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
-
-            return Task.CompletedTask;
         }
     }
 }

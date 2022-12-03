@@ -116,6 +116,14 @@ namespace SharedPublic.Model
         public Task Backup(BackupDto backup, UserEventData data = default);
 
         /// <summary>
+        /// Restores the server from the given backup.
+        /// </summary>
+        /// <param name="backup">the backup to restore</param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Task Restore(IBackup backup, UserEventData data = default);
+
+        /// <summary>
         /// Fired when the server has changed status.
         /// </summary>
         public event EventHandler<ServerStatus> StatusChange;

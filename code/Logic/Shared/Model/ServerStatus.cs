@@ -39,7 +39,12 @@ namespace SharedPublic.Model
         /// <summary>
         /// Server is backing up, it is offline but no action is allowed.
         /// </summary>
-        BackUp
+        BackUp,
+
+        /// <summary>
+        /// Server is restoring, it is offline but no action is allowed.
+        /// </summary>
+        Restore,
     }
 
     /// <summary>
@@ -62,6 +67,7 @@ namespace SharedPublic.Model
                 ServerStatus.ShuttingDown => "Shutting Down",
                 ServerStatus.Maintenance => "Maintenance",
                 ServerStatus.BackUp => "Backup",
+                ServerStatus.Restore => "Restore",
                 _ => "NOT IMPLEMENTED SERVER STATUS"
             };
         }

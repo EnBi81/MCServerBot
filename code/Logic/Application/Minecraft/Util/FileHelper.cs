@@ -131,6 +131,40 @@ namespace Application.Minecraft.Util
 
 
         /// <summary>
+        /// Extracts a zip file to a directory, overwriting the existing elements
+        /// </summary>
+        /// <param name="zipFile"></param>
+        /// <param name="destinationDirectoryName"></param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
+        public static async Task ExtractToDirectory(string zipFile, string destinationDirectoryName)
+        {
+            await using FileStream fs = new FileStream(zipFile, FileMode.Open);
+            using var archive = new ZipArchive(fs, ZipArchiveMode.Read, false);
+
+            DirectoryInfo di = Directory.CreateDirectory(destinationDirectoryName);
+            string destinationDirectoryFullPath = di.FullName;
+
+            foreach (ZipArchiveEntry zipEntry in archive.Entries)
+            {
+                string completeFileName = Path.GetFullPath(Path.Combine(destinationDirectoryFullPath, zipEntry.FullName));
+
+                if (!completeFileName.StartsWith(destinationDirectoryFullPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new IOException("Trying to extract file outside of destination directory. See this link for more info: https://snyk.io/research/zip-slip-vulnerability");
+                }
+
+                if (zipEntry.Name == "")
+                {// Assuming Empty for Directory
+                    Directory.CreateDirectory(Path.GetDirectoryName(completeFileName)!);
+                    continue;
+                }
+
+                await Task.Run(() => zipEntry.ExtractToFile(completeFileName, true));
+            }
+        }
+
+        /// <summary>
         /// Creates a zip file from the given directory, including a filter by entry.
         /// </summary>
         /// <param name="sourceDirectoryName"></param>

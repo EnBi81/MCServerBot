@@ -208,9 +208,16 @@ namespace Application.Minecraft
             return task;
         }
 
+        /// <inheritdoc/>
         public Task Backup(BackupDto dto, UserEventData data = default)
         {
             return _minecraftServerLogic.Backup(dto, data);
+        }
+
+        /// <inheritdoc/>
+        public Task Restore(IBackup backup, UserEventData data = default)
+        {
+            return _minecraftServerLogic.Restore(backup, data);
         }
     }
 }

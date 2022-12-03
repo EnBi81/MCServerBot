@@ -1,0 +1,5 @@
+Manual and Auto backup => handle deleting old backups
+Manual backup => choose which old manual backup to delete when the limit is reached
+
+Check the restore/version upgrade feature
+Put server files into a subfolder

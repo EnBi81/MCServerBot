@@ -1,7 +1,9 @@
 ﻿using Application.Minecraft.Backup;
 using Application.Minecraft.Configs;
 using Application.Minecraft.Util;
+using SharedPublic.Enums;
 using SharedPublic.Exceptions;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {
@@ -44,6 +46,9 @@ namespace Application.Minecraft.MinecraftServers.Utils
             await File.WriteAllTextAsync(eulaPath, eulaText);
         }
 
+        /// <summary>
+        /// Backs up temporarily the important files for a minecraft server. It moves the files to a backup folder.
+        /// </summary>
         public void BackUpImportantFiles()
         {
             if(Directory.Exists(_backupTempDir))
@@ -64,7 +69,9 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 dir.MoveTo(Path.Combine(backupDir.FullName, dir.Name));
         }
 
-        
+        /// <summary>
+        /// Removes all the remanaining files from the folder, but it doesn't touch the backup folder.
+        /// </summary>
         public void RemoveAllFilesExceptBackupFolder()
         {
             foreach (var file in Directory.GetFiles(_serverPath))
@@ -73,7 +80,11 @@ namespace Application.Minecraft.MinecraftServers.Utils
             foreach (var folder in Directory.GetDirectories(_serverPath).Where(dir => dir != _backupTempDir))
                 Directory.Delete(folder, true);
         }
-        
+
+        /// <summary>
+        /// Restores the important files from the backup folder to the server folder.
+        /// </summary>
+        /// <exception cref="MCInternalException"></exception>
         public void RetrieveBackedUpFiles()
         {
             var backupDir = new DirectoryInfo(_backupTempDir);
@@ -99,15 +110,27 @@ namespace Application.Minecraft.MinecraftServers.Utils
             }
         }
 
+        public void DeleteTemporaryBackupFolder()
+        {
+            Directory.Delete(_backupTempDir, true);
+        }
 
-        public async Task Backup(long serverId, string name, bool isAutomatic)
+
+        /// <summary>
+        /// Zips the server folder and saves it into the centralized backup folder.
+        /// </summary>
+        /// <param name="serverId"></param>
+        /// <param name="name"></param>
+        /// <param name="isAutomatic"></param>
+        /// <returns></returns>
+        public async Task Backup(long serverId, string name, BackupType type)
         {
             var backupManager = BackupManager.Instance;
 
             // deleting oldest backup if limit is reached
             var backups = await backupManager.GetBackupsByServer(serverId);
-            backups = backups.Where(b => b.IsAutomatic == isAutomatic);
-            var limit = isAutomatic ? _serverConfig.MaxAutoBackup : _serverConfig.MaxManualBackup;
+            backups = backups.Where(b => b.Type == type);
+            var limit = type == BackupType.Automatic ? _serverConfig.MaxAutoBackup : _serverConfig.MaxManualBackup;
 
             if (backups.Count() >= limit)
             {
@@ -117,10 +140,33 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
             // creating new backup
             string fromDir = _serverPath;
-            string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, isAutomatic);
+            string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, type);
 
             Predicate<string> filter = s => !s.StartsWith("eula.txt") && !s.StartsWith("logs") && !s.StartsWith("server.info");
             await FileHelper.CreateZipFromDirectory(fromDir, backupPath, System.IO.Compression.CompressionLevel.SmallestSize, false, filter);
+        }
+
+        /// <summary>
+        /// Restores a backup from the centralized backup folder to the server folder. 
+        /// WARNING: THIS WILL OVERWRITE ALL THE FILES IN THE SERVER FOLDER!
+        /// </summary>
+        /// <param name="serverId"></param>
+        /// <param name="backup"></param>
+        /// <returns></returns>
+        /// <exception cref="MCExternalException"></exception>
+        public async Task RestoreBackup(long serverId, IBackup backup)
+        {
+            var backupManager = BackupManager.Instance;
+            var backupPath = await backupManager.CreateBackupPath(serverId, backup.Name, backup.Type);
+
+            if (backup == null)
+                throw new MCExternalException("Backup not found!");
+
+            if (backup.ServerId != serverId)
+                throw new MCExternalException("Backup does not belong to this server!");
+            
+            // extracting backup
+            await FileHelper.ExtractToDirectory(backupPath, _serverPath);
         }
     }
 }

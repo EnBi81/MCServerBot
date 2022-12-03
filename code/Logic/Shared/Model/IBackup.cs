@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharedPublic.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,9 @@ namespace SharedPublic.Model
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// Gets if the backup was an automatic or manual backup.
+        /// Gets if the type of the backup.
         /// </summary>
-        public bool IsAutomatic { get; }
+        public BackupType Type { get; }
         /// <summary>
         /// Date of the backup.
         /// </summary>

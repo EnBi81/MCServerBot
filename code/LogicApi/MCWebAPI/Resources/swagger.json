@@ -1270,6 +1270,14 @@
         },
         "additionalProperties": false
       },
+      "SharedPublic.Enums.BackupType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "SharedPublic.Model.IBackup": {
         "type": "object",
         "properties": {
@@ -1283,9 +1291,8 @@
             "nullable": true,
             "readOnly": true
           },
-          "isAutomatic": {
-            "type": "boolean",
-            "readOnly": true
+          "type": {
+            "$ref": "#/components/schemas/SharedPublic.Enums.BackupType"
           },
           "creationTime": {
             "type": "string",
@@ -1442,7 +1449,8 @@
           2,
           3,
           4,
-          5
+          5,
+          6
         ],
         "type": "integer",
         "format": "int32"

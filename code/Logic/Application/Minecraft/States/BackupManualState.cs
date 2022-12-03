@@ -13,10 +13,12 @@ namespace Application.Minecraft.States
         public override async Task Apply()
         {
             if (args[0] is not string backupName)
+            {
                 throw new MCInternalException("Invalid backup arguments");
+            }
 
 
-            await _server.McServerFileHandler.Backup(_server.Id, backupName, false);
+            await _server.McServerFileHandler.Backup(_server.Id, backupName, SharedPublic.Enums.BackupType.Manual);
             await _server.SetServerStateAsync<OfflineState>();
         }
 

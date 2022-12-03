@@ -2,6 +2,7 @@
 using APIModel.Responses;
 using Microsoft.AspNetCore.Mvc;
 using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
 using SharedPublic.Model;
 
 namespace MCWebAPI.Controllers.api.v1
@@ -183,7 +184,17 @@ namespace MCWebAPI.Controllers.api.v1
         [HttpPatch(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "RestoreBackup")]
         public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] string backupName)
         {
-            return StatusCode(501, "Not implemented");
+            var server = serverPark.GetServer(id);
+            var backups = await serverPark.BackupManager.GetBackupsByServer(id);
+
+            var backup = backups.FirstOrDefault(b => b.Name == backupName);
+
+            if (backup is null)
+                throw new MCExternalException($"{backupName} does not exist for server {id}");
+
+            await server.Restore(backup);
+
+            return Ok();
         }
     }
 }

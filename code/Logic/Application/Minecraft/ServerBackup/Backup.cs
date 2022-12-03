@@ -1,4 +1,5 @@
-﻿using SharedPublic.Model;
+﻿using SharedPublic.Enums;
+using SharedPublic.Model;
 
 namespace Application.Minecraft.Backup
 {
@@ -9,7 +10,7 @@ namespace Application.Minecraft.Backup
         /// <inheritdoc/>
         public required string Name { get; init; }
         /// <inheritdoc/>
-        public required bool IsAutomatic { get; init; }
+        public required BackupType Type { get; init; }
         /// <inheritdoc/>
         public required DateTime CreationTime { get; init; }
         /// <inheritdoc/>
