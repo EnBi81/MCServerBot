@@ -54,6 +54,13 @@ WEB API features:
     - choose backup folder
     - create attribute ManualState and AutoState and apply them to the current states
 2. Get nbt information of a minecraft player through rcon (info should be available from controller)
+    - dimension
+    - foodlevel
+    - playerGameType
+    - Sleeping
+    - XpLevel
+    - XpP
+    - XpSeed
 3. choose server icon
     - only from the given ones
 4. When deleting a server, put the backups and the server to the recycle bin instead of the deleted folder
