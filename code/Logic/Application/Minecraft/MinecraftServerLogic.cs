@@ -151,7 +151,7 @@ namespace Application.Minecraft
             Id = id;
             Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
-            McServerFileHandler = new MinecraftServersFileHandler(ServerPath, config.ServerConfig);
+            McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
 
             ServerConfig = config.ServerConfig;
 

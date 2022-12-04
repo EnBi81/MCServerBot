@@ -1,6 +1,8 @@
-﻿using Application.Minecraft.MinecraftServers;
+﻿using Application.Minecraft.Backup;
+using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
+using SharedPublic.Enums;
 using SharedPublic.Exceptions;
 using SharedPublic.Model;
 namespace Application.Minecraft.States
@@ -17,8 +19,24 @@ namespace Application.Minecraft.States
                 throw new MCInternalException("Invalid backup arguments");
             }
 
+            var backupManager = BackupManager.Instance;
 
-            await _server.McServerFileHandler.Backup(_server.Id, backupName, SharedPublic.Enums.BackupType.Manual);
+            // deleting oldest backup if limit is reached
+            var backups = await backupManager.GetBackupsByServer(_server.Id);
+
+            // all auto backups
+            backups = backups.Where(b => b.Type == BackupType.Manual);
+            var limit = _server.ServerConfig.MaxAutoBackup;
+            int difference = backups.Count() - limit;
+
+            if (difference >= 0)
+            {
+                var oldestBackups = backups.OrderBy(b => b.CreationTime).Take(difference + 1);
+                foreach (var oldBackup in oldestBackups)
+                    await backupManager.DeleteBackup(oldBackup);
+            }
+
+            await _server.McServerFileHandler.Backup(_server.Id, backupName, BackupType.Manual);
             await _server.SetServerStateAsync<OfflineState>();
         }
 

@@ -1,11 +1,9 @@
-Manual and Auto backup => handle deleting old backups
-Manual backup => choose which old manual backup to delete when the limit is reached
-
-Check the restore/version upgrade feature
 Put server files into a subfolder
+Check the restore/version upgrade feature
 
 Add Delete state which handles the server deletion
 Add Deleted event to the minecraft server
 Serverpark should not have a delete method, instead it should listen to the minecraft servers for deletion
+update astah state diagram
 
 Minecraft server should have a method to modify its own properties (name, version), not from serverpark

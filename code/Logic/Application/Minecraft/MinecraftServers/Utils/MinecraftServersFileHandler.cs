@@ -14,13 +14,10 @@ namespace Application.Minecraft.MinecraftServers.Utils
         // to a newer version
         private readonly string _backupTempDir;
 
-        private readonly MinecraftServerConfig _serverConfig;
-
-        public MinecraftServersFileHandler(string serversPath, MinecraftServerConfig serverConfig)
+        public MinecraftServersFileHandler(string serversPath)
         {
             _serverPath = serversPath;
             _backupTempDir = Path.Combine(_serverPath, "backup");
-            _serverConfig = serverConfig;
         }
 
 
@@ -127,17 +124,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
         {
             var backupManager = BackupManager.Instance;
 
-            // deleting oldest backup if limit is reached
-            var backups = await backupManager.GetBackupsByServer(serverId);
-            backups = backups.Where(b => b.Type == type);
-            var limit = type == BackupType.Automatic ? _serverConfig.MaxAutoBackup : _serverConfig.MaxManualBackup;
-
-            if (backups.Count() >= limit)
-            {
-                var oldestBackup = backups.OrderBy(b => b.CreationTime).First();
-                await backupManager.DeleteBackup(oldestBackup);
-            }
-
+           
             // creating new backup
             string fromDir = _serverPath;
             string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, type);
