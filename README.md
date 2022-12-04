@@ -58,12 +58,13 @@ WEB API features:
     - only from the given ones
 4. When deleting a server, put the backups and the server to the recycle bin instead of the deleted folder
 5. Write out Api uptime
-6. Paging for GetAll endpoints
-7. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-8. c# client + discord
-9. js client + old page
-10. new blazor pages
-11. Minecraft command autocomplete
+6. User click, mouse hover, uptime for webpage statistics
+7. Paging for GetAll endpoints
+8. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+9. c# client + discord
+10. js client + old page
+11. new blazor pages
+12. Minecraft command autocomplete
 
 
 
