@@ -71,6 +71,7 @@ WEB API features:
 9. c# client + discord
 10. js client + old page
 11. new blazor pages
+    - PWA for saving offline mode (make this optional for users)
 12. Minecraft command autocomplete
 
 
