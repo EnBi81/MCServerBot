@@ -2,9 +2,33 @@
 
 namespace Sandbox
 {
+    public class Test
+    {
+        public static Random Rand = new Random();
+
+        public static int RandomNyil => Rand.Next();
+        public static int RandomSima { get; } = Rand.Next();
+
+
+
+
+        static void Main(string[] args)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine(RandomSima);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine(RandomNyil);
+            }
+        }
+    }
+    
     public class SandBoxClass
     {
-        static async Task Main(string[] args)
+        static async Task Main1(string[] args)
         {
             string fromDir = @"C:\Users\enbi8\source\repos\MCServerBot\code\Sandbox\bin\Debug\net7.0\1";
             string destination = @"1.zip";
