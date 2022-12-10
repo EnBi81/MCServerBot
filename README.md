@@ -54,17 +54,27 @@ WEB API features:
     - choose backup folder
     - create attribute ManualState and AutoState and apply them to the current states
 2. Get nbt information of a minecraft player through rcon (info should be available from controller)
+    - dimension
+    - foodlevel
+    - playerGameType
+    - Sleeping
+    - XpLevel
+    - XpP
+    - XpSeed
 3. choose server icon
     - only from the given ones
 4. When deleting a server, put the backups and the server to the recycle bin instead of the deleted folder
 5. Write out Api uptime
-6. User click, mouse hover, uptime for webpage statistics
-7. Paging for GetAll endpoints
-8. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-9. c# client + discord
-10. js client + old page
-11. new blazor pages
-12. Minecraft command autocomplete
+6. Request limiter (max server maintenance, max running server, stuff like these.
+7. User click, mouse hover, uptime for webpage statistics
+8. Paging for GetAll endpoints
+9. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+10. c# client + discord
+11. js client + old page
+12. new blazor pages
+    - PWA for saving offline mode (make this optional for users)
+13. Map overview in browser
+14. Minecraft command autocomplete
 
 
 
