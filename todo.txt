@@ -1,3 +1,11 @@
+New server folder structure:
+1/
+  - server.info
+  - server-files/
+  - temp/
+    - trash/
+	- backup/
+
 Put server files into a subfolder
 Check the restore/version upgrade feature
 
