@@ -73,6 +73,7 @@ WEB API features:
 11. js client + old page
 12. new blazor pages
     - PWA for saving offline mode (make this optional for users)
+    - Put the blazor pages to github (be able to select a host where to send the requests
 13. Map overview in browser
 14. Minecraft command autocomplete
 
