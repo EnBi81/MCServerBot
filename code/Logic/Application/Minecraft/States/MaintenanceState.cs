@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.MinecraftServers;
+using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
 using SharedPublic.DTOs;
@@ -23,7 +24,8 @@ namespace Application.Minecraft.States
         /// <returns></returns>
         private bool IsServerNew()
         {
-            return !new DirectoryInfo(_server.ServerPath).GetFiles().Any(f => f.Name != "server.info");
+            var dirInfo = new DirectoryInfo(_server.FileStructure.ServerFiles);
+            return dirInfo.GetFiles().Length == 0;
         }
 
         /// <summary>
@@ -58,11 +60,6 @@ namespace Application.Minecraft.States
                 await _server.McServerFileHandler.AcceptEula();
                 AddSystemLog("Eula Accepted.");
             }
-
-            if (args[0] is not MinecraftServerCreationPropertiesDto dto)
-                throw new MCInternalException("Invalid arguments for maintenance state");
-
-            await _server.Properties.UpdateProperties(dto);
         }
 
         /// <summary>
@@ -74,14 +71,44 @@ namespace Application.Minecraft.States
             AddSystemLog("Upgrading Server to new Version");
             
             AddSystemLog("Backing up important files...");
-            _server.McServerFileHandler.BackUpImportantFiles();
-            AddSystemLog("Important files backed up.");
-            _server.McServerFileHandler.RemoveAllFilesExceptBackupFolder();
 
-            await CreateServerFiles();
+            string[] itemsToBackup = { "world", "banned-ips.",
+                "banned-players.", "ops.", "server.properties", "usercache.json", "whitelist.", "white-list" };
+
+            // empty temp folders
+            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
+            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
+            // move important files to backup
+            _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempBackup, itemsToBackup);
+            // move other files to trash
+            _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempTrash);
+
+            AddSystemLog("Important files backed up.");
+
+            try
+            {
+                await CreateServerFiles();
+            }
+            catch (Exception e)
+            {
+                AddSystemLog("Failed to create server files. Rolling back...");
+                _server.McServerFileHandler.EmptyFolder(ServerFolder.ServerFolder);
+                _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
+                _server.McServerFileHandler.MoveItems(ServerFolder.TempTrash, ServerFolder.ServerFolder);
+
+                await SetNewState<OfflineState>();
+                throw;
+            }
+            
 
             AddSystemLog("Retrieving backed up files...");
-            _server.McServerFileHandler.RetrieveBackedUpFiles();
+            
+            // remove the temp trash
+            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
+            // move temp backup to server folder
+            _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
+            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
+            
             AddSystemLog("Backed up files retrieved.");
         }
 
@@ -105,13 +132,19 @@ namespace Application.Minecraft.States
         {
             var logMessage = new LogMessage("Starting Server Maintenance " + _server.ServerName, LogMessageType.System_Message);
             _server.AddLog(logMessage);
-            
+
             if (IsServerNew())
+            {
+                if (args.Length == 0 || args[0] is not MinecraftServerCreationPropertiesDto dto)
+                    throw new MCExternalException("No creation properties were provided.");
+                    
                 await CreateServerFiles();
+                await _server.Properties.UpdateProperties(dto);
+            }
             else
                 await UpgradeServerToNewVersion();
 
-            await _server.SetServerStateAsync<OfflineState>();
+            await SetNewState<OfflineState>();
             _server.McServerInfos.Save(_server);
         }
 

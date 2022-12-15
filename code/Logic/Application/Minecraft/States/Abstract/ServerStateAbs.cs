@@ -14,6 +14,11 @@ namespace Application.Minecraft.States.Abstract
             this.args = args;
         }
 
+        protected Task SetNewState<T>() where T : IServerState
+        {
+            return _server.SetServerStateAsync<T>();
+        }
+
         public abstract ServerStatus Status { get; }
         public abstract bool IsRunning { get; }
         public abstract bool IsAllowedNextState(IServerState state);

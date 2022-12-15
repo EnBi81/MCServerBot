@@ -16,6 +16,7 @@ namespace Application.Minecraft.States
         {
             if (args[0] is not string backupName)
             {
+                await SetNewState<OfflineState>();
                 throw new MCInternalException("Invalid backup arguments");
             }
 
@@ -31,13 +32,12 @@ namespace Application.Minecraft.States
 
             if (difference >= 0)
             {
-                var oldestBackups = backups.OrderBy(b => b.CreationTime).Take(difference + 1);
-                foreach (var oldBackup in oldestBackups)
-                    await backupManager.DeleteBackup(oldBackup);
+                await SetNewState<OfflineState>();
+                throw new MCExternalException("Manual Backup limit has been reached. Please delete one of the backups.");
             }
 
             await _server.McServerFileHandler.Backup(_server.Id, backupName, BackupType.Manual);
-            await _server.SetServerStateAsync<OfflineState>();
+            await SetNewState<OfflineState>();
         }
 
 

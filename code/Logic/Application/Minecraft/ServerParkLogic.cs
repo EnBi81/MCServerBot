@@ -108,8 +108,14 @@ namespace Application.Minecraft
 
 
         /// <inheritdoc/>
-        public IMinecraftServer GetServer(long id) =>
-            ServerCollection[id];
+        public IMinecraftServer GetServer(long id)
+        {
+            if (ServerCollection.TryGetValue(id, out IMinecraftServer? server))
+                return server;
+             
+            throw new MCExternalException($"ERROR: Server with id {id} not found!");
+        }
+            
 
 
 

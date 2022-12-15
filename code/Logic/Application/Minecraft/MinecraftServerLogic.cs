@@ -87,7 +87,7 @@ namespace Application.Minecraft
                 int versionCompared = Version.Parse(_mcVersion.Version).CompareTo(Version.Parse(value.Version));
                 if (versionCompared > 0)
                     throw new MinecraftServerException($"Cannot downgrade from {_mcVersion.Version} to {value.Version}");
-                else if (versionCompared == 0)
+                if (versionCompared == 0)
                     throw new MinecraftServerException($"Server is already on version {value.Version}");
 
                 SetServerState<MaintenanceState>();
@@ -107,7 +107,7 @@ namespace Application.Minecraft
         internal MinecraftServerInfos McServerInfos { get; }
         internal MinecraftServersFileHandler McServerFileHandler { get; }
         internal MinecraftServerConfig ServerConfig { get; }
-        internal string ServerPath { get; }
+        internal McServerFileStructure FileStructure { get; }
 
 
 
@@ -144,19 +144,18 @@ namespace Application.Minecraft
 
         private MinecraftServerLogic(long id, string serverFolderName, MinecraftConfig config)
         {
-            string serverPropertiesFileName = serverFolderName + "\\server.properties";
             string serverInfoFile = serverFolderName + "\\server.info";
-
-            ServerPath = serverFolderName;
+            
+            FileStructure = new McServerFileStructure(serverFolderName);
             Id = id;
-            Properties = MinecraftServerProperties.GetProperties(serverPropertiesFileName);
+            Properties = MinecraftServerProperties.GetProperties(FileStructure.ServerFiles + "\\server.properties");
             McServerInfos = new MinecraftServerInfos(serverInfoFile);
-            McServerFileHandler = new MinecraftServersFileHandler(ServerPath);
+            McServerFileHandler = new MinecraftServersFileHandler(FileStructure);
 
             ServerConfig = config.ServerConfig;
 
             McServerProcess = new MinecraftServerProcess(
-                serverDirectory: serverFolderName,
+                serverDirectory: FileStructure.ServerFiles,
                 javaLocation: config.JavaLocation,
                 serverHandlerPath: config.MinecraftServerHandlerPath,
                 config: ServerConfig);

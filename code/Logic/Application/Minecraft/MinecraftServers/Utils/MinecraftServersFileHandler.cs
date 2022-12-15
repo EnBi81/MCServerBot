@@ -1,5 +1,4 @@
 ﻿using Application.Minecraft.Backup;
-using Application.Minecraft.Configs;
 using Application.Minecraft.Util;
 using SharedPublic.Enums;
 using SharedPublic.Exceptions;
@@ -7,20 +6,54 @@ using SharedPublic.Model;
 
 namespace Application.Minecraft.MinecraftServers.Utils
 {
-    internal class MinecraftServersFileHandler
+    public enum ServerFolder
     {
-        private readonly string _serverPath;
-        // this backup dir is only used to temporarily backup the server files while the server is upgrading
-        // to a newer version
-        private readonly string _backupTempDir;
+        ServerFolder, TempTrash, TempBackup
+    }
 
-        public MinecraftServersFileHandler(string serversPath)
+    /// <summary>
+    /// Handles files for a minecraft server
+    /// </summary>
+    public class MinecraftServersFileHandler
+    {
+        private readonly McServerFileStructure _fileStructure;
+
+        private string ServerFiles => _fileStructure.ServerFiles;
+        private string BackupTempFolder => _fileStructure.TempBackup;
+        private string TrashFolder => _fileStructure.TempTrash;
+
+        public MinecraftServersFileHandler(McServerFileStructure fileStructure)
         {
-            _serverPath = serversPath;
-            _backupTempDir = Path.Combine(_serverPath, "backup");
+            _fileStructure = fileStructure;
         }
 
+        /// <summary>
+        /// Returns the folder corresponding the enum value.
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private string GetFolderPath(ServerFolder folder)
+        {
+            return folder switch
+            {
+                ServerFolder.ServerFolder => ServerFiles,
+                ServerFolder.TempBackup => BackupTempFolder,
+                ServerFolder.TempTrash => TrashFolder,
+                _ => throw new NotImplementedException()
+            };
+        }
 
+        /// <summary>
+        /// Returns the DirectoryInfo corresponding the enum value.
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        private DirectoryInfo GetDirectoryInfo(ServerFolder folder)
+        {
+            string path = GetFolderPath(folder);
+            return new DirectoryInfo(path);
+        }
 
         /// <summary>
         /// Accepts eula for a minecraft server.
@@ -29,9 +62,9 @@ namespace Application.Minecraft.MinecraftServers.Utils
         /// <exception cref="MCInternalException"></exception>
         public async Task AcceptEula()
         {
-            string eulaPath = Path.Combine(_serverPath, "eula.txt");
+            string eulaPath = Path.Combine(ServerFiles, "eula.txt");
             if (!File.Exists(eulaPath))
-                throw new MCInternalException("Couldn't find eula.txt in folder " + _serverPath);
+                throw new MCInternalException("Couldn't find eula.txt in folder " + ServerFiles);
 
 
             string eulaText = await File.ReadAllTextAsync(eulaPath);
@@ -42,76 +75,61 @@ namespace Application.Minecraft.MinecraftServers.Utils
             eulaText = eulaText.Replace("eula=false", "eula=true");
             await File.WriteAllTextAsync(eulaPath, eulaText);
         }
-
+        
+        
         /// <summary>
-        /// Backs up temporarily the important files for a minecraft server. It moves the files to a backup folder.
+        /// Moves files from a directory to a directory. If items parameter is null, it moves every files and folders.
         /// </summary>
-        public void BackUpImportantFiles()
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="items"></param>
+        public void MoveItems(ServerFolder from, ServerFolder to, string[]? items = null)
         {
-            if(Directory.Exists(_backupTempDir))
-                Directory.Delete(_backupTempDir, true);
+            if(from == to)
+                throw new ArgumentException("From and to folders are the same");
 
-            var backupDir = Directory.CreateDirectory(_backupTempDir);
+            var fromPath = GetDirectoryInfo(from);
+            var toPath = GetDirectoryInfo(to);
 
-            var info = new DirectoryInfo(_serverPath);
+            IEnumerable<FileInfo> filesToMove = fromPath.GetFiles().Where(f => f.Exists);
+            IEnumerable<DirectoryInfo> foldersToMove = fromPath.GetDirectories().Where(f => f.Exists);
 
-            // https://www.sportskeeda.com/minecraft-wiki/how-to-update-server-minecraft#:~:text=To%20update%20a%20server%20in%20Minecraft%2C%20create%20a%20new%20folder,executable%20into%20the%20old%20folder.
-            string[] importantFiles = { "banned-ips.json", "banned-players.json", "ops.json", "server.properties", "usercache.json", "whitelist.json", "server.info" };
-            string[] importantFolders = { "world" };
-
-            foreach (var file in importantFiles.Select(f => new FileInfo(Path.Combine(_serverPath, f))).Where(f => f.Exists))
-                file.MoveTo(Path.Combine(backupDir.FullName, file.Name));
-
-            foreach (var dir in importantFolders.Select(d => new DirectoryInfo(Path.Combine(_serverPath, d))).Where(d => d.Exists))
-                dir.MoveTo(Path.Combine(backupDir.FullName, dir.Name));
-        }
-
-        /// <summary>
-        /// Removes all the remanaining files from the folder, but it doesn't touch the backup folder.
-        /// </summary>
-        public void RemoveAllFilesExceptBackupFolder()
-        {
-            foreach (var file in Directory.GetFiles(_serverPath))
-                File.Delete(file);
-
-            foreach (var folder in Directory.GetDirectories(_serverPath).Where(dir => dir != _backupTempDir))
-                Directory.Delete(folder, true);
-        }
-
-        /// <summary>
-        /// Restores the important files from the backup folder to the server folder.
-        /// </summary>
-        /// <exception cref="MCInternalException"></exception>
-        public void RetrieveBackedUpFiles()
-        {
-            var backupDir = new DirectoryInfo(_backupTempDir);
-
-            if (!backupDir.Exists)
-                throw new MCInternalException("Could not find backup directory!");
-
-            foreach (var file in backupDir.GetFiles())
+            if(items is not null)
             {
-                string originalFilePath = Path.Combine(_serverPath, file.Name);
-                if(File.Exists(originalFilePath))
-                    File.Delete(originalFilePath);
-                file.MoveTo(originalFilePath);
+                filesToMove = filesToMove.Where(f => items.Any(item => f.Name.StartsWith(item)));
+                foldersToMove = foldersToMove.Where(f => items.Any(item => f.Name.StartsWith(item)));
             }
-                
 
-            foreach (var dir in backupDir.GetDirectories())
+            foreach (FileInfo file in filesToMove)
             {
-                string originalDirPath = Path.Combine(_serverPath, dir.Name);
-                if(Directory.Exists(originalDirPath))
-                    Directory.Delete(originalDirPath, true);
-                dir.MoveTo(originalDirPath);
+                string newFileName = Path.Combine(toPath.FullName, file.Name);
+                if(File.Exists(newFileName))
+                    File.Delete(newFileName);
+                file.MoveTo(newFileName);
+            }
+            foreach (DirectoryInfo dir in foldersToMove)
+            {
+                string newFolderName = Path.Combine(toPath.FullName, dir.Name);
+                if(Directory.Exists(newFolderName))
+                    Directory.Delete(newFolderName, true);
+                dir.MoveTo(newFolderName);
             }
         }
 
-        public void DeleteTemporaryBackupFolder()
+        /// <summary>
+        /// Deletes every file from a folder
+        /// </summary>
+        /// <param name="folder"></param>
+        public void EmptyFolder(ServerFolder folder)
         {
-            Directory.Delete(_backupTempDir, true);
-        }
+            DirectoryInfo di = GetDirectoryInfo(folder);
 
+            foreach (FileInfo file in di.GetFiles())
+                file.Delete();
+            foreach (DirectoryInfo dir in di.GetDirectories())
+                dir.Delete(true);
+        }
+        
 
         /// <summary>
         /// Zips the server folder and saves it into the centralized backup folder.
@@ -126,10 +144,10 @@ namespace Application.Minecraft.MinecraftServers.Utils
 
            
             // creating new backup
-            string fromDir = _serverPath;
+            string fromDir = ServerFiles;
             string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, type);
 
-            Predicate<string> filter = s => !s.StartsWith("eula.txt") && !s.StartsWith("logs") && !s.StartsWith("server.info");
+            Predicate<string> filter = s => !s.StartsWith("eula.txt") && !s.StartsWith("logs");
             await FileHelper.CreateZipFromDirectory(fromDir, backupPath, System.IO.Compression.CompressionLevel.SmallestSize, false, filter);
         }
 
@@ -153,7 +171,7 @@ namespace Application.Minecraft.MinecraftServers.Utils
                 throw new MCExternalException("Backup does not belong to this server!");
             
             // extracting backup
-            await FileHelper.ExtractToDirectory(backupPath, _serverPath);
+            await FileHelper.ExtractToDirectory(backupPath, BackupTempFolder);
         }
     }
 }
