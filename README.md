@@ -74,6 +74,7 @@ WEB API features:
 12. new blazor pages
     - PWA for saving offline mode (make this optional for users)
     - Put the blazor pages to github (be able to select a host where to send the requests
+    - skin viewer: https://github.com/rkkoszewski/minecraft-css-3d-skin-viewer
 13. Map overview in browser
 14. Minecraft command autocomplete
 
