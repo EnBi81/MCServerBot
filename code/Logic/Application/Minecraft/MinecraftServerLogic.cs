@@ -90,7 +90,7 @@ namespace Application.Minecraft
                 if (versionCompared == 0)
                     throw new MinecraftServerException($"Server is already on version {value.Version}");
 
-                SetServerState<MaintenanceState>();
+                SetServerState<VersionUpgradeState>();
                 
                 _mcVersion = value;
                 RaiseEvent(VersionChanged, value);
@@ -137,7 +137,7 @@ namespace Application.Minecraft
 
             McServerInfos.Save(this);
             
-            Thread t = new Thread(() => SetServerState<MaintenanceState>(creationProperties));
+            Thread t = new Thread(() => SetServerState<ServerCreationState>(creationProperties));
             t.Start();
         }
 

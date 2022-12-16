@@ -47,7 +47,7 @@ namespace Application.Minecraft.States
         
         public override bool IsAllowedNextState(IServerState state)
         {
-            return state is StartingState or BackupManualState or MaintenanceState or RestoreState;
+            return state is StartingState or BackupManualState or VersionUpgradeState or RestoreState;
         }
 
         /// <summary>

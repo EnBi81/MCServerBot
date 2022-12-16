@@ -9,5 +9,6 @@ namespace SharedPublic.Exceptions
     public class MCInternalException : MCException
     {
         public MCInternalException(string? message) : base(message) { }
+        public MCInternalException(Exception inner) : base(inner) { }
     }
 }

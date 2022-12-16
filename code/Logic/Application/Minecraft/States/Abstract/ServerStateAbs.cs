@@ -14,7 +14,7 @@ namespace Application.Minecraft.States.Abstract
             this.args = args;
         }
 
-        protected Task SetNewState<T>() where T : IServerState
+        protected Task SetNewStateAsync<T>() where T : IServerState
         {
             return _server.SetServerStateAsync<T>();
         }

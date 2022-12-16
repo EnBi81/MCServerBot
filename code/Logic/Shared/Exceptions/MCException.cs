@@ -9,5 +9,6 @@ namespace SharedPublic.Exceptions
     public class MCException : Exception
     {
         public MCException(string? message = null) : base(message) { }
+        public MCException(Exception inner) : base(inner.Message, inner) { }
     }
 }

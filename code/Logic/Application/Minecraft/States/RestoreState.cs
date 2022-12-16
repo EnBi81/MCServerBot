@@ -20,7 +20,7 @@ namespace Application.Minecraft.States
         {
             if (args is { Length: 0} || args[0] is not IBackup backup)
             {
-                await SetNewState<OfflineState>();
+                await SetNewStateAsync<OfflineState>();
                 throw new MCInternalException("No backup present when restoring");
             }
 
@@ -48,7 +48,7 @@ namespace Application.Minecraft.States
                 _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
                 _server.McServerFileHandler.MoveItems(ServerFolder.TempTrash, ServerFolder.ServerFolder);
 
-                await SetNewState<OfflineState>();
+                await SetNewStateAsync<OfflineState>();
                 throw;
             }
 
@@ -60,7 +60,7 @@ namespace Application.Minecraft.States
             _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
 
 
-            await SetNewState<OfflineState>();
+            await SetNewStateAsync<OfflineState>();
         }
 
 
