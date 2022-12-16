@@ -6,71 +6,70 @@ using SharedPublic.Enums;
 using SharedPublic.Exceptions;
 using SharedPublic.Model;
 
-namespace Application.Minecraft.States
+namespace Application.Minecraft.States;
+
+/// <summary>
+/// This state handles the backing up
+/// </summary>
+[AutoState]
+internal class BackupAutoState : ServerStateAbs
 {
-    /// <summary>
-    /// This state handles the backing up
-    /// </summary>
-    [AutoState]
-    internal class BackupAutoState : ServerStateAbs
+    public BackupAutoState(MinecraftServerLogic server, object[] args) : base(server, args) { }
+
+    public override async Task Apply()
     {
-        public BackupAutoState(MinecraftServerLogic server, object[] args) : base(server, args) { }
+        _server.PerformanceReporter?.Stop();
 
-        public override async Task Apply()
+        var uptimeMinutes = DateTime.Now - (_server.OnlineFrom ?? DateTime.MaxValue);
+        
+
+        if(uptimeMinutes.TotalMinutes >= _server.ServerConfig.AutoBackupAfterUptimeMinute)
         {
-            _server.PerformanceReporter?.Stop();
+            _server.AddLog(new LogMessage("Auto backup server", LogMessageType.System_Message));
 
-            var uptimeMinutes = DateTime.Now - (_server.OnlineFrom ?? DateTime.MaxValue);
-            
+            var backupManager = BackupManager.Instance;
 
-            if(uptimeMinutes.TotalMinutes >= _server.ServerConfig.AutoBackupAfterUptimeMinute)
+            // deleting oldest backup if limit is reached
+            var backups = await backupManager.GetBackupsByServer(_server.Id);
+
+            // all auto backups
+            backups = backups.Where(b => b.Type == BackupType.Automatic);
+            var limit = _server.ServerConfig.MaxAutoBackup;
+            int difference = backups.Count() - limit;
+
+            if (difference >= 0)
             {
-                _server.AddLog(new LogMessage("Auto backup server", LogMessageType.System_Message));
-
-                var backupManager = BackupManager.Instance;
-
-                // deleting oldest backup if limit is reached
-                var backups = await backupManager.GetBackupsByServer(_server.Id);
-
-                // all auto backups
-                backups = backups.Where(b => b.Type == BackupType.Automatic);
-                var limit = _server.ServerConfig.MaxAutoBackup;
-                int difference = backups.Count() - limit;
-
-                if (difference >= 0)
-                {
-                    var oldestBackups = backups.OrderBy(b => b.CreationTime).Take(difference + 1);
-                    foreach(var oldBackup in oldestBackups)
-                        await backupManager.DeleteBackup(oldBackup);
-                }
-
-
-                string backupName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss_f");
-                await _server.McServerFileHandler.Backup(_server.Id, backupName, BackupType.Automatic);
-
-                _server.AddLog(new LogMessage("Auto backing up server", LogMessageType.System_Message));
+                var oldestBackups = backups.OrderBy(b => b.CreationTime).Take(difference + 1);
+                foreach(var oldBackup in oldestBackups)
+                    await backupManager.DeleteBackup(oldBackup);
             }
-            else
-                _server.AddLog(new LogMessage("Skipping auto backup", LogMessageType.System_Message));
 
-            await _server.SetServerStateAsync<OfflineState>();
+
+            string backupName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss_f");
+            await _server.McServerFileHandler.Backup(_server.Id, backupName, BackupType.Automatic);
+
+            _server.AddLog(new LogMessage("Auto backing up server", LogMessageType.System_Message));
         }
+        else
+            _server.AddLog(new LogMessage("Skipping auto backup", LogMessageType.System_Message));
 
-
-
-        public override ServerStatus Status => ServerStatus.BackUp;
-
-        public override bool IsRunning => false;
-
-        public override bool IsAllowedNextState(IServerState state)
-        {
-            return state is OfflineState;
-        }
-
-        public override void HandleLog(LogMessage logMessage) { }
-
-        public override Task WriteCommand(string? command, string username) => 
-            throw new MinecraftServerException(_server.ServerName + " is backing up!");
-       
+        await _server.SetServerStateAsync<OfflineState>();
     }
+
+
+
+    public override ServerStatus Status => ServerStatus.BackUp;
+
+    public override bool IsRunning => false;
+
+    public override bool IsAllowedNextState(IServerState state)
+    {
+        return state is OfflineState;
+    }
+
+    public override void HandleLog(LogMessage logMessage) { }
+
+    public override Task WriteCommand(string? command, string username) => 
+        throw new MinecraftServerException(_server.ServerName + " is backing up!");
+   
 }

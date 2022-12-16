@@ -5,7 +5,7 @@ namespace SharedPublic.Model
     public interface IMinecraftServerProperties
     {
         /// <summary>
-        /// Dictionary of each of the property key and value.
+        /// Dictionary of the visible properties of the minecraft server.
         /// </summary>
         public Dictionary<string, string> Properties { get; }
 

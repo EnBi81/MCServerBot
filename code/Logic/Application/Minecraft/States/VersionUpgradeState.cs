@@ -5,84 +5,72 @@ using Application.Minecraft.States.Attributes;
 using Application.Minecraft.Versions;
 using SharedPublic.Exceptions;
 
-namespace Application.Minecraft.States
+namespace Application.Minecraft.States;
+
+/// <summary>
+/// This state is when the server files are created, or the server is being upgraded to a newer version.
+/// </summary>
+[ManualState]
+internal class VersionUpgradeState : MaintenanceStateAbs
 {
+
+    public VersionUpgradeState(MinecraftServerLogic server, object[] args) : base(server, args) { }
+    
+    
+
     /// <summary>
-    /// This state is when the server files are created, or the server is being upgraded to a newer version.
+    /// Upgrades the server to a newer minecraft version.
     /// </summary>
-    [ManualState]
-    internal class VersionUpgradeState : MaintenanceStateAbs
+    /// <returns></returns>
+    public async override Task Apply()
     {
+        if (args.Length == 0 || args[0] is not IMinecraftVersion version)
+            throw new MCExternalException("No version was provided to upgrade to!");
 
-        public VersionUpgradeState(MinecraftServerLogic server, object[] args) : base(server, args) { }
 
-        
-        /// <summary>
-        /// Returns if the server is new or not
-        /// </summary>
-        /// <returns></returns>
-        private bool IsServerNew()
+        AddSystemLog("Upgrading Server to new Version");
+        AddSystemLog("Backing up important files...");
+
+        string[] itemsToBackup = { "world", "banned-ips.",
+            "banned-players.", "ops.", "server.properties", "usercache.json", "whitelist.", "white-list" };
+
+        // empty temp folders
+        _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
+        _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
+        // move important files to backup
+        _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempBackup, itemsToBackup);
+        // move other files to trash
+        _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempTrash);
+
+        AddSystemLog("Important files backed up.");
+
+        try
         {
-            var dirInfo = new DirectoryInfo(_server.FileStructure.ServerFiles);
-            return dirInfo.GetFiles().Length == 0;
+            await CreateServerFiles(version);
         }
-
-        
-
-        /// <summary>
-        /// Upgrades the server to a newer minecraft version.
-        /// </summary>
-        /// <returns></returns>
-        public async override Task Apply()
+        catch (Exception e)
         {
-            if (args.Length == 0 || args[0] is not IMinecraftVersion version)
-                throw new MCExternalException("No version was provided to upgrade to!");
-
-
-            AddSystemLog("Upgrading Server to new Version");
-            AddSystemLog("Backing up important files...");
-
-            string[] itemsToBackup = { "world", "banned-ips.",
-                "banned-players.", "ops.", "server.properties", "usercache.json", "whitelist.", "white-list" };
-
-            // empty temp folders
-            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
-            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
-            // move important files to backup
-            _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempBackup, itemsToBackup);
-            // move other files to trash
-            _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempTrash);
-
-            AddSystemLog("Important files backed up.");
-
-            try
-            {
-                await CreateServerFiles(version);
-            }
-            catch (Exception e)
-            {
-                AddSystemLog("Failed to create server files. Rolling back...");
-                _server.McServerFileHandler.EmptyFolder(ServerFolder.ServerFolder);
-                _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
-                _server.McServerFileHandler.MoveItems(ServerFolder.TempTrash, ServerFolder.ServerFolder);
-
-                await SetNewStateAsync<OfflineState>();
-                throw new MCInternalException(e);
-            }
-            
-
-            AddSystemLog("Retrieving backed up files...");
-            
-            // remove the temp trash
-            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
-            // move temp backup to server folder
+            AddSystemLog("Failed to create server files. Rolling back...");
+            _server.McServerFileHandler.EmptyFolder(ServerFolder.ServerFolder);
             _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
-            _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
-            
-            AddSystemLog("Backed up files retrieved.");
+            _server.McServerFileHandler.MoveItems(ServerFolder.TempTrash, ServerFolder.ServerFolder);
 
             await SetNewStateAsync<OfflineState>();
-            _server.McServerInfos.Save(_server);
+            throw new MCInternalException(e);
         }
+        
+
+        AddSystemLog("Retrieving backed up files...");
+        
+        // remove the temp trash
+        _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
+        // move temp backup to server folder
+        _server.McServerFileHandler.MoveItems(ServerFolder.TempBackup, ServerFolder.ServerFolder);
+        _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
+        
+        AddSystemLog("Backed up files retrieved.");
+
+        await SetNewStateAsync<OfflineState>();
+        _server.McServerInfos.Save(_server);
     }
 }

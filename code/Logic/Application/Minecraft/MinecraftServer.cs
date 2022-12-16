@@ -5,219 +5,218 @@ using Loggers;
 using SharedPublic.DTOs;
 using SharedPublic.Model;
 
-namespace Application.Minecraft
+namespace Application.Minecraft;
+
+/// <summary>
+/// Proxy class for logging and handling database records.
+/// </summary>
+internal class MinecraftServer : IMinecraftServer
 {
-    /// <summary>
-    /// Proxy class for logging and handling database records.
-    /// </summary>
-    internal class MinecraftServer : IMinecraftServer
+    private readonly MinecraftLogger _logger;
+    private readonly IMinecraftDataAccess _eventRegister;
+    private readonly MinecraftServerLogic _minecraftServerLogic;
+
+    public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
+        string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
     {
-        private readonly MinecraftLogger _logger;
-        private readonly IMinecraftDataAccess _eventRegister;
-        private readonly MinecraftServerLogic _minecraftServerLogic;
+        _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config));
+        _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
+        Startup();
+    }
 
-        public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
+
+    public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
+        long id, string serverName, string serverFolderName, MinecraftConfig config,
+        IMinecraftVersion version, MinecraftServerCreationPropertiesDto? creationProperties) : this(dataAccess, logger)
+    {
+        _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version, creationProperties));
+        _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
+        Startup();
+    }
+
+    private MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger)
+    {
+        _eventRegister = dataAccess;
+        _logger = logger;
+        _minecraftServerLogic = null!;
+    }
+
+    private MinecraftServerLogic InitLogicServer(Func<MinecraftServerLogic> func)
+    {
+        try
         {
-            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config));
-            _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
-            Startup();
+            return func();
         }
-
-
-        public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-            long id, string serverName, string serverFolderName, MinecraftConfig config,
-            IMinecraftVersion version, MinecraftServerCreationPropertiesDto? creationProperties) : this(dataAccess, logger)
+        catch (Exception e)
         {
-            _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version, creationProperties));
-            _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
-            Startup();
+            _logger.Error(_logger.MinecraftServer, e);
+            throw;
         }
+    }
 
-        private MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger)
-        {
-            _eventRegister = dataAccess;
-            _logger = logger;
-            _minecraftServerLogic = null!;
-        }
+    /// <summary>
+    /// Starts up the listeners.
+    /// </summary>
+    private void Startup()
+    {
+        HandleDatabaseEvents();
+        HandleLogging();
+    }
 
-        private MinecraftServerLogic InitLogicServer(Func<MinecraftServerLogic> func)
-        {
-            try
-            {
-                return func();
-            }
-            catch (Exception e)
-            {
-                _logger.Error(_logger.MinecraftServer, e);
-                throw;
-            }
-        }
+    /// <summary>
+    /// Listens to the minecraft server and adds the relevant events to the database.
+    /// </summary>
+    private void HandleDatabaseEvents()
+    {
+        _minecraftServerLogic.PerformanceMeasured += (s, e) =>
+            _eventRegister.AddMeasurement(Id, e.CPU, e.Memory);
 
-        /// <summary>
-        /// Starts up the listeners.
-        /// </summary>
-        private void Startup()
-        {
-            HandleDatabaseEvents();
-            HandleLogging();
-        }
+        _minecraftServerLogic.PlayerJoined += (s, e) =>
+            _eventRegister.PlayerJoined(Id, e.Username);
 
-        /// <summary>
-        /// Listens to the minecraft server and adds the relevant events to the database.
-        /// </summary>
-        private void HandleDatabaseEvents()
-        {
-            _minecraftServerLogic.PerformanceMeasured += (s, e) =>
-                _eventRegister.AddMeasurement(Id, e.CPU, e.Memory);
+        _minecraftServerLogic.PlayerLeft += (s, e) =>
+            _eventRegister.PlayerLeft(Id, e.Username);
 
-            _minecraftServerLogic.PlayerJoined += (s, e) =>
-                _eventRegister.PlayerJoined(Id, e.Username);
+        _minecraftServerLogic.StorageMeasured += (s, e) =>
+            _eventRegister.SetDiskSize(Id, e);
+    }
 
-            _minecraftServerLogic.PlayerLeft += (s, e) =>
-                _eventRegister.PlayerLeft(Id, e.Username);
+    /// <summary>
+    /// Handles the loggings.
+    /// </summary>
+    private void HandleLogging()
+    {
+        string mcServer = _logger.MinecraftServer;
 
-            _minecraftServerLogic.StorageMeasured += (s, e) =>
-                _eventRegister.SetDiskSize(Id, e);
-        }
+        _minecraftServerLogic.LogReceived += (s, e)
+            => _logger.Log(mcServer + "-log", e.Message);
+        _minecraftServerLogic.PerformanceMeasured += (s, e)
+            => _logger.Log(mcServer + "-performance", $"{Id}:{ServerName} measurement: CPU - {e.CPU:0.00}%  Memory - {e.Memory / (1024 * 1024)} MB");
+        _minecraftServerLogic.PlayerJoined += (s, e)
+            => _logger.Log(mcServer + "-player", $"{e.Username} joined {Id}:{ServerName}");
+        _minecraftServerLogic.PlayerLeft += (s, e)
+            => _logger.Log(mcServer + "-player", $"{e.Username} left {Id}:{ServerName}");
+        _minecraftServerLogic.StatusChange += (s, e)
+            => _logger.Log(mcServer + "-status", $"{Id}:{ServerName} new status: " + e.DisplayString());
+        _minecraftServerLogic.StorageMeasured += (s, e)
+            => _logger.Log(mcServer + "-storage", $"{Id}:{ServerName} storage measured: {e / (1024 * 1024)} MB");
+        _minecraftServerLogic.NameChanged += (s, e)
+            => _logger.Log(mcServer, $"{Id}:{ServerName} name changed to {ServerName}");
+        _minecraftServerLogic.VersionChanged += (s, e)
+            => _logger.Log(mcServer + "-version", $"{Id}:{ServerName} version changed to {e.Version}");
+    }
 
-        /// <summary>
-        /// Handles the loggings.
-        /// </summary>
-        private void HandleLogging()
-        {
-            string mcServer = _logger.MinecraftServer;
+    /// <inheritdoc/>
+    public long Id => _minecraftServerLogic.Id;
 
-            _minecraftServerLogic.LogReceived += (s, e)
-                => _logger.Log(mcServer + "-log", e.Message);
-            _minecraftServerLogic.PerformanceMeasured += (s, e)
-                => _logger.Log(mcServer + "-performance", $"{Id}:{ServerName} measurement: CPU - {e.CPU:0.00}%  Memory - {e.Memory / (1024 * 1024)} MB");
-            _minecraftServerLogic.PlayerJoined += (s, e)
-                => _logger.Log(mcServer + "-player", $"{e.Username} joined {Id}:{ServerName}");
-            _minecraftServerLogic.PlayerLeft += (s, e)
-                => _logger.Log(mcServer + "-player", $"{e.Username} left {Id}:{ServerName}");
-            _minecraftServerLogic.StatusChange += (s, e)
-                => _logger.Log(mcServer + "-status", $"{Id}:{ServerName} new status: " + e.DisplayString());
-            _minecraftServerLogic.StorageMeasured += (s, e)
-                => _logger.Log(mcServer + "-storage", $"{Id}:{ServerName} storage measured: {e / (1024 * 1024)} MB");
-            _minecraftServerLogic.NameChanged += (s, e)
-                => _logger.Log(mcServer, $"{Id}:{ServerName} name changed to {ServerName}");
-            _minecraftServerLogic.VersionChanged += (s, e)
-                => _logger.Log(mcServer + "-version", $"{Id}:{ServerName} version changed to {e.Version}");
-        }
+    /// <inheritdoc/>
+    public string ServerName { get => _minecraftServerLogic.ServerName; set => _minecraftServerLogic.ServerName = value; }
 
-        /// <inheritdoc/>
-        public long Id => _minecraftServerLogic.Id;
+    /// <inheritdoc/>
+    public ServerStatus StatusCode => _minecraftServerLogic.StatusCode;
 
-        /// <inheritdoc/>
-        public string ServerName { get => _minecraftServerLogic.ServerName; set => _minecraftServerLogic.ServerName = value; }
+    /// <inheritdoc/>
+    public bool IsRunning => _minecraftServerLogic.IsRunning;
 
-        /// <inheritdoc/>
-        public ServerStatus StatusCode => _minecraftServerLogic.StatusCode;
+    /// <inheritdoc/>
+    public ICollection<ILogMessage> Logs => _minecraftServerLogic.Logs;
 
-        /// <inheritdoc/>
-        public bool IsRunning => _minecraftServerLogic.IsRunning;
+    /// <inheritdoc/>
+    public DateTime? OnlineFrom => _minecraftServerLogic.OnlineFrom;
 
-        /// <inheritdoc/>
-        public ICollection<ILogMessage> Logs => _minecraftServerLogic.Logs;
+    /// <inheritdoc/>
+    public IMinecraftServerProperties Properties => _minecraftServerLogic.Properties;
 
-        /// <inheritdoc/>
-        public DateTime? OnlineFrom => _minecraftServerLogic.OnlineFrom;
+    /// <inheritdoc/>
+    public int Port => _minecraftServerLogic.Port;
 
-        /// <inheritdoc/>
-        public IMinecraftServerProperties Properties => _minecraftServerLogic.Properties;
+    /// <inheritdoc/>
+    public Dictionary<string, IMinecraftPlayer> Players => _minecraftServerLogic.Players;
 
-        /// <inheritdoc/>
-        public int Port => _minecraftServerLogic.Port;
+    /// <inheritdoc/>
+    public string StorageSpace => _minecraftServerLogic.StorageSpace;
 
-        /// <inheritdoc/>
-        public Dictionary<string, IMinecraftPlayer> Players => _minecraftServerLogic.Players;
+    /// <inheritdoc/>
+    public long StorageBytes => _minecraftServerLogic.StorageBytes;
 
-        /// <inheritdoc/>
-        public string StorageSpace => _minecraftServerLogic.StorageSpace;
-
-        /// <inheritdoc/>
-        public long StorageBytes => _minecraftServerLogic.StorageBytes;
-
-        /// <inheritdoc/>
-        public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
+    /// <inheritdoc/>
+    public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
 
 
-        /// <inheritdoc/>
-        public event EventHandler<ServerStatus> StatusChange
-        {
-            add => _minecraftServerLogic.StatusChange += value;
-            remove => _minecraftServerLogic.StatusChange -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<ILogMessage> LogReceived
-        {
-            add => _minecraftServerLogic.LogReceived += value;
-            remove => _minecraftServerLogic.LogReceived -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<IMinecraftPlayer> PlayerJoined
-        {
-            add => _minecraftServerLogic.PlayerJoined += value;
-            remove => _minecraftServerLogic.PlayerJoined -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<IMinecraftPlayer> PlayerLeft
-        {
-            add => _minecraftServerLogic.PlayerLeft += value;
-            remove => _minecraftServerLogic.PlayerLeft -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<(double CPU, long Memory)> PerformanceMeasured
-        {
-            add => _minecraftServerLogic.PerformanceMeasured += value;
-            remove => _minecraftServerLogic.PerformanceMeasured -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<string> NameChanged
-        {
-            add => _minecraftServerLogic.NameChanged += value;
-            remove => _minecraftServerLogic.NameChanged -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<long> StorageMeasured
-        {
-            add => _minecraftServerLogic.StorageMeasured += value;
-            remove => _minecraftServerLogic.StorageMeasured -= value;
-        }
-        /// <inheritdoc/>
-        public event EventHandler<IMinecraftVersion> VersionChanged
-        {
-            add => _minecraftServerLogic.VersionChanged += value;
-            remove => _minecraftServerLogic.VersionChanged -= value;
-        }
+    /// <inheritdoc/>
+    public event EventHandler<ServerStatus> StatusChange
+    {
+        add => _minecraftServerLogic.StatusChange += value;
+        remove => _minecraftServerLogic.StatusChange -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<ILogMessage> LogReceived
+    {
+        add => _minecraftServerLogic.LogReceived += value;
+        remove => _minecraftServerLogic.LogReceived -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<IMinecraftPlayer> PlayerJoined
+    {
+        add => _minecraftServerLogic.PlayerJoined += value;
+        remove => _minecraftServerLogic.PlayerJoined -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<IMinecraftPlayer> PlayerLeft
+    {
+        add => _minecraftServerLogic.PlayerLeft += value;
+        remove => _minecraftServerLogic.PlayerLeft -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<(double CPU, long Memory)> PerformanceMeasured
+    {
+        add => _minecraftServerLogic.PerformanceMeasured += value;
+        remove => _minecraftServerLogic.PerformanceMeasured -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<string> NameChanged
+    {
+        add => _minecraftServerLogic.NameChanged += value;
+        remove => _minecraftServerLogic.NameChanged -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<long> StorageMeasured
+    {
+        add => _minecraftServerLogic.StorageMeasured += value;
+        remove => _minecraftServerLogic.StorageMeasured -= value;
+    }
+    /// <inheritdoc/>
+    public event EventHandler<IMinecraftVersion> VersionChanged
+    {
+        add => _minecraftServerLogic.VersionChanged += value;
+        remove => _minecraftServerLogic.VersionChanged -= value;
+    }
 
-        /// <inheritdoc/>
-        public Task Shutdown(UserEventData data) =>
-            _minecraftServerLogic.Shutdown(data);
+    /// <inheritdoc/>
+    public Task Shutdown(UserEventData data) =>
+        _minecraftServerLogic.Shutdown(data);
 
-        /// <inheritdoc/>
-        public Task Start(UserEventData data) =>
-            _minecraftServerLogic.Start(data);
+    /// <inheritdoc/>
+    public Task Start(UserEventData data) =>
+        _minecraftServerLogic.Start(data);
 
-        /// <inheritdoc/>
-        public Task WriteCommand(string? command, UserEventData data)
-        {
-            var task = _minecraftServerLogic.WriteCommand(command, data);
-            _eventRegister.WriteCommand(Id, command!, data);
-            return task;
-        }
+    /// <inheritdoc/>
+    public Task WriteCommand(string? command, UserEventData data)
+    {
+        var task = _minecraftServerLogic.WriteCommand(command, data);
+        _eventRegister.WriteCommand(Id, command!, data);
+        return task;
+    }
 
-        /// <inheritdoc/>
-        public Task Backup(BackupDto dto, UserEventData data = default)
-        {
-            return _minecraftServerLogic.Backup(dto, data);
-        }
+    /// <inheritdoc/>
+    public Task Backup(BackupDto dto, UserEventData data = default)
+    {
+        return _minecraftServerLogic.Backup(dto, data);
+    }
 
-        /// <inheritdoc/>
-        public Task Restore(IBackup backup, UserEventData data = default)
-        {
-            return _minecraftServerLogic.Restore(backup, data);
-        }
+    /// <inheritdoc/>
+    public Task Restore(IBackup backup, UserEventData data = default)
+    {
+        return _minecraftServerLogic.Restore(backup, data);
     }
 }

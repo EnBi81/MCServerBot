@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Minecraft.States.Attributes
+namespace Application.Minecraft.States.Attributes;
+
+[AttributeUsage(AttributeTargets.Class)]
+internal class AutoStateAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    internal class AutoStateAttribute : Attribute
-    {
-    }
 }
