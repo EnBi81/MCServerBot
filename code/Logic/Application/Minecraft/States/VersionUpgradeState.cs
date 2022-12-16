@@ -2,9 +2,8 @@
 using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
-using SharedPublic.DTOs;
+using Application.Minecraft.Versions;
 using SharedPublic.Exceptions;
-using SharedPublic.Model;
 
 namespace Application.Minecraft.States
 {
@@ -34,10 +33,13 @@ namespace Application.Minecraft.States
         /// Upgrades the server to a newer minecraft version.
         /// </summary>
         /// <returns></returns>
-        private async Task Apply()
+        public async override Task Apply()
         {
+            if (args.Length == 0 || args[0] is not IMinecraftVersion version)
+                throw new MCExternalException("No version was provided to upgrade to!");
+
+
             AddSystemLog("Upgrading Server to new Version");
-            
             AddSystemLog("Backing up important files...");
 
             string[] itemsToBackup = { "world", "banned-ips.",
@@ -55,7 +57,7 @@ namespace Application.Minecraft.States
 
             try
             {
-                await CreateServerFiles();
+                await CreateServerFiles(version);
             }
             catch (Exception e)
             {

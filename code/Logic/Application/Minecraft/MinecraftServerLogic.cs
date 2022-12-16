@@ -1,5 +1,4 @@
-﻿using Application.Minecraft.Backup;
-using Application.Minecraft.Configs;
+﻿using Application.Minecraft.Configs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
@@ -89,9 +88,9 @@ namespace Application.Minecraft
                     throw new MinecraftServerException($"Cannot downgrade from {_mcVersion.Version} to {value.Version}");
                 if (versionCompared == 0)
                     throw new MinecraftServerException($"Server is already on version {value.Version}");
-
-                SetServerState<VersionUpgradeState>();
                 
+                SetServerState<VersionUpgradeState>(value);
+
                 _mcVersion = value;
                 RaiseEvent(VersionChanged, value);
                 McServerInfos.Save(this);

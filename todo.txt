@@ -1,7 +1,4 @@
 Check the restore/version upgrade feature
-separate server creation and server version upgrade state
-
-restore version when exception on upgrade
 
 server.properties file
 

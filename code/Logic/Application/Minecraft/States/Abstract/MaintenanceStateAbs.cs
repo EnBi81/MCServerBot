@@ -1,4 +1,5 @@
 ﻿using Application.Minecraft.MinecraftServers;
+using Application.Minecraft.Versions;
 using SharedPublic.Exceptions;
 using SharedPublic.Model;
 
@@ -42,11 +43,13 @@ namespace Application.Minecraft.States.Abstract
         /// Creates the server files from scratch
         /// </summary>
         /// <returns></returns>
-        protected async Task CreateServerFiles()
+        protected async Task CreateServerFiles(IMinecraftVersion? version = null)
         {
             AddSystemLog("Creating Server Files...");
 
-            var process = await _server.StartServerProcess();
+            var process = version is null ?
+                await _server.StartServerProcess() :
+                await _server.McServerProcess.Start(version);
 
 
             // https://nodecraft.com/support/games/minecraft/minecraft-eula#:~:text=Starting%20with%20Minecraft%20version%201.7,.com%2Fdocuments%2Fminecraft_eula.
