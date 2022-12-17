@@ -1,6 +1,27 @@
 Check the restore/version upgrade feature
 
-server.properties file
+server.properties file -----------------
+Creating
+Creating the server with servercreationproperties dto 
+
+First start
+1. Start server 
+2. Create server files 
+3. read server.properties 
+4. modify the existing ones to the dto 
+
+Server upgrade + first new start
+1. Save current properties 
+2. Create the new files
+3. Read the newly created properties
+4. Create a new servercreationproperties
+5. Apply the default properties
+6. Apply the previously saved properties from the previous version 
+
+Restoring
+1. Ignore server.properties and basically everything except the world folder
+
+---------------------------------------------
 
 
 Add Delete state which handles the server deletion
