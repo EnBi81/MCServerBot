@@ -1379,9 +1379,6 @@
             "nullable": true,
             "readOnly": true
           },
-          "properties": {
-            "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServerProperties"
-          },
           "port": {
             "type": "integer",
             "format": "int32",
@@ -1415,20 +1412,6 @@
           },
           "mcVersion": {
             "$ref": "#/components/schemas/Application.Minecraft.Versions.IMinecraftVersion"
-          }
-        },
-        "additionalProperties": false
-      },
-      "SharedPublic.Model.IMinecraftServerProperties": {
-        "type": "object",
-        "properties": {
-          "properties": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true,
-            "readOnly": true
           }
         },
         "additionalProperties": false

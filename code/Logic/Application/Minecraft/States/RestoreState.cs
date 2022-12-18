@@ -25,17 +25,17 @@ internal class RestoreState : ServerStateAbs
         }
 
         AddSystemLog($"Restoring backup {backup.ServerId}-{backup.Name} ...");
-
-        string[] itemsToBackup = new[] { "eula.txt" };
+        
+        string[] itemsToTrash = new[] { "world" };
 
 
         // empty temp folders
         _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
         _server.McServerFileHandler.EmptyFolder(ServerFolder.TempTrash);
-        // move important files to backup
-        _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempBackup, itemsToBackup);
         // move other files to trash
-        _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempTrash);
+        _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempTrash, itemsToTrash);
+        // move important files to backup
+        _server.McServerFileHandler.MoveItems(ServerFolder.ServerFolder, ServerFolder.TempBackup);
 
         try
         {

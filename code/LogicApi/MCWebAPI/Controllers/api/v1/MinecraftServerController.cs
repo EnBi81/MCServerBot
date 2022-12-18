@@ -28,6 +28,18 @@ namespace MCWebAPI.Controllers.api.v1
             this.serverPark = serverPark;
         }
 
+        /// <summary>
+        /// Throws external exception if the server does not exist.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private Task ThrowIfServerNotExists(long id)
+        {
+            _ = serverPark.GetServer(id);
+            return Task.CompletedTask;
+        }
+
+
 
         /// <summary>
         /// Gets the informations of a server.
@@ -130,6 +142,8 @@ namespace MCWebAPI.Controllers.api.v1
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost(RouteId + "/backups", Name = "BackupServer")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BackupServer([FromRoute] long id, [FromBody] BackupDto dto)
         {
             var server = serverPark.GetServer(id);
@@ -137,7 +151,7 @@ namespace MCWebAPI.Controllers.api.v1
 
             await server.Backup(dto, user);
 
-            return Ok();
+            return NoContent();
         }
 
         /// <summary>
@@ -147,10 +161,12 @@ namespace MCWebAPI.Controllers.api.v1
         /// <returns></returns>
         [HttpGet(RouteId + "/backups", Name = "GetBackups")]
         [ProducesResponseType(typeof(IEnumerable<IBackup>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetBackups([FromRoute] long id)
         {
-            IEnumerable<IBackup> backups = await serverPark.BackupManager.GetBackupsByServer(id);
+            await ThrowIfServerNotExists(id);
 
+            IEnumerable<IBackup> backups = await serverPark.BackupManager.GetBackupsByServer(id);
             return Ok(backups);
         }
 
@@ -161,15 +177,16 @@ namespace MCWebAPI.Controllers.api.v1
         /// <param name="backupName"></param>
         /// <returns></returns>
         [HttpDelete(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "DeleteBackup")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] string backupName)
         {
-            // this throws exception if server does not exist
-            serverPark.GetServer(id);
+            await ThrowIfServerNotExists(id);
 
             var backup = (await serverPark.BackupManager.GetBackupsByServer(id)).FirstOrDefault(b => b.Name == backupName);
 
             if (backup == null)
-                return BadRequest("Backup does not exist.");
+                throw new MCExternalException("Backup does not exist.");
 
             await serverPark.BackupManager.DeleteBackup(backup);
             return Ok(backup);
@@ -195,6 +212,33 @@ namespace MCWebAPI.Controllers.api.v1
             await server.Restore(backup);
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Gets all the properties of a server
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet(RouteId + "/properties", Name = "GetProperties")]
+        public Task<IActionResult> GetProperties([FromRoute] long id)
+        {
+            var server = serverPark.GetServer(id);
+            var properties = server.Properties;
+
+            return Task.FromResult(Ok(properties) as IActionResult);
+        }
+
+        /// <summary>
+        /// Modifies the server properties
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        [HttpPatch(RouteId + "/properties", Name = "ModifyProperties")]
+        public Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

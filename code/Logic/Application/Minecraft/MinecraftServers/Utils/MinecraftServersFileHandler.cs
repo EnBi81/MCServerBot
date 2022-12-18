@@ -129,14 +129,14 @@ public class MinecraftServersFileHandler
         foreach (DirectoryInfo dir in di.GetDirectories())
             dir.Delete(true);
     }
-    
+
 
     /// <summary>
     /// Zips the server folder and saves it into the centralized backup folder.
     /// </summary>
     /// <param name="serverId"></param>
     /// <param name="name"></param>
-    /// <param name="isAutomatic"></param>
+    /// <param name="type"></param>
     /// <returns></returns>
     public async Task Backup(long serverId, string name, BackupType type)
     {
@@ -147,7 +147,7 @@ public class MinecraftServersFileHandler
         string fromDir = ServerFiles;
         string backupPath = await BackupManager.Instance.CreateBackupPath(serverId, name, type);
 
-        Predicate<string> filter = s => !s.StartsWith("eula.txt") && !s.StartsWith("logs");
+        Predicate<string> filter = s => s.StartsWith("world");
         await FileHelper.CreateZipFromDirectory(fromDir, backupPath, System.IO.Compression.CompressionLevel.SmallestSize, false, filter);
     }
 

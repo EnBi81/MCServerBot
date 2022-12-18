@@ -1,6 +1,7 @@
 ﻿using Application.Minecraft.Versions;
 using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
+using System.Text.Json.Serialization;
 
 namespace SharedPublic.Model
 {
@@ -53,6 +54,7 @@ namespace SharedPublic.Model
         /// <summary>
         /// Access to the properties file of the server.
         /// </summary>
+        [JsonIgnore]
         public IMinecraftServerProperties Properties { get; }
 
         /// <summary>

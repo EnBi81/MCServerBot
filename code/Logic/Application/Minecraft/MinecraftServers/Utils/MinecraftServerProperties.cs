@@ -1,5 +1,6 @@
 ﻿using SharedPublic.DTOs;
 using SharedPublic.Model;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 
