@@ -11,6 +11,34 @@ namespace Application.Minecraft.MinecraftServers.Utils;
 /// </summary>
 public class MinecraftServerProperties : IMinecraftServerProperties
 {
+    /* 
+     * server.properties file -----------------
+     * Creating
+     * Creating the server with servercreationproperties dto 
+     * 
+     * First start
+     * 1. Start server 
+     * 2. Create server files 
+     * 3. read server.properties 
+     * 4. modify the existing ones to the dto 
+     * 
+     * Server upgrade + first new start
+     * 1. Save current properties 
+     * 2. Create the new files
+     * 3. Read the newly created properties
+     * 4. Create a new servercreationproperties
+     * 5. Apply the default properties
+     * 6. Apply the previously saved properties from the previous version 
+     * 
+     * Restoring
+     * 1. Ignore server.properties and basically everything except the world folder
+     * 
+     * ---------------------------------------------
+     */
+
+
+    
+
     /// <summary>
     /// Reads the file specified in the argument and creates a new instance of the MinecraftServerProperties.
     /// </summary>
@@ -35,38 +63,14 @@ public class MinecraftServerProperties : IMinecraftServerProperties
         await File.WriteAllTextAsync(file, sb.ToString());
     }
 
-
-    private readonly static string[] _visibleProperties = new string[]
-    {
-        "allow-flight",
-        "difficulty",
-        "enable-command-block",
-        "enforce-secure-profile",
-        "gamemode",
-        "hardcore",
-        "level-seed",
-        "level-type",
-        "max-world-size",
-        "motd",
-        "pvp",
-        "simulation-distance",
-        "spawn-monsters",
-        "spawn-protection",
-        "view-distance",
-        "white-list"
-    };
-
-
+    
     /// <inheritdoc/>
     public Dictionary<string, string> Properties 
     {
         get
         {
             LoadData();
-
-            return _properties
-            .Where(pair => _visibleProperties.Contains(pair.Key))
-            .ToDictionary(pair => pair.Key, pair => pair.Value);
+            return _properties;
         }
     }
 
@@ -131,16 +135,27 @@ public class MinecraftServerProperties : IMinecraftServerProperties
     public Dictionary<string, string>.Enumerator GetEnumerator()
         => Properties.GetEnumerator();
 
-    public async Task UpdateProperties(MinecraftServerPropertiesDto dto)
+    public Task UpdatePropertiesAsync(MinecraftServerPropertiesDto dto)
+    {
+        var newProps = dto.ValidateAndRetrieveData();
+        return UpdatePropertiesAsync(newProps);
+    }
+
+    public async Task UpdatePropertiesAsync(Dictionary<string, string> props)
     {
         LoadData();
 
-        foreach (var (key, value) in dto.ValidateAndRetrieveData())
+        foreach (var (key, value) in props)
         {
             if (_properties.ContainsKey(key))
                 _properties[key] = value;
         }
 
         await SaveProperties(_file, this);
+    }
+
+    public void ClearProperties()
+    {
+        _properties.Clear();
     }
 }

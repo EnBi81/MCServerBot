@@ -25,7 +25,7 @@ internal class ServerCreationState : MaintenanceStateAbs
 
         dto.ValidateAndRetrieveData();
         await CreateServerFiles();
-        await _server.Properties.UpdateProperties(dto);
+        await _server.Properties.UpdatePropertiesAsync(dto);
 
         await SetNewStateAsync<OfflineState>();
         _server.McServerInfos.Save(_server);

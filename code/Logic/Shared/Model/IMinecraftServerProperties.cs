@@ -27,6 +27,16 @@ namespace SharedPublic.Model
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public Task UpdateProperties(MinecraftServerPropertiesDto dto);
+        public Task UpdatePropertiesAsync(MinecraftServerPropertiesDto dto);
+        /// <summary>
+        /// Update the minecraft server properties.
+        /// </summary>
+        /// <param name="props"></param>
+        /// <returns></returns>
+        public Task UpdatePropertiesAsync(Dictionary<string, string> props);
+        /// <summary>
+        /// Flushes all the property data and resets the state of the object.
+        /// </summary>
+        public void ClearProperties();
     }
 }

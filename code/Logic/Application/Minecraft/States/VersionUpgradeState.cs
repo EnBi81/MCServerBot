@@ -3,6 +3,7 @@ using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
 using Application.Minecraft.Versions;
+using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
 
 namespace Application.Minecraft.States;
@@ -28,11 +29,13 @@ internal class VersionUpgradeState : MaintenanceStateAbs
             throw new MCExternalException("No version was provided to upgrade to!");
 
 
+        Dictionary<string, string> oldProperties = new (_server.Properties.Properties);
+
         AddSystemLog("Upgrading Server to new Version");
         AddSystemLog("Backing up important files...");
 
         string[] itemsToBackup = { "world", "banned-ips.",
-            "banned-players.", "ops.", "server.properties", "usercache.json", "whitelist.", "white-list" };
+            "banned-players.", "ops.","usercache.json", "whitelist.", "white-list" };
 
         // empty temp folders
         _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
@@ -58,7 +61,13 @@ internal class VersionUpgradeState : MaintenanceStateAbs
             await SetNewStateAsync<OfflineState>();
             throw new MCInternalException(e);
         }
-        
+
+        // updating server.properties file
+        _server.Properties.ClearProperties();
+        var serverCreationDto = new MinecraftServerCreationPropertiesDto();
+        var defaultProperties = serverCreationDto.ValidateAndRetrieveData();
+        await _server.Properties.UpdatePropertiesAsync(defaultProperties);
+        await _server.Properties.UpdatePropertiesAsync(oldProperties);
 
         AddSystemLog("Retrieving backed up files...");
         

@@ -165,7 +165,6 @@ internal class MinecraftServerLogic : IMinecraftServer
 
         _mcVersion = null!;
         _serverState = null!;
-        SetServerState<OfflineState>();
 
         PlayerLeft = null!;
         LogReceived = null!;

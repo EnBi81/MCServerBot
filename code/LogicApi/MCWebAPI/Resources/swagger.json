@@ -481,8 +481,18 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIModel.Responses.ExceptionDTO"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -525,6 +535,16 @@
                   "items": {
                     "$ref": "#/components/schemas/SharedPublic.Model.IBackup"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIModel.Responses.ExceptionDTO"
                 }
               }
             }
@@ -576,6 +596,16 @@
           "200": {
             "description": "Success"
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIModel.Responses.ExceptionDTO"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -617,6 +647,88 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/v1/MinecraftServer/{id}/properties": {
+      "get": {
+        "tags": [
+          "MinecraftServer"
+        ],
+        "summary": "Gets all the properties of a server (Auth)",
+        "operationId": "GetProperties",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "MinecraftServer"
+        ],
+        "summary": "Modifies the server properties (Auth)",
+        "operationId": "ModifyProperties",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerPropertiesDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"

@@ -1,6 +1,7 @@
 ﻿using Application.Minecraft.Versions;
 using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace SharedPublic.Model

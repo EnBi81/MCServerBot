@@ -238,7 +238,10 @@ namespace MCWebAPI.Controllers.api.v1
         [HttpPatch(RouteId + "/properties", Name = "ModifyProperties")]
         public Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
         {
-            throw new NotImplementedException();
+            var server = serverPark.GetServer(id);
+            server.Properties.UpdatePropertiesAsync(dto);
+
+            return Task.FromResult(Ok() as IActionResult);
         }
     }
 }

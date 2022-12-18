@@ -4,6 +4,7 @@ using Application.Minecraft.Versions;
 using Loggers;
 using SharedPublic.DTOs;
 using SharedPublic.Model;
+using System.Text.Json.Serialization;
 
 namespace Application.Minecraft;
 
@@ -125,6 +126,7 @@ internal class MinecraftServer : IMinecraftServer
     public DateTime? OnlineFrom => _minecraftServerLogic.OnlineFrom;
 
     /// <inheritdoc/>
+    [JsonIgnore]
     public IMinecraftServerProperties Properties => _minecraftServerLogic.Properties;
 
     /// <inheritdoc/>

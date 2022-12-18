@@ -28,9 +28,16 @@ namespace SharedPublic.DTOs
              view-distance: default 10, 3-32
              white-list: default false
          */
-        
-        
-        private void ValidateValue(PropertyInfo property, ref object value)
+
+
+        /// <summary>
+        /// Validates one value, and assigns the valid value to the correct format. Must be called before inserting into the database.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="value"></param>
+        /// <exception cref="MCInternalException"></exception>
+        /// <exception cref="MCExternalException"></exception>
+        private void ValidateSingleValue(PropertyInfo property, ref object value)
         {
             var propName = property.Name;
             var propType = property.PropertyType;
@@ -77,7 +84,7 @@ namespace SharedPublic.DTOs
             }
         }
 
-        protected Dictionary<string, string> ValidateAndRetrieveData(bool setAllDefaultValues)
+        protected Dictionary<string, string> ValidateAndRetrieveData(bool useDefaultIfNull)
         {
             var properties = GetType().GetProperties();
 
@@ -96,13 +103,13 @@ namespace SharedPublic.DTOs
                 string? key = displayAttr.DisplayName;
                 object? value = prop.GetValue(this);
 
-                if(setAllDefaultValues && defaultAttr != null)
+                if(useDefaultIfNull && defaultAttr != null)
                     value ??= defaultAttr.Value;
 
                 if (value == null || key == null)
                     continue;
 
-                ValidateValue(prop, ref value);
+                ValidateSingleValue(prop, ref value);
 
                 values.Add(key, value.ToString()!);
             }

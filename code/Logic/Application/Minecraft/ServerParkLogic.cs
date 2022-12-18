@@ -193,7 +193,7 @@ internal class ServerParkLogic : IServerPark
             server.ServerName = dto.NewName;
 
         if(dto.Properties != null)
-            server.Properties.UpdateProperties(dto.Properties);
+            server.Properties.UpdatePropertiesAsync(dto.Properties);
 
         InvokeServerModified(server, dto);
 
