@@ -220,12 +220,12 @@ namespace MCWebAPI.Controllers.api.v1
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet(RouteId + "/properties", Name = "GetProperties")]
-        public Task<IActionResult> GetProperties([FromRoute] long id)
+        public async Task<IActionResult> GetProperties([FromRoute] long id)
         {
             var server = serverPark.GetServer(id);
             var properties = server.Properties;
 
-            return Task.FromResult(Ok(properties) as IActionResult);
+            return Ok(properties);
         }
 
         /// <summary>

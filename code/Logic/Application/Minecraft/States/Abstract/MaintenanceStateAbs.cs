@@ -21,7 +21,7 @@ internal abstract class MaintenanceStateAbs : ServerStateAbs
     /// Adds the log message to the log collection.
     /// </summary>
     /// <param name="logMessage"></param>
-    public override void HandleLog(LogMessage logMessage) { }
+    public override void HandleLog(LogMessage logMessage) => _server.AddLog(logMessage);
     /// <summary>
     /// Cannot write command during maintenance,
     /// </summary>
@@ -49,6 +49,7 @@ internal abstract class MaintenanceStateAbs : ServerStateAbs
 
         version ??= _server.MCVersion;
 
+        AddSystemLog("Starting version " + version.Version);
         var process = await _server.McServerProcess.Start(version);
 
 
@@ -62,8 +63,10 @@ internal abstract class MaintenanceStateAbs : ServerStateAbs
                     await _server.McServerProcess.WriteToStandardInputAsync("stop");
             }
 
+            AddSystemLog("Adding Listener for process " + process.Id);
             _server.LogReceived += ShutdownServerWhenReady;
             await process.WaitForExitAsync();
+            AddSystemLog("Setup exited with code " + process.ExitCode);
             _server.LogReceived -= ShutdownServerWhenReady;
         }
         // from 1.8, the server will shut down after creating the files, and we need to accept the eula
