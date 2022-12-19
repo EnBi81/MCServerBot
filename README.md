@@ -93,6 +93,12 @@ rename them to appsettings.json and launchSettings.json respectively, and fill i
 
 # Technical information
 
+## State Machine
+
+A Minecraft server has a lot of functionalities, such as turning on/off, upgrading to a newer version, backing up automatically and manually, or restoring a backup, deleting a server. For keeping the codes separate and follow the Single Responsibility Principle from SOLID, these actions are separated into states. There are two types of state ManualState and AutoState. The AutoState is automatically triggered, while the ManualState is triggered by some kind of user action.
+
+<img src="docs/diagrams/state-diagram.png">
+
 ## Project structure
 
 ### Data Tier
