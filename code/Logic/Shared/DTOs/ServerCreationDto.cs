@@ -25,6 +25,11 @@ namespace APIModel.DTOs
         public string? Version { get; set; }
 
         /// <summary>
+        /// Icon of the server (if null, the default icon will be used)
+        /// </summary>
+        public string? ServerIcon { get; set; }
+
+        /// <summary>
         /// Properties to apply when creating the server.
         /// </summary>
         public MinecraftServerCreationPropertiesDto? Properties { get; set; }

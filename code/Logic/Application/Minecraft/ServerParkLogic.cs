@@ -2,6 +2,7 @@
 using Application.DAOs;
 using Application.Minecraft.Backup;
 using Application.Minecraft.Configs;
+using Application.Minecraft.DTOs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.Util;
 using Loggers;
@@ -80,7 +81,15 @@ internal class ServerParkLogic : IServerPark
                 throw new MCInternalException($"ERROR: cannot convert folder {folderName} to ulong. Please remove that folder from the Servers directory!");
             }
 
-            var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, _logger, serverFolder.FullName, _config);
+            var creationDto = new ExistingServerCreationDto
+            {
+                DataAccess = _databaseAccess.MinecraftDataAccess,
+                Logger = _logger,
+                ServerFolderName = serverFolder.FullName,
+                Config = _config,
+            };
+
+            var mcServer = new MinecraftServer(creationDto);
             RegisterMcServer(mcServer);
         }
     }
@@ -174,9 +183,20 @@ internal class ServerParkLogic : IServerPark
             string destDir = ServersFolder + newServerId;
             Directory.CreateDirectory(destDir);
 
-            mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess,
-                _logger, newServerId, serverName,
-                destDir, _config, version, dto.Properties);
+            var creationDto = new NewServerCreationDto
+            {
+                Id = newServerId,
+                ServerName = serverName,
+                ServerIcon = dto.ServerIcon,
+                ServerFolderName = destDir,
+                Logger = _logger,
+                Config = _config,
+                Version = version,
+                CreationProperties = dto.Properties,
+                DataAccess = _databaseAccess.MinecraftDataAccess,
+            };
+
+            mcServer = new MinecraftServer(creationDto);
 
             RegisterMcServer(mcServer);
         }

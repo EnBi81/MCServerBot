@@ -4,6 +4,7 @@ using MCWebAPI;
 
 
 
+DateTime startTime = DateTime.Now;
 
 LogService.CreateLogService()
                 .AddLogger<NetworkLogger>()
@@ -52,3 +53,6 @@ catch(Exception e)
 {
     LogService.GetService<WebApiLogger>().LogFatal(e);
 }
+
+var uptime = DateTime.Now - startTime;
+LogService.GetService<WebApiLogger>().Log("program", "Program stopped after " + uptime.ToString("g"));s

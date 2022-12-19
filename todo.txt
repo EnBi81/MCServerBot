@@ -1,1 +1,3 @@
 Minecraft server should have a method to modify its own properties (name, version), not from serverpark
+
+https://stackoverflow.com/questions/10320232/how-to-accept-a-file-post

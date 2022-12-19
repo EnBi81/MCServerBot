@@ -27,6 +27,11 @@ internal class MinecraftServerInfos
     /// Minecraft version of the server.
     /// </summary>
     public string Version { get; set; } = null!;
+
+    /// <summary>
+    /// Icon of the server
+    /// </summary>
+    public string? ServerIcon { get; set; }
     
 
     /// <summary>
@@ -57,6 +62,7 @@ internal class MinecraftServerInfos
         Id = server.Id;
         Name = server.ServerName;
         Version = server.MCVersion.Version;
+        ServerIcon = server.ServerIcon;
 
         string json = JsonConvert.SerializeObject(this);
         File.WriteAllText(_filename, json);
@@ -88,5 +94,6 @@ internal class MinecraftServerInfos
         Id = obj.Id;
         Name = obj.Name;
         Version = obj.Version;
+        ServerIcon = obj.ServerIcon;
     }
 }

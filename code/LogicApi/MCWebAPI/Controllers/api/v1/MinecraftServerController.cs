@@ -5,243 +5,252 @@ using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
 using SharedPublic.Model;
 
-namespace MCWebAPI.Controllers.api.v1
+namespace MCWebAPI.Controllers.api.v1;
+
+/// <summary>
+/// Endpoint for managing the minecraft servers.
+/// </summary>
+[ApiVersion(ApiVersionV1)]
+public class MinecraftServerController : ApiController
 {
+    private const string RouteId = "{id:long}";
+
+
+
+    private readonly IServerPark serverPark;
+
     /// <summary>
-    /// Endpoint for managing the minecraft servers.
+    /// Initializes the minecraft server controller.
     /// </summary>
-    [ApiVersion(ApiVersionV1)]
-    public class MinecraftServerController : ApiController
+    /// <param name="serverPark"></param>
+    public MinecraftServerController(IServerPark serverPark)
     {
-        private const string RouteId = "{id:long}";
+        this.serverPark = serverPark;
+    }
+
+    /// <summary>
+    /// Throws external exception if the server does not exist.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    private Task ThrowIfServerNotExists(long id)
+    {
+        _ = serverPark.GetServer(id);
+        return Task.CompletedTask;
+    }
 
 
 
-        private readonly IServerPark serverPark;
-
-        /// <summary>
-        /// Initializes the minecraft server controller.
-        /// </summary>
-        /// <param name="serverPark"></param>
-        public MinecraftServerController(IServerPark serverPark)
-        {
-            this.serverPark = serverPark;
-        }
-
-        /// <summary>
-        /// Throws external exception if the server does not exist.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private Task ThrowIfServerNotExists(long id)
-        {
-            _ = serverPark.GetServer(id);
-            return Task.CompletedTask;
-        }
+    /// <summary>
+    /// Gets the informations of a server.
+    /// </summary>
+    /// <param name="id">id of the server.</param>
+    /// <returns></returns>
+    /// <response code="200">Returns the requested server object.</response>
+    /// <response code="400">The server with the specified id does not exist.</response>
+    [HttpGet(RouteId, Name = "GetServer")]
+    [ProducesResponseType(typeof(IMinecraftServer), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public IActionResult GetFullServer([FromRoute] long id)
+    {
+        var server = serverPark.GetServer(id);
+        return Ok(server);
+    }
 
 
+    /// <summary>
+    /// Deletes a server from the system.
+    /// </summary>
+    /// <param name="id">id of the server</param>
+    /// <returns></returns>
+    /// <response code="204">The server is deleted. Nothing more.</response>
+    /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
+    [HttpDelete(RouteId, Name = "DeleteServer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteServer([FromRoute] long id)
+    {
+        var user = await GetUserEventData();
+        await serverPark.DeleteServer(id, user);
+        return NoContent();
+    }
 
-        /// <summary>
-        /// Gets the informations of a server.
-        /// </summary>
-        /// <param name="id">id of the server.</param>
-        /// <returns></returns>
-        /// <response code="200">Returns the requested server object.</response>
-        /// <response code="400">The server with the specified id does not exist.</response>
-        [HttpGet(RouteId, Name = "GetServer")]
-        [ProducesResponseType(typeof(IMinecraftServer), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public IActionResult GetFullServer([FromRoute] long id)
-        {
-            var server = serverPark.GetServer(id);
-            return Ok(server);
-        }
+    /// <summary>
+    /// Modifies the server information.
+    /// </summary>
+    /// <param name="id">id of the server to modify</param>
+    /// <param name="dto">new values</param>
+    /// <returns></returns>
+    /// <response code="204">The server is deleted. Nothing more.</response>
+    /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
+    [HttpPut(RouteId, Name = "ModifyServer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
+    {
+        var user = await GetUserEventData();
+        await serverPark.ModifyServer(id, dto, user);
 
-
-        /// <summary>
-        /// Deletes a server from the system.
-        /// </summary>
-        /// <param name="id">id of the server</param>
-        /// <returns></returns>
-        /// <response code="204">The server is deleted. Nothing more.</response>
-        /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
-        [HttpDelete(RouteId, Name = "DeleteServer")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteServer([FromRoute] long id)
-        {
-            var user = await GetUserEventData();
-            await serverPark.DeleteServer(id, user);
-            return NoContent();
-        }
-
-        /// <summary>
-        /// Modifies the server information.
-        /// </summary>
-        /// <param name="id">id of the server to modify</param>
-        /// <param name="dto">new values</param>
-        /// <returns></returns>
-        /// <response code="204">The server is deleted. Nothing more.</response>
-        /// <response code="400">The server with the specified id does not exist or an exception happened during the deletion.</response>
-        [HttpPut(RouteId, Name = "ModifyServer")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ModifyServer([FromRoute] long id, [FromBody] ModifyServerDto dto)
-        {
-            var user = await GetUserEventData();
-            await serverPark.ModifyServer(id, dto, user);
-
-            return NoContent();
-        }
+        return NoContent();
+    }
 
 
 
-        /// <summary>
-        /// Writes a command to the server.
-        /// </summary>
-        /// <param name="id">id of the minecraft server</param>
-        /// <param name="commandDto">command data</param>
-        /// <returns></returns>
-        /// <response code="204">The command is executed.</response>
-        /// <response code="400">The server with the specified id does not exist or an exception happened during the command execution.</response>
-        [HttpPost(RouteId + "/commands", Name = "WriteCommandToServer")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
-        {
-            var server = serverPark.GetServer(id);
+    /// <summary>
+    /// Writes a command to the server.
+    /// </summary>
+    /// <param name="id">id of the minecraft server</param>
+    /// <param name="commandDto">command data</param>
+    /// <returns></returns>
+    /// <response code="204">The command is executed.</response>
+    /// <response code="400">The server with the specified id does not exist or an exception happened during the command execution.</response>
+    [HttpPost(RouteId + "/commands", Name = "WriteCommandToServer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
+    {
+        var server = serverPark.GetServer(id);
 
-            string? command = commandDto?.Command;
-            server.WriteCommand(command);
-            return NoContent();
-        }
-
-
-        /// <summary>
-        /// Toggles the minecraft server on and off.
-        /// </summary>
-        /// <param name="id">id of the minecraft server.</param>
-        /// <returns></returns>
-        /// <response code="204">The server is either started or deleted, depending on the state of it.</response>
-        /// <response code="400">The server with the specified id does not exist or an exception happened during the toggle.</response>
-        [HttpPost(RouteId + "/toggle", Name = "ToggleServer")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ToggleServer([FromRoute] long id)
-        {
-            var user = await GetUserEventData();
-            await serverPark.ToggleServer(id, user);
-            return NoContent();
-        }
+        string? command = commandDto?.Command;
+        server.WriteCommand(command);
+        return NoContent();
+    }
 
 
-        /// <summary>
-        /// Backs up the server.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        [HttpPost(RouteId + "/backups", Name = "BackupServer")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> BackupServer([FromRoute] long id, [FromBody] BackupDto dto)
-        {
-            var server = serverPark.GetServer(id);
-            var user = await GetUserEventData();
+    /// <summary>
+    /// Toggles the minecraft server on and off.
+    /// </summary>
+    /// <param name="id">id of the minecraft server.</param>
+    /// <returns></returns>
+    /// <response code="204">The server is either started or deleted, depending on the state of it.</response>
+    /// <response code="400">The server with the specified id does not exist or an exception happened during the toggle.</response>
+    [HttpPost(RouteId + "/toggle", Name = "ToggleServer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ToggleServer([FromRoute] long id)
+    {
+        var user = await GetUserEventData();
+        await serverPark.ToggleServer(id, user);
+        return NoContent();
+    }
 
-            await server.Backup(dto, user);
 
-            return NoContent();
-        }
+    /// <summary>
+    /// Backs up the server.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost(RouteId + "/backups", Name = "BackupServer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> BackupServer([FromRoute] long id, [FromBody] BackupDto dto)
+    {
+        var server = serverPark.GetServer(id);
+        var user = await GetUserEventData();
 
-        /// <summary>
-        /// Gets all the backups of a server.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet(RouteId + "/backups", Name = "GetBackups")]
-        [ProducesResponseType(typeof(IEnumerable<IBackup>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetBackups([FromRoute] long id)
-        {
-            await ThrowIfServerNotExists(id);
+        await server.Backup(dto, user);
 
-            IEnumerable<IBackup> backups = await serverPark.BackupManager.GetBackupsByServer(id);
-            return Ok(backups);
-        }
+        return NoContent();
+    }
 
-        /// <summary>
-        /// Deletes a backup of a server.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="backupName"></param>
-        /// <returns></returns>
-        [HttpDelete(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "DeleteBackup")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] string backupName)
-        {
-            await ThrowIfServerNotExists(id);
+    /// <summary>
+    /// Gets all the backups of a server.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet(RouteId + "/backups", Name = "GetBackups")]
+    [ProducesResponseType(typeof(IEnumerable<IBackup>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetBackups([FromRoute] long id)
+    {
+        await ThrowIfServerNotExists(id);
 
-            var backup = (await serverPark.BackupManager.GetBackupsByServer(id)).FirstOrDefault(b => b.Name == backupName);
+        IEnumerable<IBackup> backups = await serverPark.BackupManager.GetBackupsByServer(id);
+        return Ok(backups);
+    }
 
-            if (backup == null)
-                throw new MCExternalException("Backup does not exist.");
+    /// <summary>
+    /// Deletes a backup of a server.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="backupName"></param>
+    /// <returns></returns>
+    [HttpDelete(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "DeleteBackup")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] string backupName)
+    {
+        await ThrowIfServerNotExists(id);
 
-            await serverPark.BackupManager.DeleteBackup(backup);
-            return Ok(backup);
-        }
+        var backup = (await serverPark.BackupManager.GetBackupsByServer(id)).FirstOrDefault(b => b.Name == backupName);
 
-        /// <summary>
-        /// Restores a backup of a server.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="backupName"></param>
-        /// <returns></returns>
-        [HttpPatch(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "RestoreBackup")]
-        public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] string backupName)
-        {
-            var server = serverPark.GetServer(id);
-            var backups = await serverPark.BackupManager.GetBackupsByServer(id);
+        if (backup == null)
+            throw new MCExternalException("Backup does not exist.");
 
-            var backup = backups.FirstOrDefault(b => b.Name == backupName);
+        await serverPark.BackupManager.DeleteBackup(backup);
+        return Ok(backup);
+    }
 
-            if (backup is null)
-                throw new MCExternalException($"{backupName} does not exist for server {id}");
+    /// <summary>
+    /// Restores a backup of a server.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="backupName"></param>
+    /// <returns></returns>
+    [HttpPatch(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "RestoreBackup")]
+    public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] string backupName)
+    {
+        var server = serverPark.GetServer(id);
+        var backups = await serverPark.BackupManager.GetBackupsByServer(id);
 
-            await server.Restore(backup);
+        var backup = backups.FirstOrDefault(b => b.Name == backupName);
 
-            return Ok();
-        }
+        if (backup is null)
+            throw new MCExternalException($"{backupName} does not exist for server {id}");
 
-        /// <summary>
-        /// Gets all the properties of a server
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet(RouteId + "/properties", Name = "GetProperties")]
-        public async Task<IActionResult> GetProperties([FromRoute] long id)
-        {
-            var server = serverPark.GetServer(id);
-            var properties = server.Properties;
+        await server.Restore(backup);
 
-            return Ok(properties);
-        }
+        return Ok();
+    }
 
-        /// <summary>
-        /// Modifies the server properties
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        [HttpPatch(RouteId + "/properties", Name = "ModifyProperties")]
-        public Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
-        {
-            var server = serverPark.GetServer(id);
-            server.Properties.UpdatePropertiesAsync(dto);
+    /// <summary>
+    /// Gets all the properties of a server
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet(RouteId + "/properties", Name = "GetProperties")]
+    public async Task<IActionResult> GetProperties([FromRoute] long id)
+    {
+        var server = serverPark.GetServer(id);
+        var properties = server.Properties;
 
-            return Task.FromResult(Ok() as IActionResult);
-        }
+        return Ok(properties);
+    }
+
+    /// <summary>
+    /// Modifies the server properties
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    [HttpPatch(RouteId + "/properties", Name = "ModifyProperties")]
+    public Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
+    {
+        var server = serverPark.GetServer(id);
+        server.Properties.UpdatePropertiesAsync(dto);
+
+        return Task.FromResult(Ok() as IActionResult);
+    }
+
+    /// <summary>
+    /// Gets the icon of the server.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet(RouteId + "/icon", Name = "GetIcon")]
+    public Task<IActionResult> GetServerIcon()
+    {
+        throw new NotImplementedException();
     }
 }

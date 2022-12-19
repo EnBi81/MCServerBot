@@ -88,6 +88,11 @@ namespace SharedPublic.Model
         /// </summary>
         public IMinecraftVersion MCVersion { get; set; }
 
+        /// <summary>
+        /// Gets and sets the server version of the server.
+        /// </summary>
+        public string? ServerIcon { get; set; }
+
 
         /// <summary>
         /// Starts the server

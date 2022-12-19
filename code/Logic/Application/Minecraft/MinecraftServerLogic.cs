@@ -1,5 +1,6 @@
 ﻿using Application.Minecraft.Backup;
 using Application.Minecraft.Configs;
+using Application.Minecraft.DTOs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
@@ -99,7 +100,16 @@ internal class MinecraftServerLogic : IMinecraftServer
     }
     private IMinecraftVersion _mcVersion;
 
-
+    /// <inheritdoc/>
+    public string? ServerIcon { get => _serverIcon; 
+        set
+        {
+            _serverIcon = value;
+            //RaiseEvent(IconChanged, value);
+            McServerInfos.Save(this);
+        }
+    }
+    private string? _serverIcon;
 
 
     internal ProcessPerformanceReporter? PerformanceReporter { get; private set; }
@@ -108,10 +118,9 @@ internal class MinecraftServerLogic : IMinecraftServer
     internal MinecraftServersFileHandler McServerFileHandler { get; }
     internal MinecraftServerConfig ServerConfig { get; }
     internal McServerFileStructure FileStructure { get; }
+    
 
-
-
-    public MinecraftServerLogic(string serverFolderName, MinecraftConfig config) : this(0, serverFolderName, config)
+    public MinecraftServerLogic(ExistingServerCreationDto dto) : this(0, dto.ServerFolderName, dto.Config)
     {
         McServerInfos.Load();
         IMinecraftVersionCollection vsCollection = MinecraftVersionCollection.Instance;
@@ -121,22 +130,23 @@ internal class MinecraftServerLogic : IMinecraftServer
 
 
         Id = McServerInfos.Id;
-        _serverName = McServerInfos.Name!;
+        _serverName = McServerInfos.Name;
         _mcVersion = version;
+        _serverIcon = McServerInfos.ServerIcon;
 
         SetServerState<OfflineState>();
     }
 
 
-    public MinecraftServerLogic(long id, string serverName, 
-        string serverFolderName, MinecraftConfig config, IMinecraftVersion version, 
-        MinecraftServerCreationPropertiesDto? creationProperties) : this(id, serverFolderName, config)
+    public MinecraftServerLogic(NewServerCreationDto dto) : this(dto.Id, dto.ServerFolderName, dto.Config)
     {
-        _serverName = serverName;
-        _mcVersion = version;
-
-        McServerInfos.Save(this);
+        _serverName = dto.ServerName;
+        _mcVersion = dto.Version;
+        _serverIcon = dto.ServerIcon;
         
+        McServerInfos.Save(this);
+
+        var creationProperties = dto.CreationProperties ?? new MinecraftServerCreationPropertiesDto();
         Thread t = new Thread(async () => await SetServerStateAsync<ServerCreationState>(creationProperties));
         t.Start();
     }
@@ -175,6 +185,7 @@ internal class MinecraftServerLogic : IMinecraftServer
         StorageMeasured = null!;
         PerformanceMeasured = null!;
         VersionChanged = null!;
+        Deleted = null!;
     }
 
 

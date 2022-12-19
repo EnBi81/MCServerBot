@@ -1,5 +1,6 @@
 ﻿using Application.DAOs.Database;
 using Application.Minecraft.Configs;
+using Application.Minecraft.DTOs;
 using Application.Minecraft.Versions;
 using Loggers;
 using SharedPublic.DTOs;
@@ -19,20 +20,17 @@ internal class MinecraftServer : IMinecraftServer
 
     
 
-    public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-        string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
+    public MinecraftServer(ExistingServerCreationDto dto) : this(dto.DataAccess, dto.Logger)
     {
-        _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(serverFolderName, config));
+        _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(dto));
         _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
         Startup();
     }
 
 
-    public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
-        long id, string serverName, string serverFolderName, MinecraftConfig config,
-        IMinecraftVersion version, MinecraftServerCreationPropertiesDto? creationProperties) : this(dataAccess, logger)
+    public MinecraftServer(NewServerCreationDto dto) : this(dto.DataAccess, dto.Logger)
     {
-        _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(id, serverName, serverFolderName, config, version, creationProperties));
+        _minecraftServerLogic = InitLogicServer(() => new MinecraftServerLogic(dto));
         _logger.Log(_logger.MinecraftServer, $"Server {ServerName} created");
         Startup();
     }
@@ -145,6 +143,9 @@ internal class MinecraftServer : IMinecraftServer
 
     /// <inheritdoc/>
     public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
+
+    /// <inheritdoc/>
+    public string? ServerIcon { get => _minecraftServerLogic.ServerIcon; set => _minecraftServerLogic.ServerIcon = value; }
 
     /// <inheritdoc/>
     public event EventHandler<IMinecraftServer> Deleted
