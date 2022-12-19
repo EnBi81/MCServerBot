@@ -45,6 +45,11 @@ namespace SharedPublic.Model
         /// Server is restoring, it is offline but no action is allowed.
         /// </summary>
         Restore,
+
+        /// <summary>
+        /// Server is being deleted, no way to go back
+        /// </summary>
+        Deleting,
     }
 
     /// <summary>
@@ -68,6 +73,7 @@ namespace SharedPublic.Model
                 ServerStatus.Maintenance => "Maintenance",
                 ServerStatus.BackUp => "Backup",
                 ServerStatus.Restore => "Restore",
+                ServerStatus.Deleting => "Deleting",
                 _ => "NOT IMPLEMENTED SERVER STATUS"
             };
         }

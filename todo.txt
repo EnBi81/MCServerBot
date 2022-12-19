@@ -1,6 +1,3 @@
-Check the restore/version upgrade feature
-synchronize serverpark
-
 Add Delete state which handles the server deletion
 Add Deleted event to the minecraft server
 Serverpark should not have a delete method, instead it should listen to the minecraft servers for deletion
