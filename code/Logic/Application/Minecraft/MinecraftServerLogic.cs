@@ -1,4 +1,5 @@
-﻿using Application.Minecraft.Configs;
+﻿using Application.Minecraft.Backup;
+using Application.Minecraft.Configs;
 using Application.Minecraft.MinecraftServers;
 using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States;
@@ -226,6 +227,15 @@ internal class MinecraftServerLogic : IMinecraftServer
     public Task Restore(IBackup backup, UserEventData data = default) =>
         SetServerStateAsync<RestoreState>(backup);
 
+    /// <inheritdoc/>
+    public Task DeleteAsync(UserEventData data = default) 
+    {
+        var task = SetServerStateAsync<DeleteState>();
+        RaiseEvent(Deleted, this);
+        return task;
+    }
+        
+
 
     /// <summary>
     /// Handles the received log message according to the state of the server.
@@ -252,6 +262,8 @@ internal class MinecraftServerLogic : IMinecraftServer
     public event EventHandler<IMinecraftVersion> VersionChanged;
     /// <inheritdoc/>
     public event EventHandler<long> StorageMeasured;
+    /// <inheritdoc/>
+    public event EventHandler<IMinecraftServer> Deleted;
 
 
     /// <summary>

@@ -12,6 +12,12 @@ namespace SharedPublic.Model
         /// <returns></returns>
         public Task<IEnumerable<IBackup>> GetBackupsByServer(long serverId);
         /// <summary>
+        /// Deletes all the backups for a server.
+        /// </summary>
+        /// <param name="serverId"></param>
+        /// <returns></returns>
+        public Task DeleteServerBackupsAsync(long serverId);
+        /// <summary>
         /// Deletes a backup
         /// </summary>
         /// <param name="backup">backup to delete</param>

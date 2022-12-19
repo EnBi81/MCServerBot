@@ -17,6 +17,8 @@ internal class MinecraftServer : IMinecraftServer
     private readonly IMinecraftDataAccess _eventRegister;
     private readonly MinecraftServerLogic _minecraftServerLogic;
 
+    
+
     public MinecraftServer(IMinecraftDataAccess dataAccess, MinecraftLogger logger,
         string serverFolderName, MinecraftConfig config) : this(dataAccess, logger)
     {
@@ -144,7 +146,12 @@ internal class MinecraftServer : IMinecraftServer
     /// <inheritdoc/>
     public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
 
-
+    /// <inheritdoc/>
+    public event EventHandler<IMinecraftServer> Deleted
+    {
+        add => _minecraftServerLogic.Deleted += value;
+        remove => _minecraftServerLogic.Deleted -= value;
+    }
     /// <inheritdoc/>
     public event EventHandler<ServerStatus> StatusChange
     {
@@ -220,5 +227,10 @@ internal class MinecraftServer : IMinecraftServer
     public Task Restore(IBackup backup, UserEventData data = default)
     {
         return _minecraftServerLogic.Restore(backup, data);
+    }
+
+    public Task DeleteAsync(UserEventData data = default)
+    {
+        return _minecraftServerLogic.DeleteAsync(data);
     }
 }

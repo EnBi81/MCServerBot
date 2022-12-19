@@ -1,6 +1,1 @@
-Add Delete state which handles the server deletion
-Add Deleted event to the minecraft server
-Serverpark should not have a delete method, instead it should listen to the minecraft servers for deletion
-update astah state diagram
-
 Minecraft server should have a method to modify its own properties (name, version), not from serverpark

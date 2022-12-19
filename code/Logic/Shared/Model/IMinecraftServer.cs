@@ -127,6 +127,13 @@ namespace SharedPublic.Model
         public Task Restore(IBackup backup, UserEventData data = default);
 
         /// <summary>
+        /// Deletes the server.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Task DeleteAsync(UserEventData data = default);
+
+        /// <summary>
         /// Fired when the server has changed status.
         /// </summary>
         public event EventHandler<ServerStatus> StatusChange;
@@ -158,5 +165,9 @@ namespace SharedPublic.Model
         /// Fired when the server's version has been changed.
         /// </summary>
         public event EventHandler<IMinecraftVersion> VersionChanged;
+        /// <summary>
+        /// Fired when the server is deleted.
+        /// </summary>
+        public event EventHandler<IMinecraftServer> Deleted;
     }
 }

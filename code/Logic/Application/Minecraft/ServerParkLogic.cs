@@ -205,23 +205,12 @@ internal class ServerParkLogic : IServerPark
     }
 
     /// <inheritdoc/>
-    public Task<IMinecraftServer> DeleteServer(long id, UserEventData user)
+    public async Task<IMinecraftServer> DeleteServer(long id, UserEventData user)
     {
-        string newDir = $"{DeletedServersFolder}{id}-{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+        var server = GetServer(id);
         
-        FileHelper.MoveDirectory(ServersFolder + id, newDir);
-        Task.Run(() =>
-        {
-            FileHelper.ZipDirectory(newDir, newDir + ".zip");
-            FileHelper.DeleteDirectory(newDir);
-        });
-
-        ServerCollection.Remove(id, out IMinecraftServer? server);
-
-        if (server != null)
-            InvokeServerDeleted(server);
-
-        return Task.FromResult(server!);
+        await server.DeleteAsync(user);
+        return server;
     }
 
     /// <summary>
@@ -230,9 +219,20 @@ internal class ServerParkLogic : IServerPark
     private void RegisterMcServer(IMinecraftServer server)
     {
         ServerCollection.Add(server.Id, server);
+        server.Deleted += Server_Deleted;
         InvokeServerAdded(server);
     }
-    
+
+    private void Server_Deleted(object? sender, IMinecraftServer e)
+    {
+        e.Deleted -= Server_Deleted;
+        
+        ServerCollection.Remove(e.Id, out IMinecraftServer? server);
+
+        if (server != null)
+            InvokeServerDeleted(server);
+    }
+
 
     /// <inheritdoc/>
     public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange;

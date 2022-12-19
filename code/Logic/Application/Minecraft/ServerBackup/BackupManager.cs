@@ -92,4 +92,14 @@ internal class BackupManager : IBackupManager
 
         FileSystem.DeleteFile(backupFileFullPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
     }
+
+    /// <inheritdoc/>
+    public Task DeleteServerBackupsAsync(long serverId)
+    {
+        var backupFolder = GetServerBackupFolder(serverId);
+        if(backupFolder.Exists)
+            FileSystem.DeleteDirectory(backupFolder.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
+
+        return Task.CompletedTask;
+    }
 }
