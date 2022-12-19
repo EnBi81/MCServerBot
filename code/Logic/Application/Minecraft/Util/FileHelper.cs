@@ -160,7 +160,11 @@ internal class FileHelper
                 continue;
             }
 
-            await Task.Run(() => zipEntry.ExtractToFile(completeFileName, true));
+            // create directory if needed
+            FileInfo info = new FileInfo(completeFileName);
+            info.Directory?.Create();
+            
+            zipEntry.ExtractToFile(completeFileName, true);
         }
     }
 

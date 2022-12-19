@@ -163,21 +163,25 @@ internal class ServerParkLogic : IServerPark
     {
         var serverName = dto.NewName!;
 
-        var version = MinecraftVersionCollection[dto.Version] ?? MinecraftVersionCollection.Latest; 
+        var version = MinecraftVersionCollection[dto.Version] ?? MinecraftVersionCollection.Latest;
 
+        IMinecraftServer mcServer;
         // synchronization increment
-        long newServerId = Interlocked.Increment(ref _serverIdCounter);
+        lock (this)
+        {
+            long newServerId = Interlocked.Increment(ref _serverIdCounter);
 
-        string destDir = ServersFolder + newServerId;
-        Directory.CreateDirectory(destDir);
+            string destDir = ServersFolder + newServerId;
+            Directory.CreateDirectory(destDir);
 
-        var mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess, 
-            _logger, newServerId, serverName,
-            destDir, _config, version, dto.Properties);
+            mcServer = new MinecraftServer(_databaseAccess.MinecraftDataAccess,
+                _logger, newServerId, serverName,
+                destDir, _config, version, dto.Properties);
+
+            RegisterMcServer(mcServer);
+        }
         
-        RegisterMcServer(mcServer);
-        
-        return Task.FromResult((IMinecraftServer)mcServer);
+        return Task.FromResult(mcServer);
     }
 
 

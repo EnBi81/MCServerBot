@@ -136,7 +136,7 @@ internal class MinecraftServerLogic : IMinecraftServer
 
         McServerInfos.Save(this);
         
-        Thread t = new Thread(() => SetServerState<ServerCreationState>(creationProperties));
+        Thread t = new Thread(async () => await SetServerStateAsync<ServerCreationState>(creationProperties));
         t.Start();
     }
 

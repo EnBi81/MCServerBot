@@ -171,6 +171,6 @@ public class MinecraftServersFileHandler
             throw new MCExternalException("Backup does not belong to this server!");
         
         // extracting backup
-        await FileHelper.ExtractToDirectory(backupPath, BackupTempFolder);
+        await FileHelper.ExtractToDirectory(backupPath, ServerFiles);
     }
 }

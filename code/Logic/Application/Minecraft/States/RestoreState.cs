@@ -41,7 +41,7 @@ internal class RestoreState : ServerStateAbs
         {
             await _server.McServerFileHandler.RestoreBackup(_server.Id, backup);
         }
-        catch
+        catch (Exception e)
         {
             AddSystemLog($"Failed to restore backup {backup.ServerId}-{backup.Name}. Rolling back...");
             _server.McServerFileHandler.EmptyFolder(ServerFolder.ServerFolder);
@@ -49,7 +49,7 @@ internal class RestoreState : ServerStateAbs
             _server.McServerFileHandler.MoveItems(ServerFolder.TempTrash, ServerFolder.ServerFolder);
 
             await SetNewStateAsync<OfflineState>();
-            throw;
+            throw new MCInternalException(e);
         }
 
         AddSystemLog($"Restore {backup.ServerId}-{backup.Name} done! Finishing post processing...");

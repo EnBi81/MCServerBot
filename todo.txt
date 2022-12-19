@@ -1,4 +1,5 @@
 Check the restore/version upgrade feature
+synchronize serverpark
 
 Add Delete state which handles the server deletion
 Add Deleted event to the minecraft server
