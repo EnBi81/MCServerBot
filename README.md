@@ -32,28 +32,25 @@ WEB API features:
 	- Grant permission for a discord user to use the system
 	- Revoke permission for a discord user to not allow to use the system
 
-- Now introducing Minecraft Versions
+- Minecraft Versions
 	- Add a new server with a specified minecraft version
 	- If no version has been selected, then automatically the latest version will be used
 	- Upgrade a server to a newer version
 	- Downgrading a server to an older version is not allowed
 	- The available version's info is downloaded from [the wiki](https://minecraft.fandom.com/wiki/Java_Edition_version_history), and the server.jar is automatically downloaded if it is not found in the local storage.
 	- When creating a server or upgrading to a newer version, the server is set to a maintenance status. The maintenance is not started until a user manually starts the server. An other server can be started while there are servers in maintenance status.
+	
+- Backups and restores
+	- User is able to manually backup a server if it is offline
+	- The system automatically backs up a server when it has shut down after being online for longer than the specified time in the appsettings.json
+	- User is able to restore manual and automatic backups.
 
 <img src="docs/images/api-endpoints.png">
 
 
 ## TODO:
-(Before starting the websites and discord bot)
 
-1. backup (auto + manual)
-    - parameter for how many auto saves / server
-    - manual backup with given name (no unique name)
-    - restore for all kinds of backup
-    - backup when server is shut down, and was running over x minutes
-    - choose backup folder
-    - create attribute ManualState and AutoState and apply them to the current states
-2. Get nbt information of a minecraft player through rcon (info should be available from controller)
+1. Get nbt information of a minecraft player through rcon (info should be available from controller)
     - dimension
     - foodlevel
     - playerGameType
@@ -62,24 +59,21 @@ WEB API features:
     - XpP
     - XpSeed
     - https://github.com/stefanodriussi/rconsharp
-3. choose server icon
+2. choose server icon
     - only from the given ones
     - https://stackoverflow.com/questions/186062/can-an-asp-net-mvc-controller-return-an-image
-4. When deleting a server, put the backups and the server to the recycle bin instead of the deleted folder
-5. Write out Api uptime
-6. Request limiter (max server maintenance, max running server, stuff like these.
-7. User click, mouse hover, uptime for webpage statistics
-8. Paging for GetAll endpoints
-9. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-10. c# client + discord
-11. js client + old page
-12. new blazor pages
+3. Request limiter (max server maintenance, max running server, stuff like these.
+4. User click, mouse hover, uptime for webpage statistics
+5. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+6. c# client + discord
+7. js client + old page
+8. new blazor pages
     - PWA for saving offline mode (make this optional for users)
     - Put the blazor pages to github (be able to select a host where to send the requests
     - skin viewer: https://github.com/rkkoszewski/minecraft-css-3d-skin-viewer
     - skin viewer 2: https://github.com/bs-community/skinview3d
-13. Map overview in browser
-14. Minecraft command autocomplete
+    - Map overview in browser
+9. Minecraft command autocomplete
 
 
 
