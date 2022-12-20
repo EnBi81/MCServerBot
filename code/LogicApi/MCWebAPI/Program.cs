@@ -55,4 +55,4 @@ catch(Exception e)
 }
 
 var uptime = DateTime.Now - startTime;
-LogService.GetService<WebApiLogger>().Log("program", "Program stopped after " + uptime.ToString("g"));s
+LogService.GetService<WebApiLogger>().Log("program", "Program stopped after " + uptime.ToString("g"));

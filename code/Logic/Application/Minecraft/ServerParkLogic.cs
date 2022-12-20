@@ -219,6 +219,9 @@ internal class ServerParkLogic : IServerPark
         if(dto.Properties != null)
             server.Properties.UpdatePropertiesAsync(dto.Properties);
 
+        if (dto.Icon != null)
+            server.ServerIcon = dto.Icon;
+
         InvokeServerModified(server, dto);
 
         return Task.FromResult(server);

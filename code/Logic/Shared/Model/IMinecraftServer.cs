@@ -91,6 +91,7 @@ namespace SharedPublic.Model
         /// <summary>
         /// Gets and sets the server version of the server.
         /// </summary>
+        [JsonIgnore]
         public string? ServerIcon { get; set; }
 
 

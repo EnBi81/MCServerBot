@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MCWebAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SharedPublic.DTOs;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace MCWebAPI.Controllers.api.v1;
 
@@ -8,37 +13,55 @@ namespace MCWebAPI.Controllers.api.v1;
 [ApiVersion(ApiVersionV1)]
 public class IconsController : ApiController
 {
+
+    private readonly McIconManager _iconManager;
+    private string base64String;
+
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="iconManager"></param>
+    public IconsController(McIconManager iconManager)
+    {
+        _iconManager = iconManager;
+    }
+
+
     /// <summary>
     /// Gets all the available icons
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllIcons()
     {
-        throw new NotImplementedException();
+        var icons = await _iconManager.GetIcons();
+        return Ok(icons);
     }
 
     /// <summary>
     /// Uploads a new icon to the server
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     [HttpPost]
-    public async Task<IActionResult> UploadIcon()
+    [AllowAnonymous]
+    [RequestSizeLimit(10_000_000)] // 10 MB
+    public async Task<IActionResult> UploadIcons([FromBody] IconUploadDto icon)
     {
-        // https://stackoverflow.com/questions/10320232/how-to-accept-a-file-post
-        throw new NotImplementedException();
+        await _iconManager.CreateIcon(icon);
+        return Ok();
     }
 
     /// <summary>
     /// Deletes an existing icon.
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    [HttpDelete]
-    public async Task<IActionResult> DeleteIcon()
+    [HttpDelete("{name}")]
+    public async Task<IActionResult> DeleteIcon([FromRoute] string name)
     {
-        throw new NotImplementedException();
+        await _iconManager.DeleteIcon(name);
+
+        return NoContent();
     }
 }

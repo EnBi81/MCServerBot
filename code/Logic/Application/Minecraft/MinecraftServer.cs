@@ -145,6 +145,7 @@ internal class MinecraftServer : IMinecraftServer
     public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
 
     /// <inheritdoc/>
+    [JsonIgnore]
     public string? ServerIcon { get => _minecraftServerLogic.ServerIcon; set => _minecraftServerLogic.ServerIcon = value; }
 
     /// <inheritdoc/>

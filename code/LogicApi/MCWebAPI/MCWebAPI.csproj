@@ -28,6 +28,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Security.Claims" Version="4.3.0" />
   </ItemGroup>
 
@@ -40,7 +41,7 @@
 
   <ItemGroup>
     <Folder Include="Resources\Logs\" />
-    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\icons\" />
   </ItemGroup>
 
   <ItemGroup>

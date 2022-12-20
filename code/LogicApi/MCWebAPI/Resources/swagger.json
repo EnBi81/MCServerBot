@@ -193,6 +193,73 @@
         ]
       }
     },
+    "/api/v1/Icons": {
+      "get": {
+        "tags": [
+          "Icons"
+        ],
+        "summary": "Gets all the available icons",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Icons"
+        ],
+        "summary": "Uploads a new icon to the server",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharedPublic.DTOs.IconUploadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Icons/{name}": {
+      "delete": {
+        "tags": [
+          "Icons"
+        ],
+        "summary": "Deletes an existing icon. (Auth)",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/v1/MinecraftServer/{id}": {
       "get": {
         "tags": [
@@ -747,6 +814,41 @@
         ]
       }
     },
+    "/api/v1/MinecraftServer/{id}/icon": {
+      "get": {
+        "tags": [
+          "MinecraftServer"
+        ],
+        "summary": "Gets the icon of the server. (Auth)",
+        "operationId": "GetIcon",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/v1/Permission/{id}/grant": {
       "post": {
         "tags": [
@@ -1066,6 +1168,10 @@
             "default": "1.19.2",
             "nullable": true
           },
+          "serverIcon": {
+            "type": "string",
+            "nullable": true
+          },
           "properties": {
             "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerCreationPropertiesDto"
           }
@@ -1166,6 +1272,20 @@
         "type": "object",
         "properties": {
           "backupName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.DTOs.IconUploadDto": {
+        "type": "object",
+        "properties": {
+          "iconName": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconData": {
             "type": "string",
             "nullable": true
           }
@@ -1378,6 +1498,10 @@
           },
           "properties": {
             "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerPropertiesDto"
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

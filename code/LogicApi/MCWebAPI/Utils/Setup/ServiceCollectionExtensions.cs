@@ -53,6 +53,7 @@ public static class ServiceCollectionExtensions
         });
 
         collection.AddSignalR();
+        collection.AddHttpContextAccessor();
 
         return collection;
     }
@@ -107,6 +108,7 @@ public static class ServiceCollectionExtensions
         // API
         collection.AddSingleton<SocketPool>();
 
+        collection.AddScoped<McIconManager>();
 
         // API Auth
         collection.AddScoped<IAuthService, AuthService>();
