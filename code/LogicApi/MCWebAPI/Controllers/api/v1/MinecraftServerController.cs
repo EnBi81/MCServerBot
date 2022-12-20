@@ -255,7 +255,6 @@ public class MinecraftServerController : ApiController
     /// </summary>
     /// <returns></returns>
     [HttpGet(RouteId + "/icon", Name = "GetIcon")]
-    [AllowAnonymous] // TODO remove anonymous
     public async Task<IActionResult> GetServerIcon([FromRoute] long id)
     {
         var server = serverPark.GetServer(id);

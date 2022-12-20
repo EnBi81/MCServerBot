@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedPublic.DTOs;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace MCWebAPI.Controllers.api.v1;
 
@@ -15,7 +13,6 @@ public class IconsController : ApiController
 {
 
     private readonly McIconManager _iconManager;
-    private string base64String;
 
 
     /// <summary>
