@@ -59,21 +59,18 @@ WEB API features:
     - XpP
     - XpSeed
     - https://github.com/stefanodriussi/rconsharp
-2. choose server icon
-    - only from the given ones
-    - https://stackoverflow.com/questions/186062/can-an-asp-net-mvc-controller-return-an-image
-3. Request limiter (max server maintenance, max running server, stuff like these.
-4. User click, mouse hover, uptime for webpage statistics
-5. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-6. c# client + discord
-7. js client + old page
-8. new blazor pages
+2. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+3. c# client + discord
+4. js client + old page
+5. new blazor pages
     - PWA for saving offline mode (make this optional for users)
     - Put the blazor pages to github (be able to select a host where to send the requests
     - skin viewer: https://github.com/rkkoszewski/minecraft-css-3d-skin-viewer
     - skin viewer 2: https://github.com/bs-community/skinview3d
     - Map overview in browser
-9. Minecraft command autocomplete
+    - User click, mouse hover, uptime for webpage statistics
+6. Minecraft command autocomplete
+7. Request limiter (max server maintenance, max running server, stuff like these.
 
 
 
