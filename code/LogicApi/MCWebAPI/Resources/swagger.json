@@ -209,7 +209,7 @@
         "tags": [
           "Icons"
         ],
-        "summary": "Uploads a new icon to the server",
+        "summary": "Uploads a new icon to the server (Auth)",
         "requestBody": {
           "content": {
             "application/json": {
@@ -222,8 +222,19 @@
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/api/v1/Icons/{name}": {
@@ -819,7 +830,7 @@
         "tags": [
           "MinecraftServer"
         ],
-        "summary": "Gets the icon of the server. (Auth)",
+        "summary": "Gets the icon of the server.",
         "operationId": "GetIcon",
         "parameters": [
           {
@@ -827,26 +838,16 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
+        }
       }
     },
     "/api/v1/Permission/{id}/grant": {

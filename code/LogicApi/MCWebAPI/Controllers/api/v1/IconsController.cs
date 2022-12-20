@@ -1,4 +1,4 @@
-﻿using MCWebAPI.Utils;
+﻿using MCWebAPI.Utils.Images;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedPublic.DTOs;
@@ -45,7 +45,6 @@ public class IconsController : ApiController
     /// </summary>
     /// <returns></returns>
     [HttpPost]
-    [AllowAnonymous]
     [RequestSizeLimit(10_000_000)] // 10 MB
     public async Task<IActionResult> UploadIcons([FromBody] IconUploadDto icon)
     {

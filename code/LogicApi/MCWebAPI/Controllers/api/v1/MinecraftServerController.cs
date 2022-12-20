@@ -1,9 +1,12 @@
 ﻿using APIModel.DTOs;
 using APIModel.Responses;
+using MCWebAPI.Utils.Images;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
 using SharedPublic.Model;
+using System.IO;
 
 namespace MCWebAPI.Controllers.api.v1;
 
@@ -18,16 +21,19 @@ public class MinecraftServerController : ApiController
 
 
     private readonly IServerPark serverPark;
+    private readonly McIconManager _iconManager;
 
     /// <summary>
     /// Initializes the minecraft server controller.
     /// </summary>
     /// <param name="serverPark"></param>
-    public MinecraftServerController(IServerPark serverPark)
+    public MinecraftServerController(IServerPark serverPark, McIconManager iconManager)
     {
         this.serverPark = serverPark;
+        _iconManager = iconManager;
     }
 
+    
     /// <summary>
     /// Throws external exception if the server does not exist.
     /// </summary>
@@ -249,8 +255,14 @@ public class MinecraftServerController : ApiController
     /// </summary>
     /// <returns></returns>
     [HttpGet(RouteId + "/icon", Name = "GetIcon")]
-    public Task<IActionResult> GetServerIcon()
+    [AllowAnonymous] // TODO remove anonymous
+    public async Task<IActionResult> GetServerIcon([FromRoute] long id)
     {
-        throw new NotImplementedException();
+        var server = serverPark.GetServer(id);
+
+        var (extension, stream) = await _iconManager.GetIconOrErrorIconAsync(server.ServerIcon);
+
+
+        return new FileStreamResult(stream, "image/" + extension);
     }
 }

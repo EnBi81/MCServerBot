@@ -14,6 +14,7 @@ using SharedPublic.Model;
 using System.Text;
 using System.Security.Claims;
 using Application.Minecraft.Configs;
+using MCWebAPI.Utils.Images;
 
 namespace MCWebAPI.Utils.Setup;
 
