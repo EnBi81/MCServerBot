@@ -146,7 +146,7 @@ internal class MinecraftServer : IMinecraftServer
 
     /// <inheritdoc/>
     [JsonIgnore]
-    public string? ServerIcon { get => _minecraftServerLogic.ServerIcon; set => _minecraftServerLogic.ServerIcon = value; }
+    public string? ServerIcon { get => _minecraftServerLogic.ServerIcon; }
 
     /// <inheritdoc/>
     public event EventHandler<IMinecraftServer> Deleted
@@ -231,8 +231,15 @@ internal class MinecraftServer : IMinecraftServer
         return _minecraftServerLogic.Restore(backup, data);
     }
 
+    /// <inheritdoc/>
     public Task DeleteAsync(UserEventData data = default)
     {
         return _minecraftServerLogic.DeleteAsync(data);
+    }
+
+    /// <inheritdoc/>
+    public Task ModifyAsync(ModifyServerDto dto, UserEventData user)
+    {
+        return _minecraftServerLogic.ModifyAsync(dto, user);
     }
 }

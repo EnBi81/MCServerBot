@@ -28,7 +28,7 @@ namespace SharedPublic.Model
         /// <summary>
         /// Gets or sets the name of the server. Raises a <see cref="NameChanged"/> event.
         /// </summary>
-        public string ServerName { get; set; }
+        public string ServerName { get; }
 
         /// <summary>
         /// Gets the status code of the server.
@@ -86,13 +86,13 @@ namespace SharedPublic.Model
         /// <summary>
         /// Gets the minecraft version of the server.
         /// </summary>
-        public IMinecraftVersion MCVersion { get; set; }
+        public IMinecraftVersion MCVersion { get; }
 
         /// <summary>
         /// Gets and sets the server version of the server.
         /// </summary>
         [JsonIgnore]
-        public string? ServerIcon { get; set; }
+        public string? ServerIcon { get; }
 
 
         /// <summary>
@@ -138,6 +138,14 @@ namespace SharedPublic.Model
         /// <param name="data"></param>
         /// <returns></returns>
         public Task DeleteAsync(UserEventData data = default);
+
+        /// <summary>
+        /// Modifies the server.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public Task ModifyAsync(ModifyServerDto dto, UserEventData user);
 
         /// <summary>
         /// Fired when the server has changed status.

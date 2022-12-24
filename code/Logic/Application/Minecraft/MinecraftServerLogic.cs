@@ -239,13 +239,15 @@ internal class MinecraftServerLogic : IMinecraftServer
         SetServerStateAsync<RestoreState>(backup);
 
     /// <inheritdoc/>
-    public Task DeleteAsync(UserEventData data = default) 
+    public async Task DeleteAsync(UserEventData data = default) 
     {
-        var task = SetServerStateAsync<DeleteState>();
+        await SetServerStateAsync<DeleteState>();
         RaiseEvent(Deleted, this);
-        return task;
     }
-        
+
+    public Task ModifyAsync(ModifyServerDto dto, UserEventData user)
+        => SetServerStateAsync<ModificationState>(dto);
+
 
 
     /// <summary>
@@ -439,4 +441,6 @@ internal class MinecraftServerLogic : IMinecraftServer
             return hash;
         }
     }
+
+    
 }

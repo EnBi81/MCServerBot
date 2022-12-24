@@ -23,10 +23,6 @@ internal class ServerParkLogic : IServerPark
     /// Path of the folder the minecraft servers are stored
     /// </summary>
     internal string ServersFolder { get; }
-    /// <summary>
-    /// Path of the folder which contains the previously deleted servers
-    /// </summary>
-    internal string DeletedServersFolder { get; }
     
 
 
@@ -49,7 +45,6 @@ internal class ServerParkLogic : IServerPark
 
 
         ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
-        DeletedServersFolder = _config.MinecraftServersBaseFolder + "DeletedServers\\";
 
         
         ActiveServerPlayerLeft = null!;
@@ -206,25 +201,13 @@ internal class ServerParkLogic : IServerPark
 
 
     /// <inheritdoc/>
-    public Task<IMinecraftServer> ModifyServer(long id, ModifyServerDto dto, UserEventData user)
+    public async Task<IMinecraftServer> ModifyServer(long id, ModifyServerDto dto, UserEventData user)
     {
         var server = GetServer(id);
-        
-        if (dto.Version != null)
-            server.MCVersion = MinecraftVersionCollection[dto.Version]!;
-        
-        if (dto.NewName != null)
-            server.ServerName = dto.NewName;
-
-        if(dto.Properties != null)
-            server.Properties.UpdatePropertiesAsync(dto.Properties);
-
-        if (dto.Icon != null)
-            server.ServerIcon = dto.Icon;
-
+        await server.ModifyAsync(dto, user);
         InvokeServerModified(server, dto);
 
-        return Task.FromResult(server);
+        return server;
     }
 
     /// <inheritdoc/>

@@ -1,5 +1,5 @@
-﻿
-using System.Net.Http.Json;
+﻿using CoreRCON;
+using System.Net;
 
 namespace Sandbox
 {
@@ -7,29 +7,19 @@ namespace Sandbox
     {
         static async Task Main(string[] args)
         {
-            await UploadImages();
-        }
-        
-        static async Task UploadImages()
-        {
-            var imgDir = "imageDone";
+            // https://www.nuget.org/packages/CoreRCON
 
-            var images = Directory.GetFiles(imgDir);
+            // Connect to a server
+            var rcon = new RCON(IPAddress.Parse("127.0.0.1"), 25575, "12345678");
+            await rcon.ConnectAsync();
 
-            HttpClient client = new HttpClient();
+            Console.WriteLine("Connected to server");
+            
+            string respnose = await rcon.SendCommandAsync("data get entity @e[limit=1]");
+            
+            Console.WriteLine($"Response: " + respnose);
 
-            foreach (var image in images)
-            {
-                var fileInfo = new FileInfo(image);
-                var imageBytes = File.ReadAllBytes(image);
-                string imageData = Convert.ToBase64String(imageBytes);
-
-                var dto = new { iconName = fileInfo.Name, iconData = imageData };
-
-                await client.PostAsJsonAsync("https://localhost:7229/api/v1/Icons", dto);
-
-                Console.WriteLine("Posted " + fileInfo.Name);
-            }
+            rcon.Dispose();
         }
     }
 }
