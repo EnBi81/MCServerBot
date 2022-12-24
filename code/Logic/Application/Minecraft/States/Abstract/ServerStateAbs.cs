@@ -14,9 +14,9 @@ internal abstract class ServerStateAbs : IServerState
         this.args = args;
     }
 
-    protected Task SetNewStateAsync<T>() where T : IServerState
+    protected Task SetNewStateAsync<T>(params object[] args) where T : IServerState
     {
-        return _server.SetServerStateAsync<T>();
+        return _server.SetServerStateAsync<T>(args);
     }
 
     public abstract ServerStatus Status { get; }

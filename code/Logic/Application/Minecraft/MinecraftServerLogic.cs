@@ -83,16 +83,8 @@ internal class MinecraftServerLogic : IMinecraftServer
     public IMinecraftVersion MCVersion
     {
         get => _mcVersion;
-        set
-        {
-            int versionCompared = Version.Parse(_mcVersion.Version).CompareTo(Version.Parse(value.Version));
-            if (versionCompared > 0)
-                throw new MinecraftServerException($"Cannot downgrade from {_mcVersion.Version} to {value.Version}");
-            if (versionCompared == 0)
-                throw new MinecraftServerException($"Server is already on version {value.Version}");
-            
-            SetServerState<VersionUpgradeState>(value);
-
+        internal set
+        { // This setter is reserved for the VersionUpgradeState, please do not use it elsewhere
             _mcVersion = value;
             RaiseEvent(VersionChanged, value);
             McServerInfos.Save(this);

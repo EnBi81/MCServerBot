@@ -23,10 +23,6 @@ namespace SharedPublic.DTOs
         public string? Version { get; set; }
 
         /// <summary>
-        /// Properties to change
-        /// </summary>
-        public MinecraftServerPropertiesDto? Properties { get; set; }
-        /// <summary>
         /// New icon of the server
         /// </summary>
         public string? Icon { get; set; }

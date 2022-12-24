@@ -3,6 +3,7 @@ using Application.Minecraft.MinecraftServers.Utils;
 using Application.Minecraft.States.Abstract;
 using Application.Minecraft.States.Attributes;
 using Application.Minecraft.Versions;
+using Newtonsoft.Json.Linq;
 using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
 
@@ -28,6 +29,19 @@ internal class VersionUpgradeState : MaintenanceStateAbs
         if (args.Length == 0 || args[0] is not IMinecraftVersion version)
             throw new MCExternalException("No version was provided to upgrade to!");
 
+
+        int versionCompared = Version.Parse(_server.MCVersion.Version).CompareTo(Version.Parse(version.Version));
+        
+        if (versionCompared > 0)
+        {
+            await SetNewStateAsync<OfflineState>();
+            throw new MinecraftServerException($"Cannot downgrade from {_server.MCVersion.Version} to {version.Version}");
+        }
+        if (versionCompared == 0)
+        {
+            await SetNewStateAsync<OfflineState>();
+            throw new MinecraftServerException($"Server is already on version {version.Version}");
+        }
 
         Dictionary<string, string> oldProperties = new (_server.Properties.Properties);
 
@@ -78,6 +92,8 @@ internal class VersionUpgradeState : MaintenanceStateAbs
         _server.McServerFileHandler.EmptyFolder(ServerFolder.TempBackup);
         
         AddSystemLog("Backed up files retrieved.");
+
+        _server.MCVersion = version;
 
         await SetNewStateAsync<OfflineState>();
         _server.McServerInfos.Save(_server);

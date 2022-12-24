@@ -114,13 +114,6 @@ internal class ServerParkInputValidation : IServerPark
             CheckVersionExist(newVersion);
         }
 
-        var newProps = dto.Properties;
-        if (newProps is not null)
-        {
-            newProps.ValidateAndRetrieveData();
-        }
-
-
         return _serverPark.ModifyServer(id, dto, user);
     }
 

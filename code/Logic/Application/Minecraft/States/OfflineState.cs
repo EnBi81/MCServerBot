@@ -47,7 +47,7 @@ internal class OfflineState : ServerStateAbs
     
     public override bool IsAllowedNextState(IServerState state)
     {
-        return state is StartingState or BackupManualState or VersionUpgradeState or RestoreState or DeleteState;
+        return state is StartingState or BackupManualState or VersionUpgradeState or RestoreState or DeleteState or ModificationState;
     }
 
     /// <summary>

@@ -1508,9 +1508,6 @@
             "default": null,
             "nullable": true
           },
-          "properties": {
-            "$ref": "#/components/schemas/SharedPublic.DTOs.MinecraftServerPropertiesDto"
-          },
           "icon": {
             "type": "string",
             "nullable": true
@@ -1599,7 +1596,8 @@
           },
           "serverName": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           },
           "statusCode": {
             "$ref": "#/components/schemas/SharedPublic.Model.ServerStatus"

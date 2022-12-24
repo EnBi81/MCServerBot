@@ -142,7 +142,7 @@ internal class MinecraftServer : IMinecraftServer
     public long StorageBytes => _minecraftServerLogic.StorageBytes;
 
     /// <inheritdoc/>
-    public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; set => _minecraftServerLogic.MCVersion = value; }
+    public IMinecraftVersion MCVersion { get => _minecraftServerLogic.MCVersion; }
 
     /// <inheritdoc/>
     [JsonIgnore]
