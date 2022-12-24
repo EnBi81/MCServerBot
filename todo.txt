@@ -1,0 +1,2 @@
+reading player data from rcon
+design player json return in the controller
