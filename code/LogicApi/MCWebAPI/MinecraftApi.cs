@@ -102,6 +102,8 @@ namespace MCWebAPI
 
                     options.AddSignalRFunctionality();
                 });
+
+                app.MapSignalrExtensions();
             }
 
             app.UseHttpsRedirection();

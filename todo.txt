@@ -1,1 +1,0 @@
-separate signalr extension to only put api endpoints if development mode

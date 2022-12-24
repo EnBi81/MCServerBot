@@ -47,8 +47,14 @@ namespace SignalRSwaggerGen
                     generic.Invoke(app, new object[] { app, path });
                 }
             }
+        }
 
-            // inject the js
+        /// <summary>
+        /// Maps the required signalr endpoints to the swagger so it can generate the correct documentation.
+        /// </summary>
+        /// <param name="app"></param>
+        public static void MapSignalrExtensions(this IEndpointRouteBuilder app)
+        {
             app.MapGet("/swagger/extensions/SignalRSwaggerSetup", () => JsInjection);
             app.MapGet("/swagger/extensions/SignalRSwaggerExtension", () => JsFunctionality);
         }
