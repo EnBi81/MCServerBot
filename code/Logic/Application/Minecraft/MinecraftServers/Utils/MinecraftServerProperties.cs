@@ -1,4 +1,5 @@
 ﻿using SharedPublic.DTOs;
+using SharedPublic.Exceptions;
 using SharedPublic.Model;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -44,9 +45,9 @@ public class MinecraftServerProperties : IMinecraftServerProperties
     /// </summary>
     /// <param name="file">Path to the properties file.</param>
     /// <returns>Information of the properties loaded into a MinecraftServerProperties instance.</returns>
-    public static MinecraftServerProperties GetProperties(string file)
+    public static MinecraftServerProperties GetProperties(string file, IMinecraftServer server)
     {
-        return new MinecraftServerProperties(file);
+        return new MinecraftServerProperties(file, server);
     }
 
     /// <summary>
@@ -78,15 +79,17 @@ public class MinecraftServerProperties : IMinecraftServerProperties
 
 
     private readonly Dictionary<string, string> _properties = new();
+    private readonly IMinecraftServer _server;
 
 
     /// <summary>
     /// Initializes the instance by splitting the lines to key value pairs and puts them into the Properties
     /// </summary>
     /// <param name="lines"></param>
-    public MinecraftServerProperties(string file)
+    public MinecraftServerProperties(string file, IMinecraftServer server)
     {
         _file = file;
+        _server = server;
     }
 
 
@@ -141,8 +144,16 @@ public class MinecraftServerProperties : IMinecraftServerProperties
         return UpdatePropertiesAsync(newProps);
     }
 
+    /// <summary>
+    /// Updates the properties with the new values. Only allowed if the server is offline or in maintenance mode.
+    /// </summary>
+    /// <param name="props"></param>
+    /// <returns></returns>
     public async Task UpdatePropertiesAsync(Dictionary<string, string> props)
     {
+        if (_server.StatusCode is not ServerStatus.Offline and not ServerStatus.Maintenance)
+            throw new MCExternalException("Updating server properties is only allowed in offline mode.");
+
         LoadData();
 
         foreach (var (key, value) in props)
