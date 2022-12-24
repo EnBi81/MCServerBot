@@ -82,21 +82,7 @@ internal class OnlineState : ServerStateAbs
             _server.SetServerState<ShuttingDownState>();
         }
     }
-
-    /// <summary>
-    /// Writes command to the server process.
-    /// </summary>
-    /// <param name="command"></param>
-    /// <param name="username"></param>
-    public override async Task WriteCommand(string? command, string username)
-    {
-        if (string.IsNullOrWhiteSpace(command))
-            throw new MinecraftServerArgumentException(nameof(command) + " command must not be null or empty.");
-
-        await _server.McServerProcess.WriteToStandardInputAsync(command);
-        var logMess = new LogMessage(_server.ServerName + "/" + username + ": " + command, LogMessageType.User_Message);
-        _server.AddLog(logMess);
-    }
+    
 
     public override Task Apply() { return Task.CompletedTask; }
 }

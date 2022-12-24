@@ -25,5 +25,4 @@ internal abstract class ServerStateAbs : IServerState
 
     public abstract Task Apply();
     public abstract void HandleLog(LogMessage logMessage);
-    public abstract Task WriteCommand(string? command, string username);
 }

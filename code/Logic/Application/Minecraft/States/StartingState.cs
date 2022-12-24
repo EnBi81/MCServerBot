@@ -55,8 +55,4 @@ internal class StartingState : ServerStateAbs
     {
         return state is OnlineState or BackupAutoState;
     }
-    
-
-    public override Task WriteCommand(string? command, string username) =>
-        throw new MinecraftServerException(_server.ServerName + " is starting, please wait!");
 }

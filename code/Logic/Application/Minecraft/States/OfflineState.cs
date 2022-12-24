@@ -56,12 +56,4 @@ internal class OfflineState : ServerStateAbs
     /// <param name="logMessage">this will be ignored anyways.</param>
     public override void HandleLog(LogMessage logMessage) { } // do nothing, no logs while server is offline
     
-    /// <summary>
-    /// Throws exception as the server is offline.
-    /// </summary>
-    /// <param name="command">This parameter is ignored-</param>
-    /// <param name="username">This parameter is also ignored</param>
-    /// <exception cref="Exception">This is thrown always.</exception>
-    public override Task WriteCommand(string? command, string username) =>
-        throw new MinecraftServerException(_server.ServerName + " is not online!");
 }

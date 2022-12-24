@@ -18,14 +18,14 @@ internal class RestoreState : ServerStateAbs
 
     public override async Task Apply()
     {
-        if (args is { Length: 0} || args[0] is not IBackup backup)
+        if (args is { Length: 0 } || args[0] is not IBackup backup)
         {
             await SetNewStateAsync<OfflineState>();
             throw new MCInternalException("No backup present when restoring");
         }
 
         AddSystemLog($"Restoring backup {backup.ServerId}-{backup.Name} ...");
-        
+
         string[] itemsToTrash = new[] { "world" };
 
 
@@ -76,5 +76,4 @@ internal class RestoreState : ServerStateAbs
 
     public override void HandleLog(LogMessage logMessage) { }
     public override bool IsAllowedNextState(IServerState state) => state is OfflineState;
-    public override Task WriteCommand(string? command, string username) => throw new MinecraftServerException(_server.ServerName + " is restoring!");
 }

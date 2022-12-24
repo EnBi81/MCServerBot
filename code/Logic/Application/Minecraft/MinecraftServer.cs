@@ -212,7 +212,7 @@ internal class MinecraftServer : IMinecraftServer
         _minecraftServerLogic.Start(data);
 
     /// <inheritdoc/>
-    public Task WriteCommand(string? command, UserEventData data)
+    public Task<CommandResponse> WriteCommand(string? command, UserEventData data)
     {
         var task = _minecraftServerLogic.WriteCommand(command, data);
         _eventRegister.WriteCommand(Id, command!, data);

@@ -55,8 +55,5 @@ internal class ShuttingDownState : ServerStateAbs
     public override void HandleLog(LogMessage logMessage) =>
         _server.AddLog(logMessage);
     
-
-    public override Task WriteCommand(string? command, string username) =>
-        throw new MinecraftServerException(_server.ServerName + " is not online!");
     
 }

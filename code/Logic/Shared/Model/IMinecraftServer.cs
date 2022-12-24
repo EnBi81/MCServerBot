@@ -108,7 +108,7 @@ namespace SharedPublic.Model
         /// <param name="command">command to send to the minecraft server.</param>
         /// <param name="data">user data of the user who sends the command.</param>
         /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-        public Task WriteCommand(string? command, UserEventData data = default);
+        public Task<CommandResponse> WriteCommand(string? command, UserEventData data = default);
 
         /// <summary>
         /// Shuts down the minecraft server if it is online.

@@ -110,7 +110,10 @@ internal class MinecraftServerLogic : IMinecraftServer
     internal MinecraftServersFileHandler McServerFileHandler { get; }
     internal MinecraftServerConfig ServerConfig { get; }
     internal McServerFileStructure FileStructure { get; }
-    
+
+
+
+    private RconClient? _rconClient;
 
     public MinecraftServerLogic(ExistingServerCreationDto dto) : this(0, dto.ServerFolderName, dto.Config)
     {
@@ -150,7 +153,7 @@ internal class MinecraftServerLogic : IMinecraftServer
         
         FileStructure = new McServerFileStructure(serverFolderName);
         Id = id;
-        Properties = MinecraftServerProperties.GetProperties(FileStructure.ServerFiles + "\\server.properties");
+        Properties = MinecraftServerProperties.GetProperties(FileStructure.ServerFiles + "\\server.properties", this);
         McServerInfos = new MinecraftServerInfos(serverInfoFile);
         McServerFileHandler = new MinecraftServersFileHandler(FileStructure);
 
@@ -209,14 +212,79 @@ internal class MinecraftServerLogic : IMinecraftServer
         };
     }
 
+
+    
+    internal async Task<RconClient> GetRconClient()
+    {
+        if (_rconClient is { IsConnected: true })
+            return _rconClient;
+
+        if(_rconClient is not null)
+            _rconClient.Dispose();
+
+        // this throws exception
+        if (!RconClient.IsRconAvailable(this))
+            return null!;
+
+        var rconPort = Properties["rcon.port"];
+        var password = Properties["rcon.password"];
+
+        if (rconPort is null || password is null)
+            throw new MCInternalException($"RconPort: {rconPort}  RconPass: {password}");
+
+        _rconClient = new RconClient("localhost", ushort.Parse(rconPort), password);
+        await _rconClient.ConnectAsync();
+
+        return _rconClient;
+    }
+
+    internal Task CloseRconClient()
+    {
+        if (_rconClient is not null)
+        {
+            _rconClient.Dispose();
+            _rconClient = null;
+        }
+            
+        return Task.CompletedTask;
+    }
+
     /// <inheritdoc/>
     public Task Start(UserEventData data) =>
         SetServerStateAsync<StartingState>(data.Username);
 
 
     /// <inheritdoc/>
-    public Task WriteCommand(string? command, UserEventData data) =>
-        _serverState.WriteCommand(command, data.Username);
+    public async Task<CommandResponse> WriteCommand(string? command, UserEventData data) 
+    {
+        if(StatusCode is not ServerStatus.Online)
+            throw new MCExternalException("Server is not online");
+
+        if (string.IsNullOrWhiteSpace(command))
+            throw new MinecraftServerArgumentException(nameof(command) + " command must not be empty or white space.");
+
+        var logMess = new LogMessage(ServerName + "/" + data.Username + ": " + command, LogMessageType.User_Message);
+        AddLog(logMess);
+
+        CommandResponse responseObj;
+        try
+        {
+            var rcon = await GetRconClient();
+            string response = await rcon.SendMessageAsync(command);
+            logMess = new LogMessage("Server: " + response, LogMessageType.System_Message);
+            AddLog(logMess);
+
+            responseObj = new CommandResponse { Response = response, IsValidResponse = true };
+        }
+        catch (Exception e)
+        {
+            await McServerProcess.WriteToStandardInputAsync(command);
+            string response = "Command execution was done without RCON, therefore no response available. Reason: " + e.Message;
+            responseObj = new CommandResponse { Response = response, IsValidResponse = false };
+        }
+
+        return responseObj;
+    }
 
     /// <inheritdoc/>
     public Task Shutdown(UserEventData data) =>
@@ -433,6 +501,4 @@ internal class MinecraftServerLogic : IMinecraftServer
             return hash;
         }
     }
-
-    
 }

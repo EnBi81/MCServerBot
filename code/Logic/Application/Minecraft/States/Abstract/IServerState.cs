@@ -28,13 +28,6 @@ internal interface IServerState
     /// <param name="logMessage"></param>
     public void HandleLog(LogMessage logMessage);
     /// <summary>
-    /// Writes a command to the minecraft server process if the server is online.
-    /// </summary>
-    /// <param name="command"></param>
-    /// <param name="username"></param>
-    /// <exception cref="MinecraftServerException">If the server is not Online.</exception>
-    public Task WriteCommand(string? command, string username);
-    /// <summary>
     /// Returns true if the next state is allowed to set; else false. If the state is set by user, it throws an exception.
     /// </summary>
     /// <param name="state"></param>

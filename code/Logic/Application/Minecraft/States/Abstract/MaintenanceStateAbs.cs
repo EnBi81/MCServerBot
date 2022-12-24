@@ -23,15 +23,6 @@ internal abstract class MaintenanceStateAbs : ServerStateAbs
     /// <param name="logMessage"></param>
     public override void HandleLog(LogMessage logMessage) => _server.AddLog(logMessage);
     /// <summary>
-    /// Cannot write command during maintenance,
-    /// </summary>
-    /// <param name="command"></param>
-    /// <param name="username"></param>
-    /// <returns></returns>
-    /// <exception cref="MinecraftServerException"></exception>
-    public override Task WriteCommand(string? command, string username) 
-        => throw new MCExternalException("You cannot add commands during maintenance!");
-    /// <summary>
     /// Only offline state is allowed
     /// </summary>
     /// <param name="state"></param>

@@ -27,7 +27,5 @@ namespace Application.Minecraft.States
         public override bool IsRunning => false;
         public override void HandleLog(LogMessage logMessage) { }
         public override bool IsAllowedNextState(IServerState state) => false;
-        public override Task WriteCommand(string? command, string username) 
-            => throw new MinecraftServerException("Server is being deleted. No commands allowed");
     }
 }

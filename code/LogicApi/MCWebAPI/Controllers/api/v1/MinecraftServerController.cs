@@ -113,13 +113,13 @@ public class MinecraftServerController : ApiController
     [HttpPost(RouteId + "/commands", Name = "WriteCommandToServer")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
-    public IActionResult WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
+    public async Task<IActionResult> WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
     {
         var server = serverPark.GetServer(id);
 
         string? command = commandDto?.Command;
-        server.WriteCommand(command);
-        return NoContent();
+        var response = await server.WriteCommand(command);
+        return Ok(response);
     }
 
 
@@ -242,12 +242,12 @@ public class MinecraftServerController : ApiController
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     [HttpPatch(RouteId + "/properties", Name = "ModifyProperties")]
-    public Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
+    public async Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
     {
         var server = serverPark.GetServer(id);
-        server.Properties.UpdatePropertiesAsync(dto);
+        await server.Properties.UpdatePropertiesAsync(dto);
 
-        return Task.FromResult(Ok() as IActionResult);
+        return Ok();
     }
 
     /// <summary>

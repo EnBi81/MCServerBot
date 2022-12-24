@@ -53,7 +53,4 @@ internal class BackupManualState : ServerStateAbs
     }
 
     public override void HandleLog(LogMessage logMessage) { }
-
-    public override Task WriteCommand(string? command, string username) =>
-        throw new MinecraftServerException(_server.ServerName + " is backing up!");
 }
