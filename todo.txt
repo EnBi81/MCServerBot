@@ -1,3 +1,4 @@
+Move hardcoded permissions to appsettings.json
 reading player data from rcon
 design player json return in the controller
 close and dispose rcon connection when server offline
