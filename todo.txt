@@ -1,3 +1,10 @@
+PlayerSimple - offline/online status + username
+PlayerComplex - full attributes
+
+Server returns playersimple
+Server/id/players/username returns full player
+
+
 Move hardcoded permissions to appsettings.json
 reading player data from rcon
 design player json return in the controller
