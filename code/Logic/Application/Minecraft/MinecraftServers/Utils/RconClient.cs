@@ -23,7 +23,7 @@ internal class RconClient : IDisposable
         if (server.Properties["enable-rcon"] != "true") 
             throw new MCExternalException("RCON is not enabled for this minecraft server. To use RCON, enable it in the properties.");
 
-        if (server.Properties["rcon.password"] is "")
+        if (server.Properties["rcon.password"] is not { Length: > 0 })
             throw new MCExternalException("RCON password is not set for this minecraft server. To use RCON, enter a valid password.");
 
         return true;

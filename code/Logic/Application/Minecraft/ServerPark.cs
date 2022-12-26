@@ -136,34 +136,6 @@ public class ServerPark : IServerPark
         }
     }
     /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined
-    {
-        add
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerPlayerJoined += value;
-        }
-        remove
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerPlayerJoined -= value;
-        }
-    }
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft
-    {
-        add
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerPlayerLeft += value;
-        }
-        remove
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerPlayerLeft -= value;
-        }
-    }
-    /// <inheritdoc/>
     public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured
     {
         add

@@ -47,8 +47,6 @@ internal class ServerParkLogic : IServerPark
         ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
 
         
-        ActiveServerPlayerLeft = null!;
-        ActiveServerPlayerJoined = null!;
         ActiveServerLogReceived = null!;
         ActiveServerPerformanceMeasured = null!;
         ActiveServerStatusChange = null!;
@@ -247,12 +245,6 @@ internal class ServerParkLogic : IServerPark
     public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived;
 
     /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined;
-
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft;
-
-    /// <inheritdoc/>
     public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
 
     /// <inheritdoc/>
@@ -275,8 +267,6 @@ internal class ServerParkLogic : IServerPark
     {
         server.StatusChange += InvokeStatusTracker;
         server.LogReceived += InvokeLogReceived;
-        server.PlayerLeft += InvokePlayerLeft;
-        server.PlayerJoined += InvokePlayerJoined;
         server.PerformanceMeasured += InvokePerformanceMeasured;
     }
 
@@ -291,8 +281,6 @@ internal class ServerParkLogic : IServerPark
 
         server.StatusChange -= InvokeStatusTracker;
         server.LogReceived -= InvokeLogReceived;
-        server.PlayerLeft -= InvokePlayerLeft;
-        server.PlayerJoined -= InvokePlayerJoined;
         server.PerformanceMeasured -= InvokePerformanceMeasured;
     }
 
@@ -300,10 +288,6 @@ internal class ServerParkLogic : IServerPark
     // IMinecraft events
     private void InvokePerformanceMeasured(object? sender, (double CPU, long Memory) e) =>
         ActiveServerPerformanceMeasured?.Invoke(sender, new(e, (IMinecraftServer)sender!));
-    private void InvokePlayerJoined(object? sender, IMinecraftPlayer e) =>
-        ActiveServerPlayerJoined?.Invoke(sender, new(e, (IMinecraftServer)sender!));
-    private void InvokePlayerLeft(object? sender, IMinecraftPlayer e) =>
-        ActiveServerPlayerLeft?.Invoke(sender, new(e, (IMinecraftServer)sender!));
     private void InvokeLogReceived(object? sender, ILogMessage e) =>
         ActiveServerLogReceived?.Invoke(sender, new(e, (IMinecraftServer)sender!));
     private void InvokeStatusTracker(object? sender, ServerStatus e) =>

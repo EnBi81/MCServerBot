@@ -1,7 +1,6 @@
 ﻿using SharedPublic.DTOs;
 using SharedPublic.Exceptions;
 using SharedPublic.Model;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,7 +9,7 @@ namespace Application.Minecraft.MinecraftServers.Utils;
 /// <summary>
 /// Class managing the properties file for a minecraft server.
 /// </summary>
-public class MinecraftServerProperties : IMinecraftServerProperties
+public partial class MinecraftServerProperties : IMinecraftServerProperties
 {
     /* 
      * server.properties file -----------------
@@ -37,8 +36,10 @@ public class MinecraftServerProperties : IMinecraftServerProperties
      * ---------------------------------------------
      */
 
+    [GeneratedRegex("[^=]+=[^=]*")]
+    private static partial Regex PropertyRegex();
 
-    
+
 
     /// <summary>
     /// Reads the file specified in the argument and creates a new instance of the MinecraftServerProperties.
@@ -74,8 +75,9 @@ public class MinecraftServerProperties : IMinecraftServerProperties
             return _properties;
         }
     }
-
-    private readonly string _file;
+    
+    private readonly FileInfo _file;
+    private DateTime lastReadTime = DateTime.MinValue;
 
 
     private readonly Dictionary<string, string> _properties = new();
@@ -88,27 +90,31 @@ public class MinecraftServerProperties : IMinecraftServerProperties
     /// <param name="lines"></param>
     public MinecraftServerProperties(string file, IMinecraftServer server)
     {
-        _file = file;
+        _file = new FileInfo(file);
         _server = server;
     }
 
-
+    
     private void LoadData()
     {
-        if (_properties.Any())
+        _file.Refresh(); // refresh to get the latest data
+        if (lastReadTime > _file.LastWriteTime) // check if the last read time is newer than the last write time (data is already loaded)
             return;
-        
+
+        lastReadTime = DateTime.Now;
+        _properties.Clear();
+
         string[] lines;
         try
         {
-            lines = File.ReadAllLines(_file);
+            lines = File.ReadAllLines(_file.FullName);
         }
         catch (FileNotFoundException)
         {
             lines = Array.Empty<string>();
         }
         
-        Regex regex = new("[^=]+=[^=]*");
+        Regex regex = PropertyRegex();
         foreach (var line in lines)
         {
             if (!regex.IsMatch(line))
@@ -162,11 +168,13 @@ public class MinecraftServerProperties : IMinecraftServerProperties
                 _properties[key] = value;
         }
 
-        await SaveProperties(_file, this);
+        await SaveProperties(_file.FullName, this);
     }
 
     public void ClearProperties()
     {
         _properties.Clear();
     }
+
+    
 }

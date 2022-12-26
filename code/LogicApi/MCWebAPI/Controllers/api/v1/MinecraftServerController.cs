@@ -251,6 +251,25 @@ public class MinecraftServerController : ApiController
     }
 
     /// <summary>
+    /// Gets a player's data on the server.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    [HttpGet(RouteId + "/players/{username}", Name = "GetPlayer")]
+    public async Task<IActionResult> GetPlayerData([FromRoute] long id, [FromRoute] string username)
+    {
+        var server = serverPark.GetServer(id);
+        if(!server.PlayersFull.TryGetValue(username, out var player))
+        {
+            return NotFound();
+        }
+
+        await player.RefreshData();
+        return Ok(player);
+    }
+
+    /// <summary>
     /// Gets the icon of the server.
     /// </summary>
     /// <returns></returns>

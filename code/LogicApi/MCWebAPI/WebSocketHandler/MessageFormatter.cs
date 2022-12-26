@@ -65,28 +65,7 @@ namespace MCWebAPI.WebSocketHandler
 
             return Serialize(log);
         }
-
-        public static string PlayerJoin(long id, IMinecraftPlayer player)
-        {
-            var playerJoin = new
-            {
-                datatype = "playerJoin",
-                serverId = id,
-                player = player
-            };
-            return Serialize(playerJoin);
-        }
-
-        public static string PlayerLeft(long id, IMinecraftPlayer player)
-        {
-            var playerLeft = new 
-            {
-                datatype = "playerLeft",
-                serverId = id, 
-                player = player
-            };
-            return Serialize(playerLeft);
-        }
+        
 
         public static string PcUsage(long serverId, string cpuPerc, string memory)
         {

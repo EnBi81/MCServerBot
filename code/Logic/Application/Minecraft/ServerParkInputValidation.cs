@@ -223,18 +223,7 @@ internal class ServerParkInputValidation : IServerPark
         add => _serverPark.ActiveServerLogReceived += value;
         remove => _serverPark.ActiveServerLogReceived -= value;
     }
-
-    public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined
-    {
-        add => _serverPark.ActiveServerPlayerJoined += value;
-        remove => _serverPark.ActiveServerPlayerJoined -= value;
-    }
-
-    public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft
-    {
-        add => _serverPark.ActiveServerPlayerLeft += value;
-        remove => _serverPark.ActiveServerPlayerLeft -= value;
-    }
+    
 
     public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured
     {

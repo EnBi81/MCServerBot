@@ -1,5 +1,4 @@
-﻿using CoreRCON;
-using System.Net;
+﻿using System.Net;
 
 namespace Sandbox
 {
@@ -7,19 +6,14 @@ namespace Sandbox
     {
         static async Task Main(string[] args)
         {
-            // https://www.nuget.org/packages/CoreRCON
+            var fileInfo = new FileInfo("test.txt");
+            Console.WriteLine("Edited time: " + fileInfo.LastWriteTimeUtc);
 
-            // Connect to a server
-            var rcon = new RCON(IPAddress.Parse("127.0.0.1"), 25575, "12345678");
-            await rcon.ConnectAsync();
+            Console.WriteLine("Waiting for enter...");
+            Console.ReadLine();
 
-            Console.WriteLine("Connected to server");
-            
-            string respnose = await rcon.SendCommandAsync("data get entity @e[limit=1]");
-            
-            Console.WriteLine($"Response: " + respnose);
-
-            rcon.Dispose();
+            fileInfo.Refresh();
+            Console.WriteLine("Edited time: " + fileInfo.LastWriteTimeUtc);
         }
     }
 }

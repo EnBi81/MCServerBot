@@ -20,9 +20,10 @@ internal class ShuttingDownState : ServerStateAbs
     /// <param name="server"></param>
     public ShuttingDownState(MinecraftServerLogic server, object[] args) : base(server, args)
     {
-        foreach (var player in ((IMinecraftServer)server).OnlinePlayers)
+        foreach (var (username, player) in server.PlayersFull)
         {
-            server.SetPlayerOffline(player.Username);
+            if(player.OnlineFrom is not null)
+                server.SetPlayerOffline(username);
         }
     }
 

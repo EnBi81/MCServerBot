@@ -64,14 +64,15 @@ namespace SharedPublic.Model
         public int Port { get; }
 
         /// <summary>
-        /// Gets all the currently online players.
+        /// Gets the players who have been connected to the server in the current session
         /// </summary>
-        public List<IMinecraftPlayer> OnlinePlayers => (from player in Players.Values where player.OnlineFrom.HasValue select player).ToList();
+        [JsonIgnore]
+        public IDictionary<string, IPlayerFull> PlayersFull { get; }
 
         /// <summary>
-        /// Holding all the players who have played in the server, from the beginning of the current runtime.
+        /// Gets the players who have been connected to the server in the current session
         /// </summary>
-        public Dictionary<string, IMinecraftPlayer> Players { get; }
+        public IEnumerable<IPlayerSimple> Players { get; }
 
         /// <summary>
         /// Physical storage space on the disk of the server.
@@ -158,11 +159,11 @@ namespace SharedPublic.Model
         /// <summary>
         /// Fired when a player has joined to the server.
         /// </summary>
-        public event EventHandler<IMinecraftPlayer> PlayerJoined;
+        public event EventHandler<IPlayerSimple> PlayerJoined;
         /// <summary>
         /// Fired when a player has left the server.
         /// </summary>
-        public event EventHandler<IMinecraftPlayer> PlayerLeft;
+        public event EventHandler<IPlayerSimple> PlayerLeft;
         /// <summary>
         /// Fired when performance has been measured of the minecraft server process. CPU is in percentage, Memory in Bytes.
         /// </summary>

@@ -825,6 +825,52 @@
         ]
       }
     },
+    "/api/v1/MinecraftServer/{id}/players/{username}": {
+      "get": {
+        "tags": [
+          "MinecraftServer"
+        ],
+        "summary": "Gets a player's data on the server. (Auth)",
+        "operationId": "GetPlayer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "username",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/v1/MinecraftServer/{id}/icon": {
       "get": {
         "tags": [
@@ -1566,26 +1612,6 @@
         },
         "additionalProperties": false
       },
-      "SharedPublic.Model.IMinecraftPlayer": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "onlineFrom": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "readOnly": true
-          },
-          "pastOnline": {
-            "$ref": "#/components/schemas/System.TimeSpan"
-          }
-        },
-        "additionalProperties": false
-      },
       "SharedPublic.Model.IMinecraftServer": {
         "type": "object",
         "properties": {
@@ -1630,18 +1656,10 @@
             "format": "int32",
             "readOnly": true
           },
-          "onlinePlayers": {
+          "players": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
-            },
-            "nullable": true,
-            "readOnly": true
-          },
-          "players": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftPlayer"
+              "$ref": "#/components/schemas/SharedPublic.Model.IPlayerSimple"
             },
             "nullable": true,
             "readOnly": true
@@ -1658,6 +1676,28 @@
           },
           "mcVersion": {
             "$ref": "#/components/schemas/Application.Minecraft.Versions.IMinecraftVersion"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.IPlayerSimple": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "pastOnlineTicks": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -1684,86 +1724,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "System.TimeSpan": {
-        "type": "object",
-        "properties": {
-          "ticks": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "days": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "hours": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "milliseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "microseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanoseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "totalDays": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalHours": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMilliseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMicroseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalNanoseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMinutes": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalSeconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
       }
     },
     "securitySchemes": {

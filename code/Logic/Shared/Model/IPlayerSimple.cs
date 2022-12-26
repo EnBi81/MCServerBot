@@ -1,15 +1,20 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace SharedPublic.Model
 {
     /// <summary>
-    /// Holds information of a minecraft player in
+    /// Simple Player object
     /// </summary>
-    public interface IMinecraftPlayer
+    public interface IPlayerSimple
     {
         /// <summary>
         /// Username of the player
         /// </summary>
-        public string Username { get; }
+        string Username { get; }
 
         /// <summary>
         /// If the player is online, this holds the time joined to the server, else null.
@@ -19,6 +24,6 @@ namespace SharedPublic.Model
         /// <summary>
         /// Sum of the time spent online from the previous sessions.
         /// </summary>
-        public TimeSpan PastOnline { get; }
+        public long PastOnlineTicks { get; }
     }
 }

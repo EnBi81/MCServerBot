@@ -114,17 +114,7 @@ namespace SharedPublic.Model
         /// Event fired when a log message has been received from the active server.
         /// </summary>
         public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived;
-
-        /// <summary>
-        /// Event fired when a player joins the active server.
-        /// </summary>
-        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerJoined;
-
-        /// <summary>
-        /// Event fired when a player leaves the active server.
-        /// </summary>
-        public event EventHandler<ServerValueEventArgs<IMinecraftPlayer>> ActiveServerPlayerLeft;
-
+        
         /// <summary>
         /// Event fired when a performance measurement data has been received. CPU in percentage, Memory in bytes.
         /// </summary>

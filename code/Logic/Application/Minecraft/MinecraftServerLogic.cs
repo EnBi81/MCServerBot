@@ -76,8 +76,12 @@ internal class MinecraftServerLogic : IMinecraftServer
     /// <inheritdoc/>
     public ICollection<ILogMessage> Logs => _logs.ToList();
 
+
     /// <inheritdoc/>
-    public Dictionary<string, IMinecraftPlayer> Players { get; } = new Dictionary<string, IMinecraftPlayer>();
+    public IDictionary<string, IPlayerFull> PlayersFull { get; } = new Dictionary<string, IPlayerFull>();
+
+    /// <inheritdoc/>
+    public IEnumerable<IPlayerSimple> Players => PlayersFull.Values.Select(p => (IPlayerSimple)p);
 
     /// <inheritdoc/>
     public IMinecraftVersion MCVersion
@@ -111,7 +115,7 @@ internal class MinecraftServerLogic : IMinecraftServer
     internal MinecraftServerConfig ServerConfig { get; }
     internal McServerFileStructure FileStructure { get; }
 
-
+    
 
     private RconClient? _rconClient;
 
@@ -213,7 +217,11 @@ internal class MinecraftServerLogic : IMinecraftServer
     }
 
 
-    
+    /// <summary>
+    /// Gets the RCON client i
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="MCInternalException"></exception>
     internal async Task<RconClient> GetRconClient()
     {
         if (_rconClient is { IsConnected: true })
@@ -324,9 +332,9 @@ internal class MinecraftServerLogic : IMinecraftServer
     /// <inheritdoc/>
     public event EventHandler<ILogMessage> LogReceived;
     /// <inheritdoc/>
-    public event EventHandler<IMinecraftPlayer> PlayerJoined;
+    public event EventHandler<IPlayerSimple> PlayerJoined;
     /// <inheritdoc/>
-    public event EventHandler<IMinecraftPlayer> PlayerLeft;
+    public event EventHandler<IPlayerSimple> PlayerLeft;
     /// <inheritdoc/>
     public event EventHandler<(double CPU, long Memory)> PerformanceMeasured;
     /// <inheritdoc/>
@@ -419,11 +427,11 @@ internal class MinecraftServerLogic : IMinecraftServer
     /// <param name="username">Username of the player.</param>
     internal void SetPlayerOnline(string username)
     {
-        if (!Players.ContainsKey(username))
-            Players.Add(username, new MinecraftPlayer(username));
+        if (!PlayersFull.ContainsKey(username))
+            PlayersFull.Add(username, new MinecraftPlayer(username, GetRconClient));
 
-        ((MinecraftPlayer)Players[username]).SetOnline();
-        RaiseEvent(PlayerJoined, Players[username]);
+        ((MinecraftPlayer)PlayersFull[username]).SetOnline();
+        RaiseEvent(PlayerJoined, PlayersFull[username]);
     }
 
     /// <summary>
@@ -432,7 +440,7 @@ internal class MinecraftServerLogic : IMinecraftServer
     /// <param name="username">Username of the player.</param>
     internal void SetPlayerOffline(string username)
     {
-        Players.TryGetValue(username, out IMinecraftPlayer? player);
+        PlayersFull.TryGetValue(username, out IPlayerFull? player);
 
         if (player == null)
             return;

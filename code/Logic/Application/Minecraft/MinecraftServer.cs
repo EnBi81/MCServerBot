@@ -16,7 +16,7 @@ internal class MinecraftServer : IMinecraftServer
 {
     private readonly MinecraftLogger _logger;
     private readonly IMinecraftDataAccess _eventRegister;
-    private readonly MinecraftServerLogic _minecraftServerLogic;
+    private readonly IMinecraftServer _minecraftServerLogic;
 
     
 
@@ -111,7 +111,7 @@ internal class MinecraftServer : IMinecraftServer
     public long Id => _minecraftServerLogic.Id;
 
     /// <inheritdoc/>
-    public string ServerName { get => _minecraftServerLogic.ServerName; set => _minecraftServerLogic.ServerName = value; }
+    public string ServerName { get => _minecraftServerLogic.ServerName; }
 
     /// <inheritdoc/>
     public ServerStatus StatusCode => _minecraftServerLogic.StatusCode;
@@ -133,9 +133,6 @@ internal class MinecraftServer : IMinecraftServer
     public int Port => _minecraftServerLogic.Port;
 
     /// <inheritdoc/>
-    public Dictionary<string, IMinecraftPlayer> Players => _minecraftServerLogic.Players;
-
-    /// <inheritdoc/>
     public string StorageSpace => _minecraftServerLogic.StorageSpace;
 
     /// <inheritdoc/>
@@ -147,6 +144,12 @@ internal class MinecraftServer : IMinecraftServer
     /// <inheritdoc/>
     [JsonIgnore]
     public string? ServerIcon { get => _minecraftServerLogic.ServerIcon; }
+
+    /// <inheritdoc/>
+    [JsonIgnore]
+    public IDictionary<string, IPlayerFull> PlayersFull => _minecraftServerLogic.PlayersFull;
+
+    public IEnumerable<IPlayerSimple> Players => _minecraftServerLogic.Players;
 
     /// <inheritdoc/>
     public event EventHandler<IMinecraftServer> Deleted
@@ -167,13 +170,13 @@ internal class MinecraftServer : IMinecraftServer
         remove => _minecraftServerLogic.LogReceived -= value;
     }
     /// <inheritdoc/>
-    public event EventHandler<IMinecraftPlayer> PlayerJoined
+    public event EventHandler<IPlayerSimple> PlayerJoined
     {
         add => _minecraftServerLogic.PlayerJoined += value;
         remove => _minecraftServerLogic.PlayerJoined -= value;
     }
     /// <inheritdoc/>
-    public event EventHandler<IMinecraftPlayer> PlayerLeft
+    public event EventHandler<IPlayerSimple> PlayerLeft
     {
         add => _minecraftServerLogic.PlayerLeft += value;
         remove => _minecraftServerLogic.PlayerLeft -= value;

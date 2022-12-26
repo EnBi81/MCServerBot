@@ -8,8 +8,4 @@
 	<LangVersion>11.0</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CoreRCON" Version="5.0.5" />
-  </ItemGroup>
-
 </Project>
