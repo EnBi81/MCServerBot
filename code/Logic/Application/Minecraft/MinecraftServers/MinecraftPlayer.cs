@@ -240,7 +240,7 @@ internal class MinecraftPlayer : IPlayerFull
             string regex = "Dimension: [\\\\\\\"]{2}([^\\\\\\\"]+)[\\\\\\\"]{2}";
 
             if (!IsMatch(regex, out var match))
-                return null;
+                return "minecraft:overworld";
 
             return match.Groups[1].Value;
         }
