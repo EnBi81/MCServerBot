@@ -155,6 +155,10 @@ internal class MinecraftPlayer : IPlayerFull
         public double Z { get; init; }
     }
 
+
+    /// <summary>
+    /// Helps deserialize the player data
+    /// </summary>
     private class NBTPlayerData
     {
         /*

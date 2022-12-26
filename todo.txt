@@ -1,2 +1,1 @@
 Move hardcoded permissions to appsettings.json
-close and dispose rcon connection when server offline

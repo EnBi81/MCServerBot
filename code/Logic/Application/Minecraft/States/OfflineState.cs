@@ -23,7 +23,7 @@ internal class OfflineState : ServerStateAbs
         
     }
 
-    public override Task Apply()
+    public override async Task Apply()
     {
         var serverUptime = DateTime.Now - (_server.OnlineFrom ?? DateTime.MaxValue);
         if(serverUptime.TotalSeconds > 0)
@@ -31,8 +31,7 @@ internal class OfflineState : ServerStateAbs
 
         _server.StorageBytes = _server.McServerProcess.GetStorage();
         _server.OnlineFrom = null;
-
-        return Task.CompletedTask;
+        await _server.CloseRconClient();
     }
 
     /// <summary>
