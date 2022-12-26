@@ -26,6 +26,9 @@ internal class RconClient : IDisposable
         if (server.Properties["rcon.password"] is not { Length: > 0 })
             throw new MCExternalException("RCON password is not set for this minecraft server. To use RCON, enter a valid password.");
 
+        if (server.StatusCode is not ServerStatus.Online)
+            throw new MCExternalException("RCON usage is only allowed while the server is online.");
+
         return true;
     }
     
