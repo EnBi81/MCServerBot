@@ -112,16 +112,25 @@ internal partial class MinecraftVersionCollection
         _downloadingVersions.Remove(version.Version);
     }
 
+
+
+    private bool isPythonRunning = false;
     /// <summary>
     /// Downloads the version informations from the web
     /// </summary>
     /// <returns></returns>
     private async Task CheckVersionsPython()
     {
+        if (isPythonRunning)
+            throw new MCExternalException("Checking versions is already running!");
+        isPythonRunning = true;
+
         _logger.Log(_loggerSource, "Downloading version list from Mojang...");
 
         await ExecuteScript("dependency_downloader.py");
         await ExecuteScript("mc_version_list_downloader.py");
+
+        isPythonRunning = false;
         
 
         async Task ExecuteScript(string filename)
