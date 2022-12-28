@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APIModel.Responses
+namespace Prismarine.NET.DTOs
 {
     public class AuthenticatedResponse
     {
-        public string JWT { get; set; } = null!;
-        public string Type { get; set; } = null!;
+        public string Jwt { get; set; } = "";
+        public string Type { get; set; } = "";
     }
 }

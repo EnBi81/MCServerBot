@@ -40,13 +40,10 @@ namespace MCWebAPI.Auth
                     throw new LoginException("You must provide a " + prop.Name);
             }
 
-            if (!Enum.TryParse(dto.Platform, true, out Platform platform))
-                throw new LoginException("Unrecognized platform: " + dto.Platform);
-
             DataUser user = await GetUser(dto.Token);
-            string token = AuthUtils.GenerateJwt(user, platform, _config);
+            string token = AuthUtils.GenerateJwt(user, Platform.Website, _config);
 
-            return new AuthenticatedResponse { Token = token, Type = "Bearer" };
+            return new AuthenticatedResponse { JWT = token, Type = "Bearer" };
         }
 
     }

@@ -1239,10 +1239,6 @@
           "token": {
             "type": "string",
             "nullable": true
-          },
-          "platform": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1300,7 +1296,7 @@
       "APIModel.Responses.AuthenticatedResponse": {
         "type": "object",
         "properties": {
-          "token": {
+          "jwt": {
             "type": "string",
             "nullable": true
           },
