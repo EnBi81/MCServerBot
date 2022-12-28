@@ -2,7 +2,7 @@
 
 namespace Prismarine.NET.Networking.Interfaces;
 
-public interface IAuthService
+internal interface IAuthService
 {
     /// <summary>
     /// Gets a jwt token from a login token

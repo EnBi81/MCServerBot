@@ -7,15 +7,12 @@ namespace Prismarine.NET.Networking.Utils;
 /// </summary>
 internal class HttpClientProvider
 {
-    public static HttpClientProvider Instance = new HttpClientProvider();
-
-
     private HttpClient? _client;
 
 
-    private HttpClientProvider() 
+    public HttpClientProvider(string baseAddress) 
     {
-        BaseUrl = "https://localhost:7229"; // for development purpose, later the user can set this
+        uri = new Uri(baseAddress); // for development purpose, later the user can set this
     }
     
     /// <summary>
@@ -25,16 +22,17 @@ internal class HttpClientProvider
         get
         {
             // if _client is null, create a new instance of HttpClient
-            _client ??= new HttpClient();
-
+            if(_client is null)
+            {
+                _client = new HttpClient { BaseAddress = uri };
+            }
+            
             if(JwtToken is not null)
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", JwtToken);
             else 
                 _client.DefaultRequestHeaders.Authorization = null;
-
-            if (uri is not null)
-                _client.BaseAddress = uri;
-
+            
+            
             return _client;
         }
     }
@@ -51,6 +49,5 @@ internal class HttpClientProvider
     public string? BaseUrl
     {
         get => uri?.ToString();
-        set => uri = value is not null ? new Uri(value) : null;
     }
 }

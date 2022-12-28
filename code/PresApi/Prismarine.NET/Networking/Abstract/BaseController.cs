@@ -6,10 +6,31 @@ using System.Net.Http.Json;
 
 namespace Prismarine.NET.Networking.Abstract
 {
-    public abstract class BaseController
+    internal abstract class BaseController
     {
-        private HttpClientProvider HttpClientProvider { get; } = Utils.HttpClientProvider.Instance;
-        private JsonSerializer Serializer { get; } = JsonSerializer.Instance;
+        private HttpClientProvider HttpClientProvider { get; } 
+        private JsonSerializer Serializer { get; }
+
+
+        public BaseController(HttpClientProvider httpClientProvider, JsonSerializer jsonSerializer)
+        {
+            HttpClientProvider = httpClientProvider;
+            Serializer = jsonSerializer;
+        }
+
+
+        protected async Task<T> GetAsync<T>(string uri)
+        {
+            // get the http client
+            HttpClient client = HttpClientProvider.HttpClient;
+
+            HttpResponseMessage response = await client.GetAsync(uri);
+            await ThrowExceptionIfRequestUnsuccessful(response);
+
+            var content = await response.Content.ReadAsStringAsync();
+            //Console.WriteLine(content);
+            return Serializer.Deserialize<T>(content) ?? throw new Exception("Deserialization failed");
+        }
 
         #region Post
         /// <summary>

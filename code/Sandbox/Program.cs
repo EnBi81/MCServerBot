@@ -1,4 +1,5 @@
-﻿using Prismarine.NET.Networking.Implementations;
+﻿using Prismarine.NET;
+using Prismarine.NET.Networking.Implementations;
 using Prismarine.NET.Networking.Interfaces;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -9,10 +10,15 @@ namespace Sandbox
     {
         static async Task Main(string[] args)
         {
-            IAuthService authService = new AuthHttpClient();
+            var client = new PrismarineClient();
+            await client.LoginAsync("test-acc");
 
-            var response = await authService.Login("test-acc");
-            Console.WriteLine("Token: " + response.Jwt);
+            var servers = await client.ServerPark.GetAllServers();
+            foreach (var item in servers)
+            {
+
+                Console.WriteLine(item.Id);
+            }
         }
     }
 }
