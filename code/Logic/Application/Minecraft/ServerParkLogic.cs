@@ -47,10 +47,6 @@ internal class ServerParkLogic : IServerPark
         ServersFolder = _config.MinecraftServersBaseFolder + "Servers\\";
 
         
-        ActiveServerLogReceived = null!;
-        ActiveServerPerformanceMeasured = null!;
-        ActiveServerStatusChange = null!;
-
         ServerAdded = null!;
         ServerDeleted = null!;
         ServerModified = null!;
@@ -127,10 +123,8 @@ internal class ServerParkLogic : IServerPark
 
         if (ActiveServer == server)
             return;
-
-        UnSubscribeEventTrackers(ActiveServer);
+        
         ActiveServer = server;
-        SubscribeEventTrackers(ActiveServer);
     }
 
 
@@ -237,16 +231,6 @@ internal class ServerParkLogic : IServerPark
             InvokeServerDeleted(server);
     }
 
-
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange;
-
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived;
-
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
-
     /// <inheritdoc/>
     public event EventHandler<ServerValueEventArgs<ModifyServerDto>> ServerModified;
 
@@ -256,43 +240,8 @@ internal class ServerParkLogic : IServerPark
     /// <inheritdoc/>
     public event EventHandler<ValueEventArgs<IMinecraftServer>> ServerDeleted;
 
-
-
-
-    /// <summary>
-    /// Subscribe ServerPark events on a specific minecraft server.
-    /// </summary>
-    /// <param name="server">server to subscribe</param>
-    private void SubscribeEventTrackers(IMinecraftServer server)
-    {
-        server.StatusChange += InvokeStatusTracker;
-        server.LogReceived += InvokeLogReceived;
-        server.PerformanceMeasured += InvokePerformanceMeasured;
-    }
-
-    /// <summary>
-    /// Unsubscribe ServerPark events from a minecraft server.
-    /// </summary>
-    /// <param name="server">server to unsubscribe from</param>
-    private void UnSubscribeEventTrackers(IMinecraftServer? server)
-    {
-        if (server == null)
-            return;
-
-        server.StatusChange -= InvokeStatusTracker;
-        server.LogReceived -= InvokeLogReceived;
-        server.PerformanceMeasured -= InvokePerformanceMeasured;
-    }
-
-
-    // IMinecraft events
-    private void InvokePerformanceMeasured(object? sender, (double CPU, long Memory) e) =>
-        ActiveServerPerformanceMeasured?.Invoke(sender, new(e, (IMinecraftServer)sender!));
-    private void InvokeLogReceived(object? sender, ILogMessage e) =>
-        ActiveServerLogReceived?.Invoke(sender, new(e, (IMinecraftServer)sender!));
-    private void InvokeStatusTracker(object? sender, ServerStatus e) =>
-        ActiveServerStatusChange?.Invoke(sender, new(e, (IMinecraftServer)sender!));
-
+    
+    
 
     // ServerPark events
     private void InvokeServerModified(IMinecraftServer server, ModifyServerDto dto) =>

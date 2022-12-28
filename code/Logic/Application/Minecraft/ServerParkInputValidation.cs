@@ -211,25 +211,7 @@ internal class ServerParkInputValidation : IServerPark
             throw new ServerParkException($"The server '{id}' does not exist.");
     }
     
-
-    public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
-    {
-        add => _serverPark.ActiveServerStatusChange += value;
-        remove => _serverPark.ActiveServerStatusChange -= value;
-    }
-
-    public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived
-    {
-        add => _serverPark.ActiveServerLogReceived += value;
-        remove => _serverPark.ActiveServerLogReceived -= value;
-    }
     
-
-    public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured
-    {
-        add => _serverPark.ActiveServerPerformanceMeasured += value;
-        remove => _serverPark.ActiveServerPerformanceMeasured -= value;
-    }
 
     public event EventHandler<ServerValueEventArgs<ModifyServerDto>> ServerModified
     {

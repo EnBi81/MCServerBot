@@ -102,24 +102,7 @@ namespace SharedPublic.Model
         /// <exception cref="Exception">If the server does not exist, or it's running.</exception>
         public Task<IMinecraftServer> DeleteServer(long id, UserEventData user = default);
 
-
         
-
-        /// <summary>
-        /// Event fired when the active server's status has changed.
-        /// </summary>
-        public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange;
-
-        /// <summary>
-        /// Event fired when a log message has been received from the active server.
-        /// </summary>
-        public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived;
-        
-        /// <summary>
-        /// Event fired when a performance measurement data has been received. CPU in percentage, Memory in bytes.
-        /// </summary>
-        public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured;
-
         /// <summary>
         /// Event fired when a server has been modified.
         /// </summary>

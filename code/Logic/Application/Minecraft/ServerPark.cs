@@ -106,49 +106,6 @@ public class ServerPark : IServerPark
             return _serverPark.BackupManager;
         }
     }
-
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<ServerStatus>> ActiveServerStatusChange
-    {
-        add
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerStatusChange += value;
-        }
-        remove
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerStatusChange -= value;
-        }
-    }
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<ILogMessage>> ActiveServerLogReceived
-    {
-        add
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerLogReceived += value;
-        }
-        remove
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerLogReceived -= value;
-        }
-    }
-    /// <inheritdoc/>
-    public event EventHandler<ServerValueEventArgs<(double CPU, long Memory)>> ActiveServerPerformanceMeasured
-    {
-        add
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerPerformanceMeasured += value;
-        }
-        remove
-        {
-            ThrowExceptionIfNotInitialized();
-            _serverPark.ActiveServerPerformanceMeasured -= value;
-        }
-    }
     /// <inheritdoc/>
     public event EventHandler<ServerValueEventArgs<ModifyServerDto>> ServerModified
     {
