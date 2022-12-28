@@ -108,17 +108,17 @@ public class MinecraftServerController : ApiController
     /// <param name="id">id of the minecraft server</param>
     /// <param name="commandDto">command data</param>
     /// <returns></returns>
-    /// <response code="204">The command is executed.</response>
+    /// <response code="200">The command is executed.</response>
     /// <response code="400">The server with the specified id does not exist or an exception happened during the command execution.</response>
     [HttpPost(RouteId + "/commands", Name = "WriteCommandToServer")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(CommandResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> WriteCommand([FromRoute] long id, [FromBody] CommandDto commandDto)
     {
         var server = serverPark.GetServer(id);
 
         string? command = commandDto?.Command;
-        var response = await server.WriteCommand(command);
+        CommandResponse response = await server.WriteCommand(command);
         return Ok(response);
     }
 
@@ -183,7 +183,7 @@ public class MinecraftServerController : ApiController
     /// <param name="backupName"></param>
     /// <returns></returns>
     [HttpDelete(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "DeleteBackup")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IBackup), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionDTO), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteBackup([FromRoute] long id, [FromRoute] string backupName)
     {
@@ -205,6 +205,7 @@ public class MinecraftServerController : ApiController
     /// <param name="backupName"></param>
     /// <returns></returns>
     [HttpPatch(RouteId + "/backups/{backupName:regex(^[[\\w\\W]])}", Name = "RestoreBackup")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> RestoreBackup([FromRoute] long id, [FromRoute] string backupName)
     {
         var server = serverPark.GetServer(id);
@@ -226,6 +227,7 @@ public class MinecraftServerController : ApiController
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet(RouteId + "/properties", Name = "GetProperties")]
+    [ProducesResponseType(typeof(IMinecraftServerProperties), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProperties([FromRoute] long id)
     {
         var server = serverPark.GetServer(id);
@@ -242,6 +244,7 @@ public class MinecraftServerController : ApiController
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     [HttpPatch(RouteId + "/properties", Name = "ModifyProperties")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ModifyProperties([FromRoute] long id, [FromBody] MinecraftServerPropertiesDto dto)
     {
         var server = serverPark.GetServer(id);
@@ -257,6 +260,7 @@ public class MinecraftServerController : ApiController
     /// <param name="username"></param>
     /// <returns></returns>
     [HttpGet(RouteId + "/players/{username}", Name = "GetPlayer")]
+    [ProducesResponseType(typeof(IPlayerFull), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPlayerData([FromRoute] long id, [FromRoute] string username)
     {
         var server = serverPark.GetServer(id);
@@ -274,13 +278,13 @@ public class MinecraftServerController : ApiController
     /// </summary>
     /// <returns></returns>
     [HttpGet(RouteId + "/icon", Name = "GetIcon")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetServerIcon([FromRoute] long id)
     {
         var server = serverPark.GetServer(id);
 
         var (extension, stream) = await _iconManager.GetIconOrErrorIconAsync(server.ServerIcon);
-
-
+        
         return new FileStreamResult(stream, "image/" + extension);
     }
 }

@@ -201,7 +201,17 @@
         "summary": "Gets all the available icons",
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Returns a list of absolute urls to the server icons.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -254,8 +264,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success"
+          "204": {
+            "description": "No Content"
           },
           "401": {
             "description": "Unauthorized"
@@ -455,8 +465,15 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "The command is executed."
+          "200": {
+            "description": "The command is executed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedPublic.DTOs.CommandResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "The server with the specified id does not exist or an exception happened during the command execution.",
@@ -672,7 +689,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedPublic.Model.IBackup"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -764,7 +788,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedPublic.Model.IMinecraftServerProperties"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -855,7 +886,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedPublic.Model.IPlayerFull"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -1336,6 +1374,19 @@
         },
         "additionalProperties": false
       },
+      "SharedPublic.DTOs.CommandResponse": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "string",
+            "nullable": true
+          },
+          "isValidResponse": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "SharedPublic.DTOs.IconUploadDto": {
         "type": "object",
         "properties": {
@@ -1680,6 +1731,97 @@
         },
         "additionalProperties": false
       },
+      "SharedPublic.Model.IMinecraftServerProperties": {
+        "type": "object",
+        "properties": {
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.IPlayerFull": {
+        "type": "object",
+        "properties": {
+          "deathTime": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "dimension": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "foodLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "healthLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "playerGameType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "position": {
+            "$ref": "#/components/schemas/SharedPublic.Model.IPoint3D"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "seenCredits": {
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true
+          },
+          "sleepTimer": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "xpLevel": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "onlineFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "pastOnlineTicks": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SharedPublic.Model.IPlayerSimple": {
         "type": "object",
         "properties": {
@@ -1697,6 +1839,27 @@
           "pastOnlineTicks": {
             "type": "integer",
             "format": "int64",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharedPublic.Model.IPoint3D": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "y": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "z": {
+            "type": "number",
+            "format": "double",
             "readOnly": true
           }
         },

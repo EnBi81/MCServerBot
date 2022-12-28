@@ -1,4 +1,5 @@
-﻿using MCWebAPI.Utils.Images;
+﻿using APIModel.Responses;
+using MCWebAPI.Utils.Images;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedPublic.DTOs;
@@ -29,8 +30,10 @@ public class IconsController : ApiController
     /// Gets all the available icons
     /// </summary>
     /// <returns></returns>
+    /// <response code="200">Returns a list of absolute urls to the server icons.</response>
     [HttpGet]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(ICollection<string>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllIcons()
     {
         var icons = await _iconManager.GetIcons();
@@ -54,6 +57,7 @@ public class IconsController : ApiController
     /// </summary>
     /// <returns></returns>
     [HttpDelete("{name}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteIcon([FromRoute] string name)
     {
         await _iconManager.DeleteIcon(name);

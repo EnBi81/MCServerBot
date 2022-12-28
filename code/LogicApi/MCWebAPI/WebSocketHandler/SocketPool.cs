@@ -50,10 +50,6 @@ namespace MCWebAPI.WebSocketHandler
         {
             _logger.Log("socket-pool", "Setting up listeners");
             
-            _serverPark.ActiveServerLogReceived += ActiveServerLogReceived;
-            _serverPark.ActiveServerPerformanceMeasured += ActiveServerPerformanceMeasured;
-            _serverPark.ActiveServerStatusChange += ActiveServerStatusChange;
-            
             _serverPark.ServerAdded += ServerAdded;
             _serverPark.ServerDeleted += ServerDeleted;
             _serverPark.ServerModified += ServerNameChanged;
