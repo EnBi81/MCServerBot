@@ -16,8 +16,20 @@ namespace Sandbox
             var servers = await client.ServerPark.GetAllServers();
             foreach (var item in servers)
             {
+                // write out all the properties
+                Console.WriteLine("id: " + item.Id);
+                Console.WriteLine("name: " + item.ServerName);
+                Console.WriteLine("is running: " + item.IsRunning);
+                Console.WriteLine("version: " + item.MCVersion.Version);
+                Console.WriteLine("logs: ");
+                foreach (var log in item.Logs)
+                {
+                    Console.WriteLine(" - " + log.Message);
+                }
 
-                Console.WriteLine(item.Id);
+                Console.WriteLine("status: " + item.Status);
+
+                Console.WriteLine();
             }
         }
     }
