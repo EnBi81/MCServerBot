@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.ComponentModel;
 using System.Text.Json;
 
 namespace Prismarine.NET.Networking.Utils
@@ -8,14 +10,19 @@ namespace Prismarine.NET.Networking.Utils
     /// </summary>
     internal class JsonSerializer
     {
-
-        private static readonly JsonSerializerOptions _settings = new ()
+        
+        private readonly JsonSerializerSettings _settings = new()
         {
-            AllowTrailingCommas = true, 
-            PropertyNameCaseInsensitive = true,
+            NullValueHandling = NullValueHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore,
         };
 
-        
+
+        public JsonSerializer(IContainer container)
+        {
+            
+        }
 
 #pragma warning disable CA1822 // Mark members as static
 
@@ -26,7 +33,7 @@ namespace Prismarine.NET.Networking.Utils
         /// <returns></returns>
         public string Serialize(object? obj)
         {
-            return System.Text.Json.JsonSerializer.Serialize(obj);
+            return JsonConvert.SerializeObject(obj);
         }
 
         /// <summary>
@@ -39,9 +46,17 @@ namespace Prismarine.NET.Networking.Utils
         {
             if (json is null)
                 throw new ArgumentNullException($"The {nameof(json)} string is null.");
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json, _settings);
+            return JsonConvert.DeserializeObject<T>(json, _settings);
+        }
+
+        public void Populate<T>(string? json, object obj)
+        {
+            if (json is null)
+                throw new ArgumentNullException($"The {nameof(json)} string is null.");
+            JsonConvert.PopulateObject(json, obj);
         }
 
 #pragma warning restore CA1822
     }
 }
+

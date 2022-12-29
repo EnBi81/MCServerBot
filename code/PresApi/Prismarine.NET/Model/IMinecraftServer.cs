@@ -7,41 +7,61 @@ namespace Prismarine.NET.Model
         /// <summary>
         /// Id number, unique for a minecraft server.
         /// </summary>
-        public long Id { get; }
+        long Id { get; }
 
         /// <summary>
         /// Gets the name of the server.
         /// </summary>
-        public string ServerName { get; }
+        string ServerName { get; }
 
         /// <summary>
         /// Gets the status code of the server.
         /// </summary>
-        public ServerStatus Status { get; }
+        ServerStatus Status { get; }
         
         /// <summary>
         /// Gets if the server process is running.
         /// </summary>
-        public bool IsRunning { get; }
+        bool IsRunning { get; }
         
         /// <summary>
         /// Gets the last 50 log messages from the server.
         /// </summary>
-        public ICollection<LogMessage> Logs { get; }
+        ICollection<LogMessage> Logs { get; }
 
         /// <summary>
         /// The time of the server when it became online, or null if the server is offline
         /// </summary>
-        public DateTime? OnlineFrom { get; }
+        DateTime? OnlineFrom { get; }
 
         /// <summary>
         /// Phisical storage space on the disk of the server in BYTES.
         /// </summary>
-        public long StorageBytes { get; }
+        long StorageBytes { get; }
 
         /// <summary>
         /// Gets the minecraft version of the server.
         /// </summary>
-        public MinecraftVersion MCVersion { get; }
+        MinecraftVersion MCVersion { get; }
+
+        /// <summary>
+        /// Gets the server icon.
+        /// </summary>
+        string ServerIcon { get; }
+
+
+        /// <summary>
+        /// Refreshes the local data from the server.
+        /// </summary>
+        /// <returns></returns>
+        Task Refresh();
+
+        Task Modify();
+
+        Task Delete();
+
+        Task WriteCommand();
+
+        Task Toggle();
     }
 }
