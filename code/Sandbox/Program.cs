@@ -13,24 +13,32 @@ namespace Sandbox
             var client = new PrismarineClient();
             await client.LoginAsync("test-acc");
 
-            var servers = await client.ServerPark.GetAllServers();
-            foreach (var item in servers)
+            var versions = await client.ServerPark.GetMinecraftVersionsAsync();
+            foreach (var version in versions)
             {
-                // write out all the properties
-                Console.WriteLine("id: " + item.Id);
-                Console.WriteLine("name: " + item.ServerName);
-                Console.WriteLine("is running: " + item.IsRunning);
-                Console.WriteLine("version: " + item.MCVersion.Version);
-                Console.WriteLine("logs: ");
-                foreach (var log in item.Logs)
-                {
-                    Console.WriteLine(" - " + log.Message);
-                }
-
-                Console.WriteLine("status: " + item.Status);
-
+                Console.WriteLine(version.Name);
+                Console.WriteLine(version.Version);
                 Console.WriteLine();
             }
+
+            //var servers = await client.ServerPark.GetAllServersAsync();
+            //foreach (var item in servers)
+            //{
+            //    // write out all the properties
+            //    Console.WriteLine("id: " + item.Id);
+            //    Console.WriteLine("name: " + item.ServerName);
+            //    Console.WriteLine("is running: " + item.IsRunning);
+            //    Console.WriteLine("version: " + item.MCVersion.Version);
+            //    Console.WriteLine("logs: ");
+            //    foreach (var log in item.Logs)
+            //    {
+            //        Console.WriteLine(" - " + log.Message);
+            //    }
+
+            //    Console.WriteLine("status: " + item.Status);
+
+            //    Console.WriteLine();
+            //}
         }
     }
 }

@@ -22,7 +22,6 @@ namespace Prismarine.NET
             var loginResponse = await authService.Login(token);
             HttpClientProvider provider = _serviceProvider.GetRequiredService<HttpClientProvider>();
             provider.JwtToken = loginResponse.Jwt;
-            Console.WriteLine("logged in");
         }
 
 
@@ -36,12 +35,16 @@ namespace Prismarine.NET
         }
 
         private static IServiceProvider GetServices() => new ServiceCollection()
-            .AddSingleton(JsonSerializer.Instance)
+            // utils
+            .AddSingleton<JsonSerializer>()
             .AddSingleton(new HttpClientProvider("https://localhost:7229"))
+            // networking
             .AddSingleton<IAuthService, AuthHttpClient>()
             .AddSingleton<IServerParkService, ServerParkHttpClient>()
+            .AddSingleton<IMinecraftServerService, MinecraftHttpClient>()
+            // models
             .AddSingleton<IServerPark, ServerPark>()
-            
+            // build
             .BuildServiceProvider();
     }
 }

@@ -8,8 +8,6 @@ namespace Prismarine.NET.Networking.Utils
     /// </summary>
     internal class JsonSerializer
     {
-        public static JsonSerializer Instance { get; } = new JsonSerializer();
-
 
         private static readonly JsonSerializerOptions _settings = new ()
         {
@@ -17,8 +15,7 @@ namespace Prismarine.NET.Networking.Utils
             PropertyNameCaseInsensitive = true,
         };
 
-
-        private JsonSerializer() { }
+        
 
 #pragma warning disable CA1822 // Mark members as static
 

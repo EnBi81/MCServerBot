@@ -164,7 +164,7 @@ public partial class MinecraftServerProperties : IMinecraftServerProperties
 
         foreach (var (key, value) in props)
         {
-            if (_properties.ContainsKey(key))
+            if (_properties.ContainsKey(key) && value is not null)
                 _properties[key] = value;
         }
 

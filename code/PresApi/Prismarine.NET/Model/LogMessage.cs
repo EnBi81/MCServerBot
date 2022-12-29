@@ -2,8 +2,8 @@
 {
     public class LogMessage
     {
-        public string Message { get; set; }
-        public LogMessageType MessageType { get; set; }
+        public string? Message { get; }
+        public LogMessageType MessageType { get; }
     }
     
     /// <summary>
