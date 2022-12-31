@@ -54,14 +54,14 @@ namespace Prismarine.NET.Model
         /// Refreshes the local data from the server.
         /// </summary>
         /// <returns></returns>
-        Task Refresh();
+        Task RefreshAsync();
 
-        Task Modify();
+        Task ModifyAsync();
 
-        Task Delete();
+        Task DeleteAsync();
 
-        Task WriteCommand();
+        Task WriteCommandAsync();
 
-        Task Toggle();
+        Task ToggleAsync();
     }
 }

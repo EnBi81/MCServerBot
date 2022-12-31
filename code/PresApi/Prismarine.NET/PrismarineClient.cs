@@ -44,6 +44,7 @@ namespace Prismarine.NET
             .AddSingleton<IMinecraftServerService, MinecraftHttpClient>()
             // models
             .AddSingleton<IServerPark, ServerPark>()
+            .AddTransient<IMinecraftServer, MinecraftServer>()
             // build
             .BuildServiceProvider();
     }

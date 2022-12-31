@@ -29,7 +29,7 @@ namespace Prismarine.NET.Model.Implementations
              return _serverParkService.GetMinecraftVersions();
         }
 
-        public Task<IMinecraftServer> GetServer(long id) 
+        public Task<IMinecraftServer> GetServerAsync(long id) 
         {
             return _minecraftServerService.GetServerById(id);
         }

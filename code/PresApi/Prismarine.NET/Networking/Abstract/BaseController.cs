@@ -75,13 +75,16 @@ namespace Prismarine.NET.Networking.Abstract
             return result;
         }
         #endregion
+
+
+        #region Util methods
         
         /// <summary>
         /// Throws exceptions if the response is not successful
         /// </summary>
         /// <param name="response"></param>
         /// <returns></returns>
-        /// <exception cref="Exceptions.AuthenticationException">if the user is not logged in</exception>
+        /// <exception cref="AuthenticationException">if the user is not logged in</exception>
         /// <exception cref="AuthorizationException">if the user has no permission</exception>
         /// <exception cref="ApiException">other exceptions</exception>
         /// <exception cref="HttpRequestException">unknown exceptions</exception>
@@ -92,7 +95,7 @@ namespace Prismarine.NET.Networking.Abstract
             {
                 // the user is not logged in
                 if (response.StatusCode is HttpStatusCode.Unauthorized)
-                    throw new Exceptions.AuthenticationException();
+                    throw new AuthenticationException();
 
                 // the user has no permission to access the resource
                 if (response.StatusCode is HttpStatusCode.Unauthorized)
@@ -109,5 +112,7 @@ namespace Prismarine.NET.Networking.Abstract
                 throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
             }
         }
+
+        #endregion
     }
 }

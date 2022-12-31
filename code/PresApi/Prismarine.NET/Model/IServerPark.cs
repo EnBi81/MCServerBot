@@ -25,6 +25,6 @@ namespace Prismarine.NET.Model
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<IMinecraftServer> GetServer(long id);
+        Task<IMinecraftServer> GetServerAsync(long id);
     }
 }

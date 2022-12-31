@@ -21,6 +21,9 @@ namespace Sandbox
                 Console.WriteLine();
             }
 
+            var servers = await client.ServerPark.GetAllServersAsync();
+            Prismarine.NET.Model.IMinecraftServer server = await client.ServerPark.GetServerAsync(2);
+
             //var servers = await client.ServerPark.GetAllServersAsync();
             //foreach (var item in servers)
             //{
