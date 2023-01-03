@@ -50,27 +50,19 @@ WEB API features:
 
 ## TODO:
 
-1. Get nbt information of a minecraft player through rcon (info should be available from controller)
-    - dimension
-    - foodlevel
-    - playerGameType
-    - Sleeping
-    - XpLevel
-    - XpP
-    - XpSeed
-    - https://github.com/stefanodriussi/rconsharp
-2. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
-3. c# client + discord
-4. js client + old page
-5. new blazor pages
+1. Change websockets to SignalR (https://stackoverflow.com/questions/28948517/how-do-i-generate-api-documentation-for-signalr)
+2. c# client + discord
+3. js client + old page
+4. new blazor pages
     - PWA for saving offline mode (make this optional for users)
     - Put the blazor pages to github (be able to select a host where to send the requests
     - skin viewer: https://github.com/rkkoszewski/minecraft-css-3d-skin-viewer
     - skin viewer 2: https://github.com/bs-community/skinview3d
+    - skin api: https://mc-heads.net/avatar/Crash285
     - Map overview in browser
     - User click, mouse hover, uptime for webpage statistics
-6. Minecraft command autocomplete
-7. Request limiter (max server maintenance, max running server, stuff like these.
+5. Minecraft command autocomplete
+6. Request limiter (max server maintenance, max running server, stuff like these.
 
 
 
